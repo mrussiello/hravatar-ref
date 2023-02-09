@@ -1,0 +1,116 @@
+html
+{
+  overscroll-behavior: none;
+}
+
+body
+{
+    margin: 0px auto;
+    font-size: 1.2rem;
+    color: #3d3d3d;
+    background-color: #fff;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    overscroll-behavior: none;
+}
+
+
+/**********************************************
+ * TABLE DEFAULTS
+ **********************************************/
+
+table
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.left
+{
+    margin-left: 0px;
+}
+
+td
+{
+    text-align: left;
+    vertical-align: top;
+}
+
+
+/**********************************************
+ * TEXT SIZES and WEIGHTS
+ **********************************************/
+
+.textbold
+{
+    font-weight: bold;    
+}
+
+.textitalic
+{
+    font-style: italic;    
+}
+
+.textverylarge
+{
+    font-size:  1.4rem;
+}
+
+.textlarge
+{
+    font-size:  1.3rem;
+}
+
+.textmedium
+{
+    font-size:  1.2rem;
+}
+
+.textmedsmall
+{
+    font-size:  1.2rem;
+}
+
+
+.textsmall
+{
+    font-size:  1.2rem;
+}
+
+.texttiny
+{
+    font-size:  1rem;
+}
+
+
+
+/**********************************************
+ * TEMPLATE LAYOUT CLASSES
+ **********************************************/
+
+.pagewrapper
+{
+   text-align:center; 
+   margin-top:5px;
+   margin-bottom:10px;
+}
+
+.pageinnerdiv
+{
+    display:block;        
+}
+
+img
+{
+    border-width: 0px;
+}
+
+.ui-selectoneradio label
+{
+    font-size:  1.2rem;
+}
+
+body .ui-widget
+{
+    font-size:  1.2rem;
+}
+

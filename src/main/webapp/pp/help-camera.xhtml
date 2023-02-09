@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+
+    <pp:helpcamera-head />
+    
+</ui:define>
+    
+    
+<ui:define name="coreinnersection">
+
+    <pp:helpcamera-body />
+
+    <br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <div id="wrapperdiv1">
+
+        <table  id="precheckdiv" style="margin-left:auto;margin-right:auto;margin-bottom:60px;margin-top:100px">
+            
+            <tr>
+                <td>
+                    <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.CheckingYourSystem']}"/>
+                </td>
+            </tr>
+            
+        </table>
+
+        <br />
+
+        <table id="continuelinkdiv" style="display:none;margin-left:auto;margin-right:auto;width:600px">
+            
+            <tr>
+                <td>
+                    <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.SystemCheckComplete']}"/>
+                    <br />&#160;
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <h:outputText styleClass="textbold ttformtext" value="#{stMessages['g.SystemCheckAutoforward']}"/>
+                    <br />&#160;
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <a href="#" id="autoforwardlinkurl" title="#{stMessages['g.SystemCheckAutoforwardtTitle']}">
+                        <h:outputText styleClass="ttfooter" value="#{stMessages['g.Continue']}"/>
+                    </a>
+                </td>
+            </tr>
+
+            
+        </table>
+        
+    </div>
+
+       
+    
+</cc:implementation>
+
+
+</html>

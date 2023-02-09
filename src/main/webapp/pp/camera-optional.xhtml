@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    
+    <script type="text/javascript">
+                
+        function copyUrltoClipboard( txt )
+        {
+            if( txt )
+            {
+                var ele = document.createElement( 'textarea' );
+                var es = ele.style;
+                es.rows=1;
+                es.cols=1;
+                es.opacity=0.1;
+                ele.value=txt;
+                var par = document.getElementById('thetextspan');
+                par.appendChild(ele);
+
+                if( cf5_isIos() )
+                {
+                    var range = document.createRange();
+                    range.selectNodeContents(ele);
+                    selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    ele.setSelectionRange(0, 999999);
+                }
+                
+                else
+                    ele.select();    
+
+                document.execCommand('Copy');            
+                ele.blur();
+                par.removeChild( ele );
+                
+                PF('urlcopied').show();               
+            }
+            
+        }
+        
+        function cf5_isIos()
+        {
+            return /iP(hone|od|ad)/.test(navigator.platform);
+        }
+        
+    </script>
+    
+</ui:define>
+    
+    
+<ui:define name="coreinnersection">
+
+    <ref:messages-embedded />
+
+    <h:form prependId="false" >
+
+        <ref:stdforminputs />
+        <ref:noncoreforminputs />
+
+        <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-top:2px;padding-bottom:8px">
+            
+            <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPCameraOptional']}" escape="false"/>
+                        
+            <h:panelGroup>
+                <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" />
+                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P1']}">
+                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                </h:outputFormat>
+            </h:panelGroup>
+
+            
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P2']}" />
+            
+
+             <h:panelGroup>
+                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P3']}"/>
+                &#160;
+                <h:outputLink value="https://www.hravatar.com/ta/help/check-camera.xhtml" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
+                    <h:outputText styleClass="ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
+                </h:outputLink>
+             </h:panelGroup>
+             
+             
+            <h:panelGroup>
+                <div style="padding-top:10px">
+                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPUseThisUrlC']}"/>
+                </div>
+            </h:panelGroup>
+            
+            <h:panelGroup>
+                <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard( '#{proctorUtils.fullRestartUrl}' ); ">
+                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer" value="#{proctorUtils.fullRestartUrl}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                    &#160;&#160;
+                    <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                </div>
+            </h:panelGroup>
+
+            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P2']}">
+                <f:param value="#{refUtils.rcCheckTypeName}"/>
+            </h:outputFormat>           
+            
+            <h:panelGroup>
+                <table style="margin-left:auto;margin-left:auto;padding:4px;padding-top:15px">
+                    <tr>
+                        <td><p:inputText tabindex="11" size="24" value="#{proctorBean.email}" placeholder="#{stMessages['g.Email']}"/>                            
+                        </td>
+                        <td><p:commandButton tabindex="12" ajax="false" action="#{proctorUtils.processEmailDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlEmail']}"/>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td><p:inputText tabindex="13" size="24" value="#{proctorBean.mobileNum}" placeholder="#{stMessages['g.MobilePhone']}"/>                            
+                        </td>
+                        <td><p:commandButton tabindex="14" ajax="false" action="#{proctorUtils.processSmsDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlText']}"/>
+                        </td>
+                    </tr> 
+                    <!--
+                    <tr>
+                        <td>                            
+                        </td>
+                        <td><p:button tabindex="15" value="#{stMessages['g.MulCopyToClipBoard']}" onclick="copyUrltoClipboard( '#{proctorUtils.fullRestartUrl}' ); return false;"/>                            
+                        </td>
+                    </tr> 
+                    -->
+                </table>
+            </h:panelGroup>
+            
+
+            <h:panelGroup>
+                <div style="text-align:center;padding-top:40px">
+                    <div style="display:inline-block">
+                        <p:commandButton tabindex="16" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" value="#{stMessages['g.PPT.ContinueNoCamera']}" title="#{stMessages['g.PPT.ContinueNoCameraAlt']}"/>
+                        &#160;
+                        <p:button tabindex="16" value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}" onclick="PF('exitcheckconfirm').show(); return false"/>
+                    </div>                    
+                </div>
+            </h:panelGroup>
+            
+            <h:panelGroup>
+                <div style="text-align:center;padding-top:10px">
+                    <h:commandLink action="#{proctorUtils.processCheckForCameraAgain}" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
+                        <h:outputText styleClass="ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
+                    </h:commandLink>
+                </div>                
+            </h:panelGroup>
+            
+
+        </h:panelGrid>
+
+    <div id="thetextspan"></div>
+    
+    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
+    
+        <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
+                <f:param value="#{refUtils.rcCheckTypeName}"/>
+            </h:outputFormat>
+        </p>
+        
+        <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+    </p:dialog>
+    
+        <p:dialog width="550" modal="true" header="#{stMessages['g.ExitConfirm']}" style="font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            <h:panelGrid columns="1" cellpadding="4">
+                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1.camerachange']}" >
+                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                </h:outputFormat>
+                
+                <h:outputText value="#{stMessages['g.ExitConfirm.P2.camerachange']}" />
+
+                <h:panelGroup>
+                    <p:commandButton ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
+                        &#160;
+                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+        </p:dialog>
+    
+    
+    </h:form>
+
+
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

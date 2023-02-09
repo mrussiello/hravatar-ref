@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:session="http://xmlns.jcp.org/jsf/composite/session">
+<body>
+
+<ui:composition template="#{skinInfoBean.coreTemplate}">
+
+	<ui:define name="coreinnersection">
+
+        <session:idle-monitor />
+
+	<div style="width:750px;margin-left: auto;margin-right: auto">
+
+	<br />
+
+        <ui:fragment rendered="#{not userBean.userLoggedOnAsAdmin}">
+
+            <h:form id="logonform1" prependId="false">
+
+            <p:panel header="Logon Form" style="width:500px;margin-left:auto;margin-right:auto">
+
+            <p:focus for="username"/>
+
+            <h:panelGrid columns="3">
+                <h:outputText styleClass="titletext1" value="Please Sign In:" escape="false"/>
+                <h:panelGroup></h:panelGroup>
+                <h:panelGroup></h:panelGroup>
+
+                 <h:outputLabel for="username" value="Email/Username:" />
+                 <p:inputText id="username" value="#{userUtils.logonName}" autocomplete="username" label="username" validatorMessage="Username is required.">
+                    <f:validateLength minimum="2" />
+                </p:inputText>
+                <h:panelGroup></h:panelGroup>
+
+                 <h:outputLabel for="password" value="Password:" />
+                 <p:password id="password"
+                             value="#{userUtils.logonKey}" label="password" autocomplete="current-password"  validatorMessage="Password is required." feedback="false">
+                    <f:validateLength minimum="4" maximum="20" />
+                </p:password>
+                <h:panelGroup></h:panelGroup>
+
+                <h:panelGroup></h:panelGroup>
+                <p:commandButton action="#{userUtils.processLogonAttempt}" ajax="false" title="Sign In" value="Sign In">
+                </p:commandButton>
+                <h:panelGroup></h:panelGroup>
+
+            </h:panelGrid>
+
+            </p:panel>
+
+            <br />&#160;
+            </h:form>
+        </ui:fragment>
+
+	<br />
+
+        <h:form prependId="false">
+        <div style="font-size:1rem">
+            
+        <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin and fn:length(adminRefBean.strParam1) gt 0}">               
+            <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear reports">Clear Online Report(s)</p:commandLink>
+            <br />
+            <br />            
+            <h:outputText style="font-size:1.2rem" value="#{adminRefBean.strParam1}" escape="false" />
+            <br />
+        </ui:fragment>
+        
+        
+        <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+
+
+            <p:panel header="Links and Functions" toggleable="true" closable="true" style="width:100%">
+
+                <ui:fragment rendered="#{adminRefUtils.newRefStartsOk}">
+                <div style="color:blue;padding:10px;font-size:1.2rem;font-weight: bold;text-align:center">
+                    New Ref Starts are ON.
+                </div>
+                </ui:fragment>
+                
+                <ui:fragment rendered="#{not adminRefUtils.newRefStartsOk}">
+                <div style="color:red;padding:10px;font-size:24pt;font-weight: bold;text-align:center">
+                    New Ref Starts are  OFF!!!!!
+                </div>
+                </ui:fragment>
+
+                
+                    <h:panelGrid cellpadding="3"
+                                 cellspacing="0"
+                                 border="0"
+                                 columns="3">
+
+
+                        <p:commandLink ajax="false" action="#{adminRefUtils.processToggleRefStarts}" title="Toggle New Ref starts. When off, no new reference checks can begin.">Toggle New Ref Starts</p:commandLink>
+                        <p:commandLink ajax="false" action="#{adminRefUtils.processToggleRemindersBatches}" title="Toggle automatic Reminders Batches.">Toggle Reminder Batches</p:commandLink>
+                        <p:commandLink ajax="false" action="#{adminRefUtils.processClearDmbsCache}" title="Clear dbms cache">DBMS Cache</p:commandLink>
+
+                        <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>                        
+                        <p:commandLink ajax="false" action="#{userUtils.processStartReminderBatch}" title="Starts a reminder batch">Start Reminder Batch</p:commandLink>
+                        <h:panelGroup></h:panelGroup>
+                        
+                        <h:outputText value="HTML Result Report:"/>
+                        <p:inputText value="#{adminRefBean.rcCheckId}" placeholder="RcCheckId" size="8"/>
+                        <h:panelGroup>(RcCheck Id)</h:panelGroup>
+
+                        <h:panelGroup></h:panelGroup>
+                        <p:inputText value="#{adminRefBean.langStr}" placeholder="Locale Str" size="8"/>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processGenRefResultReportOnline}" value="Create Results Report"/>
+                        
+
+                        <h:outputText value="HTML Result PDF:"/>
+                        <p:inputText value="#{adminRefBean.rcCheckId4}" placeholder="RcCheckId" size="8"/>
+                        <h:panelGroup>(RcCheck Id)</h:panelGroup>
+
+                        <h:panelGroup></h:panelGroup>
+                        <p:inputText value="#{adminRefBean.reportId4}" placeholder="ReportId" size="8"/>
+                        <h:panelGroup>(Report Id)</h:panelGroup>
+                        
+                        <h:panelGroup></h:panelGroup>
+                        <p:inputText value="#{adminRefBean.langStr4}" placeholder="Locale Str" size="8"/>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processCreateRcReportPdf}" value="Create Results Report"/>
+                        
+                        
+                        
+                        <h:outputText value="Re-Distribute Progress:"/>
+                        <p:inputText value="#{adminRefBean.rcCheckId2}" placeholder="RcCheckId" size="8"/>
+                        <h:panelGroup>(RcCheck Id)</h:panelGroup>
+
+                        <h:panelGroup></h:panelGroup>
+                        <p:inputText value="#{adminRefBean.langStr2}" placeholder="Locale Str" size="8"/>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processRedistributeProgress}" value="Re-distribute Progress"/>
+
+                        <h:outputText value="Re-Score RcCheckId:"/>
+                        <p:inputText value="#{adminRefBean.rcCheckId3}" size="8"/>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processRecomputeRaterAndOverallScores}" value="Re-Score RcCheck"/>
+
+
+                        <h:outputText style="font-weight:bold" value="Run As Admin:"/>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+
+                        <h:panelGroup>RcCheck Id:</h:panelGroup>
+                        <h:panelGroup>
+                             <p:inputText value="#{adminRefBean.rcCheckId5}" size="8">
+                            <f:convertNumber integerOnly="true"/>
+                        </p:inputText>&#160;Rqd for Candidate
+                        </h:panelGroup>                        
+                        <h:panelGroup></h:panelGroup>
+
+                        <h:panelGroup>RcRater Id:</h:panelGroup>
+                        <h:panelGroup>
+                            <p:inputText value="#{adminRefBean.rcRaterId5}" size="8">
+                                <f:convertNumber integerOnly="true"/>
+                            </p:inputText>&#160;Rqd for Rater
+                        </h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+
+                        <h:panelGroup></h:panelGroup>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processRunAsAdmin}" value="Run As Admin (No Saving)"/>
+                        <h:panelGroup></h:panelGroup>
+                        
+                    </h:panelGrid>
+
+            </p:panel>
+            <br />
+
+
+            <br />
+
+
+
+            <p:panel rendered="#{fn:length(adminRefBean.pdfReportList) gt 0}" header="PDF Reports" style="width:750px;margin-left:auto;margin-right:auto;margin-top:12px">
+
+                <f:facet name="header">
+                    <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
+                </f:facet>
+                <f:facet name="footer">
+                    <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
+                </f:facet>
+
+                <p:dataTable value="#{adminRefBean.pdfReportList}" var="pdfReport">
+
+                    <p:column>
+                        <h:commandLink>
+                            <h:graphicImage library="images" name="report.png" style="width:20px" />
+                            <!-- NOTE: The SetPropertyActionListener MUST go above the FileDownload component to ensure that the
+                                 TestEventScore is in the right place before the code looks for it. -->
+                            <f:setPropertyActionListener target="#{adminRefBean.pdfReport}" value="#{pdfReport}"/>
+                            <p:fileDownload value="#{adminRefUtils.reportFileToDownload}">
+                            </p:fileDownload>
+                        </h:commandLink>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">Report Name</f:facet>
+                        <h:outputText value="#{pdfReport[2]}"/>
+                        <br />
+                        <h:outputText value="#{pdfReport[3]}">
+                            <f:convertDateTime type="both" dateStyle="short" timeStyle="long" timeZone="#{userBean.user.timeZoneId}"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column>
+                        <f:facet name="header">RcCheckId</f:facet>
+                        <h:outputText value="#{pdfReport[0]}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+            <br />
+        
+            <p:panel header="System Status"  toggleable="true" closable="true" style="width:100%">
+
+                  <table cellpadding="2" cellspacing="0" width="100%">
+
+                          <ui:repeat value="#{userUtils.sessionListener.statusList}" var="stat">
+                          <tr>
+                                  <td width="50%"><h:outputText value="#{stat.name}"/></td>
+                                  <td width="50%"><h:outputText value="#{stat.value}"/></td>
+                          </tr>
+                          </ui:repeat>
+
+                  </table>
+
+            </p:panel>
+
+            <br />        
+        
+            <br />
+
+
+            <p:dataTable value="#{userUtils.sessionListener.dataList}" var="o" style="width:100%">
+
+                <f:facet name="header">Session-level Status
+                &#160;
+                <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>
+                </f:facet>
+
+                <p:column style="white-space: normal">
+                     <f:facet name="header">Time</f:facet>
+                    <h:outputText value="#{o.secs}"/>
+                </p:column>
+
+                <p:column style="white-space: normal">
+                     <f:facet name="header">Portal</f:facet>
+                    <h:outputText rendered="#{o.corp ne null}" value="#{o.corp}"/>
+                </p:column>
+
+                <p:column style="white-space: normal">
+                     <f:facet name="header">User</f:facet>
+                    <h:outputText rendered="#{o.user ne null}" value="#{o.user}, orgId=#{o.orgId}, type=#{o.type}"/>
+                </p:column>
+
+                <p:column style="white-space: normal">
+                     <f:facet name="header">RcCheck</f:facet>
+                    <h:outputText rendered="#{o.rcCheck ne null}" value="RcCheck: #{o.rcCheck}"/>
+                    <h:outputText rendered="#{o.rcRater ne null}" value=", RcRater: #{o.rcRater}"/>
+                </p:column>
+
+                <p:column style="white-space: normal">
+                     <f:facet name="header">Status</f:facet>
+                    <h:outputText rendered="#{o.status ne null}" value="#{o.status}"/>
+                </p:column>
+
+            </p:dataTable>
+
+            <br />&#160;
+
+        </ui:fragment>
+        </div>
+	</h:form>
+
+	</div>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
+

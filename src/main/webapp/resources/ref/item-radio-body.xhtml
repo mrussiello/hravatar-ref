@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+    <h:form prependId="false">
+    <ref:stdforminputs />
+    <ref:raterforminputs />
+    <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
+                <f:param value="#{raterRefUtils.raterQuestionCount}"/>
+            </h:outputFormat>
+            <h:outputFormat rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                <f:param value="#{candidateRefUtils.raterQuestionNumberForCandidate}"/>
+                <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
+            </h:outputFormat>
+        </div>
+
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+
+            <ref:item-infoquestion />
+            
+            <p:selectOneRadio value="#{raterRefBean.selectedRadioIndex}" styleClass="textmedium ttformtext" layout="pageDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+                <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemList}"/>
+            </p:selectOneRadio>
+                        
+            <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
+            <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
+            </h:panelGroup>
+            
+            
+            <h:panelGroup>
+                <div style="text-align: center">
+                    <div style="display:inline-block;">
+                        <p:commandButton ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}">
+                            <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
+                        </p:commandButton>
+                        &#160;
+                        <p:commandButton rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                            <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+            </h:panelGroup>
+                   
+            <ref:item-skipbutton />
+            
+        </h:panelGrid>
+
+        <ref:avcomments-dialog />
+    
+    </h:form>
+        <ref:avcomments-uploadform />
+    </div>
+
+    <br /><br /><br />&#160;
+
+
+</cc:implementation>
+</html>

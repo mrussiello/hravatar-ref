@@ -1,0 +1,13 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+<f:view contentType="text/html">
+    <f:metadata>
+        <f:viewParam name="medrecapi" value="#{proctorEntry.medrecapi}"/>
+        <f:viewParam name="recdevs" value="#{proctorEntry.recdevs}"/>
+        <f:viewParam name="gum" value="#{proctorEntry.getusermedia}"/>
+        <f:viewParam name="acidx" value="#{proctorEntry.acidx}"/>
+    </f:metadata>
+<f:event listener="#{proctorEntry.doBrowserCheckEntry}" type="preRenderView" />
+</f:view>
+</html>

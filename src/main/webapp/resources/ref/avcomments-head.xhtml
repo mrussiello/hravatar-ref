@@ -1,0 +1,1001 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+<!-- INTERFACE -->
+<cc:interface>
+<!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+<!-- cc.attrs.value -->
+
+<ui:fragment rendered="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}">
+
+    <style>
+        .reftdcenter
+        {
+            text-align:center;
+        }
+        .valignmid
+        {
+            vertical-align:middle;
+        }
+        .recordtablea
+        {
+            padding-left:20px;
+            padding-right:20px;
+        }
+        .recordtableb
+        {
+            width:250px;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        //<![CDATA[
+        
+    var rcCheckId='#{refBean.rcCheck.rcCheckIdEncrypted}';
+    var rcRaterId='#{refBean.rcRaterIdEncrypted}';
+    var rcItemId='#{raterRefBean.rcItem.rcItemIdEncrypted}';
+    var userId='#{refBean.userIdEncrypted}';
+    var isAudioOnly = #{refBean.audioCommentsOnly};
+    var recordingIsAudioOnly = false;
+    var hasPrevUpload = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null};
+    var prevUploadIsAudio = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile.isAudio};
+    var mRecErrorStr = "#{stMessages['g.RecordingError.Title']}";
+    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']}";
+    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']}";
+    var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
+    var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
+    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']}"; 
+    var errorNoBlobToUpload = "#{stMessages['g.PPErrorNoUploadBlobMessage']}"; 
+    var errorDuringUpload = "#{stMessages['g.PPErrorDuringUpload']}"; 
+    var errorDuringUploadAbort = "#{stMessages['g.PPErrorDuringUploadAbort']}"; 
+    var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
+    var reRecordTextVid = "#{stMessages['g.ReRecordCommentVid']}";
+    var reRecordTextAud = "#{stMessages['g.ReRecordCommentAud']}";
+    var audioAlreadyRecorded = "#{stMessages['g.RecordAudioPrev']}";
+    var videoAlreadyRecorded = "#{stMessages['g.RecordVideoPrev']}";
+    var recordVideoHeader = "#{stMessages['g.RecordVideoComment']}";
+    var recordAudioHeader = "#{stMessages['g.RecordAudioComment']}";
+    var recordingInProgress = "#{stMessages['g.RecordingInProgress']}";
+    var recordingStopped = "#{stMessages['g.RecordingStopped']}";
+
+    var selCameraDevice = '#{userBean.selCamera}';
+    var selMicrophoneDevice = '#{userBean.selMicrophone}';
+
+    
+    
+    var fileSize = 0;
+    var uploadedUserFileTypeId = 220;
+                
+    // used for playback.
+    var playbackMedEle = null; 
+
+    // Used for recording audio or video. 
+    var recordMedEle = null;
+
+    // Indicates that medEle and medEle2 are different and should be swapped when playing/recording.
+    var swapMed = false;
+    
+    var rcdDiv = null;
+    
+    var mRecorder = null;
+    
+    var recordedBlobs = [];
+      
+    var mrOptions = null;
+    
+    var mrConstraints = null;
+    
+    var theBlob = null;
+    
+    var maxTm = 120;
+        
+    var sliceTm = 0.20;
+    var sliceCt = 0;
+    
+    var playing = false;
+    
+    var recAvInProg = false;
+    var sent = false;
+    
+    var medStrm = null;
+    var medStrmProm = null;
+    // z.muteWrngCt=0;
+    var medStrmErrCt = 0;
+    
+    /*
+     * status
+     *     0 = not started
+     *     1 = started
+     *     2 = completed
+     *     3 = failed
+     */
+    var uploadStatus = 0;
+    var uploadUrl = "/tr/ppfupload";
+    var uploadPercent = 0;
+    
+    var desWid = 400;
+    var desHgt = 300;
+    
+     // var RECBUTSRC = '/tr/images/startrecbut1.png';
+     // var STOPRECBUTSRC = '/tr/images/stoprecbut1.png';
+    //var PLAYBUTSRC = '/tr/images/playbut1.png';
+    //var PAUSEBUTSRC = '/tr/images/pausebut1.png';
+    
+    
+    var MIN_FILSZ=4500;
+    var MAX_MED_ERRS=2;
+    var MAX_TOTAL_MED_ERRS=4;
+    var MAX_MUTE_WRNGS=3;    
+        
+    window.addEventListener( 'load', doMediaCaptureOnload );    
+        
+    function doMediaCaptureOnload()
+    {
+        if( hasPrevUpload )
+        {
+            var ele = document.getElementById( 'avuploadindicatordiv' );
+            if( ele )
+            {    
+                ele.innerHTML=prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
+                ele.style.display='block';                
+            }
+            ele = document.getElementById( 'rerecordtxtvid' );
+            if( ele )
+                ele.innerHTML=reRecordTextVid;
+            ele = document.getElementById( 'rerecordtxtaud' );
+            if( ele )
+                ele.innerHTML=reRecordTextAud;
+        }        
+    }
+        
+    function initForMediaCapture()
+    {
+        try
+        {
+            // Dialog Header - set to audio or video
+            var ele = document.getElementById( 'avcommentdialogheader' );
+            if( ele )
+                ele.innerHTML=recordingIsAudioOnly ? recordAudioHeader : recordVideoHeader;
+               
+            // Clear media div of elements.
+            var mediacommentdiv = document.getElementById('mediacommentdiv');
+            
+            /// clean the mediacommentdiv
+            mediacommentdiv.innerHTML='';
+            
+            mediacommentdiv.style.paddingTop= (recordingIsAudioOnly ? 40 : 3) + 'px';
+            
+            var desiredTagname = recordingIsAudioOnly ? 'audio' : 'video';
+            
+            // Make sure existing elements are the correct type. 
+            if( (recordMedEle) && recordMedEle.tagName!==desiredTagname )
+                recordMedEle = null;
+            
+            if( (playbackMedEle) && playbackMedEle.tagName!==desiredTagname )
+                playbackMedEle = null;
+            
+            // create recording Ele
+            if( !(recordMedEle) && !recordingIsAudioOnly )
+            {    
+                recordMedEle = document.createElement( desiredTagname );
+                //autoplay="true" width="300" height="225" style="border: 1px darkgray solid;margin-top:10px;margin-right:40px"
+                var res = recordMedEle.style;
+                res.border='1px darkgray solid';
+                res.marginTop='10px';
+                res.marginRight='40px';
+            }
+            
+            if( (recordMedEle) )
+            {    
+                recordMedEle.srcObject = null;
+                recordMedEle.setAttribute( 'width', desWid ); 
+                recordMedEle.setAttribute( 'height', desHgt ); 
+                recordMedEle.setAttribute( 'autoplay',''); 
+                recordMedEle.setAttribute( 'id','commentrecordele'); 
+                recordMedEle.setAttribute( 'playsinline','true'); 
+                recordMedEle.setAttribute( 'defaultMuted',''); 
+                recordMedEle.setAttribute( 'muted',''); 
+                mediacommentdiv.appendChild( recordMedEle );
+            }
+            
+            
+            
+            if( !(playbackMedEle) )
+            {
+                playbackMedEle = document.createElement( desiredTagname );
+                playbackMedEle.addEventListener( 'play', function(e) {playbackList();} );
+                playbackMedEle.addEventListener( 'pause', function(e) {playbackPauseList();} );
+                playbackMedEle.addEventListener( 'ended', function(e) {playbackPauseList();} );
+            }
+            else
+                playbackMedEle.srcObject = null;
+            
+            playbackMedEle.id = 'commentplaybackele';
+            playbackMedEle.controls = true;
+            playbackMedEle.autoplay = false;
+            playbackMedEle.setAttribute( 'playsinline','true'); 
+                        
+            var pes = playbackMedEle.style;
+                        
+            // video playback
+            if( !recordingIsAudioOnly )
+            {
+                playbackMedEle.disablePictureInPicture=true;
+                pes.width=desWid + 'px';
+                pes.height=desHgt + 'px';
+            }
+            
+            var recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
+            recbut.style.display='inline';
+            recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? '' : 'audio' ) );
+            recbut.style.display='none';
+            
+            setMrOptionsAndConstraints();            
+        }
+        catch( e )
+        {
+            // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
+            logIt( 'avcomments-head.initForMediaCapture() Error ' + e.message  ); 
+        }
+
+        if( !(mrOptions) )
+            mrOptions = {mimeType: 'video/webm' };
+
+        swapMed=true;        
+    }
+    
+    function setMrOptionsAndConstraints()
+    {
+            if( recordingIsAudioOnly )
+                mrOptions = {mimeType: 'audio/webm' };
+            
+            else if( !(MediaRecorder.isTypeSupported) ) 
+               mrOptions = {mimeType: 'video/mp4'};
+
+            else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) 
+               mrOptions = {mimeType: 'video/webm'};
+               // mrOptions = {mimeType: 'video/webm; codecs=vp9'};
+
+            else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) 
+               mrOptions = {mimeType: 'video/webm'};
+
+            else if(MediaRecorder.isTypeSupported('video/mp4')) 
+               mrOptions = {mimeType: 'video/mp4'};
+
+            else
+               mrOptions = {mimeType: 'video/webm; codecs=vp8'};
+
+            if( recordingIsAudioOnly )
+            {    
+                mrConstraints = { audio:true, video:false };
+                
+                if( (selMicrophoneDevice) )
+                    mrConstraints.audio.deviceId={exact:selMicrophoneDevice};    	   
+            }
+
+            // Video
+            else
+            {    
+                mrConstraints = { audio: true, video: { width:{min:desWid, ideal:desWid }, height:{min:desWid}, facingMode: "user" } };
+                
+                if( (selCameraDevice) )
+                    mrConstraints.video.deviceId={exact:selCameraDevice};
+
+                if( (selMicrophoneDevice) )
+                    mrConstraints.audio.deviceId={exact:selMicrophoneDevice};    	                   
+            }
+            
+        
+    }
+    
+    
+    function setForUploadStart( isAudio )
+    {        
+        uploadStatus = 0;
+        uploadPercent = 0;
+        
+        isAudio = (isAudio) ? isAudio : false;
+        
+        recordingIsAudioOnly = isAudio;
+        
+        setMrOptionsAndConstraints();
+
+        theBlob = null;
+        recordedBlobs = [];
+
+        medStrm = null;    
+        medStrmProm = null;
+        mRecorder = null;
+        playing = false;
+    
+        recAvInProg = false;
+        sent = false;
+    
+        
+        initForMediaCapture();
+        
+        swapMediaPlayers( false );
+        
+        startMediaStream();
+        
+        logIt( 'avcomments-head.xhtml setForUploadStart() isAudio=' + isAudio );
+        
+        // switch to start.
+        //var recbut = document.getElementById( 'startstoprecbut' );
+        //recbut.src=RECBUTSRC;
+
+        var but = document.getElementById( 'playbut' );
+        but.style.display='none';    
+        // playbut.src = PLAYBUTSRC;
+
+        but = document.getElementById( 'pausebut' );
+        but.style.display='none';    
+        
+        var upldbut = document.getElementById('uploadbuttondiv');
+        upldbut.style.display='none';        
+
+    }
+    
+    function doStartStopRecClick()
+    {
+        if( !recAvInProg )
+            doStartMediaRecording();
+        else
+            doStopMediaRecording();
+    }
+    
+    
+    function doStartMediaRecording()
+    {
+        logIt( 'avcomments-head.xhtml.doStartMediaRecording() START ');
+        if( !(mrOptions) )
+            initForMediaCapture();
+        
+            
+        // swap media players - show recording player.
+        swapMediaPlayers( false );
+
+        // hide play but
+        // var playbut = document.getElementById( 'playpausebut' );
+        if( startRec2() )
+        {
+            var but = document.getElementById( 'playbut' );
+            but.style.display='none';
+            but = document.getElementById( 'pausebut' );
+            but.style.display='none';
+            but = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
+            but.style.display='none';
+            but = document.getElementById( 'stoprecbut' );
+            but.style.display='inline';
+
+
+
+            // switch to stop.
+            //var recbut = document.getElementById( 'startstoprecbut' );
+            //if( startRec2() )
+            //{  
+            //    recbut.src=STOPRECBUTSRC;
+            //}
+            //else
+            //    recbut.src=RECBUTSRC;
+
+            var ele = document.getElementById('recordinginprogressdiv');
+            if( ele )
+                ele.innerHTML = recordingInProgress;
+        }
+    }
+
+    function doStopMediaRecording()
+    {
+        logIt( 'avcomments-head.xhtml.doStopMediaRecording() START ');
+
+        if( !(mrOptions) )
+            initForMediaCapture();
+
+        // switch to start.
+        if( stopRec2() )
+        {
+            var but = document.getElementById( 'playbut' );
+            but.style.display='none';
+            but = document.getElementById( 'pausebut' );
+            but.style.display='none';
+            but = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
+            but.style.display='inline';
+            but = document.getElementById( 'stoprecbut' );
+            but.style.display='none';
+            //var recbut = document.getElementById( 'startstoprecbut' );
+           // recbut.src=RECBUTSRC;
+        
+            // show play but
+            but = document.getElementById( 'playbut' );
+            but.style.display='inline';
+            //var playbut = document.getElementById( 'playpausebut' );
+            //playbut.src = PLAYBUTSRC;
+            //playbut.style.display='block';        
+        }
+
+        var ele = document.getElementById('recordinginprogressdiv');
+        if( ele )
+            ele.innerHTML = recordingStopped;
+
+    }
+    
+    function doPlayPauseClick()
+    {
+        logIt( 'avcomments-head.xhtml.doPlayPauseClick() START playing=' + playing );
+        
+        if( playing )
+            doStopPlayback();
+        else
+            doStartPlayback()        
+    }
+    
+    function playbackList()
+    {
+        logIt( 'avcomments-head.xhtml.playbackList() START playing=' + playing );
+        //if( playing )
+        //    return;
+        
+        var but = document.getElementById( 'playbut' );
+        but.style.display='none';
+        but = document.getElementById( 'pausebut' );
+        but.style.display='inline';
+               
+        //var playbut = document.getElementById( 'playpausebut' );
+        //playbut.src = PAUSEBUTSRC;
+        //playing = true;
+        
+    }
+
+    function playbackPauseList()
+    {
+        logIt( 'avcomments-head.xhtml.playbackPauseList() START playing=' + playing );
+        //if( !playing )
+         //   return;
+        
+        var but = document.getElementById( 'playbut' );
+        but.style.display='inline';
+        but = document.getElementById( 'pausebut' );
+        but.style.display='none';
+        //var playbut = document.getElementById( 'playpausebut' );
+        //playbut.src = PLAYBUTSRC;
+        //playing = false;
+        
+    }
+    
+    
+    function doStartPlayback()
+    {
+        logIt( 'avcomments-head.xhtml.doStartPlayback() START playing=' + playing );
+        if( playing || !(playbackMedEle) )
+            return;
+        
+        // swap media players
+        swapMediaPlayers( true );
+        
+        playbackMedEle.play();
+        
+        playbackList();
+    }
+    
+    function doStopPlayback()
+    {
+        logIt( 'avcomments-head.xhtml.doStopPlayback() START playing=' + playing );
+        if( !(playbackMedEle) )
+            return;
+
+        playbackMedEle.pause();
+        
+        playbackPauseList();
+        
+    }
+    
+    function swapMediaPlayers( forPlayback )
+    {
+        if( !(playbackMedEle) )
+            return;
+        
+        var mediacommentdiv = document.getElementById('mediacommentdiv');
+
+        if( forPlayback && (!(playbackMedEle.parentNode) || ((recordMedEle) && recordMedEle.parentNode)) )
+        {
+            mediacommentdiv.innerHTML='';
+            mediacommentdiv.appendChild(playbackMedEle);
+        }
+        
+        if( !forPlayback && ((playbackMedEle.parentNode) || !((recordMedEle) && (recordMedEle.parentNode))) ) 
+        {
+            mediacommentdiv.innerHTML='';
+            
+            if( (recordMedEle) )
+                mediacommentdiv.appendChild(recordMedEle);
+        }
+        
+        
+    }
+    
+    function mrecError(evt)
+    {
+        var er = (evt) && (evt.error) ? evt.error.name : 'mrec error';
+
+        medStrmErrCt++;
+        logIt( 'avcomments-head.xhtml.mrecError() msg=' + er );         
+        var msg= mRecErrorStr + ' (' + er + ')';
+        showErrorMessage( msg );
+    }
+    
+    
+    function showErrorMessage( msg )
+    {
+        alert( msg );
+    }
+
+    
+    function startMediaStream()
+    {
+        try
+        {
+            theBlob = null;
+            recordedBlobs = [];
+        
+            if( !(medStrmProm) )
+            {
+                // logIt( 'avcomments-head.xhtml.startMediaStream() calling getUserMedia() ' );
+                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
+            }
+            
+            
+            if( (medStrmProm) )
+            {
+                medStrmProm.then( function(stream) 
+                {
+                    medStrm = stream;
+                    
+                    // connect streeam to the video element so user can see self.
+                    if( (recordMedEle) )
+                    {
+                        recordMedEle.srcObject = stream;
+                        recordMedEle.setAttribute( 'playsinline','true'); 
+                        recordMedEle.setAttribute( 'defaultMuted',''); 
+                        recordMedEle.setAttribute( 'muted',''); 
+                        recordMedEle.volume=0;
+                        recordMedEle.load();
+                        recordMedEle.play();                                        
+                    }
+                    
+                    if( !(mRecorder) )
+                    {
+                        mRecorder = new MediaRecorder( stream, mrOptions );
+                        mRecorder.ondataavailable = function(e) {dataAvail(e);};
+
+                               // show the image if there is one and hide the recording div.
+                        // mRecorder.onstop = function(e) {mrecStop(e);};
+
+                                // this will hide the image if there is one and show the recording div if there is one.
+                        // mRecorder.onstart = function(e) {mrecStart(e);};
+                        mRecorder.onerror = function(e) {mrecError(e);};
+                    }                    
+                },
+                function(e) 
+                {
+                    medStrmProm=null;
+                } );
+            }
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.startMediaStream() ' + e.message );      
+            showErrorMessage( 'avcomments-head.xhtml.startMediaStream() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+
+
+    
+    function startRec2()
+    {
+        try
+        {
+            theBlob = null;
+            recordedBlobs = [];
+        
+            if( (recordMedEle) )
+            {
+                recordMedEle.volume=0;
+                // recordMedEle.load();
+                recordMedEle.play();                                        
+            }        
+        
+            if( !(mRecorder) )
+            {
+                logIt( 'avcomments-head.xhtml.startRec2() ERROR no MedRecorder ' );
+                return false;
+            }
+                     
+            // create a new Media Recorder
+            if( !(mRecorder) )
+            {
+                mRecorder = new MediaRecorder( stream, mrOptions );
+                mRecorder.ondataavailable = function(e) {dataAvail(e);};
+
+                       // show the image if there is one and hide the recording div.
+                // mRecorder.onstop = function(e) {mrecStop(e);};
+
+                        // this will hide the image if there is one and show the recording div if there is one.
+                // mRecorder.onstart = function(e) {mrecStart(e);};
+                mRecorder.onerror = function(e) {mrecError(e);};
+            }
+            
+            // start the media recorder.
+            if( (mRecorder.state) && mRecorder.state!=='recording' )
+            {
+                // mrecStart();
+                mRecorder.start(1000*sliceTm);
+                recAvInProg = true;
+            }                                      
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.startRec2() ' + e.message );      
+            showErrorMessage( 'avcomments-head.xhtml.startRec2() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+    
+    
+    /*
+     * 
+    function startRec()
+    {
+        try
+        {
+            theBlob = null;
+            recordedBlobs = [];
+                
+            if( !(medStrmProm) )
+            {
+                logIt( 'avcomments-head.xhtml.startRec() calling getUserMedia() ' );
+                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
+            }
+            
+            
+            if( (medStrmProm) )
+            {
+                medStrmProm.then( function(stream) 
+                {
+                    medStrm = stream;
+                    
+                    // connect streeam to the video element so user can see self.
+                    recordMedEle.srcObject = stream;
+                    recordMedEle.setAttribute( 'playsinline','true'); 
+                    recordMedEle.setAttribute( 'defaultMuted',''); 
+                    recordMedEle.setAttribute( 'muted',''); 
+                    recordMedEle.volume=0;
+                    recordMedEle.load();
+                    recordMedEle.play();                    
+                    
+                    logIt( 'avcomments-head.xhtml.startRec() have stream. ' );
+
+                    // reset for next time.
+                    medStrmProm=null;
+                    
+                    // create a new Media Recorder
+                    mRecorder = new MediaRecorder( stream, mrOptions );
+                    mRecorder.ondataavailable = function(e) {dataAvail(e);};
+
+                           // show the image if there is one and hide the recording div.
+                    // mRecorder.onstop = function(e) {mrecStop(e);};
+
+                            // this will hide the image if there is one and show the recording div if there is one.
+                    // mRecorder.onstart = function(e) {mrecStart(e);};
+                    mRecorder.onerror = function(e) {mrecError(e);};
+                                 
+                    // start the media recorder.
+                    if( (mRecorder.state) && mRecorder.state!=='recording' )
+                    {
+                        // mrecStart();
+                        mRecorder.start(1000*sliceTm);
+                        recAvInProg = true;
+                        
+                    }                                      
+                },
+                function(e) 
+                {
+                    medStrmProm=null;
+                } );
+            }
+            
+            
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.startRec() ' + e.message );      
+            showErrorMessage( 'avcomments-head.xhtml.startRec() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+     * 
+     */
+
+
+
+    function stopRec2()
+    {
+        try
+        {
+            if( (recordMedEle) )
+                recordMedEle.pause();
+            // recordMedEle.volume=1.0;
+            
+            if( (mRecorder) )
+            {
+                logIt( 'avcomments-head.xhtml.stopRec2() mRecorder=true, state=' + mRecorder.state );
+                
+                if( (mRecorder.state) && mRecorder.state!=='inactive' )                
+                {
+                    mRecorder.stop();
+                    recAvInProg = false;
+                }
+
+                // mRecorder = null;
+
+                if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
+                {
+                    theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
+
+                    fileSize = theBlob.size;
+                    // medEle.type=(mrOptions)  ? mrOptions.mimeType : "video/webm";
+                    playbackMedEle.srcObject=null;
+                    playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
+                    // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
+                    playbackMedEle.load();
+                    playbackMedEle.pause(); 
+                    playbackMedEle.currentTime=0;
+                    //medEle.play();
+                    sent=false;
+                    // chcPnl.updateSubmtShw();
+                    var upldbut = document.getElementById('uploadbuttondiv');
+                    upldbut.style.display='inline';
+                }                       
+                
+            }                                    
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.stopRec2() ' + e.message );  
+            showErrorMessage( 'avcomments-head.xhtml.stopRec2() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+
+
+    /*
+     * 
+     *
+    function stopRec()
+    {
+        try
+        {
+            if( (recordMedEle) )
+                recordMedEle.pause();
+            // recordMedEle.volume=1.0;
+            
+            if( (mRecorder) )
+            {
+                logIt( 'avcomments-head.xhtml.stopRec() mRecorder=true, state=' + mRecorder.state );
+                
+                if( (mRecorder.state) && mRecorder.state!=='inactive' )                
+                {
+                    mRecorder.stop();
+                    recAvInProg = false;
+                }
+
+                mRecorder = null;
+
+                if( (medStrm) )
+                {
+                    // stop the tracks.
+                    var trks = medStrm.getTracks();
+                    var trk;
+                    for( var i=0; i<trks.length; i++ )
+                    {
+                        trk = trks[i];
+                        trk.stop();
+                    }
+
+                    // medStrm.getTracks().forEach(track => track.stop());
+
+                    // clear the stream.
+                    // medStrm=null; 
+                }  
+                
+                if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
+                {
+                    theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
+
+                    fileSize = theBlob.size;
+                    // medEle.type=(mrOptions)  ? mrOptions.mimeType : "video/webm";
+                    playbackMedEle.srcObject=null;
+                    playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
+                    // logIt( 'CMedCapItm.stopRec() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
+                    playbackMedEle.load();
+                    playbackMedEle.pause(); 
+                    playbackMedEle.currentTime=0;
+                    //medEle.play();
+                    sent=false;
+                    // chcPnl.updateSubmtShw();
+                    var upldbut = document.getElementById('uploadbuttondiv');
+                    upldbut.style.display='inline';
+                }                       
+                
+            }                                    
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.stopRec() ' + e.message );  
+            showErrorMessage( 'avcomments-head.xhtml.stopRec() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+     * 
+     */
+    
+    
+    function dataAvail(e)
+    {
+        // logIt( 'avcomments-head.xhtml.dataAvail() slices=' + sliceCt + ', size=' + e.data.size );
+        sliceCt++;
+        if( (e.data) && e.data.size>0 )
+        {
+            // if( recordedBlobs.length<=0 )
+            //     logIt( 'CMedCapItm.dataAvail() ' + e.data.size );
+            recordedBlobs.push(e.data); 
+            sent=false;
+        } 
+
+        if( sliceCt*sliceTm>=maxTm )
+        {
+            logIt( 'avcomments-head.xhtml.dataAvail() Max Time Reached.' );            
+            stopRec2();            
+        }
+    }    
+    
+    
+    function doUploadAvRecording()
+    {
+        logIt( 'avcomments-head.xhtml.doUploadAvRecording() START' );     
+                
+        try
+        {
+            uploadPercent = 0;
+            uploadStatus = 0;
+            if( !(theBlob) )
+            {
+                logIt( 'avcomments-head.xhtml.doUploadAvRecording() No Blob to upload.' );
+                showErrorMessage( errorNoBlobToUpload );                
+                return;
+            }
+                
+            uploadStatus = 1;
+            PF('avcommentsdialog').hide();
+            PF('avcommentsuploadingdialog').show();
+            //
+            var fd = new FormData();
+            fd.append( 'blobfile', theBlob );
+            fd.append( 'blobtype', theBlob.type );
+            fd.append( 'blobsize', theBlob.size );
+
+            fd.append( 'rcid', rcCheckId );
+            fd.append( 'rtrid', rcRaterId );
+            fd.append( 'ritmid', rcItemId );
+            fd.append( 'uft', uploadedUserFileTypeId );
+            fd.append( 'rcavt', recordingIsAudioOnly ? 3 : 4 );
+
+
+            var o=this;
+            xhr = new XMLHttpRequest();
+            xhr.open( "POST", uploadUrl , true );
+            xhr.addEventListener( 'load', function(e) { doUploadOnload(e);} );
+            
+            xhr.addEventListener( 'error', function(e) { doUploadError(e); } );
+            xhr.upload.addEventListener( 'error', function(e) { doUploadError(e); } );
+            xhr.upload.addEventListener( 'abort', function(e) { doUploadAbort(e); } );
+            // xhr.onprogress = function(e) { o.doProgress.call( o, e ); };
+            
+            xhr.upload.addEventListener( 'progress', function(e) { doUploadProgress(e); } );
+                        
+            xhr.send( fd );
+        }
+
+        catch( e )
+        {
+            showErrorMessage( errorDuringUpload + " (" + e.message + ") ");
+            uploadStatus = 3;
+            uploadPercent=Math.min(uploadPercent,89);
+        }        
+    }
+    
+    function doUploadOnload( e )
+    {
+        logIt( 'avcomments-head.xhtml.doUploadOnload()' );
+        PF('avcommentsuploadingdialog').hide();
+        uploadStatus = 2;
+        var ele = document.getElementById( 'avuploadindicatordiv' );
+        if( ele )
+            ele.style.display='inline';
+        ele = document.getElementById( 'rerecordtxtvid' );
+        if( ele )
+            ele.innerHTML=reRecordTextVid;
+        ele = document.getElementById( 'rerecordtxtaud' );
+        if( ele )
+            ele.innerHTML=reRecordTextAud;
+
+        hasPrevUpload = true;
+    }
+
+    function doUploadError( e )
+    {
+        logIt( 'avcomments-head.xhtml.doUploadError()' );
+        PF('avcommentsuploadingdialog').hide();
+        showErrorMessage( errorDuringUpload + " (" + e.message + ") ");
+        uploadStatus = 3;        
+    }
+
+    function doUploadAbort( e )
+    {
+        logIt( 'avcomments-head.xhtml.doUploadAbort()' );
+        PF('avcommentsuploadingdialog').hide();
+        showErrorMessage( errorDuringUploadAbort + " (" + e.message + ") " );
+        uploadStatus = 3;
+        
+    }
+
+    function doUploadProgress( evt )
+    {
+        try
+        {
+            if( uploadStatus===2 || uploadStatus===3 || !(evt.lengthComputable) )
+                return;
+            
+            uploadPercent = Math.round((evt.loaded * 100) / evt.total);
+            logIt( 'avcomments-head.xhtml.doUploadProgress() uploadPercent=' + uploadPercent );
+            // TO DO
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.doUploadProgress() Error: ' + e.message );
+            
+        }
+    }
+    
+    
+    // ]]>        
+    </script>
+    
+
+</ui:fragment>
+       
+
+
+
+</cc:implementation>
+
+
+</html>

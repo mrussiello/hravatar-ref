@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+<title></title>
+</h:head>
+<f:view>
+<f:metadata>
+    <f:viewParam name="rc" value="#{refEntry.rc}" required="true"/>
+    <f:viewParam name="rr" value="#{refEntry.rr}" required="false"/>
+    <f:viewParam name="ac" value="#{refEntry.ac}" required="false"/>
+    <f:viewParam name="rut" value="#{refEntry.rut}" required="false"/>
+    <f:event listener="#{refEntry.doCoreExitEntry}" type="preRenderView" />
+</f:metadata>
+<body>
+<script type="text/javascript">
+   location.href='https://www.hravatar.com/ta/index.xhtml';    
+</script>
+</body>
+</f:view>
+</html>

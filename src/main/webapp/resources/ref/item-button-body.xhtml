@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+    <h:form prependId="false">
+    <ref:stdforminputs />
+    <ref:raterforminputs />
+    <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
+                <f:param value="#{raterRefUtils.raterQuestionCount}"/>
+            </h:outputFormat>
+            <h:outputFormat rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                <f:param value="#{candidateRefUtils.raterQuestionNumberForCandidate}"/>
+                <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
+            </h:outputFormat>
+        </div>
+
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+            
+            <ref:item-infoquestion />
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice1}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice1}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="1"/>
+            </p:commandButton>
+
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice2}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice2}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="2"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice3}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice3}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="3"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice4}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice4}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="4"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice5}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice5}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="5"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice6}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice6}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="6"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice7}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice7}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="7"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice8}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice8}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="8"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice9}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice9}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="9"/>
+            </p:commandButton>
+            
+            <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice10}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice10}">
+                <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="10"/>
+            </p:commandButton>
+
+            <p:commandLink  styleClass="textmedium ttformlink" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
+            </p:commandLink>
+
+            <ref:item-skipbutton />
+        </h:panelGrid>
+                
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</cc:implementation>
+
+</html>

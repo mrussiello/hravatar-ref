@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+    
+    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" modal="true" header="#{stMessages['g.RecordComments']}" style="max-width:700px;padding-left:10px;padding-right:10px;font-size:1.3rem" widgetVar="avcommentsdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            
+        <h:panelGrid columns="1" cellpadding="5" style="margin-left:0;margin-right:auto;" columnClasses="reftdcenter">
+            
+            <h:panelGroup>
+                <div style="text-align: left">
+                <span id="avcommentdialogheader" style="font-weight:bold"></span>
+                &#160;-&#160;
+                <h:outputText value="#{stMessages['g.RecordClickButToRecord']}" />                    
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup>
+                <div style="text-align: left">
+                    <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
+                    <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
+                </div>
+            </h:panelGroup>
+
+            <!--
+            <h:outputText style="font-weight:bold" value="#{stMessages['g.RecordAfterStop']}" /> 
+            -->            
+            
+        </h:panelGrid>
+
+            <h:panelGrid columns="1" cellpadding="4" style="margin-left:auto;margin-right:auto;margin-top:4px">
+
+                <h:panelGroup>
+                    <div style="text-align:center">
+                    <div id="mediacommentdiv" style="display:inline-block;padding-top:15px">
+                    </div>
+                    </div>
+                </h:panelGroup>
+                
+                <h:panelGroup>
+                    <div id="recordinginprogressdiv" style="text-align:center;color:red;font-size:1.2rem"></div>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                <div style="text-align:center">
+                    <div style="display:inline-block">
+                        <span id="startrecbut" style="display:none">
+                            <p:button value="#{stMessages['g.StartRecording']}"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                        </span>                        
+                        <span id="startrecbutaudio" style="display:none">
+                            <p:button value="#{stMessages['g.StartAudioRecording']}" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                        </span>                        
+                        <span  id="stoprecbut" style="display:none">
+                            <p:button value="#{stMessages['g.StopRecording']}"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                        </span>
+                        
+                        <span id="playbut" style="display:none;margin-left:15px">
+                            <p:button value="#{stMessages['g.Play']}"  onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
+                        </span>
+                        <span id="pausebut" style="display:none;margin-left:15px">
+                            <p:button value="#{stMessages['g.Pause']}"  onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
+                        </span>
+                        <!-- Need stop/start button here. -->
+                        <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->                            
+                    </div><!--  -->
+                </div>
+                </h:panelGroup>
+                        
+                <h:panelGroup>
+                    <div style="text-align:center">
+                        <div style="display:inline-block">
+                            <span id="uploadbuttondiv" style="display:none">
+                                <p:button value="#{stMessages['g.RecordingUpload']}" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
+                            </span>
+                            &#160;
+                            <span id="dialogclosebut">
+                            <p:button value="#{stMessages['g.Cancel']}" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
+                            </span>
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                </h:panelGroup>
+                                
+            </h:panelGrid>
+
+
+        </p:dialog>
+    
+    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" width="800" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="font-size:1.3rem" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            
+            <h:panelGrid columns="1" cellpadding="4">
+                
+                <h:outputText value="#{stMessages['g.RecordComments.Uploading.P1']}" />
+                                
+                <h:outputText rendered="#{refBean.audioCommentsOnly}" value="#{stMessages['g.RecordComments.Uploading.P2']}" />
+                
+                <h:panelGroup>
+                    <div style="text-align:center;margin:30px">
+                        <div style="display:inline-block">
+                            <h:graphicImage library="images" name="loading-6.gif" />
+                        </div>
+                    </div>
+                </h:panelGroup>
+
+            </h:panelGrid>
+
+        </p:dialog>
+    
+            
+</cc:implementation>
+</html>

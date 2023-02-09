@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+<title></title>
+</h:head>
+<f:view contentType="text/html">
+<f:metadata>
+        <f:viewParam name="knd" value="#{selectDeviceEntry.knd}"/>
+        <f:viewParam name="deviceid" value="#{selectDeviceEntry.deviceid}"/>
+        <f:viewParam name="devicelabel" value="#{selectDeviceEntry.devicelabel}"/>
+        <f:viewParam name="tran" value="#{selectDeviceEntry.tran}"/>
+        <f:viewParam name="view" value="#{selectDeviceEntry.view}"/>
+        <f:event listener="#{selectDeviceEntry.doSelectDeviceEntry}" type="preRenderView" />
+</f:metadata>
+<body>
+<script type="text/javascript">
+   location.href='https://test.hravatar.com/tt/index.xhtml';
+</script>
+</body>
+</f:view>
+</html>

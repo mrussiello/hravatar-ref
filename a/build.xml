@@ -1,0 +1,484 @@
+<project name="tm2ref2" default="datetime" basedir="c:/work/tm2ref2">
+
+	<property name="imo.hravatar.com" value="imo1.hravatar.com" />
+	<property name="web.dir" value="${basedir}/src/main/webapp" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="dist.dir" value="${basedir}/target" />
+	<property name="bu.dir" value="${basedir}/backup" />
+	<!-- <property name="lib.dir" value="${basedir}/lib" /> -->
+	<!-- <property name="classes.dir" value="${build.dir}/classes" /> -->
+	<property name="backup.dir" value="C:/dev/stbackup/localsw" />
+    <property name="prodhra.username" value="ec2-user" />
+    <property name="prodhra.keyfile" value="C:/dev/AmazonAWS/ClicFlicKeyPair2.pem" />
+    <property name="prod.username" value="ec2-user" />
+    <property name="prod.keyfile" value="C:/dev/AmazonAWS/ClicFlicKeyPair2.pem" />
+
+    <property name="glassfishlocation" value="/usr/pgms/payara6.2023.1/payara6/glassfish" />
+
+    <property name="test1_dns" value="directtest1.hravatar.com" />
+    <property name="test2_dns" value="directtest2.hravatar.com" />
+    <property name="test3_dns" value="directtest3.hravatar.com" />
+    <property name="test4_dns" value="directtest4.hravatar.com" />
+    <property name="test5_dns" value="directtest5.hravatar.com" />
+    <property name="test6_dns" value="directtest6.hravatar.com" />
+    
+    <property name="stage.username" value="ec2-user" />
+    <property name="stage.keyfile" value="C:/dev/AmazonAWS/HRAStage-Oregon2.pem" />
+    <property name="stage_dns" value="stage1.hravatar.com" />
+    
+    
+
+
+    <property name="prod.bu.dir" value="/backup/sw" />
+    <property name="prod.dist.dir" value="/backup/dist" />
+    <property name="stage.dist.dir" value="/backup/sw" />
+
+
+	<tstamp prefix="today">
+	        <format property="year" pattern="yy"/>
+            <format property="month" pattern="MMM"/>
+	         <format property="date" pattern="dd"/>
+    </tstamp>
+
+	<target name="showprops">
+	     <echoproperties/>
+	</target>
+
+
+	<target name="datetime">
+	    <tstamp prefix="start">
+	    <format property="TODAY" pattern="EEEE, MMM dd, yyyy"/>
+	    <format property="TIME" pattern="hh:mm a"/>
+	    </tstamp>
+	    <echo message="Completed: ${start.TIME} on ${start.TODAY}."/>
+	</target>
+
+	<target name="prepare">
+	</target>
+
+
+	<target name="zipit">
+		<mkdir dir="${bu.dir}" />
+		<delete file="${bu.dir}/tm2ref2.zip" />
+		<zip file="${bu.dir}/tm2ref2.zip">
+			<fileset dir="${basedir}">
+				<exclude name="backup/**" />
+				<exclude name="log/**" />
+				<exclude name="target/**" />
+			</fileset>
+		</zip>
+		<copy file="${bu.dir}/tm2ref2.zip" todir="${backup.dir}" />
+		<antcall target="datetime" />
+	</target>
+
+
+
+	<target name="zipscp" depends="zipit">
+
+		<sshexec host="${imo.hravatar.com}"
+					username="${prod.username}"
+					keyfile="${prod.keyfile}"
+					trust="true"
+			        failonerror="false"
+					command="mkdir ${prod.bu.dir}/${today.date}${today.month}${today.year}"/>
+
+		<scp file="${bu.dir}/tm2ref2.zip" keyfile="${prod.keyfile}" todir="${prod.username}@${imo.hravatar.com}:${prod.bu.dir}/${today.date}${today.month}${today.year}"
+						     trust="true">
+			    </scp>
+
+			    <antcall target="datetime" />
+	</target>
+
+
+
+	<target name="scpredeploytest1" depends="scpstaticfilestest1,scpredeploycodetest1">
+	</target>
+
+	<target name="scpdeploytest1" depends="scpstaticfilestest1,scpdeploycodetest1">
+	</target>
+
+
+	<target name="scpredeploycodetest1">
+              <sshexec host="${test1_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test1_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test1_dns}"
+            username="${prodhra.username}"
+            keyfile="${prodhra.keyfile}"
+                trust="true"
+                command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+		<sshexec host="${test1_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpdeploycodetest1">
+              <sshexec host="${test1_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test1_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test1_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpstaticfilestest1">
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test1_dns}:/work/tm2ref2/webmod/tr" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test1_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+            <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test1_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<include name="index.html" />
+			</fileset>
+	    </scp>
+			<antcall target="datetime" />
+	</target>
+
+
+
+
+
+
+
+
+	<target name="scpredeploytest2" depends="scpstaticfilestest2,scpredeploycodetest2">
+	</target>
+	<target name="scpdeploytest2" depends="scpstaticfilestest2,scpdeploycodetest2">
+	</target>
+	<target name="scpredeploycodetest2">
+              <sshexec host="${test2_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test2_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test2_dns}"
+            username="${prodhra.username}"
+            keyfile="${prodhra.keyfile}"
+                trust="true"
+                command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+		<sshexec host="${test2_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpdeploycodetest2">
+              <sshexec host="${test2_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test2_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test2_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpstaticfilestest2">
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test2_dns}:/work/tm2ref2/webmod/tr" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test2_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+            <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test2_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<include name="index.html" />
+			</fileset>
+	    </scp>
+			<antcall target="datetime" />
+	</target>
+
+	<target name="scpredeploytest3" depends="scpstaticfilestest3,scpredeploycodetest3">
+	</target>
+	<target name="scpdeploytest3" depends="scpstaticfilestest3,scpdeploycodetest3">
+	</target>
+	<target name="scpredeploycodetest3">
+              <sshexec host="${test3_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test3_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test3_dns}"
+            username="${prodhra.username}"
+            keyfile="${prodhra.keyfile}"
+                trust="true"
+                command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+		<sshexec host="${test3_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpdeploycodetest3">
+              <sshexec host="${test3_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test3_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test3_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpstaticfilestest3">
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test3_dns}:/work/tm2ref2/webmod/tr" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test3_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+            <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test3_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<include name="index.html" />
+			</fileset>
+	    </scp>
+			<antcall target="datetime" />
+	</target>
+
+
+	<target name="scpredeploytest4" depends="scpstaticfilestest4,scpredeploycodetest4">
+	</target>
+	<target name="scpdeploytest4" depends="scpstaticfilestest4,scpdeploycodetest4">
+	</target>
+	<target name="scpredeploycodetest4">
+              <sshexec host="${test4_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test4_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test4_dns}"
+            username="${prodhra.username}"
+            keyfile="${prodhra.keyfile}"
+                trust="true"
+                command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+		<sshexec host="${test4_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpdeploycodetest4">
+              <sshexec host="${test4_dns}"
+                    username="${prodhra.username}"
+                    keyfile="${prodhra.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${prod.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${prodhra.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${prodhra.username}@${test4_dns}:${prod.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${test4_dns}"
+                        username="${prodhra.username}"
+                        keyfile="${prodhra.keyfile}"
+			      trust="true"
+			      command="${glassfishlocation}/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${prod.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpstaticfilestest4">
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test4_dns}:/work/tm2ref2/webmod/tr" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+	     <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test4_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+            <scp keyfile="${prodhra.keyfile}" todir="${prodhra.username}@${test4_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<include name="index.html" />
+			</fileset>
+	    </scp>
+			<antcall target="datetime" />
+	</target>
+
+
+
+
+
+
+
+
+	<target name="scpredeploystage" depends="scpstaticfilesstage,scpredeploycodestage">
+	</target>
+
+	<target name="scpdeploystage" depends="scpstaticfilesstage,scpdeploycodestage">
+	</target>
+
+
+	<target name="scpredeploycodestage">
+              <sshexec host="${stage_dns}"
+                    username="${stage.username}"
+                    keyfile="${stage.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${stage.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${stage.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${stage.username}@${stage_dns}:${stage.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${stage_dns}"
+            username="${stage.username}"
+            keyfile="${stage.keyfile}"
+                trust="true"
+                command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+		<sshexec host="${stage_dns}"
+                        username="${stage.username}"
+                        keyfile="${stage.keyfile}"
+			      trust="true"
+			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpdeploycodestage">
+              <sshexec host="${stage_dns}"
+                    username="${stage.username}"
+                    keyfile="${stage.keyfile}"
+                    trust="true"
+                    failonerror="false"
+                    command="mkdir ${stage.dist.dir}/${today.date}${today.month}${today.year}"/>
+		<scp keyfile="${stage.keyfile}" file="${dist.dir}/tm2ref2-1.0.war" todir="${stage.username}@${stage_dns}:${stage.dist.dir}/${today.date}${today.month}${today.year}"
+				     trust="true">
+                </scp>
+		<sshexec host="${stage_dns}"
+                        username="${stage.username}"
+                        keyfile="${stage.keyfile}"
+			      trust="true"
+			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+            <antcall target="datetime" />
+	</target>
+
+
+	<target name="scpstaticfilesstage">
+
+	     <scp keyfile="${stage.keyfile}" todir="${stage.username}@${stage_dns}:/work/tm2ref2/webmod/tr" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+	     <scp keyfile="${stage.keyfile}" todir="${stage.username}@${stage_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<exclude name="**/*.xhtml" />
+				<exclude name="**/*.jsp" />
+				<exclude name="WEB-INF/*" />
+			</fileset>
+	    </scp>
+
+            <scp keyfile="${stage.keyfile}" todir="${stage.username}@${stage_dns}:/work/tm2ref2/webmod" trust="true">
+			<fileset dir="${basedir}/src/main/webapp">
+				<include name="index.html" />
+			</fileset>
+	    </scp>
+			<antcall target="datetime" />
+	</target>
+
+
+
+</project>
+
+

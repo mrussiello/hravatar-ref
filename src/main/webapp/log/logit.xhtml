@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+<title></title>
+</h:head>
+<f:view contentType="text/xml">
+<f:metadata>
+        <f:viewParam name="tran" value="#{refLogItEntry.tran}"/>
+        <f:viewParam name="rcid" value="#{refLogItEntry.rcid}"/>
+        <f:viewParam name="rtrid" value="#{refLogItEntry.rtrid}"/>
+        <f:viewParam name="logentry" value="#{refLogItEntry.logentry}"/>
+        <f:viewParam name="level" value="#{refLogItEntry.level}"/>
+        <f:event listener="#{refLogItEntry.doLogItEntry}" type="preRenderView" />
+</f:metadata>
+<body>
+</body>
+</f:view>
+</html>

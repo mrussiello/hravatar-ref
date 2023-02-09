@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+<!-- INTERFACE -->
+<cc:interface>
+<!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+<!-- cc.attrs.value -->
+
+
+       
+
+        <h:panelGrid cellpadding="6" columns="1" style="padding-left:10px;padding-right:10px;max-width:800px;padding-top:5px;margin-top:20px;margin-left:auto;margin-right:auto">
+
+            <h:panelGroup>
+                <p:messages showDetail="false"><p:autoUpdate /></p:messages>
+            </h:panelGroup>
+
+            <h:panelGroup>
+                <div style="text-align: center;padding-bottom:12px">
+                <div style="display:inline-block;margin-left:auto;margin-right:auto">
+                <h:graphicImage library="images" name="maintenance.png"/>                
+                </div>
+                </div>
+            </h:panelGroup>
+            
+            <h:outputText styleClass="textverylarge textbold  ttboldtitle" value="#{stMessages[ 'g.SystemTempOffline' ]}"/>
+
+            <h:outputText styleClass="textmedium ttformtext"  value="#{stMessages[ 'g.TryAgainFewMins' ]}"/>
+
+            <h:panelGroup>
+                <div style="text-align: center">
+                <h:outputLink tabindex="10" styleClass="textmedium ttformlink" value="javascript:window.location.reload()" title="#{stMessages['g.TryAgain']}">
+                    <h:outputText value="#{stMessages['g.TryAgain']}"/>
+                </h:outputLink>
+                </div>
+            </h:panelGroup>
+
+            </h:panelGrid>
+
+
+</cc:implementation>
+
+
+</html>

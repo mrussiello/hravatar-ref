@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    <style>
+    </style> 
+    
+    
+    <script type="text/javascript">
+        //<![CDATA[
+                                
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );        
+                
+        // ]]>        
+    </script>
+    
+</ui:define>
+
+<ui:define name="coreinnersection">
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+    <h:form prependId="false">
+    
+        <ref:stdforminputs />
+        <ref:raterforminputs />
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputText value="#{stMessages['g.XRAddReferrals']}"/>
+        </div>
+
+
+        <h:panelGrid columns="1" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+
+            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P1']}">
+                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+            </h:outputFormat>
+                        
+        </h:panelGrid>
+        
+        
+        <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" value="#{refBean.rcCheck.rcRater.rcReferralListNoSame}" var="referral" resizableColumns="true" resizeMode="expand" 
+                     style="background-color:white;width:100%;margin:10px auto">
+        
+            <f:facet name="header">
+                <h:outputText value="#{stMessages['g.XRCurrentReferrals']}"/>
+            </f:facet>
+            
+            <p:column sortBy="#{referral.user.lastName}" styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
+                <f:facet name="header">
+                    <h:outputText value="#{stMessages['g.Name']}"/>
+                </f:facet>
+                <h:outputText styleClass="ttwindowformtext" value="#{referral.user.fullname}"/>
+            </p:column>
+
+            <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
+                <f:facet name="header">
+                    <h:outputText value="#{stMessages['g.Email']}"/>
+                </f:facet>
+                <h:outputText rendered="#{referral.user.hasValidEmail}" styleClass="ttwindowformtext" value="#{referral.user.email}"/>
+            </p:column>
+
+            <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
+                <f:facet name="header">
+                    <h:outputText value="#{stMessages['g.MobilePhone']}"/>
+                </f:facet>
+                <h:outputText styleClass="ttwindowformtext" value="#{referral.user.mobilePhone}"/>
+            </p:column>
+                        
+        </p:dataTable>
+        
+
+        <h:panelGrid columns="1" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P2']}"/>
+        </h:panelGrid>
+                
+        <h:panelGrid columns="1" cellpadding="3" style="padding-top:2px;padding-bottom:10px;margin-left:20px">
+
+            <p:inputText size="18" value="#{raterRefBean.referralUser.firstName}" placeholder="#{stMessages['g.FirstName']}"/>
+
+            <p:inputText size="18" value="#{raterRefBean.referralUser.lastName}" placeholder="#{stMessages['g.LastName']}"/>
+
+            <p:inputText size="18" value="#{raterRefBean.referralUser.email}" placeholder="#{stMessages['g.Email']}"/>
+
+            <p:inputText size="18" value="#{raterRefBean.referralUser.mobilePhone}" placeholder="#{stMessages['g.MobilePhone']}"/>
+
+            <p:commandButton ajax="false" action="#{raterRefUtils.processCreateReferral}" title="#{stMessages['g.XRCreateReferralInfo']}" value="#{stMessages['g.XRCreateReferral']}"/>
+            
+        </h:panelGrid>
+        
+        
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+            
+            
+            <h:panelGroup>
+                <div style="text-align:center;margin-top:10px;margin-bottom:10px">
+                    <div style="display:inline-block">
+                        <p:commandButton rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRExitReferrals']}"/>                
+                        <p:commandButton rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) le 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRSkipReferrals']}"/>                
+                        &#160;
+                        <p:commandButton ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.Back']}" onclick="beaconOn=false;"/>                
+                    </div>
+                </div>
+            </h:panelGroup>
+                
+        </h:panelGrid>
+                
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+    <!-- cc.attrs.value -->
+
+    <h:outputScript library="pp" name="pp-core.js" /> 
+    <h:outputScript library="pp" name="pp-img.js" />
+
+    <script type="text/javascript">
+    // <![CDATA[    
+    
+    var isDebugMode = false;
+    var uploadedUserFileTypeId = #{refBean.uploadedUserFileTypeId};        
+    var cameraMaxWid = 400;
+    var cameraMaxHgt = 300;
+    var playing = true;
+
+    var rcCheckId='#{refBean.rcCheck.rcCheckIdEncrypted}';
+    var rcRaterId='#{refBean.rcRaterIdEncrypted}';
+    var userId='#{refBean.userIdEncrypted}';
+    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']}";
+    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']}";
+    var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
+    var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
+    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']}"; 
+    var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
+        
+    var selCameraDevice = '#{userBean.selCamera}';
+    var selMicrophoneDevice = '#{userBean.selMicrophone}';
+        
+        
+    window.addEventListener( 'load', function() {doOnPhotoPageLoad();} );
+        
+        
+    function doOnPhotoPageLoad()
+    {
+        logIt( '/pp/photo-upload-head.xhtml START' );
+        initLog(); 
+        piInitVideoEleForImages( cameraMaxWid, cameraMaxHgt );        
+    }
+    
+    function doImageSnap()
+    {
+        try
+        {
+            if( !getUserMediaOk )
+            {
+                showDeviceAccessErrorMessage( lastGetUserMediaError );  
+                return;
+            }
+            
+            var medEle = localPublisherVideoElement; // document.getElementById( localPublisherVideoElementId );
+                        
+            if( !playing )
+                medEle.play();
+            
+            medEle.pause();   
+            playing = false;
+            var submitEle = document.getElementById( 'uploadimagebutton' );
+            if( (submitEle) )
+                submitEle.style.display='inline-block';
+            
+            var but = document.getElementById( 'capturebut' );
+            if( but )
+                but.style.display='none';
+            
+            var retryLink = document.getElementById( 'snapshotretrylink' );
+            if( retryLink )
+                retryLink.style.display='block';
+        }
+        catch( e )
+        {
+            var msg = '/pp/photo-upload-head.xhtml.doImageSnap() ' + e.message + ', ' + e.stack;
+            ppHandleError( msg );
+        }
+    }
+    
+    function doImageUpload()
+    {
+        try
+        {
+            piUploadVideoThumbnail( uploadedUserFileTypeId, true );
+        }
+        catch( e )
+        {
+            var msg = '/pp/photo-upload-head.xhtml.doImageUpload() ' + e.message + ', ' + e.stack;
+            ppHandleError( msg );
+        }                
+    }
+
+    
+    function showHideImageUploadDialog( show )
+    {
+        try
+        {
+            if( show )
+                PF('uploadingfiledialog').show();
+            else
+                PF('uploadingfiledialog').hide();
+        }
+        catch( e )
+        {
+            logIt( '/pp/photo-upload-head.xhtml.showHideImageUploadDialog() show=' + show + ', ' + e.message );
+        }                
+    }
+    
+    
+    function doImageCaptureRetry()
+    {
+        var submitEle = document.getElementById( 'uploadimagebutton' );
+        if( (submitEle) )
+            submitEle.style.display='none';
+        
+        var medEle = localPublisherVideoElement;
+        if( !playing )
+            medEle.play();
+        playing = true;
+        var retryLink = document.getElementById( 'snapshotretrylink' );
+        if( retryLink )
+            retryLink.style.display='none';
+        var but = document.getElementById( 'capturebut' );
+        if( but )
+            but.style.display='block';
+
+        
+    }
+    
+    
+    function cancelImageFileUpload()
+    {
+        try
+        {
+            showHideImageUploadDialog( false );
+            // PF('uploadingfiledialog').hide();
+            doImageCaptureRetry();
+        }
+        catch( e )
+        {
+            var msg = '/pp/photo-upload-head.xhtml.cancelImageFileUpload() ' + e.message + ', ' + e.stack;
+            ppHandleError( msg );
+        }        
+    }
+    
+    function openCameraHelp()
+    {
+        document.location.href='/tr/pp/help-camera-entry.xhtml';
+    }
+        
+        
+    function localDoOnImageUploadError( msg )
+    {
+        msg = (msg) ? msg : '';
+        logIt( '/pp/photo-upload-head.xhtml.localDoOnImageUploadError() ' + msg );
+        showHideImageUploadDialog( false );
+        // PF('uploadingfiledialog').hide(); 
+        var ele = document.getElementById( 'uploaderrormsgspan' );
+        if( ele )
+            ele.innerHTML=msg;
+        PF('uploaderrordialog').show();         
+    }
+
+
+    function localDoOnImageUploadSuccess()
+    {
+        logIt( 'pp-photo-upload-head.xhtml.localDoOnImageUploadSuccess() SUCCESS!' );
+        
+        if( uploadedUserFileTypeId===201 || uploadedUserFileTypeId===211 )
+            location.href='/tr/pp/photo-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&pageidx=#{refBean.activeRefPageTypeIdX}';
+        else
+            location.href='/tr/pp/photo-id-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&pageidx=#{refBean.activeRefPageTypeIdX}';
+    }        
+        
+        
+    function initLog()
+    {
+        if( !window.console )
+            console = {};
+        console.log = console.log || function(){};
+    }    
+
+    /**
+     * levels:
+     * 2 - info
+     * 1 - warn
+     * 0 - error
+     *
+     */
+    function cfSendLogMessage( msg, level )
+    {
+        try
+        {
+            // logItX( 'sendLogMessage() MESSAGE: ' + msg );
+            // sendWinPostMessage( 'imologmsg level=' + level + ' msg=' + msg );
+            var url = "/tr/log/logit.xhtml";
+            var params = "tran=logit&rcid=" + encodeURIComponent( rcCheckId ) + '&rtrid=' + encodeURIComponent( rcRaterId ) + "&level=" + level + "&logentry=" + encodeURIComponent( msg );
+            http=new XMLHttpRequest();
+            http.open( "POST", url, true );
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.send(params);
+        }
+
+        catch( e )
+        {
+            if( (window.console) )
+                console.log( '/pp/photo-upload-head.xhtml Cannot send log entry. level=' + level + ', ' + msg + ', error: ' + e.message );
+        }
+    }
+
+        
+        
+    // ]]> 
+    </script>
+
+    
+    <style>
+        .imgcapturecola
+        {
+            max-width:400px;
+            padding-top:10px;            
+        }
+        .imgcapturecolb
+        {
+            max-width:300px;
+            padding-top:100px;
+        }
+    </style>
+    
+</cc:implementation>
+
+</html>

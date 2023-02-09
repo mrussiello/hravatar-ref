@@ -1,0 +1,10 @@
+Sitemap: https://test.hravatar.com/tr/sitemap.xhtml
+User-agent: *
+Disallow: /custom/
+Disallow: /ref/
+Disallow: /misc/
+Disallow: /resources/
+Disallow: /skin/
+Disallow: /tools/
+Disallow: /util/
+Disallow: /WEB-INF/

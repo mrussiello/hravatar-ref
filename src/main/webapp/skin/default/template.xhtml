@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui"
+      lang="#{userBean.htmlLangCode}"
+      xml:lang="#{userBean.htmlLangCode}"
+      dir="#{userBean.textDirection}"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+
+<ui:insert name="headsection">
+    <h:head>
+
+	<ui:insert name="cachetags">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+	</ui:insert>
+
+	<meta name="robots" content="index,follow" />
+
+	<ui:insert name="titletag">
+            <title><h:outputText value="#{skinInfoBean.title}"/></title>
+	</ui:insert>
+
+        <h:outputStylesheet library="css" name="default.css"/>
+
+         <!-- <ui:debug /> -->
+
+        <h:outputScript library="js" name="core.js"/>
+
+	<link rel="shortcut icon" href="/tr/favicon.ico" type="image/x-icon"/>
+
+	<ui:insert name="headspec">
+	</ui:insert>
+
+        <style>
+            #wrapper
+            {
+                margin-top:10px;
+                width:960px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hdrleft
+            {
+                width:200px;
+                vertical-align:middle;
+            }
+
+            .hdrmid
+            {
+                width:560px;
+            }
+
+            .hdrright
+            {
+                width:200px;
+                text-align: right;
+            }
+
+        </style>
+
+
+    </h:head>
+</ui:insert>
+
+
+    <f:view contentType="text/html" locale="#{userBean.locale}">
+    <h:body>
+
+    <div id="pagewrapper" class="pagewrapper">
+        <div id="pageinnerdiv" class="pageinnerdiv" tabindex="-1">
+
+        <ui:insert name="headersection">
+
+            <h:form prependId="false" >
+            <h:panelGrid columns="3" cellpadding="3" columnClasses="hdrleft,hdrmid,hdrright" style="width:100%;border-bottom: 1px solid #c0c0c0">
+                <h:graphicImage library="images" name="hr-avatar-logo-210x48.png"/>
+                <h:panelGroup></h:panelGroup>
+                <h:panelGroup style="font-size:1.2rem">
+                    <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+                    <br />
+                    <h:outputText value="#{userBean.user.fullname}"/>
+                    </ui:fragment>
+                    <br />
+                    <h:outputText value="#{facesUtils.today}" escape="false"/>
+                    <br />
+                    <h:outputText value="#{facesUtils.localTime}" escape="false"/>
+                    <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+                    <br />
+                    <p:commandLink action="#{userUtils.processUserLogOff}" ajax="false" title="Sign Off">Sign Off</p:commandLink>
+                    </ui:fragment>
+                </h:panelGroup>
+            </h:panelGrid>
+            </h:form>
+            <br />&#160;
+        </ui:insert>
+
+        <ref:messages-embedded />
+
+        <ui:insert name="coreinnersection">
+                CORE PAGE SHOULD BE HERE!
+        </ui:insert>
+
+        </div>
+    </div>
+
+
+    </h:body>
+</f:view>
+
+</html>

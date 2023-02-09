@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <script type="text/javascript">
+    //<![CDATA[    
+        var recDevs = -1;        
+        var checkMedTimeout = 0;
+        var nextUrl = null;
+        
+        
+        var getusermedia = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? 1 : 0;
+        
+        function doOnPageLoad()
+        {
+            try
+            {
+                var d = document.getElementById('wrapperdiv1');
+
+                if( d )
+                {
+                    d.style.height=(window.innerHeight - 150) + 'px';
+                }
+            }
+            catch( e )
+            {}
+            
+            //console.log( 'browserprecheckhead.doOnPageLoad() AAA recDevs=' + recDevs );
+            // checkMedTimeout = setTimeout( checkMedRecAndRedirect, 4000 );
+            checkMedTimeout = setTimeout( checkRecDevices, 2400 );
+            // checkRecDevices();
+            //console.log( 'browserprecheckhead.doOnPageLoad() BBB recDevs=' + recDevs );
+        }
+        
+        
+        //  -1 = unknown
+        // 0 = none
+        // 1 = audio only
+        // 2 = video
+        function checkRecDevices()
+        {
+            console.log( 'browserprecheckhead.checkRecDevices() AAA recDevs=' + recDevs + ', getusermedia=' + getusermedia );
+            // already set
+            if( recDevs>=0 )
+            {    
+                checkMedRecAndRedirect();
+                return;
+            }
+
+            
+            console.log( 'browserprecheckhead.checkRecDevices() AAA.1 recDevs=' + recDevs + ', navigator.mediaDevices=' + (navigator.mediaDevices)  );
+            if( !(navigator.mediaDevices) || !(navigator.mediaDevices.enumerateDevices) ) 
+            {
+                recDevs=0; 
+                checkMedRecAndRedirect();
+                return;
+            }
+
+            console.log( 'browserprecheckhead.checkRecDevices() AAA.2 recDevs=' + recDevs );
+
+            var p = navigator.mediaDevices.enumerateDevices();
+            
+            if( p )
+            {
+                //console.log( 'browserprecheckhead.checkRecDevices() BBB ' );
+                p.then( function(devs) 
+                {
+                    console.log( 'browserprecheckhead.checkRecDevices() CCC ' );
+                    var a=false;
+                    var v=false;
+                    var d;
+                    var k;
+
+                    for( var i=0;i<devs.length;i++ )
+                    {
+                        d = devs[i];
+                        k = d.kind;
+
+                         if( k.indexOf( 'audioinput' )>=0 )
+                             a=true;
+                         if( k.indexOf( 'videoinput' )>=0 )
+                             v=true;                    
+                    }
+
+                    if( v )
+                        recDevs=2;
+                    else if( a )
+                        recDevs=1;
+                    else
+                        recDevs=0;
+                    
+                    checkMedRecAndRedirect();
+                }, 
+                function(e) {
+                    console.log( 'browserprecheckhead.checkRecDevices() Error ' + e.message );
+                    checkMedRecAndRedirect();
+                });
+            }
+            else
+                checkMedRecAndRedirect();
+        }
+        
+        
+        
+        function checkMedRecAndRedirect()
+        {
+           console.log( 'browserprecheckhead.checkMedRecAndRedirect() recDevs=' + recDevs );
+            
+            if( checkMedTimeout>0 )
+                clearTimeout( checkMedTimeout );
+            
+            var mr = (navigator.mediaDevices) && ('MediaRecorder' in window) && (MediaRecorder.isTypeSupported) ? true : false;
+                    
+            nextUrl = '/tr/pp/precheckentry.xhtml?medrecapi=' + (mr ? 'true' : 'false' ) + '&gum=' + getusermedia + '&recdevs=' + recDevs + '&acidx=#{refBean.activeAccessCodeX}';
+
+            setTimeout( showContinueLink, 2000 );
+    
+            document.location.href=nextUrl;
+            
+        }
+        
+        function showContinueLink()
+        {
+            var l = document.getElementById( 'autoforwardlinkurl' );
+            
+            if( l )
+                l.href=nextUrl;
+            
+            var d = document.getElementById('precheckdiv');
+            
+            if( d )
+                d.style.display='none';
+
+            d = document.getElementById('continuelinkdiv');
+            
+            if( d )
+                d.style.display='block';
+    
+        }        
+        
+        if (window.addEventListener) // W3C standard
+          window.addEventListener('load', function() {doOnPageLoad();}, false);
+        else if (window.attachEvent) // Microsoft
+          window.attachEvent('onload', doOnPageLoad);        
+        
+    //]]>    
+    </script>    
+    
+    
+</cc:implementation>
+
+
+</html>

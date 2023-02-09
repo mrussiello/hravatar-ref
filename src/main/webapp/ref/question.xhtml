@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+    </style> 
+    <script type="text/javascript">
+        //<![CDATA[
+        
+        function doLocalPageOnload()
+        {
+            
+        }
+        
+        function doLocalPageOnUnload()
+        {
+        }
+        
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );                
+        
+        // ]]>        
+    </script>
+</ui:define>
+
+<ui:define name="coreinnersection">
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+    <h:form prependId="false">
+    <ref:stdforminputs />
+    <ref:candidateforminputs />
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputFormat value="#{stMessages['g.XCQuestionXofY']}">
+                <f:param value="#{candidateRefUtils.candidateQuestionNumber}"/>
+                <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
+            </h:outputFormat>
+        </div>
+
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+
+            <h:outputText styleClass="ttformtext" value="#{candidateRefUtils.candidateInputQuestionXhtml}" escape="false"/>
+                                    
+            <h:panelGroup>
+                <div style="text-align: center;padding-top:10px;padding-bottom:10px">
+                    <div style="display:inline-block;">
+                        <p:inputTextarea  styleClass="commenttextarea" style="width:550px" rows="4" autoResize="true" value="#{candidateRefBean.candidateInputStr}"/>
+                    </div>
+                </div>
+            </h:panelGroup>
+            
+            <h:panelGroup>
+                <div style="text-align: center">
+                    <div style="display:inline-block;">
+                        <p:commandButton ajax="false" action="#{candidateRefUtils.processSaveQuestionResp}" value="#{stMessages['g.RecordAnswer']}">
+                            <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="false"/>
+                        </p:commandButton>
+                        &#160;
+                        <p:commandButton rendered="#{candidateRefUtils.candidateQuestionNumber gt 1}" ajax="false" action="#{candidateRefUtils.processSaveQuestionResp}" value="#{stMessages['g.Back']}">
+                            <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="true"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+            </h:panelGroup>
+                        
+        </h:panelGrid>
+    
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

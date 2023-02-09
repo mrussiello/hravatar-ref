@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+        .buttonstyleclass
+        {
+            min-width: 400px;
+            text-align:left;
+        }
+    </style> 
+    <script type="text/javascript">
+        //<![CDATA[
+        
+        function doLocalPageOnload()
+        {
+            
+            logIt( 'doLocalPageOnload() '  );
+        }
+        
+        function doLocalPageOnUnload()
+        {
+        }
+        
+        function doSkipButton()
+        {}
+        
+        function logIt( m )
+        {
+            console.log( 'item-button.xhtml ' + m );
+        }
+
+        function logErr( e, m )
+        {
+            console.log( 'item-button.xhtml ' + m + (e ? ", " + e.message + ",\n" + e.stack : "" ));
+        }
+        
+    
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        //window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );                
+            
+    // ]]>        
+    </script>
+
+</cc:implementation>
+
+</html>

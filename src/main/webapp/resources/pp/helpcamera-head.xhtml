@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
+
+    <style>
+    .devinfocola
+    {
+        width:35%;
+    }
+    .devinfocolb
+    {
+        width:65%;
+    }
+    
+    .bar {
+        --volume: 0%;
+        position: relative;
+        width: 100%;
+        height: 25px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-radius: 5px;
+        width: var(--volume);
+        background-color: green;
+        transition: width 100ms linear;
+    }
+    </style>
+       
+    
+    <script type="text/javascript">
+    // <![CDATA[
+    
+    var ttPageNeedsFullScroll = true;
+    
+    window.addEventListener( 'load', function() { doHelpCameraOnload(); }, false );
+
+    var mediaSource;
+    var mediaRecorder;
+    var recordedBlobs;
+    var sourceBuffer;
+    var mrOptions = null;
+    var microphoneWorkingStr = "#{stMessages['g.CamCheck.P2.micwrk']}";
+    var microphoneNotWorkingStr = "#{stMessages['g.CamCheck.P2.micnotwrk']}";
+    
+    var clickToSelectStr = "#{stMessages['g.CamCheck.P2.i.clicktosel']}";
+    var selectCameraStr = "#{stMessages['g.CamCheck.P2.i.select']}";
+    var selectMicrophoneStr = "#{stMessages['g.CamCheck.P2.j.select']}";
+    
+    var selCameraDevice = '#{userBean.selCamera}';
+    var selMicrophoneDevice = '#{userBean.selMicrophone}';
+        
+    var selectDeviceUrl = '/tr/pp/help-selectdevice-entry.xhtml';
+    
+    var volumeCallback = null;
+    var volumeInterval = null;
+
+    
+    
+    
+    function doHelpCameraOnload()
+    {
+        document.getElementById( 'useragent').innerHTML=window.navigator.userAgent;
+        document.getElementById( 'platform').innerHTML=window.navigator.platform;                        
+
+        document.getElementById( 'mediarecorder').innerHTML = ('MediaRecorder' in window) ? "#{stMessages['g.Supported']}" : "#{stMessages['g.NotSupported']}";
+        document.getElementById( 'mediasource').innerHTML =  ('MediaSource' in window) ? "#{stMessages['g.Supported']}" : "#{stMessages['g.NotSupported']}";
+        document.getElementById( 'getusermedia').innerHTML = (navigator.mediaDevices) ? "#{stMessages['g.Supported']}" : "#{stMessages['g.NotSupported']}";  
+
+        document.getElementById( 'camerasupported').innerHTML = isCameraSupported() ? "#{stMessages['g.Yes']}" : "#{stMessages['g.No']}";  
+        document.getElementById( 'videocapturesupported').innerHTML = isVideoSupported() ? "#{stMessages['g.Yes']}" : "#{stMessages['g.No']}";  
+
+        
+        document.getElementById( 'windoworientation').innerHTML =  getWindowOrientation();  
+        
+        if( isCameraSupported() )
+           createCameraWindow(); 
+           
+        try
+        {
+            createMicrophoneWindow();  
+        }
+        catch( e)
+        {
+            logIt( '/alt/test/help-camera.xhtml.doHelpCameraOnload() error calling createMicrophoneWindow(): ' + e.message );
+        }
+           
+    }
+    
+    function getWindowOrientation()
+    {
+        if( (window.matchMedia) )
+        {
+            if( window.matchMedia("(orientation: portrait)").matches )
+                return "MM Portrait";
+
+            if( window.matchMedia("(orientation: landscape)").matches )
+                return "MM Landscape";
+            
+            return "M Unknown";
+        }
+        
+        if(window.innerHeight > window.innerWidth )
+            return "Innr: Portrait";
+        
+        return "Innr: Landscape";        
+    }
+    
+    function isVideoSupported()
+    {
+       return isCameraSupported() && ('MediaRecorder' in window);
+    }
+    
+    function isCameraSupported()
+    {
+       return (navigator.mediaDevices) ? true : false;
+    }
+    
+    var canvEle;
+    
+    function createCameraWindow()
+    {
+        if( !(navigator.mediaDevices) )
+        {
+            alert('Error navigator.getUserMedia() not supported.');
+           return;
+        }
+      
+        canvEle = document.createElement( 'canvas' );      
+        // alert( 'MimeType=' + mrOptions.mimeType );
+      
+        // mrOptions.bitsPerSecond = 5000000;
+
+        var wid=200;
+        var hgt=240;
+
+      
+        var constraints = { audio: true, video: { facingMode: "user" } };
+        
+        if( (selCameraDevice) )
+            constraints.video.deviceId={exact:selCameraDevice};
+
+        if( (selMicrophoneDevice) )
+            constraints.audio.deviceId={exact:selMicrophoneDevice};
+        
+        connectToDevices( constraints );
+    
+        navigator.mediaDevices.enumerateDevices().then( function(devs){showAllDevices(devs);} );
+    
+    }
+
+
+    function createMicrophoneWindow()
+    {
+        if( !(navigator.mediaDevices) )
+        {
+            alert('Error navigator.getUserMedia() not supported.');
+           return;
+        }
+      
+        var volumeVisualizer = document.getElementById('volume-visualizer');
+
+        // console.log( 'alt/resources/js/microphone-test.js.doSetupMicTest() START volumeVisualizer=' + (volumeVisualizer) );
+
+        var constraints = { audio: {
+                echoCancellation: true
+            } 
+        };
+
+        if( (selMicrophoneDevice) )
+            constraints.audio.deviceId={exact:selMicrophoneDevice};        
+
+
+        navigator.mediaDevices.getUserMedia( constraints ).then( function (audioStream) 
+        {
+            // console.log( '/ref/resources/pp/help-camera.xhtml.doSetupMicTest() have stream=' + (audioStream) );
+            const audioContext = new AudioContext();
+            const audioSource = audioContext.createMediaStreamSource(audioStream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+            analyser.minDecibels = -127;
+            analyser.maxDecibels = 0;
+            analyser.smoothingTimeConstant = 0.4;
+            audioSource.connect(analyser);
+            const volumes = new Uint8Array(analyser.frequencyBinCount);
+            // console.log( '/ref/resources/pp/help-camera.xhtml..doSetupMicTest() BBB' );
+            volumeCallback = () => 
+            {
+                //console.log( '/ref/resources/pp/help-camera.xhtml. volumeCallback!' );
+                analyser.getByteFrequencyData(volumes);
+                let volumeSum = 0;
+                for (const volume of volumes)
+                    volumeSum += volume;
+                const averageVolume = volumeSum / volumes.length;
+                volumeVisualizer.style.setProperty('--volume', (averageVolume * 100 / 127) + '%');
+                var taxi;
+                taxi = document.getElementById("tex");
+                taxi.innerHTML = microphoneWorkingStr;
+            };
+            // console.log( '/ref/resources/pp/help-camera.xhtml. volumeCallback is set up!' );
+            volumeInterval = setInterval(volumeCallback, 100);
+        }).catch( function (err) {
+            doGetUserMediaError( 'Error setting up Microphone in window: ' + err );
+            var taxi;
+            taxi = document.getElementById("tex");
+            taxi.innerHTML = microphoneNotWorkingStr;
+        });        
+
+    }
+
+
+
+
+    function connectToDevices( constraints )
+    {
+        navigator.mediaDevices.getUserMedia( constraints ).then( function (stream) 
+        {
+          var medEle = document.getElementById( 'videoms' );
+          medEle.volume=0.0;
+          medEle.setAttribute( 'muted','true');
+          medEle.setAttribute( 'playsinline','true');
+          // medEle.style.width='200px'
+          //medEle.width=wid;
+          medEle.style.maxWidth='300px';
+          medEle.style.border='solid blue 4px';
+          medEle.style.backgroundColor='#eaeaea';
+          medEle.srcObject = stream;   
+          // medEle.play();
+        }).catch ( function (err) {
+            doGetUserMediaError( 'Error setting up camera in window: ' + err );
+           // alert('Error setting up camera window: ' + err);
+        });
+    }
+    
+    function doGetUserMediaError( msg )
+    {
+        var spanEle = document.getElementById( 'getusermediaerrormsgspan' );
+        if( (spanEle) )
+        {
+            spanEle.innerHTML=msg;
+            spanEle.style.display='block';
+        }
+        
+    }
+    
+    
+    function showAllDevices(mediaDevices)
+    {
+        getDevices(mediaDevices, 'videoinput' );
+        getDevices(mediaDevices, 'audioinput' );
+    }
+    
+    /*
+     * kind options are "videoinput", "audioinput" or "audiooutput"
+     */    
+    function getDevices(mediaDevices, knd) 
+    {
+      if( knd!=='videoinput' && knd!=='audioinput')
+          return;
+        
+      let out = [];  // {deviceid:deviceId, label:label } 
+      
+      let count = 1;
+      mediaDevices.forEach(mediaDevice => 
+     {
+        if (mediaDevice.kind===knd) 
+        {
+          var label = mediaDevice.label;
+          if( !(label) )        
+              label = (knd==='videoinput' ? 'Camera' : 'Microphone' ) + ' '  + count++;
+          out.push( {deviceid:mediaDevice.deviceId, label:label} );
+        }
+        updateMediaDeviceHtml( out, knd );
+      });
+    }  
+    
+    
+    function updateMediaDeviceHtml( devArray, knd )
+    {
+        var topEle = document.getElementById( knd==='videoinput' ? 'cameradevices' : 'microphonedevices');
+        
+        topEle.innerHTML='';
+        
+        if( !(devArray) )
+            return;
+        
+        
+        var pele;
+        var aele;
+        var dev;
+        for( var i=0; i<devArray.length; i++ )
+        {
+            dev=devArray[i];
+            pele=document.createElement('div');
+            
+            pele.className='ttformtext bodytiny';
+            pele.style.paddingTop='4px';
+            // pele.appendChild( document.createTextNode(dev.label + ' ') );
+            
+            aele = document.createElement('a');
+            aele.href='#';
+            aele.addEventListener('click', function(){doSelectMediaDevice(knd, dev.deviceid, dev.label); return false;} );
+            aele.title= knd==='videoinput' ? selectCameraStr : selectMicrophoneStr;
+            aele.className='ttformtext ttformlink bodytiny';
+            aele.style.textDecoration='underline';
+            aele.appendChild( document.createTextNode( dev.label + ' (' + clickToSelectStr + ')' ) );
+            pele.appendChild(aele);            
+            topEle.appendChild(pele);
+        }            
+    }
+    
+    function doSelectMediaDevice(knd, deviceId, deviceLabel)
+    {
+        // logIt( '/alt/resources/helpcamera-head.xhtml.doSelectMediaDevice() knd=' + knd + ', deviceId=' + deviceId + ', deviceLabel=' + deviceLabel);
+        
+        var u = selectDeviceUrl + '?tran=seldevice&knd=' + knd + '&deviceid=' + deviceId + '&devicelabel=' + encodeURIComponent(deviceLabel);
+        
+        location.href=u;
+    }
+    
+    
+    // ]]>
+    </script>    
+
+    </cc:implementation>
+
+
+</html>

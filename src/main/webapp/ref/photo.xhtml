@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+          
+    <pp:photo-upload-head />
+
+</ui:define>
+    
+<ui:define name="coreinnersection">
+
+    <pp:photo-upload-body />
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

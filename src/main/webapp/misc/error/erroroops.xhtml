@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+<body>
+
+<ui:composition template="#{skinInfoBean.coreTemplate}">
+
+
+	<ui:define name="coreinnersection">
+
+        <h:form>
+	<div style="text-align:center">
+	<table border="0" cellpadding="0" cellspacing="0" style="padding-left:10px;padding-right:10px;max-width:800px;margin:0 auto">
+
+		<tr>
+                    <td rowspan="5" style="vertical-align: middle;width:300px;">
+                        <h:graphicImage library="images" name="oops_180.png" style="margin-right:40px"/>
+                    </td>
+                       
+			<td style="width:660px"><div style="padding:5px">
+			     <br /><h:outputText styleClass="titletext1" style="font-size:19pt;font-weight:bold" value="#{stMessages[ 'g.ErrorOopsPageTitle' ]}"/>
+			     </div>
+			</td>
+		</tr>
+
+		<tr>
+			<td style="text-align:left"><br /><h:outputText value="#{stMessages[ 'g.ErrorOopsInfo' ]}"/>
+			</td>
+		</tr>
+
+		<tr>
+                    <td style="text-align:left"><br /><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" escape="false"/>
+                    </td>
+		</tr>
+            
+		<tr>
+                    <td style="text-align:left"><br /><h:outputText value="#{pfExceptionHandler.type}: #{pfExceptionHandler.message}" escape="false"/>
+                    </td>
+		</tr>
+                        
+            
+		<tr>
+			<td><br />
+			    <div style="text-align:center">
+			    	<h:outputLink value="/tr/index.xhtml" title="#{stMessages[ 'g.HomePageAlt' ]}" style="font-size:1.2rem" target="_top">
+			    	  <h:outputText value="#{stMessages['g.Home']}"/>
+			    	</h:outputLink>
+			    </div>
+			</td>
+		</tr>
+
+	</table>
+	<br /><br /><br /><br /><br /><br />&#160;
+	</div>
+        </h:form>
+  </ui:define>
+
+</ui:composition>
+
+</body>
+</html>

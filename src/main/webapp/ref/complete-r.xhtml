@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+    </style>    
+</ui:define>
+
+<ui:define name="coreinnersection">
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+    <h:form prependId="false">
+
+        <ref:stdforminputs />
+        <ref:noncoreforminputs />
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputText rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" value="#{stMessages['g.XCComplete']}"/>
+            <h:outputText rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" value="#{stMessages['g.XRQuestionsComplete']}"/>
+        </div>
+        
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+
+            <h:outputFormat rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
+                <f:param value="#{refUtils.rcCheckTypeName}"/>
+            </h:outputFormat>
+            <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XRQuestionsComplete.P1']}" escape="false">
+                <f:param value="#{refUtils.rcCheckTypeName}"/>
+            </h:outputFormat>
+
+        </h:panelGrid>
+        
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
+            <h:panelGroup>
+                <p:commandButton rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher and not raterRefUtils.needsCore2}" ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.XRGoBackToLast']}"/>
+                <p:commandButton rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher and raterRefUtils.needsCore2}" ajax="false" action="#{raterRefUtils.processGoBackToCore2}" value="#{stMessages['g.Back']}"/>
+                &#160;
+                <p:commandButton rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" ajax="false" action="#{raterRefUtils.processMarkCompleteAndExit}" value="#{stMessages['g.XRSaveAndExit']}"/>
+                <p:commandButton rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
+            </h:panelGroup>
+
+        </h:panelGrid>
+        
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

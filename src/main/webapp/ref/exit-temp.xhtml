@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    
+    <script type="text/javascript">
+                
+        function copyUrltoClipboard( txt )
+        {
+            if( txt )
+            {
+                var ele = document.createElement( 'textarea' );
+                var es = ele.style;
+                es.rows=1;
+                es.cols=1;
+                es.opacity=0.1;
+                ele.value=txt;
+                var par = document.getElementById('thetextspan');
+                par.appendChild(ele);
+
+                if( cf5_isIos() )
+                {
+                    var range = document.createRange();
+                    range.selectNodeContents(ele);
+                    selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    ele.setSelectionRange(0, 999999);
+                }
+                
+                else
+                    ele.select();    
+
+                document.execCommand('Copy');            
+                ele.blur();
+                par.removeChild( ele );
+                
+                PF('urlcopied').show();               
+            }
+            
+        }
+        
+        function cf5_isIos()
+        {
+            return /iP(hone|od|ad)/.test(navigator.platform);
+        }
+        
+    </script>
+    
+</ui:define>
+    
+    
+<ui:define name="coreinnersection">
+
+        <ref:messages-embedded />
+
+    <h:form prependId="false" >
+        
+        <ref:stdforminputs />
+        <ref:noncoreforminputs />
+
+        <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
+            
+            <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.TempStop']}" escape="false"/>
+                        
+            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.TempStop.P1']}">
+                <f:param value="#{refBean.strParam2}"/>
+            </h:outputFormat>
+             
+            <h:panelGroup>
+                <div style="padding-top:10px">
+                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPUseThisUrlC']}"/>
+                </div>
+            </h:panelGroup>
+            
+            <h:panelGroup>
+                <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard( '#{refBean.strParam1}' ); ">
+                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer" value="#{refBean.strParam1}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                    &#160;&#160;
+                    <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                </div>
+            </h:panelGroup>            
+
+        </h:panelGrid>
+
+    <div id="thetextspan"></div>
+    
+    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
+    
+        <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
+                <f:param value="#{refBean.strParam2}"/>
+            </h:outputFormat></p>
+        
+        <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+    </p:dialog>
+    
+    </h:form>
+
+
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

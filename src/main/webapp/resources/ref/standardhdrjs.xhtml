@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
+
+        <script type="text/javascript">
+           //<![CDATA[
+
+        Date.prototype.stdTimezoneOffset = function() {
+            var jan = new Date(this.getFullYear(), 0, 1);
+            var jul = new Date(this.getFullYear(), 6, 1);
+            return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+        };
+
+        Date.prototype.dst = function() {
+            return this.getTimezoneOffset() < this.stdTimezoneOffset();
+        };
+
+
+        function setHiddenFlds()
+        {
+            getTimeZoneOffset();
+            getScreenDims();
+            getRecDevs();
+            getMedRecApi();
+            getHasGetUserMedia();
+        }
+
+
+        function getMedRecApi()
+        {            
+            var el = document.getElementById( "medrecapi" );
+            
+            if( el )
+                el.value = suptsMedRecApi();
+        }
+
+
+
+        function suptsMedRecApi()
+        {
+            return (navigator.mediaDevices) && ('MediaRecorder' in window);
+        }
+
+        function getHasGetUserMedia()
+        {            
+            var el = document.getElementById( "gum" );
+            
+            if( el )
+                el.value = suptsGetUserMedia() ? 1 : 0;
+        }
+
+        function suptsGetUserMedia()
+        {
+            return navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+        }
+
+
+        function getRecDevs()
+        {
+            
+            var el = document.getElementById( "recdevs" );
+            
+            if( el )
+            {
+                setRecDevices();
+                el.value = recDevice;
+            }
+        }
+
+
+        function getScreenDims()
+        {
+            var el = document.getElementById( "scrdims" );
+            
+            if( el )
+                el.value = window.innerWidth + ',' + window.innerHeight;
+            //if( el )
+            //    el.value = window.screen.width + ',' + window.screen.height;
+        }
+
+        function getTimeZoneOffset()
+        {
+            var tm = new Date();
+
+            // alert( 'Template.getTimeZoneOffset() ' );
+            var el;
+            // Note that Javascript time zones are the opposite sign of java or normal time zones.
+            if( tm )
+            {
+                el = document.getElementById( "vtzo" );
+                if( el )
+                    el.value=( -1*tm.getTimezoneOffset()  );
+            }
+            
+            // Time Zone Id
+            if( (Intl) && (Intl.DateTimeFormat) )
+            {
+                var zid = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if( zid )
+                {
+                    el = document.getElementsByName( "vtzid" ); 
+                    for( var i=0;i<el.length; i++ )
+                    {
+                        el[i].value= zid; 
+                    }                    
+                }                     
+            }            
+
+            return true;
+        }
+
+
+        //  -1 = unknown
+        // 0 = none
+        // 1 = audio only
+        // 2 = video
+        var recDevice = -1;
+
+
+
+        //  -1 = unknown
+        // 0 = none
+        // 1 = audio only
+        // 2 = video
+        function setRecDevices()
+        {
+            // already set
+            if( recDevice>=0 )
+                return;
+
+            // assume unknown
+            recDevice = -1;
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices ) 
+                return;
+
+            var p = navigator.mediaDevices.enumerateDevices();
+
+            if( p )
+            {
+                p.then( function(devs) 
+                {
+                    var a=false;
+                    var v=false;
+                    var d;
+                    var k;
+
+                    for( var i=0;i<devs.length;i++ )
+                    {
+                        d = devs[i];
+                        k = d.kind;
+
+                         if( k.indexOf( 'audioinput' )>=0 )
+                             a=true;
+                         if( k.indexOf( 'videoinput' )>=0 )
+                             v=true;                    
+                    }
+
+                    if( v )
+                        recDevice=2;
+                    else if( a )
+                        recDevice=1;
+                    else
+                        recDevice=0;
+                }, 
+                function(e) {
+                  // logIt( 'CModel.setRecDevices() Error! ' + e.message );
+                });
+            }
+        }
+
+        window.addEventListener('load', setHiddenFlds, false);
+
+        //]]>
+        </script>
+    </cc:implementation>
+
+
+</html>

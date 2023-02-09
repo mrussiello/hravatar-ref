@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+    </style> 
+    <script type="text/javascript">
+        //<![CDATA[
+        
+        function doLocalPageOnload()
+        {
+            isPointer = (window.navigator.msPointerEnabled) ? true : false;
+            isTouch = 'ontouchstart' in window ||  window.DocumentTouch && document instanceof window.DocumentTouch ||  navigator.maxTouchPoints > 0 ||  window.navigator.msMaxTouchPoints > 0;
+            isMouse = true; // (!isTouch && !isPointer) || isPointer;
+            // window.addEventListener( 'mousemove', function(){isMouse=true;} );
+            
+            // logIt( 'doLocalPageOnload() isPointer=' + isPointer + ', isTouch=' + isTouch + ', isMouse=' + isMouse + ', needsSlider=' + needsSlider );
+            
+            if( needsSlider )
+                setupSlider();
+            
+            window.addEventListener( 'resize', function(){ doOnResize();} );
+            
+            var queryString = window.location.search;
+            
+            var urlParams = new URLSearchParams(queryString);
+            
+            if( urlParams.has('vvx') )
+            {
+                var val = urlParams.get('vvx');
+                if( val )
+                {
+                    val = parseFloat(val);
+                    if( val>0 )
+                    {
+                        var valueEle = document.getElementById( 'ratingvalue' );
+                        valueEle.value=val;
+                        setState( val );
+                    }
+                }
+            }
+        }
+        
+        function doOnResize()
+        {
+            console.log( 'doOnResize()' );
+            var valueEle = document.getElementById( 'ratingvalue' );
+            var val = (valueEle) ? parseFloat(valueEle.value) : 0;
+            
+            setupSliderResize(val);
+            
+            if( val )
+                setState( val );
+            // location.href = location.href='/tr/ref/item.xhtml?vvx=' + val; 
+        }
+                
+        function doLocalPageOnUnload()
+        {
+        }
+        
+        function doSkipButton()
+        {
+            skipped = true;
+        }
+        
+        function logIt( m )
+        {
+            console.log( 'item-rating-head.xhtml ' + m );
+        }
+
+        function logErr( e, m )
+        {
+            console.log( 'item-rating-head.xhtml ' + m + (e ? ", " + e.message + ",\n" + e.stack : "" ));
+        }
+    
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        //window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );                
+        
+        //////////////////////////////////////////////
+        // SLIDER VARIABLES
+        //////////////////////////////////////////////
+        var isPointer = false;
+        var isTouch = false;
+        var isMouse = false;
+        
+        var denyMiddleLo = #{refBean.rcCheck.rcScript.rcRatingScaleType.denyMiddleLow}; // 4.825;
+        var denyMiddleHi = #{refBean.rcCheck.rcScript.rcRatingScaleType.denyMiddleHigh}; //  6.175;
+        var denyMiddle = #{raterRefBean.rcItem.denyMiddleB};
+        var denyMiddleMsg = "#{stMessages['g.NeutralDisallowedLive']}";
+        
+        var needsSlider = #{raterRefBean.rcItem.includeNumRatingB};
+        
+        var sliderUrl = '/tr/images/slider.png';
+        var trackEle = null;
+        var trackWid = 570;
+        var trackHgt = 95;
+        var trkMargin = 0;
+        var vertOffset = 5;
+        var trackLeft = 0;
+        var trackRight = 0;
+        var trackTop = 0;
+        var trackPos = null;
+        var sliderDiv = null;
+        var sliderEle = null;
+        var sliderWid = 48;
+        var sliderHgt = 48;
+        var dragRect = null;
+        var middleX = 0;
+        var middleY = 0;
+        
+        var valueLeft = #{refBean.rcCheck.rcScript.rcRatingScaleType.minScore};
+        var valueRight = #{refBean.rcCheck.rcScript.rcRatingScaleType.maxScore};
+        
+        var hasPrev = false;
+        var prev = #{raterRefBean.rcItemWrapper.rcRating.score};
+        
+        var msOutTmout=0;
+        var msOvrListRef=null;
+        var msMvListRef=null;
+        var msUpListRef=null;
+        var msDnX = 0;
+        var msDnY = 0;
+        
+        var dragng = false;
+        var stM = null;
+        var ptrId = 0
+        var rqdMsg = "#{stMessages['g.XRRatingReqd']}";
+        
+        var skipped = false;
+
+        //////////////////////////////////////////////
+        // SLIDER FUNCTIONS
+        //////////////////////////////////////////////
+        
+        function setupSlider()
+        {
+            try
+            {
+                if( !needsSlider )
+                    return;
+                
+                hasPrev = prev > 0;
+                trackEle = document.getElementById( 'trackbarimg' );
+
+                if( isTouch  || isPointer )
+                    trackEle.addEventListener( 'touchstart' , function(e){e.preventDefault(); e.stopPropagation(); trkClkList(e); }, true  ); 
+
+                if( isMouse && !isPointer ) 
+                    trackEle.addEventListener(  "click" , function(e){ e.preventDefault(); e.stopPropagation(); trkClkList(e); }, true );
+
+                trackEle.style.cursor='pointer';
+                
+                trackPos =  trackEle.getBoundingClientRect(); // {x:0,y:0,wid:702,hgt:95};  // https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+                // note that x/left can be negative.
+
+                //trackPos.x=0;
+                //trackPos.y=0;
+                // logIt( 'setupSlider() trackPos: x=' + trackPos.x + ', y=' + trackPos.y );
+
+                sliderDiv = document.getElementById( 'sliderelediv' );
+                
+                if( !(sliderEle) )
+                {    
+                    sliderEle = document.createElement( 'img' );
+                    sliderEle.setAttribute( 'id', 'sliderthumb' );
+                    sliderEle.setAttribute( 'src' , '/tr/images/slider.png' );
+                    var ses = sliderEle.style;
+                    ses.position='absolute';
+                    ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
+                    ses.width='48px';
+                    ses.height='48px';
+                    ses.cursor='move';
+
+                    if( isTouch )
+                        sliderEle.addEventListener( 'touchstart' , function(e){e.preventDefault();msDnList(e);}, true); 
+
+                    if( isMouse && !isPointer )
+                    {
+                        sliderEle.addEventListener('mousedown', function(e){e.preventDefault(); msDnList( e );}, true ); 
+                        sliderEle.addEventListener('mouseout', function(e){e.preventDefault(); msOutList( e );}, true ); 
+                    }
+                
+                    setDragRect();
+                }
+                
+            }
+            catch( e )
+            {
+                logErr( e, "setupSlider() " );
+            }
+        }
+
+        function setupSliderResize(sldrVal)
+        {
+            try
+            {
+                if( !needsSlider )
+                    return;
+                
+                hasPrev = sldrVal > 0;
+                prev = sldrVal;
+                
+                if( !(trackEle) )
+                    trackEle = document.getElementById( 'trackbarimg' );
+
+                // this changes on resize
+                trackPos =  trackEle.getBoundingClientRect(); // {x:0,y:0,wid:702,hgt:95};  // https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+                // note that x/left can be negative.
+
+                // logIt( 'setupSlider() trackPos: x=' + trackPos.x + ', y=' + trackPos.y );
+
+                if( !(sliderDiv) ) 
+                    sliderDiv = document.getElementById( 'sliderelediv' );
+                
+                var ses = sliderEle.style;
+                ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
+                
+                dragRect=null;
+                setDragRect();
+            }
+            catch( e )
+            {
+                logErr( e, "setupSliderResize() sldrVal=" + sldrVal );
+            }
+        }
+
+    
+    
+        function setDragRect()
+        {
+            try
+            {
+                if( dragRect ) // !== null )
+                    return;
+
+                if( !(trackEle)  )
+                    return;
+
+                var epos = {x:0,y:0};
+                var r = Math.round;
+
+                // Start in center.
+                epos.x = trackPos.x + r(trackWid/2) - r(sliderWid/2);
+                // epos.y = trackPos.y - r(sliderHgt/2) + r(trackHgt/2) + vertOffset;
+
+                dragRect = {x:trackPos.x - r(sliderWid/2) + trkMargin + window.pageXOffset, y: epos.y, w: trackWid - 2*trkMargin, h:0}; //  new Rectangle( track.x - sub.thumbw/2, this.y, track.wid, 0 );
+
+                // logIt( 'setDragRect() prev='+ prev + ', trackPos=' + trackPos.x + ',' + trackPos.y + ', epos=' + epos.x + ',' + epos.y + ', dragRect: x=' + dragRect.x + ', y=' + dragRect.y + ', w=' + dragRect.w + ', h=' + dragRect.h );
+
+                trackLeft = trackPos.x - r(sliderWid/2) + trkMargin + window.pageXOffset;
+                                    
+                trackRight = trackLeft + trackWid - 2*trkMargin;
+                
+                // trackTop = trackPos.y - r(sliderWid/2);
+                
+                // logIt( 'setDragRect() trackLeft=' + trackLeft + ', trackRight=' + trackRight );
+
+                // sliderEle.style.left = epos.x + 'px';
+                // sliderEle.top = epos.y + 'px';
+                
+                // store middle values.
+                middleX = epos.x;
+                // middleY = epos.y;
+
+                if( hasPrev )
+                    setState( prev );
+                else
+                    calcValue();
+            }
+            catch( e )
+            {
+                logErr( e,  'setDragRect() ' + e.message  );
+            }
+        }
+        
+
+        function calcValue()
+        {
+            try
+            {
+                var valueEle = document.getElementById( 'ratingvalue' );
+
+                // logIt( 'calcValue() Start. current value=' + valueEle.value );
+
+                if( !(trackEle) ) // == null )
+                {
+                    valueEle.value=0;
+                    return;
+                }
+
+                if( sliderEle.parentNode===null )
+                {
+                    valueEle.value=0;
+                    return;
+                }
+                
+                var pos = intnum( sliderEle.style.left );
+
+                var trackBBox = trackEle.getBoundingClientRect();                    
+                var r = Math.round;
+                var trackLeftB = trackBBox.x - r(sliderWid/2) + trkMargin + window.pageXOffset;
+                var trackRightB = trackLeftB + trackWid - 2*trkMargin;
+
+                // logIt( 'calcValue() AA.0 pos=' + pos + ', trackLeft=' + trackLeftB + ', trackRight=' + trackRightB + ', pageOffset=' + window.pageXOffset );
+
+                if( pos <= trackLeftB+1 )
+                {
+                    logIt( 'calcValue() AA.1 setting to valueLeft. pos=' + pos + ', trackLeft=' + trackLeftB );
+                    valueEle.value = valueLeft;
+                    return;
+                }
+
+                if( pos >= trackRightB-1 )
+                {
+                    logIt( 'calcValue() AA.2 setting to valueRight. pos=' + pos + ', trackRight=' + trackRightB );
+                    valueEle.value = valueRight;
+                    return;
+                }
+
+                if( trackRightB <= trackLeftB )
+                {
+                    logIt( 'calcValue() BB.1 setting to valueLeft. pos=' + pos);
+                    valueEle.value = valueLeft;
+                    return;
+                }
+
+                // var frac = (pos - r(sliderWid/2) - trackLeftB)/(trackRightB - trackLeftB);
+                var frac = (pos - trackLeftB)/(trackRightB - trackLeftB);
+                // var frac = (pos - trackLeft)/(trackRight - trackLeft);
+                
+                if( isNaN(frac) )
+                    frac = 0;
+
+                var val = valueLeft + frac*(valueRight - valueLeft);
+
+                valueEle.value = val;
+                logIt( 'calcValue() value=' + val + ', frac=' + frac );
+            }
+            catch( e )
+            {
+                logErr( e,  'calcValue() ' + e.message );
+            }
+        };
+
+        function msOutList( e )
+        {
+            if( msOutTmout<=0 )
+            {
+                if( !(msOvrListRef) ) //== null )
+                    msOvrListRef = function(e){e.preventDefault();msOvrList(e);};
+
+                msOutTmout = setTimeout(  function(){msOutTmout=0; msUpList( e ); sliderEle.removeEventListener( 'mouseover', msOvrListRef, true ); }, 500 );  
+
+                sliderEle.addEventListener( 'mouseover', msOvrListRef, true );
+            }
+        };
+
+
+        function msOvrList( e )
+        {
+            if( msOutTmout>0 )
+            {
+                clearTimeout( msOutTmout );
+                msOutTmout = 0;
+                sliderEle.removeEventListener( 'mouseover', msOvrListRef, false ); // 2/15/2018 MR capture to false
+            }
+        };
+
+
+        function msDnList( e )
+        {
+            with( this )
+            {
+                try
+                {
+                    logIt( 'msDnList() primary pointer: ' + (isPointer && e.isPrimary) + ', type=' + e.type );
+
+                    if( sliderEle.parentNode===null )
+                        sliderDiv.appendChild( sliderEle );
+
+                    // ignore non-primary touches
+                    if( isPointer && !e.isPrimary )
+                        return;
+
+                    if( dragng )
+                        return;
+
+                    dragng=true;
+
+                    // if( stM == null )
+                    stM = mouseCoords( e );
+
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var es = sliderEle.style;
+
+                    msDnX = intnum( es.left );
+                    msDnY = intnum( es.top );
+
+                    // e.stopPropagation();
+                    
+                    msMvListRef = function(e){msMvList(e);};
+
+                    if( 1===1 || isTouch ||  isPointer )
+                        sliderDiv.addEventListener( 'touchmove', msMvListRef, true); 
+
+
+                    if( isMouse && !isPointer )
+                        sliderDiv.addEventListener( 'mousemove', msMvListRef, true );
+
+                    if( isPointer )
+                    {
+                        if( ptrId > 0 )
+                            sliderDiv.msReleasePointerCapture(ptrId);
+
+                        ptrId = e.pointerId;
+                        sliderDiv.msSetPointerCapture(ptrId);
+                    }
+
+
+                    msUpListRef = function(e){msUpList( e );};
+
+                    if( 1===1 || isTouch || isPointer )
+                    {
+                        sliderDiv.addEventListener( 'touchend',  msUpListRef, true ); 
+                        sliderDiv.addEventListener( 'touchcancel',  msUpListRef, true ); 
+                    }
+
+                    if( isMouse && !isPointer )
+                        sliderDiv.addEventListener( 'mouseup',  msUpListRef, true ); 
+                }
+                catch( ee )
+                {
+                    logErr( ee,  'msDnList() ' + ee.message  );
+                }
+            }
+        };
+
+        function msMvList( e )
+        {
+            try
+            {
+                // logIt( 'CSldrItm.msMvList ' + dragng + ' e.type=' + e.type );
+                // logIt( 'CSldrItm.msMvList ' + dragng + ' e.type=' + e.type + ' primary pointer=' + (bimo.m.isPointer && e.isPrimary) );
+
+                // ignore non-primary touches
+                if( isPointer && !e.isPrimary )
+                    return;
+
+                var m = mouseCoords( e );
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                if( !dragng )
+                    return;
+
+                var msEvt = e.type.toLowerCase().indexOf( 'mouse' ) >= 0;
+
+                var tchEvt = e.type.toLowerCase().indexOf( 'touchmove' ) >= 0;
+
+                if( !msEvt && !tchEvt && !isTouch && !isPointer )
+                    return;
+
+                // logIt( 'msMvList() ' + m.x + ', ' + m.y + ', stM.x=' + stM.x + ', startX=' + startX );
+
+                var p = {x: ( msDnX + ( m.x - stM.x ) ) , y: ( msDnY + ( m.y - stM.y ) )};
+
+                // logIt( 'msMvList() ' + p.x + ', ' + p.y );
+
+                var d = dragRect;
+
+                // Apply limits and position
+                if( p.x < d.x )
+                    p.x = d.x;
+
+                if( p.x > d.x + d.w )
+                    p.x = d.x + d.w;
+
+                sliderEle.style.left = p.x + 'px';
+            }
+            catch( ee )
+            {
+                logErr( ee,  'msMvList() ' + ee.message );
+            }
+        }
+
+
+        function msUpList( e )
+        {
+            try
+            {
+
+             if( !dragng )
+                 return;
+
+             dragng=false;
+             // logIt( 'msUpList() ' );
+
+             if( e )
+             {
+                 e.preventDefault();
+                 e.stopPropagation();
+
+                 // ignore non-primary touches
+                 if( isPointer && !e.isPrimary )
+                     return;
+             }
+
+             var o=this;
+
+             if( 1===1 || isTouch || isPointer )
+             {
+                 sliderDiv.removeEventListener( 'touchmove', msMvListRef, true );
+                 sliderDiv.removeEventListener( 'touchend', msUpListRef, true );
+                 sliderDiv.removeEventListener( 'touchcancel', msUpListRef, true );
+
+                 if( isPointer && (ptrId) )
+                     sliderDiv.msReleasePointerCapture(ptrId);
+
+                 ptrId = 0;
+             }
+
+             if( isMouse )
+             {
+                 sliderDiv.removeEventListener( 'mousemove',msMvListRef, true );
+                 sliderDiv.removeEventListener( 'mouseup', msUpListRef, true );
+             }
+
+             dragng=false;
+             sliderEle.style.cursor='move';
+
+             calcValue();
+             
+             if( denyMiddle )
+                 doDenyMiddleCheck();
+            }
+            catch( ee )
+            {
+                logErr( ee,  'msUpList() ' + ee.message  );
+            }
+        };
+
+
+
+        function trkClkList( e )
+        {
+            with( this )
+            {
+                try
+                {
+                    // logIt( 'trkClkList() start ' );
+
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    if( isPointer && !e.isPrimary )
+                        return;
+
+                    if( dragng )
+                        return;
+
+                    var msEvt = (e) ? e.type.indexOf( 'mouse' )>=0 : false;
+
+                    var x = -1;
+                    var y = -1;
+
+                    if( !msEvt && (e.touches) )
+                    {
+                            x = e.touches[0].pageX;
+                            y = e.touches[0].pageY;
+                    }
+
+                    else
+                    {
+                        x = e.clientX;
+                        y = e.clientY;
+
+                    }
+                    
+                    if( isNaN(x) )
+                    {
+                        logIt( 'trkClkList() x isNaN x=' + x + ', y=' + y );
+                        x = -1;
+                        return;
+                    }
+                    if( isNaN(y) )
+                    {
+                        logIt( 'trkClkList() y isNaN x=' + x + ', y=' + y );
+                        y = -1;
+                        return;
+                    }
+
+                    logIt( 'trkClkList() clicked coords: x=' + x + ', y=' + y );
+                    // var tpos = CGeom.findPos( track.ele );
+
+                    var es = sliderEle.style;
+
+
+                    // var d = dragRect;
+
+                    // difference between global and local
+                    var fctr = findPos( sliderEle )[0] - intnum(es.left);
+
+                    var n = x - fctr - intnum(sliderWid/2);
+
+                    var y = 0;
+
+                    var offsetLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+                    var trackBBox = trackEle.getBoundingClientRect();                    
+                    var r = Math.round;
+                    var trackLeftB = trackBBox.x + offsetLeft - r(sliderWid/2) + trkMargin;
+                    var trackRightB = trackLeftB + trackWid - 2*trkMargin;
+                    // logIt( 'trkClkList() n=' + n + ', fctr=' + fctr + ', trackBBox x=' + trackBBox.x + ', y=' + trackBBox.y + ', es.left=' + es.left );
+                    // logIt( 'trkClkList() n=' + n + ', fctr=' + fctr + ', trackBBox x=' + trackBBox.x + ', y=' + trackBBox.y + ', trackWid=' + trackWid + ', calc wid=' + (trackBBox.left - trackBBox.right) + ', es.left=' + es.left + ', offsetLeft=' + offsetLeft + ', tbx=' + (trackBBox.left + offsetLeft) );
+                    // var trackTopB = trackBBox.y + 23; 
+
+
+                    logIt( 'trkClkList()  fctr=' + fctr + ', n=' + n );
+                    if( isNaN(n) )
+                    {
+                        logIt( 'trkClkList() n isNaN n=' + n + ', fctr=' + fctr + ', x=' + x + ', y=' + y );   
+                        return;
+                    }
+
+
+                    //logIt( 'trkClkList() old slider.x: ' + es.left + ', new slider.x=' + n + ', trackEle.x=' + trackEle.style.left + ', track.wid=' + trackWid + ', ms.x=' + x + ', fctr=' + fctr + ', trackLeft=' + trackLeft + ', trackRight=' + trackRight );
+                    //if( trackLeftB<0 )
+                    //{    
+                    //    n -= trackLeftB;
+                    //    if( trackLeft>0 )
+                    //        n += trackLeft;
+                    //    else
+                    //        n -= trackLeft - r(sliderWid/2);
+                    //}
+                    //else
+                    //if( trackLeft<0 )
+                    //{
+                    //    n -= trackLeft;
+                    //}
+                    if( n+offsetLeft<trackLeftB  )
+                        n=trackLeftB;
+                    else if( n+offsetLeft>trackRightB )
+                        n=trackRightB;
+
+                    // logIt( 'trkClkList() setting x to ' + n );
+                    es.left = (n + offsetLeft) + 'px';
+                    // es.top = trackTopB + 'px';
+
+                    if( sliderEle.parentNode===null )
+                        sliderDiv.appendChild( sliderEle );
+                    //else
+                    //    logIt( 'parentnode not null');
+
+                    calcValue();                    
+
+                    if( denyMiddle )
+                        doDenyMiddleCheck();
+                }
+                catch( ee )
+                {
+                    logErr( ee,  'trkClkList() ' + ee.message  );
+                }
+            }
+        }
+        
+        function doDenyMiddleCheck()
+        {
+            if( !denyMiddle )
+                return;
+            
+            logIt( 'doDenyMiddleCheck() Start ' );
+            var valueEle = document.getElementById( 'ratingvalue' );
+            
+            if( !(valueEle) )
+            {
+                logIt( 'doDenyMiddleCheck() value element not found. ' );
+                return;
+            }
+            
+            var val = parseFloat(valueEle.value);
+            
+            if( val<denyMiddleLo || val>denyMiddleHi )
+                return;
+                
+            var newVal = val<=valueLeft + (valueRight - valueLeft)/2 ? denyMiddleLo-0.1 : denyMiddleHi+0.1;
+
+            logIt( 'doDenyMiddleCheck() val=' + val + ', moving to newVal=' + newVal );
+            
+            setState( newVal );
+            
+            alert( denyMiddleMsg );
+        }
+
+
+        function setState( st )
+        {
+            try
+            {
+                if( !(trackEle) ) // == null )
+                    return;
+
+                    logIt( 'setState() st=' + st );
+                    var val = floatnum( st );
+
+                    // val out of bounds. Skip.
+                    if( val < Math.min( valueLeft, valueRight ) || val > Math.max( valueLeft, valueRight ) )
+                        return;
+
+                    val = val - valueLeft;
+
+                    var frac = val/(valueRight - valueLeft);
+
+                    var pos = trackLeft + frac * ( trackRight - trackLeft );
+
+                    //logIt( 'setState() END st=' + st + ', pos=' + pos );
+                    sliderEle.style.left = pos + 'px';
+
+                    if( !(sliderEle.parentNode) )
+                    {
+                        //logIt( 'setState() appending sliderEle ' );
+                        sliderDiv.appendChild( sliderEle );
+                        //logIt( 'setState() sliderEle.parent ' + ( (sliderEle.parentNode) ? ' present' : ' not present' ) );
+                    }
+                    
+                    calcValue();
+            }
+
+            catch( e )
+            {
+                logErr( e, 'setState() ' + st );
+                sliderEle.style.left = middleX + 'px';
+                sliderEle.style.top = middleY + 'px';
+            }
+        }
+
+
+
+        function validate()
+        {
+            logIt( 'validate() sliderEle=' + ( (sliderEle) ? 'present' + ( (sliderEle.parentNode) ? ' has parent' : ' no parent' ) : 'not present' ) );
+            if( !(sliderEle) )
+                return null;
+            
+            if( (sliderEle.parentNode) ) //!==null )
+                return null;
+
+            return rqdMsg;
+        }
+    
+    
+    
+        function floatnum( o )
+        {
+            var n = parseFloat(o);
+            return isNaN(n) ? 0 : n;
+        }
+
+        function intnum( o )
+        {
+            var n = parseInt(o);
+            return isNaN(n) ? 0 : n;
+        }
+
+        function isNum( o )
+        {
+            return (o - 0) == o && (''+o).trim().length > 0;
+        }
+    
+        function mouseCoords( e )
+        {
+            var msEvt = (e) ? e.type.indexOf('mouse')>=0 : !isTouch;
+
+            if( !msEvt && (e.touches) )
+                return {x:e.touches[0].pageX, y:e.touches[0].pageY};
+
+            return {x:e.pageX, y:e.pageY};
+        }
+    
+        function findPos(o)
+        {
+            var curleft = 0;
+            var curtop = 0;
+
+            if ( (o) && o.offsetParent )
+            {
+                    do
+                    {
+                            curleft += o.offsetLeft;
+                            curtop += o.offsetTop;
+
+                    } while ( (o = o.offsetParent) );
+            }
+
+            return [curleft,curtop];
+        }   
+    
+        function doValidateRating()
+        {
+            logIt( 'doValidateRating() skipped=' + skipped + ", needsSlider=" + needsSlider + ', validate()=' + validate() );
+            if( skipped )
+                return false;
+            if( !needsSlider )
+                return false;
+            if( validate() )
+                return true;
+            return false;
+        }
+    
+    
+    
+    
+    
+    // ]]>        
+    </script>
+
+    <ref:avcomments-head />
+        
+</cc:implementation>
+</html>

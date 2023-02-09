@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+        .topcolclass
+        {
+            vertical-align: top;
+        }
+    </style>    
+</ui:define>
+
+<ui:define name="coreinnersection">
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+    <h:form prependId="false">
+
+        <ref:stdforminputs />
+        <ref:noncoreforminputs />
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputText value="#{stMessages['g.ConfFail']}"/>
+        </div>
+
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.P1']}"/>
+            
+        </h:panelGrid>
+            
+        <h:panelGrid columns="2" columnClasses="topcolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
+            
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourName']}:"/>
+            
+            <h:panelGroup>
+            <p:inputText size="15" value="#{refBean.strParam1}" placeholder="#{stMessages['g.FirstName']}"/>
+            &#160;
+            <p:inputText size="15" value="#{refBean.strParam2}" placeholder="#{stMessages['g.LastName']}"/>                
+            </h:panelGroup>
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourEmail']}:"/>
+            <p:inputText size="30" value="#{refBean.strParam3}" placeholder="#{stMessages['g.Email']}"/>
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.WhatWrong']}:"/>
+            <p:selectOneMenu value="#{refBean.intParam1}" style="max-width:450px">
+                <f:selectItem itemValue="0" itemLabel="#{stMessages['g.PleaseChoose']}" />
+                <f:selectItem itemValue="1" itemLabel="#{stMessages['g.ConfFailForm.ErrNameWrong']}" />
+                <!-- <f:selectItem itemValue="2" itemLabel="#{stMessages['g.ConfFailForm.ErrDontKnowPerson']}" /> -->
+                <f:selectItem itemValue="99" itemLabel="#{stMessages['g.ConfFailForm.ErrOther']}" />
+            </p:selectOneMenu>
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Note']}:"/>
+            <p:inputTextarea rows="3" styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam4}"/>
+
+            <h:panelGroup></h:panelGroup>
+            <p:commandButton ajax="false" action="#{refUtils.processConfirmFailFormSubmit}" value="#{stMessages['g.SubmitInfo']}">
+            </p:commandButton>
+            
+        </h:panelGrid>
+            
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

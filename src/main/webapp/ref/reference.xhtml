@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:misc="http://xmlns.jcp.org/jsf/composite/misc">
+<body>
+
+<ui:composition template="#{corpBean.template}">
+
+<ui:define name="headspec">
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+    </style> 
+    <script type="text/javascript">
+        //<![CDATA[
+        
+        var exitBeaconUrl = '/tr/coreexit.xhtml?rc=#{refBean.rcCheck.rcCheckIdEncrypted}&amp;ac=#{refBean.activeAccessCodeX}';
+        
+        function doLocalPageOnload()
+        {
+            
+        }
+        
+        function doLocalPageOnUnload()
+        {
+        }
+        
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );        
+        
+        
+        // ]]>        
+    </script>
+</ui:define>
+
+<ui:define name="coreinnersection">
+
+    <br style="clear:both"/>
+
+    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+    <h:form prependId="false">
+
+        <ref:stdforminputs />
+        <ref:candidateforminputs />
+
+        <ref:messages-embedded />
+
+        <div class="textverylarge textbold ttboldtitle">
+            <h:outputFormat rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" value="#{stMessages['g.XCEditReference']}">
+                <f:param value="#{refUtils.rcCheckRaterName}"/>
+            </h:outputFormat>
+            <h:outputFormat rendered="#{candidateRefBean.rcRater.rcRaterId le 0}" value="#{stMessages['g.XCCreateReference']}">
+                <f:param value="#{refUtils.rcCheckRaterName}"/>
+            </h:outputFormat>
+        </div>
+
+
+        <h:panelGrid columns="3" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Name']}:"/>
+            <h:panelGroup style="white-space:nowrap">
+                <p:inputText size="12" value="#{candidateRefBean.rcRater.user.firstName}" maxlength="250" placeholder="#{stMessages['g.FirstName']}"/>
+                &#160;
+                <p:inputText size="18" value="#{candidateRefBean.rcRater.user.lastName}" maxlength="250" placeholder="#{stMessages['g.LastName']}"/>
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup></h:panelGroup>
+            
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Email']}:"/>
+            <h:panelGroup style="white-space:nowrap">
+                <p:inputText size="30" value="#{candidateRefBean.rcRater.user.email}" maxlength="250" placeholder="#{stMessages['g.Email']}"/>
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup></h:panelGroup>
+
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.MobilePhone']}:"/>
+            <p:inputText size="30" value="#{candidateRefBean.rcRater.user.mobilePhone}" maxlength="79" placeholder="#{stMessages['g.MobilePhone']}"/>
+            <h:panelGroup></h:panelGroup>
+            
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Role']}:"/>
+            <h:panelGroup style="white-space:nowrap">
+                <p:selectOneMenu value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}">
+                    <f:selectItems value="#{candidateRefUtils.rcRaterRoleTypeSelectItemList}"/>
+                </p:selectOneMenu>
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                <misc:infobubble theDivId="raterroleinfodiv" theText="#{stMessages['g.RoleInfo']}"/>
+            </h:panelGroup>
+
+            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.RCCompanyName']}:"/>
+            <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                <p:inputText value="#{candidateRefBean.rcRater.companyName}" size="30" required="true" requiredMessage="#{stMessages['g.RCCompanyNameReqd']}"/>
+                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                 <misc:infobubble theDivId="companynameinfo" theText="#{stMessages['g.RCCompanyNameInfo']}"/>
+            </h:panelGroup>
+
+            
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.RCObservationPeriod']}:"/>
+            <h:panelGroup>
+                <h:outputText styleClass="ttformtext" value="#{stMessages['g.From']}"/>&#160;
+                <p:datePicker view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationStartDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodRqd']}"/>
+                &#160;<h:outputText styleClass="ttformtext" value="#{stMessages['g.to']}"/>&#160;
+                <p:datePicker view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
+                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                 <misc:infobubble theDivId="observationdatesinfo" theText="#{stMessages['g.RCObservationPeriodInfo']}"/>
+            </h:panelGroup>
+                        
+            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Country']}:"/>
+            <h:panelGroup style="white-space:nowrap">
+                <p:selectOneMenu value="#{candidateRefBean.rcRater.user.countryCode}">
+                    <f:selectItems value="#{candidateRefUtils.countryCodeSelectItemList}"/>
+                </p:selectOneMenu>
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                <misc:infobubble theDivId="countryinfodiv" theText="#{stMessages['g.CountryInfo']}"/>
+            </h:panelGroup>
+            
+            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCRoleResp4Rater']}:"/>
+            <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                <p:inputTextarea rows="3" cols="35" maxlength="1999" autoResize="true" value="#{candidateRefBean.rcRater.candidateRoleResp}" required="true" requiredMessage="#{stMessages['g.XCRoleResp4RaterReqd']}"/>
+                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                <misc:infobubble theDivId="randrolerespinfo" theText="#{stMessages['g.XCRoleResp4RaterInfo']}"/>
+            </h:panelGroup>
+
+            
+            
+            <h:panelGroup></h:panelGroup>  
+            <h:panelGroup>
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.Save']}">
+                    <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="false"/>
+                </p:commandButton>
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId le 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.XCSendInvitation']}" title="#{stMessages['g.XCSendInvitationInfo']}">
+                    <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="true"/>
+                </p:commandButton>
+                &#160;
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.SaveAndExit']}" title="#{stMessages['g.XCWillSendIfNew']}">
+                    <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="true"/>
+                </p:commandButton>
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId le 0}" immediate="true" ajax="false" action="#{candidateRefUtils.processRaterGoBack}" value="#{stMessages['g.XCCancelNew']}" title="#{stMessages['g.XCCancelNewInfo']}"/>                
+                &#160;
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" immediate="true" ajax="false" action="#{candidateRefUtils.processRaterGoBack}" value="#{stMessages['g.Back']}"/>                
+            </h:panelGroup>
+            <h:panelGroup></h:panelGroup>
+        </h:panelGrid>
+        
+    </h:form>
+    </div>
+
+    <br /><br /><br />&#160;
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

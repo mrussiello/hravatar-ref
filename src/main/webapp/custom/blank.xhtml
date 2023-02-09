@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      lang="#{userBean.htmlLangCode}"
+      xml:lang="#{userBean.htmlLangCode}"
+      dir="#{userBean.textDirection}">
+
+<ui:insert name="headsection">
+	<h:head>
+
+	<ui:insert name="cachetags">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+	</ui:insert>
+
+	<ui:insert name="titletag">
+		<title><h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) gt 0}" value="#{corpBean.corp.pageTitle}"/>
+		       <h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) eq 0}" value="#{corpBean.corp.name}"/>
+		</title>
+	</ui:insert>
+
+        <h:outputScript library="js" name="keepalive.js"/>
+        <h:outputScript library="js" name="core.js"/>
+
+        <h:outputStylesheet library="css" name="default.css"/>
+
+        <ui:debug />
+
+        <link rel="shortcut icon" href="#{corpBean.corp.faviconUriWithDef}" type="image/x-icon" />
+
+        <h:outputText rendered="#{corpBean.corp.hasHeadCode}" value="#{corpBean.corp.headCode}" escape="false" />
+
+	<ui:insert name="headspec">
+	</ui:insert>
+
+        <script type="text/javascript">
+        // /custom/blank.xhtml
+        </script>
+                
+        <ref:standardhdrstyle />
+        <ref:standardhdrjs />
+
+	</h:head>
+</ui:insert>
+
+
+<f:view contentType="text/html" locale="#{userBean.locale}" transient="#{corpBean.stateless}">
+<h:body>
+    <div id="pagebgdiv" class="pagebgdiv">
+
+
+    <ui:insert name="metadata">
+    </ui:insert>
+
+    <table id="corpshelldiv">
+        <tr>
+            <td>
+
+
+    <!-- BEGIN HEADER SECTION -->
+    <ui:insert name="headtable">
+
+        <ui:fragment  rendered="#{corpBean.corp.hasHeader}">
+        <h:form id="headform" prependId="false">
+
+	<table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;padding-top:10px">
+
+            <tr>
+                <td width="100%">
+                    <h:outputText value="#{corpBean.corp.header}" escape="false"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="thinbuffer">&#160;</td>
+            </tr>
+
+	</table>
+	</h:form>
+        </ui:fragment>
+    </ui:insert>
+    <!-- END HEADER TABLE -->
+
+    <!-- BEGIN CONTENT TABLE -->
+
+    <table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;margin-left: auto;margin-right: auto">
+
+        <tr>
+            <td style="width:100%;vertical-align:top">
+
+                <div id="ttcontentdiv">
+                <!-- BEGIN CONTENTS OF CORE -->
+                <ui:insert name="coreinnersection">
+                                CORE PAGE SHOULD BE HERE!
+                </ui:insert>
+                <!-- END CONTENTS OF CORE -->
+                </div>
+            </td>
+        </tr>
+
+    </table>
+<!-- END CONTENT TABLE -->
+
+
+
+<!-- BEGIN FOOTER TABLE -->
+<ui:insert name="footertable">
+
+    <ui:fragment  rendered="#{corpBean.corp.hasFooter}">
+    <h:form id="footerform" prependId="false">
+        <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
+    </h:form>
+    </ui:fragment>
+
+</ui:insert>
+<!-- END FOOTER TABLE -->
+
+
+</td></tr>
+</table>
+
+</div>
+    </h:body>
+</f:view>
+
+</html>
