@@ -75,8 +75,7 @@ public abstract class AbstractFacesServlet extends HttpServlet {
             InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
 
             // set a new viewRoot, otherwise context.getViewRoot returns null
-            UIViewRoot view =
-            facesContext.getApplication().getViewHandler().createView(facesContext, "");
+            UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "/index.xhtml");
             facesContext.setViewRoot(view);        
         }
         return facesContext;
