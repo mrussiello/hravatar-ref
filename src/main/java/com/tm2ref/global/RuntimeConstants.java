@@ -34,14 +34,14 @@ public class RuntimeConstants
 
         cache.put( "services/email/mailon", true);
 
-        cache.put( "services/log/logfilepattern", "/work/tm2ref/log/tm2ref_%g_%u.log");
+        cache.put( "services/log/logfilepattern", "/work/tm2ref2/log/tm2ref_%g_%u.log");
 
         cache.put(  "SupportEmail", "support@hravatar.com" );
         cache.put(  "CSCaseEmails", "sandy@hravatar.com,mike@hravatar.com,steve@hravatar.com" );
         cache.put(  "SystemErrorEmails", "mike@hravatar.com" );
 
 
-        cache.put( "propertiesFile", "/work/tm2ref/zzapplication.conf" );
+        cache.put( "propertiesFile", "/work/tm2ref2/zzapplication.conf" );
         cache.put( "secretsFile", "/work/hraconfig/hraglobals-test.conf" );
 
         cache.put( "httpsOK", true );
@@ -58,7 +58,7 @@ public class RuntimeConstants
         cache.put( "baseadminurl", "https://www.hravatar.com/ta" );
 
 
-        cache.put( "filesroot", "/work/tm2ref/files" );
+        cache.put( "filesroot", "/work/tm2ref2/files" );
 
 
         cache.put( "refappbasedomain", "test.hravatar.com" );

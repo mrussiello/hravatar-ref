@@ -43,7 +43,7 @@ public class LogService
             }
 
             if( filePattern == null )
-                filePattern = "c:/work/tm2ref/log/tm2ref_%g_%u.log";
+                filePattern = "c:/work/tm2ref2/log/tm2ref_%g_%u.log";
 
 
             try
