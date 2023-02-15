@@ -54,6 +54,7 @@ public enum RcDistributionType
             if( rc.getRcCheckStatusType().getIsComplete() )
                 return rc.getLastProgressMsgDate()==null;
             
+            // for the candidate - only send if have progress
             if( rater==null )
                 return rc.getRcCandidateStatusType().getIsCompletedOrHigher() && rc.getLastCandidateProgressMsgDate()==null;
             

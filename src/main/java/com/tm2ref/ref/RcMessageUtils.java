@@ -5,6 +5,7 @@
  */
 package com.tm2ref.ref;
 
+import com.tm2ref.email.EmailBlockFacade;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcOrgPrefs;
 import com.tm2ref.entity.ref.RcRater;
@@ -21,6 +22,7 @@ import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.PhoneUtils;
 import com.tm2ref.service.Tracker;
+import com.tm2ref.user.UserActionFacade;
 import com.tm2ref.user.UserActionType;
 import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.GooglePhoneUtils;
@@ -42,6 +44,8 @@ public class RcMessageUtils {
     
     RcFacade rcFacade;
     UserFacade userFacade;
+    // UserActionFacade userActionFacade;
+    EmailBlockFacade emailBlockFacade;
     
     
     
@@ -210,6 +214,28 @@ public class RcMessageUtils {
 
                 subject = MessageFactory.getStringMessage( rc.getLocale(), "g.REMINDERC" ) + " " + subject;
             }
+            
+            if( emailBlockFacade==null )
+                emailBlockFacade=EmailBlockFacade.getInstance();
+            if( emailBlockFacade.hasEmailBlock(user.getEmail(), true, true))
+            {
+                    String identifier = "RC_" + rc.getRcCheckId() + "_CANDIDATE_REMINDER_" + (new Date()).getTime();
+                    if( userFacade == null )
+                        userFacade = UserFacade.getInstance();
+                    userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                    user, 
+                                                    subject, 
+                                                    UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
+                                                    0, // intParam1
+                                                    rc.getRcCheckId(), // longparam1
+                                                    0, // longparam2 (sourceCode)
+                                                    0, // longparam4 
+                                                    identifier, 
+                                                    null, 
+                                                    user.getEmail() );                    
+                    return 0;                
+            }                
+            
 
             if( content==null && rcOrgPrefs!=null && rcOrgPrefs.getInvitation()!=null && !rcOrgPrefs.getInvitation().isBlank() )
             {
@@ -244,6 +270,8 @@ public class RcMessageUtils {
             emailMap.put( EmailConstants.FROM, fromAddr );            
             EmailUtils emailUtils = EmailUtils.getInstance();
             boolean sent = emailUtils.sendEmail( emailMap );
+            
+            
             
             return sent ? 1 : 0;                
         }
@@ -323,7 +351,7 @@ public class RcMessageUtils {
                 String identifier = "RC_SMS_" + rc.getRcCheckId() + "_" + (reminder ? "reminder_ref" : "initial_ref") + "_" + (new Date()).getTime();
                 if( userFacade == null )
                     userFacade = UserFacade.getInstance();
-                ua = userFacade.saveMessageAction( userId, // rc.getAdminUserId(), 
+                userFacade.saveMessageAction( userId, // rc.getAdminUserId(), 
                                                 user, 
                                                 "RcCheck Text", 
                                                 UserActionType.SENT_TEXT.getUserActionTypeId(), 
@@ -350,7 +378,7 @@ public class RcMessageUtils {
                 String identifier = "RC_" + rc.getRcCheckId() + "_" + (reminder ? "reminder_ref" : "initial_ref") + "_" + (new Date()).getTime();
                 if( userFacade == null )
                     userFacade = UserFacade.getInstance();
-                ua = userFacade.saveMessageAction(userId, // rc.getAdminUserId(), 
+                userFacade.saveMessageAction(userId, // rc.getAdminUserId(), 
                                                 user, 
                                                 "RcCheck Email", 
                                                 UserActionType.SENT_EMAIL.getUserActionTypeId(), 
@@ -440,6 +468,7 @@ public class RcMessageUtils {
                 if( reminder )
                     subject = MessageFactory.getStringMessage( rc.getLocale(), "g.REMINDERC" ) + " " + subject;
             }
+            
 
             if( rc.getRcSuborgPrefs()!=null && rc.getRcSuborgPrefs().getInvitationRater()!=null && !rc.getRcSuborgPrefs().getInvitationRater().isBlank() )
             {
@@ -459,6 +488,28 @@ public class RcMessageUtils {
                 key = rc.getRcCheckType().getIsPrehire() ?  "g.RCEmailHireRaterSubj" : "g.RCEmail360RaterSubj";
                 subject = MessageFactory.getStringMessage(l, key, params );
             }
+
+            if( emailBlockFacade==null )
+                emailBlockFacade=EmailBlockFacade.getInstance();
+            if( emailBlockFacade.hasEmailBlock(user.getEmail(), true, true))
+            {
+                    String identifier = "RC_" + rc.getRcCheckId() + "_RATER_INVITATION_" + (new Date()).getTime();
+                    if( userFacade == null )
+                        userFacade = UserFacade.getInstance();
+                    userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                    user, 
+                                                    subject, 
+                                                    UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
+                                                    0, // intParam1
+                                                    rc.getRcCheckId(), // longparam1
+                                                    0, // longparam2 (sourceCode)
+                                                    0, // longparam4 
+                                                    identifier, 
+                                                    null, 
+                                                    user.getEmail() );                    
+                    return 0;                
+            }                
+            
             
             if( content==null || content.isBlank() )
             {
@@ -569,12 +620,17 @@ public class RcMessageUtils {
             
             if( !EmailUtils.validateEmailNoErrors(email))
                 throw new STException( "g.EmailInvalid", new String[]{email} );
-            
+                                    
             if( l==null )
                 l = Locale.US;
             
             String key = "g.RCRestartEmailSubj";
             String subj = MessageFactory.getStringMessage(l, key, params );
+            
+            if( emailBlockFacade==null )
+                emailBlockFacade=EmailBlockFacade.getInstance();
+            if( emailBlockFacade.hasEmailBlock(email, true, true))
+                throw new STException( "g.EmailBlocked", new String[]{email} );                
             
             if( refUserType.getIsCandidate() )
                 key = "g.RCRestartEmailContent";
@@ -609,17 +665,17 @@ public class RcMessageUtils {
                     String identifier = "RC_" + rc.getRcCheckId() + "_restartlink_" + (new Date()).getTime();
                     if( userFacade == null )
                         userFacade = UserFacade.getInstance();
-                    UserAction ua = userFacade.saveMessageAction(user.getUserId(), // rc.getAdminUserId(), 
-                                                                user, 
-                                                                "RcCheck Restart Email", 
-                                                                UserActionType.SENT_EMAIL.getUserActionTypeId(), 
-                                                                0, // intParam1
-                                                                rc.getRcCheckId(), // longparam1
-                                                                0, // longparam2 (sourceCode)
-                                                                refUserType.getIsRater() && rc.getRcRater()!=null ? rc.getRcRater().getRcRaterId() : 0, // longparam4 
-                                                                identifier, 
-                                                                null, 
-                                                                email );                    
+                    userFacade.saveMessageAction(user.getUserId(), // rc.getAdminUserId(), 
+                                                    user, 
+                                                    "RcCheck Restart Email", 
+                                                    UserActionType.SENT_EMAIL.getUserActionTypeId(), 
+                                                    0, // intParam1
+                                                    rc.getRcCheckId(), // longparam1
+                                                    0, // longparam2 (sourceCode)
+                                                    refUserType.getIsRater() && rc.getRcRater()!=null ? rc.getRcRater().getRcRaterId() : 0, // longparam4 
+                                                    identifier, 
+                                                    null, 
+                                                    email );                    
                 }
             }            
             return sent ? 1 : 0;            
@@ -740,7 +796,7 @@ public class RcMessageUtils {
         if( rater!=null && rater.getIsCandidateOrEmployee() )
             rater=null;
 
-        if( rater==null && !rc.getRcCandidateStatusType().getIsCompletedOrHigher()&& !rc.getRcCheckStatusType().getIsComplete() )
+        if( rater==null && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() && !rc.getRcCheckStatusType().getIsComplete() )
         {
             LogService.logIt( "RcMessageUtils.sendProgressUpdateForRaterOrCandidateComplete() rater is null but neither RcCheck or RcCandidate is complete. rcCheckId=" + rc.getRcCheckId() );
             return sent;
@@ -760,7 +816,7 @@ public class RcMessageUtils {
         
         if( !forceSend && !rc.getRcDistributionType().sendForRaterCompletion( rc, rater ) )
         {
-            // LogService.logIt( "RcmesageUtils.sendProgressUpdateForRaterOrCandidateComplete() RcDistributionType denies sending. rcCheckId=" + rc.getRcCheckId() );
+            LogService.logIt( "RcmesageUtils.sendProgressUpdateForRaterOrCandidateComplete() RcDistributionType denies sending. rcCheckId=" + rc.getRcCheckId() );
             return sent;
         }
         
@@ -806,8 +862,6 @@ public class RcMessageUtils {
             if( rater !=null )
             {
                 rater.setLastProgressMsgDate( new Date() );            
-                if( rcFacade==null )
-                    rcFacade=RcFacade.getInstance();
                 rcFacade.saveRcRater(rater, false);
             }
             
@@ -875,6 +929,18 @@ public class RcMessageUtils {
         
         sent[0] = sendProgressUpdateEmailForRaterOrCandidateComplete(rc, null, locale, params, destEmails, true );
 
+        if( sent[0]>0 )
+        {
+            if( rc.getRcCheckStatusType().getIsComplete() && rc.getLastProgressMsgDate()==null )
+            {
+                rc.setLastProgressMsgDate(new Date() );
+
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();                        
+                rcFacade.saveRcCheck(rc, false);
+            }
+        }
+        
         return sent;
     }
     
@@ -885,19 +951,32 @@ public class RcMessageUtils {
         try
         {            
             
-            if( forceDestEmails==null || forceDestEmails.isBlank() )
-                forceDestEmails = rc.getEmailResultsTo();
+            // missing any data for sending.
+            if( rc==null )
+            {
+                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() rcCheck is null. Nothing to send." );
+                return 0;
+            }
             
             // missing any data for sending.
-            if( rc==null || forceDestEmails==null || forceDestEmails.isBlank() )
+            if( (forceDestEmails==null || forceDestEmails.isBlank()) && (rc.getEmailResultsTo()==null || rc.getEmailResultsTo().isBlank()) )
+            {
+                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() No emails to send to. rcCheckId=" + rc.getRcCheckId() + ", rc.getEmailResultsTo=" + rc.getEmailResultsTo() + ", forceDestEmails=" + forceDestEmails );
                 return 0;
+            }
             
+            if( forceDestEmails==null || forceDestEmails.isBlank() )
+                forceDestEmails = rc.getEmailResultsTo();
+
             if( rater!=null && rater.getIsCandidateOrEmployee() )
                 rater=null;
                         
-            // if rater is null, then this must be a candidate completion.
+            // if rater is null, then this must be a candidate completion or a full completion.
             if( !forceForAnyStatus && rater==null && !rc.getRcCheckStatusType().getCompleteOrHigher() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher())
+            {
+                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() Not forced, rater is null and rcCheck is not completed or the candidate is not completed. rcCheckId=" + rc.getRcCheckId() );
                 return 0;
+            }
                         
             List<String> toList = new ArrayList<>();
             for( String em : forceDestEmails.split(",") )
@@ -915,19 +994,20 @@ public class RcMessageUtils {
             }
             
             if( toList.isEmpty() )
+            {
+                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() No valid emails to send to. Returning. rcCheckId=" + rc.getRcCheckId() );
                 return 0;
+            }
             
             //if( rc.getLocale()==null)
             //    rc.setLocale(getLocale() );
             if( l==null && rc.getLangCode()!=null && !rc.getLangCode().isBlank() )
                 l = I18nUtils.getLocaleFromCompositeStr(rc.getLangCode());
-
-
             
             if( l==null )
             {
                 l=Locale.US;
-                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() locale is null, using US" );
+                LogService.logIt("RcMessageUtils.sendProgressUpdateEmailForRaterOrCandidateComplete() locale is null, using US. rcCheckId=" + rc.getRcCheckId() );
             }
             
             String key = null;
@@ -961,6 +1041,7 @@ public class RcMessageUtils {
                 
                 else if( rcDistType.getIsPartialProgress())
                     key = "g.RCEmailHireProgPartial";
+                
                 else 
                     return 0;
             }
@@ -998,11 +1079,34 @@ public class RcMessageUtils {
             if( userFacade==null )
                 userFacade=UserFacade.getInstance();
             RcResultEmailFormatter emf;
+            
             for( String em : toList )
             {
                 ru=userFacade.getUserByEmailAndOrgId(em, rc.getOrgId() );
+                
                 params[10]=ru==null ? em : ru.getFullname();
                 subject = MessageFactory.getStringMessage(l, key + ".subj", params );  
+
+                if( emailBlockFacade==null )
+                    emailBlockFacade = EmailBlockFacade.getInstance();
+                if( emailBlockFacade.hasEmailBlock(em, true, true) )
+                {
+                    String identifier = "RC_" + rc.getRcCheckId() + "_STATUS_UPDATE_" + (new Date()).getTime();
+                    if( userFacade == null )
+                        userFacade = UserFacade.getInstance();
+                    userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                    ru, 
+                                                    subject, 
+                                                    UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
+                                                    0, // intParam1
+                                                    rc.getRcCheckId(), // longparam1
+                                                    0, // longparam2 (sourceCode)
+                                                    0, // longparam4 
+                                                    identifier, 
+                                                    null, 
+                                                    em );                    
+                    continue;
+                }
                 
                 content = null;
                 if( rc.getRcCheckStatusType().getIsComplete() || forceForAnyStatus )
@@ -1022,7 +1126,26 @@ public class RcMessageUtils {
                 emailMap.put( EmailConstants.TO, em );            
                 sent = emailUtils.sendEmail( emailMap );
                 if( sent )
+                {
                     ct++;
+                    if( ru!=null )
+                    {
+                        String identifier = "RC_" + rc.getRcCheckId() + "_STATUS_UPDATE_" + (new Date()).getTime();
+                        if( userFacade == null )
+                            userFacade = UserFacade.getInstance();
+                        userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                        ru, 
+                                                        subject, 
+                                                        UserActionType.SENT_EMAIL.getUserActionTypeId(), 
+                                                        0, // intParam1
+                                                        rc.getRcCheckId(), // longparam1
+                                                        0, // longparam2 (sourceCode)
+                                                        0, // longparam4 
+                                                        identifier, 
+                                                        null, 
+                                                        em );                    
+                    }                    
+                }
             }
            
             return ct;                
