@@ -16,6 +16,14 @@
         {
             vertical-align: middle;
         }
+        .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
+        {
+            border:0;
+            background:red;
+            color:white;
+            font-weight:normal;
+        }
+        
     </style>
     
 </ui:define>
@@ -85,7 +93,7 @@
                     <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
                 </p:commandButton>
                  &#160;
-                 <p:commandButton ajax="false" action="#{refUtils.processConfirmName}" value="#{stMessages['g.NoNotMe']}">
+                 <p:commandButton ajax="false" styleClass="notmebut" action="#{refUtils.processConfirmName}" value="#{stMessages['g.NoNotMe']}">
                     <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                  </p:commandButton>
             </h:panelGroup>

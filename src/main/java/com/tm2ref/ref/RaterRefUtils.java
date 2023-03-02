@@ -838,14 +838,20 @@ public class RaterRefUtils extends BaseRefUtils
             if( mobile!=null && !mobile.isBlank() && mobileValid )
                 mobile = GooglePhoneUtils.getFormattedPhoneNumberIntl(mobile, rc.getRcRater().getUser().getCountryCode() );
             
-            boolean created = createReferral(rc, rc.getRcRater(), refUser.getFirstName(), refUser.getLastName(), refUser.getEmail(), mobile);
+            String referralNotes = raterRefBean.getReferralNotes();
+            if( referralNotes!=null && referralNotes.isBlank() )
+                referralNotes=null;
+            
+            boolean created = createReferral(rc, rc.getRcRater(), refUser.getFirstName(), refUser.getLastName(), refUser.getEmail(), mobile, referralNotes);
            
             if( created )
+            {
                 setInfoMessage("g.XRReferralCreatedForX", new String[]{refUser.getFullname()} );
+                raterRefBean.setReferralNotes(null);
+                raterRefBean.setReferralUser(new User() );        
+            }
             else
                 setErrorMessage("g.XRReferralExistsForX", new String[]{refUser.getFullname()} );
-            
-            raterRefBean.setReferralUser(new User() );
             
             return "StayInSamePlace";
         }
@@ -1133,7 +1139,7 @@ public class RaterRefUtils extends BaseRefUtils
                         
                         // OK to contact as a referral
                         if( selIdx==1 )
-                            createReferralForRater( rc, rc.getRcRater(), rc.getRcRater().getUser() );
+                            createReferralForRater(rc, rc.getRcRater(), rc.getRcRater().getUser(), rating.getText() );
                     }
                 }
 
@@ -1446,7 +1452,7 @@ public class RaterRefUtils extends BaseRefUtils
     }
 
     
-    private boolean createReferralForRater( RcCheck rc, RcRater rater, User u ) throws Exception
+    private boolean createReferralForRater( RcCheck rc, RcRater rater, User u, String textNotes) throws Exception
     {
         try
         {
@@ -1480,10 +1486,18 @@ public class RaterRefUtils extends BaseRefUtils
             rfrl.setRcRaterId(rater.getRcRaterId());
             rfrl.setUserId(u.getUserId());
             rfrl.setReferrerUserId(rater.getUserId());
-            rfrl.setRcReferralTypeId( u.getUserId()==rater.getUserId() ? 0 : 1);
+            rfrl.setRcReferralTypeId(u.getUserId()==rater.getUserId() ? 0 : 1);
             rfrl.setOrgId(rater.getOrgId());
             rfrl.setCreateDate( new Date() );
+            rfrl.setLastUpdate( rfrl.getCreateDate() );
             rfrl.setRcScriptId( rc.getRcScriptId());    
+            if( rc.getRcScript()!=null )
+                rfrl.setTargetRole(rc.getRcScript().getName() );
+            if( textNotes!=null && !textNotes.isBlank() )
+                rfrl.setReferrerNotes(textNotes);
+            else
+                rfrl.setReferrerNotes(null);
+            
             
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
@@ -1504,12 +1518,12 @@ public class RaterRefUtils extends BaseRefUtils
         }
         catch( Exception e )
         {
-            LogService.logIt( e, "RaterRefUtils.createReferralForRater() " + rater.toString() );
+            LogService.logIt(e, "RaterRefUtils.createReferralForRater() " + rater.toString() );
             throw e;
         }
     }
 
-    private boolean createReferral( RcCheck rc, RcRater rater, String firstName, String lastName, String email, String phone ) throws Exception
+    private boolean createReferral( RcCheck rc, RcRater rater, String firstName, String lastName, String email, String phone, String textNotes) throws Exception
     {
         try
         {
@@ -1521,7 +1535,7 @@ public class RaterRefUtils extends BaseRefUtils
             
             if( phone!=null && !phone.isBlank() && !GooglePhoneUtils.isNumberValid(phone, rater.getUser().getCountryCode() ) )
             {
-                LogService.logIt( "RaterRefUtils.createReferral() Phone number (" + phone + ") not valid for country code=" + rater.getUser().getCountryCode() + ".  Ignoring phone." );
+                LogService.logIt("RaterRefUtils.createReferral() Phone number (" + phone + ") not valid for country code=" + rater.getUser().getCountryCode() + ".  Ignoring phone." );
                 phone=null;
             }
             
@@ -1594,11 +1608,11 @@ public class RaterRefUtils extends BaseRefUtils
                 u = userFacade.saveUser(u, true );
             }
             
-            return createReferralForRater( rc, rater, u );
+            return createReferralForRater(rc, rater, u, textNotes );
         }
         catch( Exception e )
         {
-            LogService.logIt( e, "RaterRefUtils.createReferralForRater() " + rc.toString() + ", " + rater.toString() );
+            LogService.logIt(e, "RaterRefUtils.createReferralForRater() " + rc.toString() + ", " + rater.toString() );
             throw e;
         }
     }

@@ -62,10 +62,27 @@ public class RcReferral  implements Serializable
     @Column(name="rcscriptid")
     private int rcScriptId;
     
+    @Column(name="targetrole")
+    private String targetRole;
+    
+    @Column(name="referrernotes")
+    private String referrerNotes;
+    
+    @Column(name="notes")
+    private String notes;
+    
+    
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="lastupdate")
+    private Date lastUpdate;
+
+    
+    
     @Override
     public String toString() {
         return "RcReferral{" + "rcReferralId=" + rcReferralId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", userId=" + userId + '}';
@@ -165,6 +182,38 @@ public class RcReferral  implements Serializable
 
     public void setRcReferralTypeId(int rcReferralTypeId) {
         this.rcReferralTypeId = rcReferralTypeId;
+    }
+
+    public String getTargetRole() {
+        return targetRole;
+    }
+
+    public void setTargetRole(String targetRole) {
+        this.targetRole = targetRole;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getReferrerNotes() {
+        return referrerNotes;
+    }
+
+    public void setReferrerNotes(String referrerNotes) {
+        this.referrerNotes = referrerNotes;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     

@@ -22,6 +22,14 @@
             /* box-shadow: 0 0 15px 4px #a0c2de; */
             border: 1px solid #dddddd;
         }
+        .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
+        {
+            border:0;
+            background:red;
+            color:white;
+            font-weight:normal;
+        }
+        
     </style> 
     
 </ui:define>
@@ -94,7 +102,7 @@
                     <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
                 </p:commandButton>
                 &#160;
-                <p:commandButton ajax="true"  value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
+                <p:commandButton ajax="true" styleClass="notmebut" value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
                 </p:commandButton>                
                 &#160;
                 <p:commandButton ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>

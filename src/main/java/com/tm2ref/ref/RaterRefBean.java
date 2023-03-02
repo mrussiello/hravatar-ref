@@ -29,6 +29,8 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
     
     private User referralUser;
     
+    private String referralNotes;
+    
     
     public static RaterRefBean getInstance()
     {
@@ -121,6 +123,14 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
 
     public void setReferralUser(User referralUser) {
         this.referralUser = referralUser;
+    }
+
+    public String getReferralNotes() {
+        return referralNotes;
+    }
+
+    public void setReferralNotes(String referralNotes) {
+        this.referralNotes = referralNotes;
     }
 
 

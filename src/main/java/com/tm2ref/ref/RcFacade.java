@@ -212,6 +212,8 @@ public class RcFacade
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
                         
+            ir.setLastUpdate( new Date() );
+            
             if( ir.getRcCheckId() > 0 )
             {
                 em.merge( ir );
@@ -233,7 +235,6 @@ public class RcFacade
         {
             throw e;
         }
-
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.saveRcReferral() " + ir.toString() );

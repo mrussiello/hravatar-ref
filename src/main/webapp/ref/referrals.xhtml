@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -98,6 +97,8 @@
 
             <p:inputText size="18" value="#{raterRefBean.referralUser.mobilePhone}" placeholder="#{stMessages['g.MobilePhone']}"/>
 
+            <p:inputTextarea rows="3" cols="30" value="#{raterRefBean.referralNotes}" placeholder="#{stMessages['g.NoteToEmployer']}" />
+            
             <p:commandButton ajax="false" action="#{raterRefUtils.processCreateReferral}" title="#{stMessages['g.XRCreateReferralInfo']}" value="#{stMessages['g.XRCreateReferral']}"/>
             
         </h:panelGrid>
