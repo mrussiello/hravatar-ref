@@ -1075,7 +1075,7 @@ public class BaseFormatter {
             Report report = ReportFacade.getInstance().getReport(reportId);
 
             String title = getReportName( report );
-            String pdfImgUrl = RuntimeConstants.getStringValue("baseadminurl") + "/resources/images/pdf_download2.png";
+            String pdfImgUrl = RuntimeConstants.getStringValue("baseadminurl") + "/images/pdf_download2.png";
             sb.append( "<tr " + style + "><td style=\"vertical-align:middle;text-align:center;paddding:7px;width:10%\"><a href=\"" + url + "\" title=\"" + lmsg("g.RcPdfDownloadTitle" ) + "\"><img src=\"" + pdfImgUrl + "\" alt=\"\"/></a></td><td style=\"width:90%;vertical-align:middle;text-align:left;paddding:7px\"><a href=\"" + url + "\" title=\"" + lmsg("g.RcPdfDownloadTitle" ) + "\">"+ title + "</a></td></tr>\n" );            
         }
 
