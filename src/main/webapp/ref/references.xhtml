@@ -200,7 +200,7 @@
                 &#160;
                 <p:commandLink rendered="#{rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn=false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
                     <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
-                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
+                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
                 </p:commandLink>
                 &#160;                
                 <p:commandLink rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">

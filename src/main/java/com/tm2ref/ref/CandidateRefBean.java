@@ -23,6 +23,7 @@ import jakarta.inject.Named;
 public class CandidateRefBean  extends BaseRefBean implements Serializable {
     
     RcRater rcRater;
+    RcRater rcRater2;
     
     int candidateInputNumber = 1;
     String candidateInputStr = null;
@@ -40,6 +41,7 @@ public class CandidateRefBean  extends BaseRefBean implements Serializable {
     public void clearBean()
     {
         this.rcRater = null;
+        this.rcRater2=null;
         backToCore = false;
     }
     
@@ -102,6 +104,14 @@ public class CandidateRefBean  extends BaseRefBean implements Serializable {
 
     public void setBackToCore(boolean backToCore) {
         this.backToCore = backToCore;
+    }
+
+    public RcRater getRcRater2() {
+        return rcRater2;
+    }
+
+    public void setRcRater2(RcRater rcRater2) {
+        this.rcRater2 = rcRater2;
     }
     
     

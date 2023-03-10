@@ -596,6 +596,7 @@ public class CandidateRefUtils extends BaseRefUtils
         RcCheck rc = null;
         try
         {
+            candidateRefBean.clearBean();
             rc = refBean.getRcCheck();            
             if( rc == null )
             {
@@ -984,33 +985,46 @@ public class CandidateRefUtils extends BaseRefUtils
             }
             
             
-            candidateRefBean.clearBean();
+            // candidateRefBean.clearBean();
             
-            User ru = new User();
-            
+            // Create a new user
+            User ru = new User();            
             ru.setCountryCode( rc.getUser().getCountryCode() );
             
-            rcRater = new RcRater();
-            rcRater.setRcCheckId( rc.getRcCheckId() );
-            rcRater.setOrgId( rc.getOrgId() );
-            rcRater.setLocale(getLocale() );
+            rcRater = candidateRefBean.getRcRater();
+            
+            if( rcRater!=null && rcRater.getRcRaterId()>0 )
+            {
+                rcRater=partlyCloneRcRaterForNewReference(rcRater);
+                candidateRefBean.setRcRater(rcRater);
+            }
+            
+            if( rcRater==null )
+            {
+                // create a new rater
+                rcRater = new RcRater();
+                rcRater.setRcCheckId( rc.getRcCheckId() );
+                rcRater.setOrgId( rc.getOrgId() );
+                rcRater.setLocale(getLocale() );                
+                rcRater.setCandidateRoleResp(candRoleResp);
+                rcRater.setSourceUserId( rc.getUserId() );
+                rcRater.setRcRaterStatusTypeId( RcRaterStatusType.CREATED.getRcRaterStatusTypeId() );
+                rcRater.setContactMethodTypeId( RcContactMethodType.BOTH.getRcContactMethodTypeId() );
+                // rcRater.setRcRaterSourceType( RcRaterSourceType.CANDIDATE );
+                rcRater.setRcRaterSourceTypeId( RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId() );
+
+                rcRater.setRcRaterRoleTypeId( RcRaterRoleType.PEER.getRcRaterRoleTypeId() );
+                rcRater.setRcRaterTypeId( RcRaterType.RATER.getRcRaterTypeId() );
+                rcRater.setTempEmail(null);
+                rcRater.setTempMobile(null);
+                rcRater.setNeedsResendEmail(false);
+                rcRater.setNeedsResendMobile(false);
+                rcRater.setObservationStartDate( candidateRefBean.getLastObsStartDate());
+                rcRater.setObservationEndDate( candidateRefBean.getLastObsEndDate() );
+            }
+
+            // place cleared rater and user in rcref bean.
             rcRater.setUser( ru );
-            rcRater.setCandidateRoleResp(candRoleResp);
-            rcRater.setSourceUserId( rc.getUserId() );
-            rcRater.setRcRaterStatusTypeId( RcRaterStatusType.CREATED.getRcRaterStatusTypeId() );
-            rcRater.setContactMethodTypeId( RcContactMethodType.BOTH.getRcContactMethodTypeId() );
-            // rcRater.setRcRaterSourceType( RcRaterSourceType.CANDIDATE );
-            rcRater.setRcRaterSourceTypeId( RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId() );
-            
-            rcRater.setRcRaterRoleTypeId( RcRaterRoleType.PEER.getRcRaterRoleTypeId() );
-            rcRater.setRcRaterTypeId( RcRaterType.RATER.getRcRaterTypeId() );
-            rcRater.setTempEmail(null);
-            rcRater.setTempMobile(null);
-            rcRater.setNeedsResendEmail(false);
-            rcRater.setNeedsResendMobile(false);
-            rcRater.setObservationStartDate( candidateRefBean.getLastObsStartDate());
-            rcRater.setObservationEndDate( candidateRefBean.getLastObsEndDate() );
-            
             candidateRefBean.setRcRater(rcRater);
             
             // OK we can edit.                        
@@ -1056,7 +1070,7 @@ public class CandidateRefUtils extends BaseRefUtils
             if( !refPageType.getIsCore3() )
                 return getViewFromPageType( refBean.getRefPageType() );
             
-            rcRater = candidateRefBean.getRcRater();            
+            rcRater = candidateRefBean.getRcRater2();            
             if( rcRater==null )
                 throw new Exception( "RcRater is null!" );            
             
@@ -1230,6 +1244,36 @@ public class CandidateRefUtils extends BaseRefUtils
         }                                
     }
     
+    
+    private RcRater partlyCloneRcRaterForNewReference( RcRater rcRater )
+    {
+        if( rcRater==null )
+            return null;
+        
+        RcRater rr = new RcRater();                
+        rr.setRcCheck(rcRater.getRcCheck());
+        rr.setObservationStartDate( rcRater.getObservationStartDate());
+        rr.setObservationEndDate( rcRater.getObservationEndDate());
+        rr.setLocale( rcRater.getLocale());
+        rr.setOrgId( rcRater.getOrgId());
+        rr.setRcCheckId(rcRater.getRcCheckId());
+        rr.setRcRaterRoleTypeId(rcRater.getRcRaterRoleTypeId());
+        rr.setRcRaterSourceTypeId(rr.getRcRaterSourceTypeId());
+        rr.setCompanyName(rcRater.getCompanyName());
+        rr.setCandidateRoleResp( rcRater.getCandidateRoleResp() );
+        rr.setRcRaterStatusTypeId( RcRaterStatusType.CREATED.getRcRaterStatusTypeId() );
+        rr.setContactMethodTypeId( RcContactMethodType.BOTH.getRcContactMethodTypeId() );
+        rr.setRcRaterSourceTypeId( RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId() );
+        rr.setRcRaterTypeId( RcRaterType.RATER.getRcRaterTypeId() );
+        rr.setTempEmail(null);
+        rr.setTempMobile(null);
+        rr.setNeedsResendEmail(false);
+        rr.setNeedsResendMobile(false);
+
+        rr.setUser(new User());                
+        return rr;            
+    }
+    
     public String processSaveRater()
     {
         getCorpBean();
@@ -1261,9 +1305,13 @@ public class CandidateRefUtils extends BaseRefUtils
             if( rcRater==null )
                 throw new Exception( "RcRater is null!" );
 
-            long rcRtrReq = this.getRcRaterIdFmRequest();
+            long rcRtrReq = getRcRaterIdFmRequest();
             if( rcRtrReq!=rcRater.getRcRaterId() )
-                throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+            {
+                LogService.logIt( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+                return processViewRaters();
+                // throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+            }
                         
             if( rcRater.getRcRaterRoleType().equals( RcRaterRoleType.UNKNOWN ) )
                 throw new STException( rc.getRcCheckType().getIsPrehire() ? "g.XCErrSelectRoleType" : "g.XCErrSelectRoleType.reviewer" );
@@ -1272,6 +1320,9 @@ public class CandidateRefUtils extends BaseRefUtils
                 throw new STException( "g.XCRoleResp4RaterReqd" );
                         
             User user = rcRater.getUser();
+            if( user==null )
+                throw new Exception( "RcRater.user is null." );
+            
             if( !user.getHasNameEmail() )
                 throw new STException( "g.XCErrFullNameEmailReqd" );
 
@@ -1348,7 +1399,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     else if( rcRater.getRcRaterId()>0  )
                         LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.0 created new Rater rcRaterId=" + rcRater.getRcRaterId() + " but found an existing Rater rcRaterId=" + r2.getRcRaterId() + " for the same email. However, the other one has been sent so cannot delete it.");                                                
                     
-                    candidateRefBean.setRcRater(null);
+                    candidateRefBean.setRcRater(this.partlyCloneRcRaterForNewReference(rcRater));
                     
                     if( r2.getRcRaterSourceType().getIsCandidateOrEmployee() )
                         setErrorMessage("g.XCFoundUserAndExistingRaterX", new String[] { getRcCheckRaterName(), getRcCheckTypeName(), u2.getFullname(), u2.getEmail()} );
@@ -1491,6 +1542,9 @@ public class CandidateRefUtils extends BaseRefUtils
                 
                 if( rc.getNeedsSupervisors() )
                     this.setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
+                
+                RcRater rr = partlyCloneRcRaterForNewReference(  rcRater );                
+                candidateRefBean.setRcRater(rr);
                 
                 return "/ref/references.xhtml";
             }
