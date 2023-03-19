@@ -552,6 +552,10 @@ public class RaterRefUtils extends BaseRefUtils
     public boolean getNeedsCore2() throws Exception
     {
         getRefBean();
+        
+        if( refBean.getRcCheck()==null )
+            return false;
+        
         return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();        
     }
 
