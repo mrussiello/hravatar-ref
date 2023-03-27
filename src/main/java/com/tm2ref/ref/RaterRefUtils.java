@@ -159,9 +159,13 @@ public class RaterRefUtils extends BaseRefUtils
         if( getIsCurrentItemCommentRequiredAnyScore() )
             return true;
         
-                // Has Thresholds
-        if( refBean.getRcCheck().getRcScript()!=null )
+        getRefBean();
+        
+        // Has Thresholds
+        if( raterRefBean.getRcItem()!=null && refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript()!=null )
         {
+            // LogService.logIt( "RaterRefUtils.getIsCurrentItemCommentRequiredForScore() high=" + high + ", score=" + score + ", raterRefBean.getRcItem().getCommentThresholdLow()=" + raterRefBean.getRcItem().getCommentThresholdLow() +", raterRefBean.getRcItem().getCommentThresholdHigh()=" + raterRefBean.getRcItem().getCommentThresholdHigh() );
+            
             // has low threshold and the score is below or equal to threshold
             if( !high && raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() && score<=raterRefBean.getRcItem().getCommentThresholdLow() )
                 return true;
@@ -1146,6 +1150,7 @@ public class RaterRefUtils extends BaseRefUtils
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;
                         }
+                                                
                         else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
                         {
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
