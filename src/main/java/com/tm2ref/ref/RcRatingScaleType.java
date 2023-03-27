@@ -60,6 +60,10 @@ public enum RcRatingScaleType implements Serializable
         return 3.0f;
     }
 
+    public float getPercentOfRange( float score )
+    {
+        return 100f*(score-getMinScore())/(getMaxScore()-getMinScore());
+    }
     
     
     public float getMaxLowRatedCompScore() {

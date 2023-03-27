@@ -99,7 +99,83 @@ public class RaterRefUtils extends BaseRefUtils
         return MessageFactory.getStringMessage( getLocale(), "g.XRSkipButn" );
     }
 
+    
+    public boolean getIsCurrentItemCommentRequiredAnyScore()
+    {
+        getRefBean();
+        
+        if( refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript().getAllCommentsRequiredB() )
+            return true;
+        
+        if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null || !raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getCanHaveComments() || raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments()<=1 )
+            return false;
 
+        if( refBean.getRcCheck().getRcScript().getNoCommentsRatingItemsB() && raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getIsRating() )
+            return false;
+        
+        if( raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments()==RcItemCommentsRequiredType.REQUIRED.getRcItemCommentsRequiredTypeId() )
+            return true;
+
+        RcItemCommentsRequiredType rt = RcItemCommentsRequiredType.getValue( raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments() );
+        
+        if( rt.getAreCommentsRequired( refBean.getRefUserType() ) )
+            return true;
+        
+        /*
+        // Has Thresholds
+        if( refBean.getRcCheck().getRcScript()!=null && 
+            raterRefBean.getRcItemWrapper().getRcRating()!=null && 
+            raterRefBean.getRcItemWrapper().getRcRating().getIsCompleteOrHigher() && 
+            raterRefBean.getRcItemWrapper().getRcRating().getHasNumericScore() && 
+            (raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() || raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() ) 
+            )
+        {
+            // has low threshold and the score is below or equal to threshold
+            if( raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() && raterRefBean.getRcItemWrapper().getRcRating().getScore()<=raterRefBean.getRcItem().getCommentThresholdLow() )
+                return true;
+
+            // has high threshold and the score is above or equal to threshold
+            if( raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() && raterRefBean.getRcItemWrapper().getRcRating().getScore()>=raterRefBean.getRcItem().getCommentThresholdHigh() )
+                return true;
+        }
+        */
+        
+        return false;
+    }
+
+    public boolean getIsCurrentItemCommentRequiredForLowScore( float score )
+    {
+        return getIsCurrentItemCommentRequiredForScore( false, score );
+    }
+
+    public boolean getIsCurrentItemCommentRequiredForHighScore( float score )
+    {
+        return getIsCurrentItemCommentRequiredForScore( true, score );
+    }
+    
+    
+    public boolean getIsCurrentItemCommentRequiredForScore( boolean high, float score )
+    {
+        if( getIsCurrentItemCommentRequiredAnyScore() )
+            return true;
+        
+                // Has Thresholds
+        if( refBean.getRcCheck().getRcScript()!=null )
+        {
+            // has low threshold and the score is below or equal to threshold
+            if( !high && raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() && score<=raterRefBean.getRcItem().getCommentThresholdLow() )
+                return true;
+
+            // has high threshold and the score is above or equal to threshold
+            if( high && raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() && score>=raterRefBean.getRcItem().getCommentThresholdHigh() )
+                return true;
+        }
+                
+        return false;
+    }
+    
+    
+    
     public void doEnterCore2() throws Exception
     {
         getRefBean();
@@ -1060,15 +1136,28 @@ public class RaterRefUtils extends BaseRefUtils
                         rating.setScore(-1);
                         rating.setSelectedResponse( "" );
                     }
+                    
+                    // No comments in submission
                     if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
                     {
                         rating.setText( null );
-                        if( !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                        if( getIsCurrentItemCommentRequiredAnyScore() ) //   !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
                         {
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;
                         }
-
+                        else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
+                        {
+                            infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
+                            complete = false;                            
+                        }
+                        else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForHighScore( rating.getScore() ) )
+                        {
+                            infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
+                            complete = false;                            
+                        }
+                        
+                        /*
                         else if( !rc.getRcScript().getNoCommentsRatingItemsB() &&  itm.getIncludeComments()==1 && itm.getIncludeNumRatingB() && (validMessage==null || validMessage.isBlank()) )
                         {
                             if( itm.getCommentThresholdLow()>ratingScale.getCommentThresholdLow() && rating.getScore()>=1f && itm.getCommentThresholdLow()>=rating.getScore() )
@@ -1083,6 +1172,7 @@ public class RaterRefUtils extends BaseRefUtils
                                 complete = false;
                             }
                         }
+                        */
 
                     }
                 }
@@ -1096,7 +1186,8 @@ public class RaterRefUtils extends BaseRefUtils
                 if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
                 {
                     rating.setText( null );
-                    if( !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                    // if( !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                    if( getIsCurrentItemCommentRequiredAnyScore() )
                     {
                         validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                         complete = false;
@@ -1153,6 +1244,24 @@ public class RaterRefUtils extends BaseRefUtils
                     {
                         rating.setText( null );
 
+                        if( getIsCurrentItemCommentRequiredAnyScore() ) //   !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                        {
+                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
+                            complete = false;
+                        }
+                        else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
+                        {
+                            infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
+                            complete = false;                            
+                        }
+                        else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForHighScore( rating.getScore() ) )
+                        {
+                            infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
+                            complete = false;                            
+                        }
+                        
+                        
+                        /*
                         if( (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
                         {
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
@@ -1173,6 +1282,7 @@ public class RaterRefUtils extends BaseRefUtils
                                 complete = false;
                             }
                         }
+                        */
                     }
                 }
 
@@ -1236,7 +1346,9 @@ public class RaterRefUtils extends BaseRefUtils
                     if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
                     {
                         rating.setText( null );
-                        if( (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                        
+                        // if( (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
+                        if( getIsCurrentItemCommentRequiredAnyScore() )
                         {
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;

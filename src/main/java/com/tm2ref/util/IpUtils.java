@@ -16,6 +16,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.stream.JsonParsingException;
 import javax.net.ssl.SSLHandshakeException;
+import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.http.HttpStatus;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,6 +30,21 @@ import org.apache.http.impl.client.CloseableHttpClient;
 //@Stateless
 public class IpUtils {
 
+    
+    
+    public static boolean getIsIpAddressValid( String ipAddress )
+    {
+        try
+        {
+            return InetAddressValidator.getInstance().isValid(ipAddress);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "IpUtils.getIsIpAddressValid() " + ipAddress );
+        }
+        return true;
+    }
+    
     
     /**
      * returns 
@@ -61,6 +77,13 @@ public class IpUtils {
         
         if( ipAddress.indexOf(",")>0 )
             ipAddress=ipAddress.substring(0,ipAddress.indexOf(",")).trim();
+
+        if( !getIsIpAddressValid( ipAddress ) )
+        {
+            LogService.logIt( "IpFacade.updateIpLocationData() ipAddress is NOT Valid. ipAddress=" + ipAddress );
+            return out;
+        }
+
         
         // String uri = RuntimeConstants.getStringValue("FreeGeoIpURI") + ipAddress;
         String uri = RuntimeConstants.getStringValue("FreeGeoIpURI") + ipAddress + "?access_key=" + RuntimeConstants.getStringValue( "IpStackAccessKey" );

@@ -90,6 +90,8 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
         
     }
     
+    
+    
     public RcItemFormatType getRcItemFormatType()
     {
         if( rcItemWrapper==null || rcItemWrapper.getRcItem()==null )
