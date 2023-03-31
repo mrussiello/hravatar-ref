@@ -11,6 +11,7 @@ import com.tm2ref.global.I18nUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.ref.RcMessageUtils;
 import com.tm2ref.ref.RcReminderType;
+import com.tm2ref.ref.RcScriptFacade;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
 import com.tm2ref.user.UserFacade;
@@ -26,6 +27,7 @@ import java.util.List;
 public class ReminderUtils 
 {
     RcFacade rcFacade;
+    RcScriptFacade rcScriptFacade;
     RcReminderFacade rcReminderFacade;
     UserFacade userFacade;
     
@@ -382,6 +384,14 @@ public class ReminderUtils
                 if( rcFacade==null )
                     rcFacade=RcFacade.getInstance();
                 rc.setRcSuborgPrefs( rcFacade.getRcSuborgPrefsForSuborgId( rc.getSuborgId() ));            
+            }
+            
+            if( rc.getRcScript()==null )
+            {
+                if( rcScriptFacade==null )
+                    rcScriptFacade=RcScriptFacade.getInstance();
+                
+                rc.setRcScript( rcScriptFacade.getRcScript( rc.getRcScriptId()));
             }
             
             
