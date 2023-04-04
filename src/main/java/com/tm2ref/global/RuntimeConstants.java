@@ -290,9 +290,9 @@ public class RuntimeConstants
             {
                 Properties props = new Properties();
 
-                try
+                try (FileInputStream  fis = new FileInputStream( propertiesFile ))
                 {
-                    props.load( new FileInputStream( propertiesFile ) );
+                    props.load( fis );
                 }
 
                 catch( Exception e )
