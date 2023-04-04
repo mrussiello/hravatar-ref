@@ -31,13 +31,13 @@
                 <h:panelGroup></h:panelGroup>
                 <h:panelGroup></h:panelGroup>
 
-                 <h:outputLabel for="username" value="Email/Username:" />
+                 <p:outputLabel for="username" value="Email/Username:" />
                  <p:inputText id="username" value="#{userUtils.logonName}" autocomplete="username" label="username" validatorMessage="Username is required.">
                     <f:validateLength minimum="2" />
                 </p:inputText>
                 <h:panelGroup></h:panelGroup>
 
-                 <h:outputLabel for="password" value="Password:" />
+                 <p:outputLabel for="password" value="Password:" />
                  <p:password id="password"
                              value="#{userUtils.logonKey}" label="password" autocomplete="current-password"  validatorMessage="Password is required." feedback="false">
                     <f:validateLength minimum="4" maximum="20" />

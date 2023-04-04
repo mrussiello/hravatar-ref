@@ -129,6 +129,8 @@ public class CookieUtils
 
             cookie.setMaxAge( maxAge );
 
+            cookie.setAttribute("SameSite", "STRICT");
+            
             if( RuntimeConstants.getHttpsOnly() )
                 cookie.setSecure(true);
             
