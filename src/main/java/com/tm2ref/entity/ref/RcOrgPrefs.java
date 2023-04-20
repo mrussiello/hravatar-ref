@@ -95,6 +95,9 @@ public class RcOrgPrefs implements Serializable, Cloneable
     @Column(name="candidatecannotaddraters")
     private int candidateCannotAddRaters;
 
+    @Column(name="candidateoneraternosend")
+    private int candidateOneRaterNoSend;
+            
     @Column(name="invitationsubj")
     private String invitationSubj;
 
@@ -487,6 +490,14 @@ public class RcOrgPrefs implements Serializable, Cloneable
 
     public void setTopBottomSrcTypeId(int topBottomSrcTypeId) {
         this.topBottomSrcTypeId = topBottomSrcTypeId;
+    }
+
+    public int getCandidateOneRaterNoSend() {
+        return candidateOneRaterNoSend;
+    }
+
+    public void setCandidateOneRaterNoSend(int candidateOneRaterNoSend) {
+        this.candidateOneRaterNoSend = candidateOneRaterNoSend;
     }
 
 

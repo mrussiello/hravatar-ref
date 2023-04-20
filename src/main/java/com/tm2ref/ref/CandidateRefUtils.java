@@ -1524,14 +1524,22 @@ public class CandidateRefUtils extends BaseRefUtils
             
             LogService.logIt( "CandidateRefUtils.processSaveRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));            
             
-            if( !refBean.getAdminOverride() && send )
+            if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
             {
                 int[] out = sendRcCheckToRater(rc, rcRater, false, false, true);
                 LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );                            
             }
+
+            else if( refBean.getAdminOverride() && send && rcRater.getRaterNoSend()==1 )
+                this.setStringInfoMessage( "Did not send to Rater because of AdminOverride and/or designated No Send." );
+
             else if( refBean.getAdminOverride() && send )
                 this.setStringInfoMessage( "Did not send to Rater because of AdminOverride." );
-                        
+                   
+            if( send && rcRater.getRaterNoSend()==1 )
+                setInfoMessage( "g.XCNoSendNotSent", new String[]{rcRater.getUser().getFullname()} );
+                
+            
             if( exit )
             {
                 // Must come after sending.

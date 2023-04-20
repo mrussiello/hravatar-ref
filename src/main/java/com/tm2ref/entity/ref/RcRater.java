@@ -107,6 +107,10 @@ public class RcRater implements Serializable, Cloneable
     @Column(name="raterseconds")
     private int raterSeconds;
 
+    @Column(name="raternosend")
+    private int raterNoSend;
+
+
 
     @Column(name="ipaddress")
     private String ipAddress;
@@ -544,7 +548,7 @@ public class RcRater implements Serializable, Cloneable
         if( this.rcRaterId<=0 )
             return false;
 
-        if( this.getIsCandidateOrEmployee() )
+        if( this.getIsCandidateOrEmployee() || raterNoSend==1 )
             return false;
 
         if( getRcRaterSourceType().getIsAccountUserOrUnknown() )
@@ -976,7 +980,21 @@ public class RcRater implements Serializable, Cloneable
         this.rcReferralList = rcReferralList;
     }
 
+      public int getRaterNoSend() {
+        return raterNoSend;
+    }
 
+    public void setRaterNoSend(int raterNosend) {
+        this.raterNoSend = raterNosend;
+    }
+
+    public boolean getRaterNoSendB() {
+        return raterNoSend==1;
+    }
+
+    public void setRaterNoSendB(boolean b) {
+        this.raterNoSend = b ? 1 : 0;
+    }
 
 
 

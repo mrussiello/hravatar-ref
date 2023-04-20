@@ -116,6 +116,9 @@ public class RcCheck implements Serializable, Cloneable
     @Column(name="candidatecannotaddraters")
     private int candidateCannotAddRaters;
 
+    @Column(name="candidateoneraternosend")
+    private int candidateOneRaterNoSend;
+        
     @Column(name="askforreferrals")
     private int askForReferrals;
     
@@ -340,6 +343,21 @@ public class RcCheck implements Serializable, Cloneable
     //@Transient
     //private RefUserType refUserType;
 
+    
+    public int getNoSendRaterCount() 
+    {
+        if( this.rcRaterList==null || rcRaterList.isEmpty() )
+            return 0;
+        int c = 0;
+        for( RcRater r : rcRaterList )
+        {
+            if( r.getRaterNoSendB() )
+                c++;
+        }
+        return c;
+    }
+ 
+    
     
     
     @Override
@@ -1656,6 +1674,21 @@ public class RcCheck implements Serializable, Cloneable
         this.topBottomSrcTypeId = topBottomSrcTypeId;
     }
 
-    
+    public int getCandidateOneRaterNoSend() {
+        return candidateOneRaterNoSend;
+    }
+
+    public void setCandidateOneRaterNoSend(int candidateOneRaterNoSend) {
+        this.candidateOneRaterNoSend = candidateOneRaterNoSend;
+    }
+
+    public boolean getCandidateOneRaterNoSendB() {
+        return candidateOneRaterNoSend==1;
+    }
+
+    public void setCandidateOneRaterNoSendB(boolean b) {
+        this.candidateOneRaterNoSend = b ? 1 : 0;
+    }
+
     
 }

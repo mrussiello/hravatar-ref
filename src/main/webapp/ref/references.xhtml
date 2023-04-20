@@ -97,6 +97,7 @@
                 <f:param value="#{refUtils.rcCheckTypeName}"/>                
                 <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
             </h:outputFormat>
+            
             <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.minsnosups']}">
                 <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
                 <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
@@ -117,6 +118,9 @@
                 <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
             </h:outputFormat>
 
+            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount le 0}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
+            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount ge 1}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesUsed']}"/>
+            
             <!--
             <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.needsSupervisors}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.lowsupers']}">
                 <f:param value="#{refBean.rcCheck.raterRoleTypeCountsCandidate[1]}"/>

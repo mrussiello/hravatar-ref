@@ -86,6 +86,16 @@
             <p:inputText size="30" value="#{candidateRefBean.rcRater.user.mobilePhone}" maxlength="79" placeholder="#{stMessages['g.MobilePhone']}"/>
             <h:panelGroup></h:panelGroup>
             
+            <h:panelGroup rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and (refBean.rcCheck.noSendRaterCount le 0 or candidateRefBean.rcRater.raterNoSendB)}"></h:panelGroup>
+            <h:panelGroup rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and (refBean.rcCheck.noSendRaterCount le 0 or candidateRefBean.rcRater.raterNoSendB)}">
+                <p:selectBooleanCheckbox disabled="#{candidateRefBean.rcRater.raterNoSendB}" value="#{candidateRefBean.rcRater.raterNoSendB}" />
+                &#160;
+                <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCNoSend']}"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and (refBean.rcCheck.noSendRaterCount le 0 or candidateRefBean.rcRater.raterNoSendB)}">
+                <misc:infobubble theDivId="nosendraterinfodiv" theText="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
+            </h:panelGroup>
+            
             <h:outputText styleClass="ttformtext" value="#{stMessages['g.Role']}:"/>
             <h:panelGroup style="white-space:nowrap">
                 <p:selectOneMenu value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}">
@@ -148,7 +158,10 @@
                 <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.Save']}">
                     <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="false"/>
                 </p:commandButton>
-                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId le 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.XCSendInvitation']}" title="#{stMessages['g.XCSendInvitationInfo']}">
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId le 0 and (not refBean.rcCheck.candidateOneRaterNoSendB or refBean.rcCheck.noSendRaterCount ge 1)}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.XCSendInvitation']}" title="#{stMessages['g.XCSendInvitationInfo']}">
+                    <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="true"/>
+                </p:commandButton>
+                <p:commandButton rendered="#{candidateRefBean.rcRater.rcRaterId le 0 and refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount le 0}" ajax="false" action="#{candidateRefUtils.processSaveRater}" value="#{stMessages['g.XCSendInvitationIfAllowed']}" title="#{stMessages['g.XCSendInvitationIfAllowedInfo']}">
                     <f:setPropertyActionListener target="#{candidateRefUtils.booleanParam1}" value="true"/>
                 </p:commandButton>
                 &#160;
