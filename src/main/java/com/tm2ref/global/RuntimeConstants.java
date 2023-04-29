@@ -37,7 +37,7 @@ public class RuntimeConstants
         cache.put( "services/log/logfilepattern", "/work/tm2ref2/log/tm2ref_%g_%u.log");
 
         cache.put(  "SupportEmail", "support@hravatar.com" );
-        cache.put(  "CSCaseEmails", "sandy@hravatar.com,mike@hravatar.com,steve@hravatar.com" );
+        cache.put(  "CSCaseEmails", "sandy@hravatar.com,mike@hravatar.com" );
         cache.put(  "SystemErrorEmails", "mike@hravatar.com" );
 
 
