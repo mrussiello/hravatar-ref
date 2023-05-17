@@ -777,6 +777,7 @@ public class RcCheckUtils {
         }
             
         // if( rc.getRcRaterList()==null )
+        // always load raters. 
         rc.setRcRaterList( rcFacade.getRcRaterList( rc.getRcCheckId() ));                
         
         // Sort raters by name.
@@ -799,7 +800,8 @@ public class RcCheckUtils {
                     r.setRcRaterSourceTypeId( RcRaterSourceType.getForRcRater(rc, r).getRcRaterSourceTypeId());
 
                 r.setRcRatingList( rcFacade.getRcRatingList( rc.getRcCheckId(), r.getRcRaterId() ) );
-            }            
+            } 
+            
             Collections.sort( rc.getRcRaterList(), new RcRaterNameComparator() );
             
             // Move candidate rater record to the top slot after sorting.

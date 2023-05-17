@@ -765,6 +765,9 @@ public class CandidateRefUtils extends BaseRefUtils
             if( rc == null )
                 return;
 
+            // clone so no other operation works on this same object. 
+            rc = (RcCheck) rc.clone();
+            
             Thread.sleep((int) (5000*Math.random()));
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
@@ -911,6 +914,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             if( !refBean.getAdminOverride() )
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc ); 
+            
             CookieUtils.removeRcCheckCookie( getHttpServletResponse() );   
                         
             refBean.setRefPageType( RefPageType.CORE3 );            
