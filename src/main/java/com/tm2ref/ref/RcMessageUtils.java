@@ -1091,20 +1091,24 @@ public class RcMessageUtils {
                     emailBlockFacade = EmailBlockFacade.getInstance();
                 if( emailBlockFacade.hasEmailBlock(em, true, true) )
                 {
-                    String identifier = "RC_" + rc.getRcCheckId() + "_STATUS_UPDATE_" + (new Date()).getTime();
-                    if( userFacade == null )
-                        userFacade = UserFacade.getInstance();
-                    userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
-                                                    ru, 
-                                                    subject, 
-                                                    UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
-                                                    0, // intParam1
-                                                    rc.getRcCheckId(), // longparam1
-                                                    0, // longparam2 (sourceCode)
-                                                    0, // longparam4 
-                                                    identifier, 
-                                                    null, 
-                                                    em );                    
+                    if( ru!=null )
+                    {
+                        String identifier = "RC_" + rc.getRcCheckId() + "_STATUS_UPDATE_" + (new Date()).getTime();
+                        if( userFacade == null )
+                            userFacade = UserFacade.getInstance();
+                        userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                        ru, 
+                                                        subject, 
+                                                        UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
+                                                        0, // intParam1
+                                                        rc.getRcCheckId(), // longparam1
+                                                        0, // longparam2 (sourceCode)
+                                                        0, // longparam4 
+                                                        identifier, 
+                                                        null, 
+                                                        em );                    
+                    }
+                    
                     continue;
                 }
                 
