@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 
 
@@ -53,8 +54,13 @@ public class StringUtils
         return removeNonPrintable(str).replaceAll("[\\r\\n\\t]", "");
     }    
     
-    
-    
+    public static String capitalizeFirstChar( String inStr )
+    {
+        if( inStr==null || inStr.isBlank() )
+            return inStr;
+        
+        return Pattern.compile("^.").matcher(inStr).replaceFirst(m -> m.group().toUpperCase());
+    }
     
     public static NVPair getNVPairFromList( String name, String inStr, String delim )
     {

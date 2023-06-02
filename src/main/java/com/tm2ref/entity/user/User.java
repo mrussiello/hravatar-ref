@@ -586,7 +586,8 @@ public class User implements Serializable
         if( fn!=null )
             fn = fn.trim();
         
-        
+        if( getUserType().getNamed() )
+            fn = StringUtils.capitalizeFirstChar(fn);
         
         if( this.firstName!=null && !this.firstName.isEmpty() )
         {
@@ -634,6 +635,9 @@ public class User implements Serializable
         if( ln!=null )
             ln = ln.trim();
         
+        if( getUserType().getNamed() )
+            ln = StringUtils.capitalizeFirstChar(ln);
+                
         if( this.lastName!=null && !this.lastName.isEmpty() )
         {
             if( (ln!=null && !this.lastName.equalsIgnoreCase(ln )) || ln == null )

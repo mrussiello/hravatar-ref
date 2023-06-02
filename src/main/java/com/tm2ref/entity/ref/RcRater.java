@@ -831,6 +831,8 @@ public class RcRater implements Serializable, Cloneable
 
     public void setCompanyName(String c) {
         
+        c = StringUtils.capitalizeFirstChar(c);
+                
         if( c!=null && c.length()>254) 
             c = c.substring(0, 254 );
         this.companyName = c;
