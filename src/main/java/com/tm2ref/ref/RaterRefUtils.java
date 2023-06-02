@@ -476,7 +476,6 @@ public class RaterRefUtils extends BaseRefUtils
 
         boolean discrete = refBean!=null && refBean.getRcCheck().getRcScript()!=null && refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB();
 
-
         List<SelectItem> out = new ArrayList<>();
 
         RcItemWrapper rciw = raterRefBean.getRcItemWrapper();
@@ -544,6 +543,40 @@ public class RaterRefUtils extends BaseRefUtils
         return out;
     }
 
+    public List<Object[]> getRcItemRadioInfoArrayList()
+    {
+        List<Object[]> out = new ArrayList<>();
+        RcItemWrapper rciw = raterRefBean.getRcItemWrapper();
+        if( rciw==null || rciw.getRcItem()==null || ( !raterRefBean.getRcItemFormatType().getIsRadio() && !raterRefBean.getRcItemFormatType().getIsCheckbox()) )
+            return out;
+
+        String[] data = null;
+        
+        RcItem itm = rciw.getRcItem();
+        if( rciw.getRcItem().getHasChoice1() )
+            out.add(  new Object[] {(int)1, itm.getChoice1()} );
+        if( rciw.getRcItem().getHasChoice2() )
+            out.add(  new Object[] {(int)2, itm.getChoice2()} );
+        if( rciw.getRcItem().getHasChoice3() )
+            out.add(  new Object[] {(int)3, itm.getChoice3()} );
+        if( rciw.getRcItem().getHasChoice4() )
+            out.add(  new Object[] {(int)4, itm.getChoice4()} );
+        if( rciw.getRcItem().getHasChoice5() )
+            out.add(  new Object[] {(int)5, itm.getChoice5()} );
+        if( rciw.getRcItem().getHasChoice6() )
+            out.add(  new Object[] {(int)6, itm.getChoice6()} );
+        if( rciw.getRcItem().getHasChoice7() )
+            out.add(  new Object[] {(int)7, itm.getChoice7()} );
+        if( rciw.getRcItem().getHasChoice8() )
+            out.add(  new Object[] {(int)8, itm.getChoice8()} );
+        if( rciw.getRcItem().getHasChoice9() )
+            out.add(  new Object[] {(int)9, itm.getChoice9()} );
+        if( rciw.getRcItem().getHasChoice10() )
+            out.add(  new Object[] {(int)10, itm.getChoice10()} );
+        return out;
+    }
+    
+    
     public List<SelectItem> getRcItemRadioSelectItemList()
     {
         List<SelectItem> out = new ArrayList<>();

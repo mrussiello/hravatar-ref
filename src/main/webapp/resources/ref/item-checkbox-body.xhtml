@@ -35,13 +35,54 @@
             </h:outputFormat>
         </div>
 
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:20px;padding-bottom:20px;margin:0 auto">
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:20px;padding-bottom:20px;margin:0 auto">
 
             <ref:item-infoquestion />
             
+            <!--
             <p:selectManyCheckbox value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="grid" columns="2" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                 <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemList}"/>
             </p:selectManyCheckbox>
+            -->
+
+            <p:selectManyCheckbox id="itemradio1" value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+                    <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
+            </p:selectManyCheckbox>
+
+            <h:panelGrid columns="2" style="margin-left:10px;margin-right:auto" columnClasses="chtablecola,chtablecolb">
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" id="itrb2" for="itemradio1" itemIndex="1"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" for="itrb2" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice2}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" id="itrb3" for="itemradio1" itemIndex="2"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" for="itrb3" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice3}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" id="itrb4" for="itemradio1" itemIndex="3"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" for="itrb4" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice4}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" id="itrb5" for="itemradio1" itemIndex="4"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" for="itrb5" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice5}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" id="itrb6" for="itemradio1" itemIndex="5"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" for="itrb6" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice6}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" id="itrb7" for="itemradio1" itemIndex="6"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" for="itrb7" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice7}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" id="itrb8" for="itemradio1" itemIndex="7"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" for="itrb8" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice8}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" id="itrb9" for="itemradio1" itemIndex="8"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" for="itrb9" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice9}"/>
+
+                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" id="itrb10" for="itemradio1" itemIndex="9"/>                    
+                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
+
+            </h:panelGrid>
+            
             
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
             <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
