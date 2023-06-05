@@ -97,7 +97,7 @@ public class RcCheckUtils {
             return ALPHABET[idx];
         
         int m = (idx / ALPHABET.length) - 1;
-        int n = (idx % ALPHABET.length) - 1;
+        int n = (idx % ALPHABET.length);
         
         return ALPHABET[m] + ALPHABET[n];        
     }
