@@ -292,7 +292,10 @@ public class Org implements Serializable
 
 
     
-
+    public boolean getUseInitiatorNameInEmails()
+    {
+        return ReportUtils.getReportFlagBooleanValue("initiatornameemail", null, this, null );
+    }
 
 
     public Object clone() throws CloneNotSupportedException

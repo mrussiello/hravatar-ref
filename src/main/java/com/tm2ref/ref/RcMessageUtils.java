@@ -258,6 +258,21 @@ public class RcMessageUtils {
 
             String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : Constants.SUPPORT_EMAIL_NOREPLY;
             
+            boolean includeVia = rc.getOrg()==null || !rc.getOrg().getHasCustomSupportSendEmail();
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append( fromAddr ); // + "|" + MessageFactory.getStringMessage( getLocale(), "g.SupportEmailKey", null ) );
+            if( includeVia && rc.getOrg()!=null )
+            {
+                boolean useAdminName = rc.getAdminUser()!=null && includeVia && rc.getOrg().getUseInitiatorNameInEmails();
+                String om = useAdminName ? rc.getAdminUser().getFullname() :  rc.getOrg().getName();
+                om = StringUtils.replaceStr(om, "\"", "" );
+                om = StringUtils.truncateString(om, 60 );
+                sb.append( "|" + MessageFactory.getStringMessage(l, "g.TestInviteOrgName" , new String[]{ om } ));
+            }
+            else if( rc.getOrg()!=null )
+                sb.append( "|" + rc.getOrg().getName() );
+            
             // wrap content
             content = wrapEmailContent( content, l );
             
@@ -267,7 +282,7 @@ public class RcMessageUtils {
             emailMap.put( EmailConstants.MIME_TYPE, "text/html" );            
             emailMap.put( EmailConstants.OVERRIDE_BLOCK, "true" );                        
             emailMap.put( EmailConstants.TO, user.getEmail() );            
-            emailMap.put( EmailConstants.FROM, fromAddr );            
+            emailMap.put( EmailConstants.FROM, sb.toString() );            
             EmailUtils emailUtils = EmailUtils.getInstance();
             boolean sent = emailUtils.sendEmail( emailMap );
             
