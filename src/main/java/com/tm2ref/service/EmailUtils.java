@@ -27,6 +27,7 @@ import jakarta.mail.internet.InternetAddress;
 
 import jakarta.inject.Named;
 import jakarta.enterprise.context.RequestScoped;
+import java.util.Locale;
 import org.apache.commons.validator.routines.EmailValidator;
 
 @Named
@@ -74,26 +75,25 @@ public class EmailUtils
     {
         try
         {
-                // prepare to send
-                Map<String, Object> emailMap = new HashMap<>();
+            // prepare to send
+            Map<String, Object> emailMap = new HashMap<>();
 
-                emailMap.put( EmailConstants.MIME_TYPE , "text/plain" );
+            emailMap.put( EmailConstants.MIME_TYPE , "text/plain" );
 
-                emailMap.put( EmailConstants.SUBJECT, subj );
+            emailMap.put( EmailConstants.SUBJECT, subj );
 
-                emailMap.put( EmailConstants.CONTENT, msg );
+            msg = EmailUtils.addNoReplyMessage(msg, false, Locale.US );                        
+            emailMap.put( EmailConstants.CONTENT, msg );
 
-                emailMap.put( EmailConstants.TO, Constants.SYSTEM_ADMIN_EMAIL );
+            emailMap.put( EmailConstants.TO, Constants.SYSTEM_ADMIN_EMAIL );
 
-                // emailMap.put( EmailUtils.FROM, Constants.SUPPORT_EMAIL + "|" + MessageFactory.getStringMessage( locale , "g.SupportEmailKey", null ) );
-                emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL_NOREPLY );
+            // emailMap.put( EmailUtils.FROM, Constants.SUPPORT_EMAIL + "|" + MessageFactory.getStringMessage( locale , "g.SupportEmailKey", null ) );
+            emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL_NOREPLY );
 
-                sendEmail( emailMap );
+            sendEmail( emailMap );
 
-                Tracker.addEmailSent();
-
-                // Tracker.addEmailToAdmin();
-
+            Tracker.addEmailSent();
+            // Tracker.addEmailToAdmin();
         }
 
         catch( Exception e )
@@ -129,6 +129,25 @@ public class EmailUtils
     }
     */
 
+    public static boolean isNoReplyAddress( String a )
+    {
+        return a!=null && (a.toLowerCase().startsWith("no-reply") || a.toLowerCase().startsWith("noreply"));
+    }
+
+    public static String addNoReplyMessage( String content, boolean html, Locale locale )
+    {
+        if( content==null )
+            content="";
+        
+        if( html )
+            return content + "<p style=\"font-family: arial,calibri,sans-serif;width:600px;\">" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc") + "</p>";
+        
+        else
+            return content + "\n\n" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc");
+    }
+    
+    
+    
     /**
      * Sends an email message fia a JMS queue.
      *

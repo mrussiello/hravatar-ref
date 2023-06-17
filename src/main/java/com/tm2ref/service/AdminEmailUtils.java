@@ -9,6 +9,7 @@ import com.tm2ref.entity.cscase.CSCase;
 import com.tm2ref.global.Constants;
 import com.tm2ref.global.RuntimeConstants;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -37,6 +38,8 @@ public class AdminEmailUtils {
 
             emailMap.put( EmailConstants.SUBJECT,  subject );
 
+            content = EmailUtils.addNoReplyMessage(content, false, Locale.US );
+                        
             emailMap.put( EmailConstants.CONTENT, content );
 
             // StringBuilder sb = new StringBuilder();
