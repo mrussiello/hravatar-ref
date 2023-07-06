@@ -1430,7 +1430,20 @@ public class RaterRefUtils extends BaseRefUtils
                     rcFacade=RcFacade.getInstance();
 
                 if( !refBean.getAdminOverride() )
+                {
+                    // if new, check for existing rater id.
+                    if( rating.getRcRatingId()<=0 )
+                    {
+                        RcRating r2 = rcFacade.getRcRatingForRcRaterAndRcItem( rating.getRcRaterId(), rating.getRcItemId() );
+                        if( r2!=null )
+                        {
+                            LogService.logIt( "RaterRefUtils.doSaveItemResp() Saving a new RcRating but found existing RcRating with rcRatingId=" + r2.getRcRatingId() + " for this RcRater and RcItem. ir.getRcRaterId()=" + rating.getRcRaterId() + ", ir.getRcItemId()=" + rating.getRcItemId() + ", overWriting." );
+                            rating.setRcRatingId( r2.getRcRatingId() );
+                        }
+                    }
+
                     rcFacade.saveRcRating(rating);
+                }
 
                 if( complete || skip )
                 {
