@@ -254,7 +254,7 @@ public class RuntimeConstants
         // ////////////////////////////////////////////////////////////////////////////
         // Org-specific CS Email addresses. Comma-separated.
         // ////////////////////////////////////////////////////////////////////////////
-        cache.put( "AdditionalAffiliateSourceEmails_OrgId_107", "czarina.cruz@aseametrics.com,erick.savadera@aseametrics.com" );
+        cache.put( "AdditionalAffiliateSourceEmails_OrgId_107", "czarina.cruz@aseametrics.com,erick.savadera@aseametrics.com,ron.rivera@aseametrics.com" );
 
 
 
