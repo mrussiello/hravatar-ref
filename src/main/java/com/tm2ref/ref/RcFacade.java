@@ -654,15 +654,15 @@ public class RcFacade
             ir.setLastUpdate( new Date() );
                     
             // if new, check.
-            if( ir.getRcRatingId()<=0 )
-            {
-                RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );
-                if( r2!=null )
-                {
-                    LogService.logIt( "RcFacade.saveRcRating() Saving a new RcRating but found existing RcRating with rcRatingId=" + r2.getRcRatingId() + " for this RcRater and RcItem. ir.getRcRaterId()=" + ir.getRcRaterId() + ", ir.getRcItemId()=" + ir.getRcItemId() + ", overWriting." );
-                    ir.setRcRatingId( r2.getRcRatingId() );
-                }
-            }
+            //if( ir.getRcRatingId()<=0 )
+            //{
+            //    RcRating r2 = getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );
+            //    if( r2!=null )
+            //    {
+            //        LogService.logIt( "RcFacade.saveRcRating() Saving a new RcRating but found existing RcRating with rcRatingId=" + r2.getRcRatingId() + " for this RcRater and RcItem. ir.getRcRaterId()=" + ir.getRcRaterId() + ", ir.getRcItemId()=" + ir.getRcItemId() + ", overWriting." );
+            //        ir.setRcRatingId( r2.getRcRatingId() );
+            //    }
+            //}
             
             if( ir.getRcRatingId()>0 )
             {

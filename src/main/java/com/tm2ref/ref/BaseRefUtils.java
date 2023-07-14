@@ -240,7 +240,7 @@ public class BaseRefUtils  extends FacesUtils
             RaterRefUtils rru = RaterRefUtils.getInstance();
             rru.doEnterCore2();
 
-            refPageType.getPageFull(refUserType);
+            return refPageType.getPageFull(refUserType);
             // return rru.getNextView();
         }
         

@@ -1175,7 +1175,7 @@ public class RcCheckUtils {
         }
     }
 
-    public void performRcRaterCompletionIfReady( RcCheck rc, RcRater rater, boolean adminOverride) throws Exception
+    public boolean performRcRaterCompletionIfReady( RcCheck rc, RcRater rater, boolean adminOverride) throws Exception
     {
         try
         {
@@ -1186,7 +1186,7 @@ public class RcCheckUtils {
             if( rater.getRcRaterStatusType().getCompleteOrHigher() )
             {
                 LogService.logIt("RcCheckUtils.performRcRaterCompletionIfReady() RcRater is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
-                return;                
+                return true;                
             }
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
@@ -1200,14 +1200,21 @@ public class RcCheckUtils {
                 
                 rating = rciw.getRcRating( rater.getRcRaterId() );                
                 if( rating==null )
-                    throw new Exception( "RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() );
+                {
+                    // throw new Exception( "RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() );
+                    LogService.logIt( "RcCheckUtils.performRcRaterCompletionIfReady() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + " RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() );
+                    return false;
+                }
                     
                 if( !rating.getIsCompleteOrHigher() )
-                    throw new Exception( "RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() + ", rating status is " + rating.getRcRatingStatusType().getName() );
+                {
+                    // throw new Exception( "RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() + ", rating status is " + rating.getRcRatingStatusType().getName() );
+                    LogService.logIt( "RcCheckUtils.performRcRaterCompletionIfReady() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + " RcRater is not complete or skipped. At least one question was not answered: rcItemId=" + rciw.getRcItem().getRcItemId() + ", question=" + rciw.getRcItem().getQuestion() + ", rating status is " + rating.getRcRatingStatusType().getName() );
+                    return false;
+                }
             }
             
-            
-            
+            // At this point the rater is complete.
             rater.setRcRaterStatusTypeId( RcRaterStatusType.COMPLETED.getRcRaterStatusTypeId() );
             rater.setPercentComplete(100);
             rater.setOverallScore( computeRcRaterOverallScore( rc, rater ) );
@@ -1239,6 +1246,8 @@ public class RcCheckUtils {
             // Check for RcCheck completion if not already complete and candidate is complete.
             if( !rc.getRcCheckStatusType().getCompleteOrHigher() || rater.getInGracePeriod() )
                 performRcCheckCompletionIfReady(rc, rater.getInGracePeriod(), adminOverride);
+            
+            return true;
         }
         catch( Exception e )
         {
