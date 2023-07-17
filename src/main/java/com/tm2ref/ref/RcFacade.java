@@ -690,12 +690,13 @@ public class RcFacade
                 // let the constrain violation clear itself if necessary
                 Thread.sleep(1000);
                 
-                RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );                
-                LogService.logIt("RcFacade.saveRcRating() XXX.2 Checking for overlapping rating: " + (r2==null ? "none found" : "found " + r2.toString()) );
-                if( r2!=null && r2.getRcRatingId()!=ir.getRcRatingId() )
+                long rcRatingId = getRcRatingIdForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );   
+                // RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );                
+                LogService.logIt("RcFacade.saveRcRating() XXX.2 Checking for overlapping rating: rcRatingId=" + rcRatingId );
+                if( rcRatingId>0 )
                 {
-                    LogService.logIt("RcFacade.saveRcRating() XXX.3 Changing RcRatingId from " + ir.getRcRatingId() + " to " + r2.getRcRatingId() + " and saving." );
-                    ir.setRcRatingId( r2.getRcRatingId() );
+                    LogService.logIt("RcFacade.saveRcRating() XXX.3 Changing RcRatingId from " + ir.getRcRatingId() + " to " + rcRatingId + " and saving." );
+                    ir.setRcRatingId( rcRatingId );
                     em.persist(ir);
                     em.flush();
                 }
@@ -719,6 +720,31 @@ public class RcFacade
             throw new STException( e );
         }
     }    
+    
+    public long getRcRatingIdForRcRaterAndRcItem( long rcRaterId, int rcItemId ) throws Exception
+    {
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
+        if( pool == null )
+            throw new Exception( "Can not find Datasource" );
+        try (Connection con = pool.getConnection();
+             Statement stmt = con.createStatement() )
+        {
+            // search for incomplete.
+            String sql =  "SELECT rcratingid FROM rcrating r WHERE r.rcraterid=" + rcRaterId + " AND r.rcitemid=" + rcItemId;    
+            long rcRatingId = 0;
+            ResultSet rs = stmt.executeQuery( sql );
+            if( rs.next() )
+                rcRatingId = rs.getLong(1);
+            rs.close();
+            
+            return rcRatingId;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcFacade.findActiveRcRaterByRaterEmail() rcRaterId=" + rcRaterId + ", rcItemId=" + rcItemId);
+            return 0;
+        }        
+    }
     
     
     
