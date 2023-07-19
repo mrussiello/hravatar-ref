@@ -1183,23 +1183,28 @@ public class RaterRefUtils extends BaseRefUtils
                         rating.setSelectedResponse( "" );
                     }
                     
+                    // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.1 Rater.rating item.  score=" + rating.getScore() );
                     // No comments in submission
                     if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
                     {
+                        // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.2 Rater.rating item.  ");
                         rating.setText( null );
                         if( getIsCurrentItemCommentRequiredAnyScore() ) //   !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
                         {
+                            // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.3 Rater.rating item.  ");
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;
                         }
                                                 
                         else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
                         {
+                            // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.4 Rater.rating item. score=" + rating.getScore() + ", raterRefBean.getRcItem().getCommentThresholdLow()=" + raterRefBean.getRcItem().getCommentThresholdLow());
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
                             complete = false;                            
                         }
                         else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForHighScore( rating.getScore() ) )
                         {
+                            // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.5 Rater.rating item. score=" + rating.getScore()  + ", raterRefBean.getRcItem().getCommentThresholdHigh()=" + raterRefBean.getRcItem().getCommentThresholdHigh());
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
                             complete = false;                            
                         }
