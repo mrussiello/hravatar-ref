@@ -519,6 +519,24 @@ public class RcFacade
         }        
     }
     
+    public RcRater getRcRaterByRcCheckIdAndUserId( long rcCheckId,  long userId ) throws Exception
+    {
+        try
+        {
+            return(RcRater) em.createNamedQuery( "RcRater.findByRcCheckIdAndUserId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("rcCheckId", rcCheckId).setParameter("userId", userId).getSingleResult();
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcFacade.getRcRaterByRcCheckIdAndUserId( rcCheckId=" + rcCheckId + ", userId=" + userId + ") " );
+            throw new STException( e );
+        }                
+        
+    }
+    
     public RcRater getRcRaterByRaterAccessCode( String raterAccessCode ) throws Exception
     {
         try

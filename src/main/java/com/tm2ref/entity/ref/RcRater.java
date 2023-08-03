@@ -38,6 +38,7 @@ import jakarta.persistence.Transient;
 @NamedQueries({
         @NamedQuery( name = "RcRater.findByRcRaterId", query = "SELECT o FROM RcRater AS o WHERE o.rcRaterId=:rcRaterId" ),
         @NamedQuery( name = "RcRater.findByRcCheckId", query = "SELECT o FROM RcRater AS o WHERE o.rcCheckId=:rcCheckId" ),
+        @NamedQuery( name = "RcRater.findByRcCheckIdAndUserId", query = "SELECT o FROM RcRater AS o WHERE o.rcCheckId=:rcCheckId AND o.userId=:userId" ),
         @NamedQuery( name = "RcRater.findByRaterAccessCode", query = "SELECT o FROM RcRater AS o WHERE o.raterAccessCode=:raterAccessCode" )
 })
 public class RcRater implements Serializable, Cloneable

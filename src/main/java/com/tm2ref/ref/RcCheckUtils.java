@@ -24,6 +24,7 @@ import com.tm2ref.service.Tracker;
 import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
+import jakarta.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -597,6 +598,9 @@ public class RcCheckUtils {
     
     public RcRater createRcRaterForCandidate( RcCheck rc, boolean adminOverride ) throws Exception
     {
+        if( rc==null )
+            throw new Exception( "RcCheckUtils.createRcRaterForCandidate() RcCheck is null" );
+        
         // LogService.logIt( "RcCheckUtils.createRcRaterForCandidate() rcCheckId=" + rc.getRcCheckId() + ", rc.getCollectRatingsFmCandidate()=" + rc.getCollectRatingsFmCandidate() );
         if( !rc.getCollectRatingsFmCandidate() )
             return null;
@@ -633,35 +637,77 @@ public class RcCheckUtils {
                 return r;
             }
         }
+        
+        if( rcFacade==null )
+            rcFacade=RcFacade.getInstance();
                 
-            
-        RcRater cRtr = new RcRater();
-        cRtr.setRcCheckId( rc.getRcCheckId() );
-        cRtr.setUserId( rc.getUserId() );
-        cRtr.setCompanyName( MessageFactory.getStringMessage(rc.getLocale(), "g.RCSelfRatings" ));
-        cRtr.setOrgId( rc.getOrgId() );
-        cRtr.setSourceUserId( rc.getAdminUserId() );
-        cRtr.setRcRaterTypeId( RcRaterType.SELF.getRcRaterTypeId() );
-        // cRtr.setRcRaterSourceType(RcRaterSourceType.CANDIDATE);
-        cRtr.setRcRaterSourceTypeId(RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId());
-        cRtr.setLocale( rc.getLocale() );
-        cRtr.setUser( rc.getUser() );
+        RcRater cRtr = rcFacade.getRcRaterByRcCheckIdAndUserId(rc.getRcCheckId(), rc.getUserId());
+        if( cRtr!=null )
+        {
+            rc.getRcRaterList().add(cRtr );
+            return cRtr;
+        }
+                          
+        try
+        {
+            cRtr = new RcRater();
+            cRtr.setRcCheckId( rc.getRcCheckId() );
+            cRtr.setUserId( rc.getUserId() );
+            cRtr.setCompanyName( MessageFactory.getStringMessage(rc.getLocale(), "g.RCSelfRatings" ));
+            cRtr.setOrgId( rc.getOrgId() );
+            cRtr.setSourceUserId( rc.getAdminUserId() );
+            cRtr.setRcRaterTypeId( RcRaterType.SELF.getRcRaterTypeId() );
+            // cRtr.setRcRaterSourceType(RcRaterSourceType.CANDIDATE);
+            cRtr.setRcRaterSourceTypeId(RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId());
+            cRtr.setLocale( rc.getLocale() );
+            cRtr.setUser( rc.getUser() );
 
-        Calendar cal = new GregorianCalendar();
-        cal.add( Calendar.YEAR, -1 );
-        cal.add( Calendar.DAY_OF_MONTH, -1 );
-        cRtr.setObservationStartDate( cal.getTime() );
-        cRtr.setObservationEndDate( new Date() );
+            Calendar cal = new GregorianCalendar();
+            cal.add( Calendar.YEAR, -1 );
+            cal.add( Calendar.DAY_OF_MONTH, -1 );
+            cRtr.setObservationStartDate( cal.getTime() );
+            cRtr.setObservationEndDate( new Date() );
 
 
-        if( !adminOverride )
-            cRtr = rcFacade.saveRcRater(cRtr, false );
-        
-        //if( adminOverride )
-        //    cRtr = (RcRater) cRtr.clone();
-        
-        rc.getRcRaterList().add( cRtr );
-        return cRtr;
+            if( !adminOverride )
+                cRtr = rcFacade.saveRcRater(cRtr, false );
+
+            //if( adminOverride )
+            //    cRtr = (RcRater) cRtr.clone();
+
+            rc.getRcRaterList().add( cRtr );
+            return cRtr;
+        }
+        catch( PersistenceException e )
+        {
+            try
+            {
+                LogService.logIt( "RccheckUtils.createRcRaterForCandidate() XXX.0 " + e.toString() + " Checking for an existing RcRater record for userId=" + rc.getUserId() + ", rcCheckId=" + rc.getRcCheckId() );
+                Thread.sleep(200);
+                
+                cRtr = rcFacade.getRcRaterByRcCheckIdAndUserId(rc.getRcCheckId(), rc.getUserId());
+                if( cRtr!=null )
+                {
+                    LogService.logIt( "RccheckUtils.createRcRaterForCandidate() XXX.1 Found existing rater. Using it. rcCheckId=" + rc.getRcCheckId() );
+                    rc.getRcRaterList().add(cRtr );
+                    return cRtr;
+                }
+                
+                // not found, throw the exception
+                LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() XXX.2 rcCheckId=" + rc.getRcCheckId() );
+                throw e;
+            }
+            catch( Exception ee )
+            {
+                LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() YYY.1 got new exception when checking again. " + ee.toString() + ", rcCheckId=" + rc.getRcCheckId() );
+                throw e;
+            }
+        }        
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() rcCheckId=" + rc.getRcCheckId() );
+            throw e;
+        }
     }
     
         
