@@ -391,7 +391,7 @@ public class ReminderUtils
                 if( rcScriptFacade==null )
                     rcScriptFacade=RcScriptFacade.getInstance();
                 
-                rc.setRcScript( rcScriptFacade.getRcScript( rc.getRcScriptId()));
+                rc.setRcScript(rcScriptFacade.getRcScript(rc.getRcScriptId(), true));
             }
             
             

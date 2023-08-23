@@ -341,7 +341,7 @@ public class RaterFileUploadServlet extends BaseFileUploadServlet
             
             try
             {
-                rcItem = rcsf.getRcItem(rcItemId, true);
+                rcItem = rcsf.getRcItem(rcItemId, true, true);
             }
             catch( STException e )
             {

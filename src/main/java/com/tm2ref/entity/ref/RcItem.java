@@ -23,6 +23,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Table( name = "rcitem" )
 @NamedQueries({  
+    @NamedQuery( name = "RcItem.findByRcItemId", query = "SELECT o FROM RcItem AS o WHERE o.rcItemId=:rcItemId" ),
     @NamedQuery( name = "RcItem.findByCompetencyId", query = "SELECT o FROM RcItem AS o WHERE o.rcCompetencyId=:rcCompetencyId ORDER BY o.displayOrder" )
 })
 public class RcItem implements Serializable, Cloneable, Comparable<RcItem>

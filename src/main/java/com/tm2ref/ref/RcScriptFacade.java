@@ -1,5 +1,6 @@
 package com.tm2ref.ref;
 
+import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcCompetency;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcScript;
@@ -49,11 +50,15 @@ public class RcScriptFacade
     }
      
     
-    public RcScript getRcScript( int rcScriptId ) throws Exception
+    public RcScript getRcScript( int rcScriptId, boolean refresh) throws Exception
     {
         try
         {
-            return em.find(RcScript.class, rcScriptId );
+            if( refresh )
+                return (RcScript) em.createNamedQuery( "RcScript.findByRcScriptId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("rcScriptId", rcScriptId ).getSingleResult();
+            
+            else
+                return em.find(RcScript.class, rcScriptId );
         }
         catch( NoResultException e )
         {
@@ -68,11 +73,16 @@ public class RcScriptFacade
     
     
     
-    public RcItem getRcItem( int rcItemId, boolean load) throws STException
+    public RcItem getRcItem( int rcItemId, boolean load, boolean refresh) throws STException
     {
         try
         {
-            RcItem r = (RcItem) em.find(RcItem.class, rcItemId );
+            RcItem r;
+            
+            if( refresh )
+                r = (RcItem) em.createNamedQuery( "RcItem.findByRcItemId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("rcItemId", rcItemId ).getSingleResult();
+            else
+                r = (RcItem) em.find(RcItem.class, rcItemId );
             
             if( r!=null && r.getRcCompetencyId()>0 )
                 r.setRcCompetency( getRcCompetency( r.getRcCompetencyId() ));
@@ -104,8 +114,7 @@ public class RcScriptFacade
     {
         try
         {
-            TypedQuery<RcItem> q = em.createNamedQuery( "RcItem.findByCompetencyId", RcItem.class);
-            q.setParameter( "rcCompetencyId", rcCompetencyId );
+            TypedQuery<RcItem> q = em.createNamedQuery( "RcItem.findByCompetencyId", RcItem.class).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter( "rcCompetencyId", rcCompetencyId );
             return q.getResultList();
         }
         catch( Exception e )

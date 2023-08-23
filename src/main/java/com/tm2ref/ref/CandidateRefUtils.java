@@ -350,7 +350,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 if( rcScriptFacade==null )
                     rcScriptFacade=RcScriptFacade.getInstance();
-                RcScript rcs = rcScriptFacade.getRcScript( rc.getRcScriptId() );
+                RcScript rcs = rcScriptFacade.getRcScript(rc.getRcScriptId(), true );
                 rc.setRcScript( (RcScript)rcs.clone() );
             }
             

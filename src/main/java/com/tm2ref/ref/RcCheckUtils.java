@@ -431,7 +431,7 @@ public class RcCheckUtils {
             {
                 if( rcScriptFacade==null )
                     rcScriptFacade = RcScriptFacade.getInstance();
-                RcScript rcs = rcScriptFacade.getRcScript( rc.getRcScriptId() );
+                RcScript rcs = rcScriptFacade.getRcScript(rc.getRcScriptId(), true );
                 rc.setRcScript( (RcScript)rcs.clone() );
                 // rc.getRcScript().parseScriptJson();
                 rcScriptFacade.loadScriptObjects(rc.getRcScript(), true);
@@ -547,7 +547,7 @@ public class RcCheckUtils {
             {
                 if( rcScriptFacade==null )
                     rcScriptFacade = RcScriptFacade.getInstance();
-                RcScript rcs = rcScriptFacade.getRcScript( rc.getRcScriptId() );
+                RcScript rcs = rcScriptFacade.getRcScript(rc.getRcScriptId(), true );
                 rc.setRcScript( (RcScript)rcs.clone() );
                 rcScriptFacade.loadScriptObjects(rc.getRcScript(), true );
             }
@@ -817,7 +817,7 @@ public class RcCheckUtils {
         {
             if( rcScriptFacade==null )
                 rcScriptFacade = RcScriptFacade.getInstance();
-            RcScript rcs = rcScriptFacade.getRcScript( rc.getRcScriptId() );
+            RcScript rcs = rcScriptFacade.getRcScript(rc.getRcScriptId(), true );
             rc.setRcScript( (RcScript)rcs.clone() );            
             rcScriptFacade.loadScriptObjects(rc.getRcScript(), true );
         }
@@ -1173,7 +1173,7 @@ public class RcCheckUtils {
             {
                 if( rcScriptFacade==null )
                     rcScriptFacade=RcScriptFacade.getInstance();
-                rc.setRcScript( (RcScript) rcScriptFacade.getRcScript( rc.getRcScriptId() ).clone() );
+                rc.setRcScript( (RcScript) rcScriptFacade.getRcScript(rc.getRcScriptId(), true ).clone() );
             }
             
             // needs questions answered

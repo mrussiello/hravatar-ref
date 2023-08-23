@@ -26,6 +26,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -35,6 +36,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Table( name = "rcscript" )
 @NamedQueries({
+    @NamedQuery( name = "RcScript.findByRcScriptId", query = "SELECT o FROM RcScript AS o WHERE o.rcScriptId=:rcScriptId" ),
 })
 public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
 {

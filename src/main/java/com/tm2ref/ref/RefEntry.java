@@ -197,7 +197,7 @@ public class RefEntry
                 throw new Exception( "RcScriptId invalid: " + rcScriptId );
 
             RcScriptFacade rcScriptFacade = RcScriptFacade.getInstance();
-            RcScript rcScript = rcScriptFacade.getRcScript( rcScriptId );
+            RcScript rcScript = rcScriptFacade.getRcScript(rcScriptId, true );
             if( rcScript==null )
                 throw new Exception( "RcScript not found." );
 
