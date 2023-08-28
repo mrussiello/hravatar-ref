@@ -107,7 +107,7 @@ public class UserUtils extends FacesUtils
         locs.add( I18nUtils.getLocaleFromCompositeStr( "fr_FR" ));
         locs.add( I18nUtils.getLocaleFromCompositeStr( "in_ID" ));
         locs.add( I18nUtils.getLocaleFromCompositeStr( "it_IT" ));
-        locs.add( I18nUtils.getLocaleFromCompositeStr( "iw_IL" ));
+        locs.add( I18nUtils.getLocaleFromCompositeStr( "he_IL" ));
         locs.add( I18nUtils.getLocaleFromCompositeStr( "ja_JP" ));
         locs.add( I18nUtils.getLocaleFromCompositeStr( "ko_KR" ));
         locs.add( I18nUtils.getLocaleFromCompositeStr( "nb_NO" ));

@@ -46,6 +46,7 @@ public class PurchaseFacade
     }
 
 
+    /*
     public int getTotalRemainingCredits( int orgId, int backupOrgId, int minimumNeeded, int creditTypeId) throws Exception
     {
         if( orgId <= 0 )
@@ -66,6 +67,7 @@ public class PurchaseFacade
 
         return v;
     }
+    */
 
     
     public Date findFirstUseResultCreditId( int creditId, int creditIndex, long candidateUserId, int orgId ) throws Exception
@@ -128,7 +130,7 @@ public class PurchaseFacade
         // out[1] = creditIndex
         int[] out = new int[2];
         
-        if( orgId <= 0 || candidateUserId<=0 )
+        if( orgId<=0 || candidateUserId<=0 )
             return out;
 
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
@@ -136,7 +138,7 @@ public class PurchaseFacade
             throw new Exception( "Can not find Datasource" );
         
         Calendar cal = new GregorianCalendar();
-        cal.add( Calendar.DAY_OF_MONTH, -1*daysPrev - 1 );
+        cal.add( Calendar.DAY_OF_MONTH, -1*daysPrev - 1 ); // go back 90 days.
         Date startDate = cal.getTime();
         java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
         
@@ -159,7 +161,7 @@ public class PurchaseFacade
 
             //int creditId =0;
             //int creditIndex = 0;
-            Date earlyDate = null;
+            Date earlyDate;
             if( rs.next() )
             {
                 out[0] = rs.getInt(1);
@@ -183,7 +185,7 @@ public class PurchaseFacade
             if( !CreditType.getValue( creditTypeId ).getIsResult() )
                 return out;
 
-            // check for another RcCheck
+            // check for another RcCheck for same candidate
             sql = "SELECT creditid, creditindex FROM rccheck WHERE orgid=" + orgId + " AND userid=" + candidateUserId + " AND lastupdate>='" + sDate.toString() + "' AND creditid>0 ORDER BY creditid DESC LIMIT 1";
             rs = stmt.executeQuery( sql );
 
@@ -205,7 +207,7 @@ public class PurchaseFacade
             rs.close();            
 
             
-            // check Lv Invitation
+            // check Lv Invitation for same candidate
             sql = "SELECT creditid, creditindex from lvinvitation WHERE orgid=" + orgId + " AND recipientuserid=" + candidateUserId + " AND lastupdate>='" + sDate.toString() + "' AND creditid>0  ORDER BY creditid DESC LIMIT 1";
             rs = stmt.executeQuery( sql );
             if( rs.next() )
@@ -236,7 +238,7 @@ public class PurchaseFacade
     }
     
     
-    private int getTotalRemainingCredits( int orgId, int creditTypeId) throws Exception
+    public int getTotalRemainingCredits( int orgId, int creditTypeId) throws Exception
     {
         if( orgId <= 0 )
             return 0;
@@ -281,18 +283,18 @@ public class PurchaseFacade
     }
 
 
-
-    public Credit chargeCredit( int orgId, int backupOrgId, int qua, int creditTypeId) throws Exception
+    /*
+    public Credit chargeCredit( int orgId, int qua, int creditTypeId) throws Exception
     {
         int orgIdToUse = orgId;
 
-        if( backupOrgId > 0 )
-        {
-            int cv = getTotalRemainingCredits(orgId, creditTypeId );
+        //if( backupOrgId > 0 )
+        //{
+        //    int cv = getTotalRemainingCredits(orgId, creditTypeId );
 
-            if( cv < qua )
-                orgIdToUse = backupOrgId;
-        }
+        //    if( cv < qua )
+        //        orgIdToUse = backupOrgId;
+        //}
 
         int charged = 0;
 
@@ -361,7 +363,7 @@ public class PurchaseFacade
             
             if( lastCredit!=null )
             {
-                lastCredit.setOverageCount( lastCredit.getOverageCount() + (qua-charged) );
+                lastCredit.setOverageCount(lastCredit.getOverageCount() + (qua-charged) );
                 
                 if( lastCredit.getOverageCount()>0 )
                     lastCredit.setCreditStatusTypeId( CreditStatusType.OVERAGE.getCreditStatusTypeId() );
@@ -374,6 +376,7 @@ public class PurchaseFacade
         
         return lastCredit;
     }
+    */
 
 
 
@@ -411,7 +414,7 @@ public class PurchaseFacade
         }
     }
 
-    private Credit getLatestCreditRecord( int orgId, int creditTypeId ) throws Exception
+    public Credit getLatestCreditRecord( int orgId, int creditTypeId ) throws Exception
     {
         // Credit.findLastEntryForOrg
         try

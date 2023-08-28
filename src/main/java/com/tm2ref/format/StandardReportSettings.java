@@ -519,7 +519,7 @@ public class StandardReportSettings implements ReportSettings
             return 0;
 
 
-        else if( lang.equals( "iw" ) || lang.equals( "ar") || lang.equals( "ru")  || lang.equals( "es")  )
+        else if( lang.equals( "he" ) || lang.equals( "ar") || lang.equals( "ru")  || lang.equals( "es")  )
             return 1;
 
         else if( lang.equals( "zh" )   )

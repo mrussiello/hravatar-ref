@@ -43,7 +43,7 @@ public class HttpUtils {
             supportedLanguages.put( "fr_CA", new Locale("fr", "CA") );
             supportedLanguages.put( "fr_FR", new Locale("fr", "FR") );
             supportedLanguages.put( "it_IT", new Locale("it", "IT") );
-            supportedLanguages.put( "iw_IL", new Locale("iw", "IL") );
+            supportedLanguages.put( "he_IL", new Locale("he", "IL") );
             supportedLanguages.put( "in_ID", new Locale("in", "ID") );
             supportedLanguages.put( "ja_JP", new Locale("ja", "JP") );
             supportedLanguages.put( "ko_KR", new Locale("ko", "KR") );

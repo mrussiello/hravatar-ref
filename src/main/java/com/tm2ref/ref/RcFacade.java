@@ -9,6 +9,7 @@ import com.tm2ref.entity.ref.RcReferral;
 import com.tm2ref.entity.ref.RcSuborgPrefs;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
 import com.tm2ref.global.STException;
+import com.tm2ref.purchase.CreditType;
 import com.tm2ref.service.LogService;
 import com.tm2ref.util.StringUtils;
 import java.sql.Connection;
@@ -26,6 +27,8 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.sql.DataSource;
 
 
@@ -271,6 +274,18 @@ public class RcFacade
                         rcr=null;
                 }                
             }
+            
+            // always check for creditId if none is there.
+            if( ir.getRcCheckId()>0 && ir.getCreditId()<=0 )
+            {
+                int[] d = this.getRcCheckCreditInfo( ir.getRcCheckId() );
+                if( d!=null && d[0]>0 )
+                {
+                    ir.setCreditId(d[0]);
+                    ir.setCreditIndex(d[1]);
+                }
+            }
+                
             
             ir.setLastUpdate( new Date() );
             
@@ -896,6 +911,45 @@ public class RcFacade
         }
     }    
 
+    
+    
+    
+    public int[] getRcCheckCreditInfo( long rcCheckId ) throws Exception
+    {
+        // out[0] = creditId
+        // out[1] = creditIndex
+        int[] out = new int[2];
+        
+        if( rcCheckId<=0 )
+            return out;
+
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
+        if( pool == null )
+            throw new Exception( "Can not find Datasource" );
+        
+        String sql = "SELECT creditid,creditindex FROM rccheck WHERE rccheckid=" + rcCheckId;
+        
+        // LogService.logIt( "PurchaseFacade.getRcCheckCreditInfo( orgId=" + orgId + ", candidateUserId=" + candidateUserId + " ) sql=" + sql );        
+        try (Connection con = pool.getConnection();
+             Statement stmt = con.createStatement() )
+        {
+            try (ResultSet rs = stmt.executeQuery( sql )) 
+            {
+                if( rs.next() )
+                {
+                    out[0] = rs.getInt(1);
+                    out[1] = rs.getInt(2);
+                }
+            }
+            return out;
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcFacade.getRcCheckCreditInfo( rcCheckId=" + rcCheckId + " ) " );
+            throw new STException( e );
+        }        
+    }
     
     
 }

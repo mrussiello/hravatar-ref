@@ -1311,6 +1311,21 @@ public class RcCheckUtils {
         if( rc.getOrg()!=null && rc.getOrg().getOrgCreditUsageType().getUnlimited() && rc.getOrg().getOrgCreditUsageEndDate()!=null && rc.getOrg().getOrgCreditUsageEndDate().after( new Date() ) )
             return;
         
+        // First check.
+        if( rcFacade!=null )
+            rcFacade = RcFacade.getInstance();
+        
+        // wait a bit then check.
+        Thread.sleep(300);
+        int[] d = rcFacade.getRcCheckCreditInfo( rc.getRcCheckId() );
+        if( d!=null && d[0]>0 )
+        {
+            rc.setCreditId(d[0]);
+            rc.setCreditIndex(d[1]);
+            rcFacade.saveRcCheck(rc, false );
+            return;
+        }
+        
         RefCreditUtils rcu = new RefCreditUtils();
         rcu.chargeCreditsIfNeeded( rc.getOrg(), rc );
     }

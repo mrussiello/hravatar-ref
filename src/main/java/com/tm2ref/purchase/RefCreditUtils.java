@@ -103,7 +103,7 @@ public class RefCreditUtils {
                 //if( purchaseFacade==null )
                 //    purchaseFacade = PurchaseFacade.getInstance();
                 
-                if( purchaseFacade.getTotalRemainingCredits( o.getOrgId(), 0, 1, CreditType.RESULT.getCreditTypeId() )>0 )
+                if( getTotalRemainingCredits( o.getOrgId(), 0, 1, CreditType.RESULT.getCreditTypeId() )>0 )
                     ok = true;
 
                 if( !ok )
@@ -130,6 +130,32 @@ public class RefCreditUtils {
     }
 
 
+    public int getTotalRemainingCredits( int orgId, int backupOrgId, int minimumNeeded, int creditTypeId) throws Exception
+    {
+        if( orgId <= 0 )
+            return 0;
+
+        if( purchaseFacade==null )
+            purchaseFacade=PurchaseFacade.getInstance();
+        
+        int v = purchaseFacade.getTotalRemainingCredits(orgId, creditTypeId );
+
+        if( v >= minimumNeeded )
+            return v;
+
+        if( backupOrgId > 0 )
+        {
+            int vbu = purchaseFacade.getTotalRemainingCredits(backupOrgId, creditTypeId );
+
+            if( vbu > v )
+                return vbu;
+        }
+
+        return v;
+    }
+
+    
+    
     
     
     public void chargeCreditsIfNeeded( Org o, RcCheck rc ) throws STException
@@ -139,7 +165,9 @@ public class RefCreditUtils {
 
         try
         {
-        
+            if( rc==null )
+                throw new Exception( "RcCheck is null. OrgId=" + (o==null ? "null" : o.getOrgId() + " " +o.getName()) );
+                    
             if( o==null && (rc!=null ) )
             {
                     if( userFacade==null )
@@ -150,6 +178,16 @@ public class RefCreditUtils {
                         rc.setOrg(o);
             }
 
+            if( rc==null )
+                throw new Exception( "Org is null. RcCheckId=" + rc.getRcCheckId() );
+            
+            if( rc.getCreditId()>0 )
+                return;
+
+            if( rc.getOrg()!=null && rc.getOrg().getOrgCreditUsageType().getUnlimited() && rc.getOrg().getOrgCreditUsageEndDate()!=null && rc.getOrg().getOrgCreditUsageEndDate().after( new Date() ) )
+                return;
+        
+                        
             if( o.getOrgCreditUsageType().getUnlimited() )
             {
                 if( o.getOrgCreditUsageEndDate()!=null && o.getOrgCreditUsageEndDate().before( new Date() ) )
@@ -159,8 +197,24 @@ public class RefCreditUtils {
 
             if( o.getOrgCreditUsageType().getAnyResultCredit() || o.getOrgCreditUsageType().getUsesCredits() )
             {
+                // second check
+                if( rcFacade!=null )
+                    rcFacade = RcFacade.getInstance();
+
+                
+                // RcCheck rc2 = rcFacade.getRcCheck( rc.getRcCheckId(), true );        
+                Thread.sleep( 500 );
+                int[] d = rcFacade.getRcCheckCreditInfo( rc.getRcCheckId() );
+                if( d!=null && d[0]>0 )
+                {
+                    rc.setCreditId(d[0]);
+                    rc.setCreditIndex(d[1]);
+                    rcFacade.saveRcCheck(rc, false );
+                    return;
+                }
+            
                 // already has credits charged.
-                if( rc!=null && rc.getCreditId()>0 )
+                if( rc.getCreditId()>0 )
                     return;
 
                 boolean ok = false;
@@ -172,6 +226,16 @@ public class RefCreditUtils {
                 
                 int[] creditInfo = purchaseFacade.findTestingCreditIdToUseForRef(rc.getOrgId(), rc.getUserId(), Constants.MAX_DAYS_PREV_TESTEVENT, creditType.getCreditTypeId() );                
 
+                // check again since finding credit info may take time.
+                d = rcFacade.getRcCheckCreditInfo( rc.getRcCheckId() );
+                if( d!=null && d[0]>0 )
+                {
+                    rc.setCreditId(d[0]);
+                    rc.setCreditIndex(d[1]);
+                    rcFacade.saveRcCheck(rc, false );
+                    return;
+                }
+                                
                 // found already used credit to utilize.
                 if( creditInfo[0]>0 )
                 {
@@ -185,25 +249,36 @@ public class RefCreditUtils {
                 }
                 
                 int credits = creditType.getIsResult() ? 1 : Constants.REFERENCE_CHECK_LEGACY_CREDITS;                
-                if( purchaseFacade.getTotalRemainingCredits( o.getOrgId(), 0, credits, creditType.getCreditTypeId() ) >= credits )
+                if( getTotalRemainingCredits( o.getOrgId(), 0, credits, creditType.getCreditTypeId() ) >= credits )
                     ok = true;
 
                 LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() CCC.1 OK=" + ok );
                 
                 if( !ok )
                     throw new STException( "g.OrgCreditUsgResultNone", new String[]{rc.getRcCheckName()} );
+                                
+                // third check. do this since finding an existing credit to use might take some time. 
+                d = rcFacade.getRcCheckCreditInfo( rc.getRcCheckId() );
+                if( d!=null && d[0]>0 )
+                {
+                    rc.setCreditId(d[0]);
+                    rc.setCreditIndex(d[1]);
+                    rcFacade.saveRcCheck(rc, false );
+                    return;
+                }                
                 
-                Credit credit = purchaseFacade.chargeCredit( o.getOrgId(), 0, credits, creditType.getCreditTypeId() );                
+                Credit credit = chargeCredit(o.getOrgId(), credits, creditType.getCreditTypeId() );                
                 if( credit==null )
                     throw new Exception( "Error charging credits. Credit record is null." );
-                
-                LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() DDD.1 CreditId=" + credit.getCreditId() );
-                
+                                
                 rc.setCreditId( credit.getCreditId() );
                 rc.setCreditIndex( credit.getInitialCount() - credit.getRemainingCount() );
                 if( rcFacade==null )
                     rcFacade = RcFacade.getInstance();
                 rcFacade.saveRcCheck(rc, false);                
+
+                LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );
+                
             }
         }
         catch( STException e )
@@ -225,6 +300,105 @@ public class RefCreditUtils {
             throw new STException( e.getMessage() );
         }
     }
+    
+    
+    private synchronized Credit chargeCredit( int orgId, int qua, int creditTypeId) throws Exception
+    {
+        int orgIdToUse = orgId;
+
+        //if( backupOrgId > 0 )
+        //{
+        //    int cv = getTotalRemainingCredits(orgId, creditTypeId );
+
+        //    if( cv < qua )
+        //        orgIdToUse = backupOrgId;
+        //}
+
+        int charged = 0;
+
+        int chgThisCredit = 0;
+
+        Credit lastCredit = null;
+
+        if( purchaseFacade==null )
+            purchaseFacade=PurchaseFacade.getInstance();
+        
+        List<Credit> cl = purchaseFacade.getNextCreditList( orgIdToUse, creditTypeId );
+        
+        for( Credit c : cl )
+        {            
+            if( c.getRemainingCount()>0 )
+            {
+                lastCredit = c;
+
+                chgThisCredit = Math.min(c.getRemainingCount() , (qua - charged) );
+
+                c.setUsedCount( c.getUsedCount() + chgThisCredit );
+
+                c.setRemainingCount( c.getInitialCount() - c.getUsedCount() );
+
+                if( c.getRemainingCount() < 0 )
+                    c.setRemainingCount( 0 );
+
+                if( c.getRemainingCount()==0 )
+                {
+                    c.setCreditStatusTypeId( CreditStatusType.EMPTY.getCreditStatusTypeId() );
+                    c.setCreditZeroDate( new Date() );
+                    c.setCreditZeroStatusTypeId(0);
+                }
+
+
+                purchaseFacade.saveCredit( c );
+
+                charged += chgThisCredit;
+
+                if( charged >= qua )
+                    break;
+            }
+        }
+
+        
+        // Set credit zero info if we just used up the last credit for this account.
+        if( lastCredit!=null && lastCredit.getRemainingCount()<=0 )
+        {
+            // check for remaining.
+            int remaining = 0;
+            for( Credit c : cl )
+            {            
+                if( c.getRemainingCount()>0 )
+                    remaining+=c.getRemainingCount();
+            }
+            if( remaining<=0 )
+            {
+                lastCredit.setCreditZeroDate(new Date());
+                lastCredit.setCreditZeroStatusTypeId(1);
+                purchaseFacade.saveCredit( lastCredit );
+            }
+        }
+        
+        
+        if( charged<qua && creditTypeId==CreditType.RESULT.getCreditTypeId() )
+        {
+            if( lastCredit==null )
+                lastCredit = purchaseFacade.getLatestCreditRecord( orgIdToUse, creditTypeId );
+            
+            if( lastCredit!=null )
+            {
+                lastCredit.setOverageCount(lastCredit.getOverageCount() + (qua-charged) );
+                
+                if( lastCredit.getOverageCount()>0 )
+                    lastCredit.setCreditStatusTypeId( CreditStatusType.OVERAGE.getCreditStatusTypeId() );
+                
+                purchaseFacade.saveCredit( lastCredit );
+            }
+            else
+                LogService.logIt("PurchaseFacade.chargeCredit( " + orgId + " ) Cannot find a Credit Record to decrement for Result-Credit." );
+        }
+        
+        return lastCredit;
+    }
+
+    
     
     
     
