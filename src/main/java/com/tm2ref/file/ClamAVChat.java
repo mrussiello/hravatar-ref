@@ -179,8 +179,8 @@ import java.io.InputStream;
                         responseValue += new String(rec);
                     }
 
-                    //if( DEBUG )
-                    LogService.logIt( "ClamAVChat.doScan() response: " + responseValue);
+                    if( DEBUG )
+                        LogService.logIt( "ClamAVChat.doScan() response: " + responseValue);
 
                 }
 

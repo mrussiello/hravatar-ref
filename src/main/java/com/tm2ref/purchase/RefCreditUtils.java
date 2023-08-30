@@ -198,9 +198,8 @@ public class RefCreditUtils {
             if( o.getOrgCreditUsageType().getAnyResultCredit() || o.getOrgCreditUsageType().getUsesCredits() )
             {
                 // second check
-                if( rcFacade!=null )
+                if( rcFacade==null )
                     rcFacade = RcFacade.getInstance();
-
                 
                 // RcCheck rc2 = rcFacade.getRcCheck( rc.getRcCheckId(), true );        
                 Thread.sleep( 500 );

@@ -896,7 +896,7 @@ public class CandidateRefUtils extends BaseRefUtils
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
                 throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
-            LogService.logIt( "CandidateRefUtils.processExitAllCore() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));            
+            // LogService.logIt( "CandidateRefUtils.processExitAllCore() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));            
 
             if( rc.getCandidateCanAddRaters() )
             {
@@ -920,7 +920,7 @@ public class CandidateRefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.CORE3 );            
             RefPageType rpt = getNextPageTypeForRefProcess();            
             refBean.setRefPageType(rpt);   
-            LogService.logIt( "CandidateRefUtils.processExitAllCore() next view=" + getViewFromPageType( refBean.getRefPageType() ) );
+            // LogService.logIt( "CandidateRefUtils.processExitAllCore() next view=" + getViewFromPageType( refBean.getRefPageType() ) );
             return getViewFromPageType( refBean.getRefPageType() );
         }
         catch( STException e )

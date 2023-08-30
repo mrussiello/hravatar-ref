@@ -549,7 +549,7 @@ public class RefUtils extends BaseRefUtils
                 }
             }
 
-            LogService.logIt( "RefUtils.processExitCheck() BBB.0 ReturnUrl=" + returnUrl + ", corp=" + (corpBean.getCorp()==null ? "null" : corpBean.getCorp().getName()) );
+            // LogService.logIt( "RefUtils.processExitCheck() BBB.0 ReturnUrl=" + returnUrl + ", corp=" + (corpBean.getCorp()==null ? "null" : corpBean.getCorp().getName()) );
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )

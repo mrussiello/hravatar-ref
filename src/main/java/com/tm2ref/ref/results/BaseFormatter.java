@@ -683,7 +683,7 @@ public class BaseFormatter {
         
         for( RcItemWrapper rciw : rcl )
         {
-            LogService.logIt( "BaseFormatter.getStandardTopItemsTable() BBB adding=" + rciw.getRcItem().getRcItemId() );
+            // LogService.logIt( "BaseFormatter.getStandardTopItemsTable() BBB adding=" + rciw.getRcItem().getRcItemId() );
             
             questionStr= StringUtils.replaceStandardEntities( rciw.getQuestionWithSubs());
             
@@ -768,7 +768,7 @@ public class BaseFormatter {
         
         for( RcCompetencyWrapper rcw : rcl )
         {
-            LogService.logIt( "BaseFormatter.getStandardTopCompetenciesTable() BBB adding=" + rcw.getRcCompetency().getName() + ", " + rcw.getRcCompetency().getInterviewQuestion() );
+            // LogService.logIt( "BaseFormatter.getStandardTopCompetenciesTable() BBB adding=" + rcw.getRcCompetency().getName() + ", " + rcw.getRcCompetency().getInterviewQuestion() );
             
             competencyStr= StringUtils.replaceStandardEntities( rcw.getRcCompetency().getName() );
             

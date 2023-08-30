@@ -309,7 +309,7 @@ public class ProctorUtils extends FacesUtils {
                         
             if( output[0]==null || !((String)output[0]).equalsIgnoreCase("SUCCESS") )
             {
-                LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() returned: " + (output[0]==null ? "null" : ((String)output[0])) + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() returned: " + (output[0]==null ? "null" : ((String)output[0])) + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.NO_FACE.getProctorImageErrorTypeId() );
                 
@@ -339,7 +339,7 @@ public class ProctorUtils extends FacesUtils {
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.NO_FACE.getProctorImageErrorTypeId() );
 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is null, rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is null, rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 if( !getPhotosOptional() || proctorBean.getPhotoUploadAttempts()<Constants.MAX_PHOTO_UPLOAD_ATTEMPTS )
                 {
                     proctorBean.setPhotoUploadAttempts( proctorBean.getPhotoUploadAttempts()+1 );
@@ -354,7 +354,7 @@ public class ProctorUtils extends FacesUtils {
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.NO_FACE.getProctorImageErrorTypeId() );
                 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() FaceDetails is null, uploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() FaceDetails is null, uploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 if( !getPhotosOptional() || proctorBean.getPhotoUploadAttempts()<Constants.MAX_PHOTO_UPLOAD_ATTEMPTS )
                 {
                     proctorBean.setPhotoUploadAttempts( proctorBean.getPhotoUploadAttempts()+1 );
@@ -370,7 +370,7 @@ public class ProctorUtils extends FacesUtils {
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.NO_FACE.getProctorImageErrorTypeId() );
                 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() FaceDetail.confidence is too low=" + faceDetail.getConfidence() + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() FaceDetail.confidence is too low=" + faceDetail.getConfidence() + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 if( !getPhotosOptional() || proctorBean.getPhotoUploadAttempts()<Constants.MAX_PHOTO_UPLOAD_ATTEMPTS )
                 {
                     proctorBean.setPhotoUploadAttempts( proctorBean.getPhotoUploadAttempts()+1 );
@@ -387,7 +387,7 @@ public class ProctorUtils extends FacesUtils {
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.ID_TOO_MANY_FACES.getProctorImageErrorTypeId() );
                 
-                LogService.logIt( "ProctorUtils.doCandidateIdUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is more than TWO: " + faceCount + " rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doCandidateIdUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is more than TWO: " + faceCount + " rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 if( !getPhotosOptional() || proctorBean.getPhotoUploadAttempts()<Constants.MAX_PHOTO_UPLOAD_ATTEMPTS )
                 {
                     proctorBean.setPhotoUploadAttempts( proctorBean.getPhotoUploadAttempts()+1 );
@@ -403,7 +403,7 @@ public class ProctorUtils extends FacesUtils {
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.MULTIPLE_FACES.getProctorImageErrorTypeId() );
                 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is more than one: " + faceCount + " uploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() AmazonRekognitionUtils.getImageFaceDetails() Faces Count is more than one: " + faceCount + " uploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
                 if( !getPhotosOptional() || proctorBean.getPhotoUploadAttempts()<Constants.MAX_PHOTO_UPLOAD_ATTEMPTS )
                 {
                     proctorBean.setPhotoUploadAttempts( proctorBean.getPhotoUploadAttempts()+1 );
@@ -432,7 +432,7 @@ public class ProctorUtils extends FacesUtils {
                         foundIdCard = true;
                 }
 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() foundIdCard=" + foundIdCard + ", basicSkip=" + basicSkip );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() foundIdCard=" + foundIdCard + ", basicSkip=" + basicSkip );
                 
                 if( !basicSkip && !foundIdCard ) // || !foundFaceInCard)
                 {
@@ -452,7 +452,7 @@ public class ProctorUtils extends FacesUtils {
                 // For the ID, accept only if both faces MATCH and are STRONG ENOUGH.
                 if( !basicSkip && faceCount==2 )
                 {
-                    LogService.logIt( "ProctorUtils.doCandidateIdUpload() BBB.1 AmazonRekognitionUtils.getImageFaceDetails() Faces Count is TWO: " + faceCount + " rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );                
+                    // LogService.logIt( "ProctorUtils.doCandidateIdUpload() BBB.1 AmazonRekognitionUtils.getImageFaceDetails() Faces Count is TWO: " + faceCount + " rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );                
                     for( FaceDetail fd : (List<FaceDetail>) output[4])
                     {
                         if( fd.getConfidence()<Constants.PROCTOR_MIN_ID_FACE_CONFIDENCE )
@@ -491,7 +491,7 @@ public class ProctorUtils extends FacesUtils {
 
                     Float matchPct = (Float) output2[1];            
                     Float matchConf = (Float) output2[2];                            
-                    LogService.logIt( "ProctorUtils.doCandidateIdUpload() BBB.3 AmazonRekognitionUtils.compareThumbImages() for multiple images in same picture. returned: matchPct=" + matchPct + ", matchConf=" + matchConf + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
+                    // LogService.logIt( "ProctorUtils.doCandidateIdUpload() BBB.3 AmazonRekognitionUtils.compareThumbImages() for multiple images in same picture. returned: matchPct=" + matchPct + ", matchConf=" + matchConf + ", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );
 
                     if( !basicSkip &&  (matchPct==null || matchConf==null ||  matchPct<Constants.PROCTOR_MIN_FACE_MATCH_PERCENT || matchConf<Constants.PROCTOR_MIN_FACE_MATCH_CONFIDENCE) )
                     {
@@ -512,7 +512,7 @@ public class ProctorUtils extends FacesUtils {
                 
             }
             
-            LogService.logIt( "ProctorUtils.doPhotoUpload() id=" + uploadedUserFileType.getIsAnyId() + ". Face looks good or it's OK to skip. Moving to next step. rcCheckId=" + rc.getRcCheckId() + ", basicSkip=" + basicSkip );
+            // LogService.logIt( "ProctorUtils.doPhotoUpload() id=" + uploadedUserFileType.getIsAnyId() + ". Face looks good or it's OK to skip. Moving to next step. rcCheckId=" + rc.getRcCheckId() + ", basicSkip=" + basicSkip );
                                     
             if( refPageType.equals(RefPageType.PHOTO ) )
             {
