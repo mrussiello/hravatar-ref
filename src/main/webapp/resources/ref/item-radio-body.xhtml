@@ -59,7 +59,7 @@
                     <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
                 </p:selectOneRadio>
 
-                <h:panelGrid columns="2" style="margin-left:10px;margin-right:auto">
+                <h:panelGrid columns="2" style="margin-left:auto;margin-right:auto">
                     
                     <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>                    
                     <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>

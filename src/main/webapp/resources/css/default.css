@@ -114,3 +114,8 @@ body .ui-widget
     font-size:  1.2rem;
 }
 
+.ui-g-12, .ui-md-12
+{
+    padding:0 !important;
+}
+
