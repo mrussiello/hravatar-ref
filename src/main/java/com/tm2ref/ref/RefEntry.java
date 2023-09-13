@@ -170,7 +170,8 @@ public class RefEntry
                 throw new Exception( "TestKey Invalid. TestKeyId=" + testKeyId );
 
             if( rcFacade==null )
-                rcFacade = RcFacade.getInstance();            
+                rcFacade = RcFacade.getInstance();        
+            
             RcCheck rc = rcFacade.getRcCheckForTestKeyId(testKeyId);
             if( rc!=null )
                 return rc;
@@ -215,6 +216,10 @@ public class RefEntry
             rc.setRcCheckTypeId( RcCheckType.PREHIRE.getRcCheckTypeId() );
             rc.setEmailResultsTo( tk.getEmailResultsTo() );
             rc.setTextResultsTo( tk.getTextResultsTo() );
+            
+            //if( (rc.getEmailResultsTo()!=null && !rc.getEmailResultsTo().isBlank()) || (rc.getTextResultsTo()!=null && !rc.getTextResultsTo().isBlank()) )
+            //    rc.setDistributionTypeId( RcDistributionType.EACH_RATER.getRcDistributionTypeId() );
+            
             rc.setReturnUrl( tk.getReturnUrl() );
             rc.setCreditId( tk.getCreditId() );
             rc.setCreditIndex( tk.getCreditIndex() );
