@@ -13,8 +13,8 @@ public enum RcDistributionType
 {
     NEVER(0,"Never", "rccdt.never" ),
     COMPLETE(1,"100%", "rccdt.complete" ),
-    HALF_AND_COMPLETE(1,"50 and 100", "rccdt.half_and_complete" ),
-    EACH_RATER(0,"Each Rater", "rccdt.everyrating" );  
+    HALF_AND_COMPLETE(2,"50 and 100", "rccdt.half_and_complete" ),
+    EACH_RATER(3,"Each Rater", "rccdt.everyrating" );  
 
     private final int rcDistributionTypeId;
 

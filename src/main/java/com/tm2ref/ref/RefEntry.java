@@ -174,7 +174,10 @@ public class RefEntry
             
             RcCheck rc = rcFacade.getRcCheckForTestKeyId(testKeyId);
             if( rc!=null )
+            {
+                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Found existing RC Check for testKeyId=" + testKeyId + ", rcCheckId=" + rc.getRcCheckId() );
                 return rc;
+            }
             
             LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() AAA Creating a new RcCheck. testKeyId=" + testKeyId );
             // get the test key
@@ -187,7 +190,10 @@ public class RefEntry
             Org org = userFacade.getOrg( tk.getOrgId() );
             RcOrgPrefs rcop = rcFacade.getRcOrgPrefsForOrgId( tk.getOrgId() );
             if( rcop==null )
+            {
+                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Creating a new RcOrgPrefs for OrgId=" + tk.getOrgId() + ", testKeyId=" + testKeyId );
                 rcop = new RcOrgPrefs();
+            }
             
             RcSuborgPrefs rsop = null;            
             if( tk.getSuborgId()>0 )
@@ -227,6 +233,9 @@ public class RefEntry
             rc.setCorpId( rsop!=null && rsop.getCorpId()>=0 ? rsop.getCorpId() : rcop.getCorpId() );
             rc.setCandidateCannotAddRaters( rsop!=null && rsop.getCandidateCannotAddRaters()>=0 ? rsop.getCandidateCannotAddRaters() : rcop.getCandidateCannotAddRaters() );
             rc.setCollectCandidateRatings( rsop!=null && rsop.getCollectCandidateRatings()>=0 ? rsop.getCollectCandidateRatings() : rcop.getCollectCandidateRatings() );
+            
+            // LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() rsop=" + (rsop==null ? "null" : "not null, distid=" + rsop.getDistributionTypeId() ) + ", rcop.distid=" + rcop.getDistributionTypeId() );
+            
             rc.setDistributionTypeId( rsop!=null && rsop.getDistributionTypeId()>=0 ? rsop.getDistributionTypeId() : rcop.getDistributionTypeId() );
             rc.setReminderTypeId( rsop!=null && rsop.getReminderTypeId()>=0 ? rsop.getReminderTypeId() : rcop.getReminderTypeId() );
             rc.setCandidatePhotoCaptureTypeId(rsop!=null && rsop.getCandidatePhotoCaptureTypeId()>=0 ? rsop.getCandidatePhotoCaptureTypeId() : rcop.getCandidatePhotoCaptureTypeId() );
