@@ -32,6 +32,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ListIterator;
 
 /**
  *
@@ -1511,7 +1512,24 @@ public class CandidateRefUtils extends BaseRefUtils
             
             if( !refBean.getAdminOverride() )
             {
+                // this could return a new copy of this rater if it already exists.
                 rcRater = rcFacade.saveRcRater( rcRater , false);
+                
+                // replace if existing
+                if( create )
+                {
+                    ListIterator<RcRater> iter = rc.getRcRaterList().listIterator();
+                    while( iter.hasNext() )
+                    {
+                        if( iter.next().getRcRaterId()==rcRater.getRcRaterId() )
+                        {
+                            iter.remove();
+                            iter.add(rcRater);
+                            break;
+                        }
+                    }
+                    candidateRefBean.setRcRater(rcRater);
+                }
             }
             
             if( create )
@@ -1677,12 +1695,19 @@ public class CandidateRefUtils extends BaseRefUtils
             throw new Exception( "rcCheck is null" );
         if( rater==null )
             throw new Exception( "rater is null"); 
+        if( userFacade == null )
+            userFacade = UserFacade.getInstance();
         user = rater.getUser();        
+
+        if( user==null )
+        {
+            user = userFacade.getUser( rater.getUserId());
+            rater.setUser(user);
+        }
+
         if( user==null )
             throw new Exception( "CandidateRefUtils.sendRcCheckToRater() user is null. rcCheckId=" + rc.getRcCheckId() );
         
-        if( userFacade == null )
-            userFacade = UserFacade.getInstance();
         if( rc.getAdminUser()==null )
             rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ) );
         if( rc.getLocale()==null && rc.getLangCode()!=null )

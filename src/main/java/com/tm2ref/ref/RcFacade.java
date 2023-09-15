@@ -612,7 +612,11 @@ public class RcFacade
                     {
                         LogService.logIt("RcFacade.saveRcRater() Found existing RcRater for rcCheckId=" + ir.getRcCheckId() + " and userId=" + r.getUserId() + " returning." );
                         ir.setRcRaterId( r.getRcRaterId() );
-                        return r;
+                        ir.setRaterAccessCode(r.getRaterAccessCode());                        
+                        r.setUser(ir.getUser());
+                        r.setRcCheck(ir.getRcCheck());
+                        r.setLocale( ir.getLocale());
+                        return saveRcRater(r, updateSeconds);
                     }
                 }
             }
