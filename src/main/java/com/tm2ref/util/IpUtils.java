@@ -15,6 +15,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.stream.JsonParsingException;
+import java.net.SocketException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.http.HttpStatus;
@@ -133,7 +134,7 @@ public class IpUtils {
                 //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
             }
 
-            catch( NoHttpResponseException | SSLHandshakeException e )
+            catch( NoHttpResponseException | SocketException | SSLHandshakeException e )
             {
                 LogService.logIt( "IpUtils.getIPLocationData() ERROR " + e.toString() +", ip=" + ipAddress + ", uri=" + uri );
                 return out;
