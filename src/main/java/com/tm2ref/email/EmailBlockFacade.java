@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import java.util.Date;
 
 /**
  *
@@ -61,9 +62,15 @@ public class EmailBlockFacade
 
             q.setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
 
-            EmailBlock emailBlock = (EmailBlock) q.getSingleResult();
-
-            return emailBlock != null;
+            EmailBlock eb = (EmailBlock) q.getSingleResult();
+            if( eb!=null && eb.getExpireDate()!=null && eb.getExpireDate().before(new Date()) )
+            {
+                em.remove( eb );
+                em.flush();
+                eb=null;                
+            }   
+            return eb!=null;
+            
         }
 
         catch( NoResultException e )

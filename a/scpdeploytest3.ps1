@@ -18,6 +18,9 @@ $targetdir="$basedir/target"
 $DateTime = (Get-Date -Format "MM-dd-yyyy")
 $proddistdir="/backup/dist/$DateTime"
 
+# make dist dir
+ssh -o "StrictHostKeyChecking=accept-new" -i "${identityfile}" ec2-user@${baseurl} "mkdir $proddistdir"
+
 
 # Copy static files
 echo "Copying Static Files to: /work/${app}"
@@ -26,8 +29,6 @@ scp -i "${identityfile}" -r "${basedir}/deploytemp/webmod"  ec2-user@${baseurl}:
 
 # copy war file
 
-# make dist dir
-ssh -i "${identityfile}" ec2-user@${baseurl} "mkdir $proddistdir"
 
 # copy file to dist dir
 scp -i "${identityfile}"  "${targetdir}/${prefix}.war"  ec2-user@${baseurl}:/backup/dist/$DateTime

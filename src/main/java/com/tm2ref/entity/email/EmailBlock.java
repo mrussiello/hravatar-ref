@@ -51,6 +51,12 @@ public class EmailBlock implements Serializable
     @Column(name="createdate")
     private Date createDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="expiredate")
+    private Date expireDate;
+
+    
+    
 
     @Override
     public String toString()
@@ -124,6 +130,14 @@ public class EmailBlock implements Serializable
 
     public void setFullBlock(int fullBlock) {
         this.fullBlock = fullBlock;
+    }
+
+    public Date getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(Date expireDate) {
+        this.expireDate = expireDate;
     }
 
 
