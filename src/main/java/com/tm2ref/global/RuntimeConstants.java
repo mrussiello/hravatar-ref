@@ -37,7 +37,7 @@ public class RuntimeConstants
         cache.put( "services/log/logfilepattern", "/work/tm2ref2/log/tm2ref_%g_%u.log");
 
         cache.put(  "SupportEmail", "support@hravatar.com" );
-        cache.put(  "CSCaseEmails", "sandy@hravatar.com,mike@hravatar.com" );
+        cache.put(  "CSCaseEmails", "sandy@hravatar.com,samantha@hravatar.com,mike@hravatar.com" );
         cache.put(  "SystemErrorEmails", "mike@hravatar.com" );
 
 
@@ -183,7 +183,7 @@ public class RuntimeConstants
         cache.put( "virusScanHost" , "localhost" );
         cache.put( "virusScanPort" , ( 3310 ) );
 
-        cache.put( "lowCreditsBccEmails", "mike@hravatar.com,sandy@hravatar.com" );
+        cache.put( "lowCreditsBccEmails", "mike@hravatar.com,sandy@hravatar.com,samantha@hravatar.com" );
 
         cache.put( "autoRemindersOk", true );
 
