@@ -324,21 +324,18 @@ public class FacesUtils
         
         if( userBean.getMsieOrSamsungAndroid()!=null )
             return userBean.getMsieOrSamsungAndroid();
-        
-        userBean.setMsieOrSamsungAndroid( getIsMsie() || getIsSamsungAndroid() );
-        return userBean.getMsieOrSamsungAndroid() ? true : false;
-    }
-    
-    public boolean getIsSamsungAndroid()
-    {
+
         String ua = getUserAgent();
         
         if( ua==null )
             return false;
-        ua = ua.toLowerCase();
         
-        return (ua.contains("android") || ua.contains("tizen") ) && ( ua.contains("samsung") || ua.contains("; sm-") );
+        // return getBrowserType().isSamsung();
+        
+        userBean.setMsieOrSamsungAndroid( getBrowserType().isMsieOrSamsung() );
+        return userBean.getMsieOrSamsungAndroid();
     }
+    
     
     public boolean getIsMsie()
     {

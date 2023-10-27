@@ -45,6 +45,8 @@ public enum BrowserType
     SAFARI_DESKTOP_VER11PLUS(36,"bt.safaripcosx11plus"  ),
     CHROME_BASED_EDGE_MOBILE(37,"bt.edgemobilechrome"  ),
     CHROME_BASED_EDGE_DESKTOP(38,"bt.edgechrome"  ),
+    SAMSUNG_MOBILE(39,"bt.samsungmobile"  ),
+    SAMSUNG(40,"bt.samsungmobile"  ),
     SECURE_EXAM_BROWSER(100,"bt.seb"  ),
     SECURE_EXAM_BROWSER_MAC(101,"bt.sebmac"  );
 
@@ -66,7 +68,18 @@ public enum BrowserType
         return equals( MSIE10_PLUS ) || equals( MSIE11_MOBILE ) || equals( MSIE9 ) || equals( MSIE_8_OR_LOWER  );
     }
 
+    public boolean isSamsung()
+    {
+        return equals( SAMSUNG_MOBILE ) || equals(SAMSUNG);
+    }
+    
+    public boolean isMsieOrSamsung()
+    {
+        return isMsie() || isSamsung();
+    }
+    
 
+    
     public static BrowserType getFmUserAgent( String u )
     {
     	if( u == null || u.length() == 0 )
@@ -149,7 +162,10 @@ public enum BrowserType
 
             else if( u.indexOf( "ucbrowser" ) > 0 )
                 ua = 34;
-                
+
+            else if( u.indexOf( "; samsung sm-" )>0 || u.indexOf( "; sm-" )>0 || u.indexOf( "samsungbrowser/") >= 0 || u.indexOf( "vivobrowser/") >= 0 )
+                ua = 39;
+                                        
             else if( u.indexOf( "chrome/" ) > 0 || u.indexOf( "crios/" ) > 0 )
             {
                 if( u.indexOf( "edge/" ) > 0 || u.indexOf( "edga/" ) > 0 )
@@ -327,6 +343,16 @@ public enum BrowserType
         return BrowserType.getValue(ua);
     }
 
+    
+    public static boolean getIsSamsungOrVivo( String u )
+    {
+    	if( u == null || u.isBlank() )
+            return false;
+        
+    	return u.toLowerCase().indexOf( "samsungbrowser/") >= 0 || u.toLowerCase().indexOf( "vivobrowser/") >= 0;        
+    }
+    
+    
 
     public static boolean getIsSafariMacVersion11Plus( String u )
     {
