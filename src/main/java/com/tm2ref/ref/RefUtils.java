@@ -701,6 +701,8 @@ public class RefUtils extends BaseRefUtils
         getCorpBean();
         getRefBean();
 
+        // LogService.logIt( "RefUtils.processConfirmName() AAA Start" );
+        
         RcCheck rc = null;
         try
         {
@@ -708,7 +710,10 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
+            {
+                LogService.logIt( "RefUtils.processConfirmName() rc=null after attempt to repair. Going to corp.home." );
                 return CorpUtils.getInstance().processCorpHome();
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -743,6 +748,7 @@ public class RefUtils extends BaseRefUtils
                 }
             }
 
+            // LogService.logIt( "RefUtils.processConfirmName() BBB booleanParam1=" + booleanParam1 );
             // BooleanParam1 means confirmed.
             if( booleanParam1 )
             {

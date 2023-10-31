@@ -100,7 +100,7 @@ public class RefEntry
 
      public void doTestKeyRefEntry()
      {
-        LogService.logIt( "RefEntry.doTestKeyRefEntry() START tk=" + (tk==null ? "null" : tk )+ ", cuid=" + (cuid==null ? "null" : cuid) + ", rcsid=" + (rcsid==null ? "null" : rcsid) );
+        LogService.logIt( "RefEntry.doTestKeyRefEntry() START tk=" + (tk==null ? "null" : tk )+ ", cuid=" + (cuid==null ? "null" : cuid) + ", rcsid=" + (rcsid==null ? "null" : rcsid) + ", orgAutoTestId=" + orgAutoTestId );
         long testKeyId=0;
         long userId=0;
         int rcScriptId=0;
@@ -140,7 +140,7 @@ public class RefEntry
                 return;                
             }
             
-            if( testKeyId<=0 )
+            if( testKeyId<=0 && userId<=0 )
             {
                 navigateTo( "/index.xhtml" );
                 return;
@@ -165,7 +165,7 @@ public class RefEntry
              
             nextViewId = refUtils.performSimpleEntry(rcc.getCorpId(), rcc.getRcCheckId(), 0, null, false );
             
-            LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1 nextViewId=" + nextViewId );
+            LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1c nextViewId=" + nextViewId );
 
             if( nextViewId != null )
                 navigateTo( nextViewId );
