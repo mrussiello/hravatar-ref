@@ -54,6 +54,23 @@ public class RcFacade
     }
     
     
+    public RcCheck getRcCheckForUserIdAndRcScriptId( long userId, long adminUserId, int rcScriptId, Date createdAfterDate ) throws Exception
+    {
+        try
+        {
+            return (RcCheck) em.createNamedQuery( "RcCheck.findRecentByUserIdAndScriptId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("userId", userId ).setParameter("adminUserId", adminUserId ).setParameter("rcScriptId", rcScriptId ).setParameter("createdAfterDate", createdAfterDate ).getSingleResult();
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcFacade.getActiveRcCheckForUserIdAndRcScriptId( userId=" + userId + ", adminUserId=" + adminUserId + ", rcScriptId=" + rcScriptId + " ) " );
+            throw new STException( e );
+        }
+    }
+    
     public RcCheck getRcCheckForTestKeyId( long testKeyId ) throws STException
     {
         try

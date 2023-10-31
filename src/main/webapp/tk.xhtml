@@ -10,6 +10,9 @@
 <f:view contentType="text/html">
 <f:metadata>
         <f:viewParam name="tk" value="#{refEntry.tk}"/>
+        <f:viewParam name="cuid" value="#{refEntry.cuid}"/>
+        <f:viewParam name="rcsid" value="#{refEntry.rcsid}"/>
+        <f:viewParam name="oat" value="#{refEntry.orgAutoTestId}"/>
         <f:event listener="#{refEntry.doTestKeyRefEntry}" type="preRenderView" />
 </f:metadata>
 <body>

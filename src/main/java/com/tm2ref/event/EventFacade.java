@@ -2,6 +2,7 @@ package com.tm2ref.event;
 
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.event.TestKeyArchive;
+import com.tm2ref.entity.user.OrgAutoTest;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.LogService;
 
@@ -34,6 +35,27 @@ public class EventFacade
         }
     }
 
+    public OrgAutoTest getOrgAutoTest( int orgAutoTestId ) throws Exception
+    {
+        try
+        {
+            if( orgAutoTestId <= 0 )
+                throw new Exception( "orgAutoTestId is invalid " + orgAutoTestId );
+            return (OrgAutoTest) em.createNamedQuery( "OrgAutoTest.findByOrgAutoTestId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter( "orgAutoTestId", orgAutoTestId ).getSingleResult();
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.getOrgAutoTest( " + orgAutoTestId + " )" );
+            throw e;
+        }
+    }
+
+    
+    
 
     private TestKeyArchive getTestKeyArchive( long testKeyId ) throws Exception
     {

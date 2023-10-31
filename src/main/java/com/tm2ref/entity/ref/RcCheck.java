@@ -42,7 +42,8 @@ import jakarta.persistence.Transient;
 @NamedQueries({
         @NamedQuery( name = "RcCheck.findByTestKeyId", query = "SELECT o FROM RcCheck AS o WHERE o.testKeyId=:testKeyId" ),
         @NamedQuery( name = "RcCheck.findByRcCheckId", query = "SELECT o FROM RcCheck AS o WHERE o.rcCheckId=:rcCheckId" ),
-        @NamedQuery( name = "RcCheck.findByCandidateAccessCode", query = "SELECT o FROM RcCheck AS o WHERE o.candidateAccessCode=:candidateAccessCode" )    
+        @NamedQuery( name = "RcCheck.findByCandidateAccessCode", query = "SELECT o FROM RcCheck AS o WHERE o.candidateAccessCode=:candidateAccessCode" ),
+        @NamedQuery( name = "RcCheck.findRecentByUserIdAndScriptId", query = "SELECT o FROM RcCheck AS o WHERE o.userId=:userId AND o.adminUserId=:adminUserId AND o.rcScriptId=:rcScriptId AND o.createDate>=:createdAfterDate" ),        
 })
 public class RcCheck implements Serializable, Cloneable
 {

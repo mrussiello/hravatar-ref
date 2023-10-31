@@ -63,6 +63,13 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
     @Column(name="rcscriptstatustypeid")
     private int rcScriptStatusTypeId;
 
+    /**
+     * 0=pre-hire
+     * 1=employee
+     */
+    @Column(name="rcchecktypeid")
+    private int rcCheckTypeId;
+    
     @Column(name="langcode")
     private String langCode;
 
@@ -932,6 +939,14 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
     
     public boolean getNoCommentsRatingItemsB() {
         return noCommentsRatingItems==1;
+    }
+
+    public int getRcCheckTypeId() {
+        return rcCheckTypeId;
+    }
+
+    public void setRcCheckTypeId(int rcCheckTypeId) {
+        this.rcCheckTypeId = rcCheckTypeId;
     }
 
     

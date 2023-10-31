@@ -98,7 +98,7 @@
             <h:panelGroup>
                 <div style="text-align: center">
                     <div style="display:inline-block;">
-                        <p:commandButton ajax="false" action="#{raterRefUtils.processSaveItemResp}" onclick="if( doValidateRating() ) { PF('ratingrequireddialog').show(); return false; }" value="#{stMessages['g.RecordAnswer']}">
+                        <p:commandButton ajax="false" action="#{raterRefUtils.processSaveItemResp}" onclick="if( doValidateRating() ) { PF('ratingrequireddialog').show(); return false; }" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
                         </p:commandButton>
                         &#160;

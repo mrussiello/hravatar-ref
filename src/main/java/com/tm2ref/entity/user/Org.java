@@ -189,11 +189,11 @@ public class Org implements Serializable
     //@Column(name="defaultmessagetext")
     //private String defaultMessageText;
 
-    //@Column(name="emailresultsto")
-    //private String emailResultsTo;
+    @Column(name="emailresultsto")
+    private String emailResultsTo;
 
-    //@Column(name="textresultsto")
-    //private String textResultsTo;
+    @Column(name="textresultsto")
+    private String textResultsTo;
 
     //@Column(name="findlyaccountcredentials")
     //private String findlyAccountCredentials;
@@ -607,6 +607,22 @@ public class Org implements Serializable
 
     public void setSupportSendEmail(String supportSendEmail) {
         this.supportSendEmail = supportSendEmail;
+    }
+
+    public String getEmailResultsTo() {
+        return emailResultsTo;
+    }
+
+    public void setEmailResultsTo(String emailResultsTo) {
+        this.emailResultsTo = emailResultsTo;
+    }
+
+    public String getTextResultsTo() {
+        return textResultsTo;
+    }
+
+    public void setTextResultsTo(String textResultsTo) {
+        this.textResultsTo = textResultsTo;
     }
 
 
