@@ -889,6 +889,12 @@ public class RaterRefUtils extends BaseRefUtils
         RcCheck rc = refBean.getRcCheck();
         try
         {
+            if( rc==null )
+            {
+                LogService.logIt( "RaterRefUtils.processExitCore2() Fatal Error refBean.rcCheck is null." );
+                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RefBean.rcCheck is null" , null, null, rc, rc==null ? null : rc.getRcRater(), true );            
+            }
+            
             // use the completed survey as a reason to check for candidate completion if this is not the candidate.
             if( !rc.getRcRater().getRcRaterStatusType().getCompleteOrHigher() )
             {
