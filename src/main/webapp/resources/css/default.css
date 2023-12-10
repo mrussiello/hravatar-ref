@@ -13,6 +13,19 @@ body
     overscroll-behavior: none;
 }
 
+/**********************************************
+ * Screen Reader Only
+ **********************************************/
+.sr-only 
+{
+    position:absolute;
+    left:-10000px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+}
+
 
 /**********************************************
  * TABLE DEFAULTS

@@ -16,10 +16,10 @@
     </ui:fragment>
 
     <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRating and not raterRefBean.rcItem.rcItemFormatType.isCommentsOnly}">
-        <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB or facesUtils.isMsieOrSamsungAndroid}">
+        <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB or facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive}">
             <ref:item-rating-head-msie />    
         </ui:fragment>
-        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid}">
+        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
             <ref:item-rating-head />    
         </ui:fragment>    
     </ui:fragment>
@@ -45,10 +45,10 @@
     </ui:fragment>
 
     <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRating}">
-        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and facesUtils.isMsieOrSamsungAndroid}">
+        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive}">
             <ref:item-rating-body-msie />    
         </ui:fragment>
-        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid}">
+        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
             <ref:item-rating-body />    
         </ui:fragment>
         <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <!-- INTERFACE -->
 <cc:interface>
-    <!-- <cc:attribute name="value" required="false"/> -->
+    <cc:attribute name="showToggleAccessible" required="false" default="false"/>
 </cc:interface>
 
 <!-- IMPLEMENTATION -->
@@ -16,6 +17,16 @@
         <p:commandLink rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.rcItem.hideSkip le 0 and (not refBean.rcCheck.rcScript.allCommentsRequiredB or raterRefBean.rcItem.includeComments le 0 or not raterRefBean.rcItem.rcItemFormatType.canHaveComments)}" ajax="false" action="#{raterRefUtils.processSkipItem}" styleClass="textmedium ttformlink" onclick="doSkipButton()" title="#{stMessages['g.XRSkipButnAlt']}">
             <h:outputText style="text-decoration:underline" value="#{raterRefUtils.itemSkipButtonText}"/>
         </p:commandLink>
+        
+        <ui:fragment rendered="#{cc.attrs.showToggleAccessible}">
+            &#160;
+            <p:commandLink rendered="#{refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRExitAccessibleAlt']}">
+                <h:outputText style="text-decoration:underline" value="#{stMessages['g.XRExitAccessible']}"/>
+            </p:commandLink>
+            <p:commandLink rendered="#{not refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRViewAccessibleAlt']}">
+                <h:outputText style="text-decoration:underline" value="#{stMessages['g.XRViewAccessible']}"/>
+            </p:commandLink>
+        </ui:fragment>
     </div>
 
 </cc:implementation>

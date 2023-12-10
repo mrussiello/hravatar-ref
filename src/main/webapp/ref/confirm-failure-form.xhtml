@@ -50,24 +50,26 @@
             <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourName']}:"/>
             
             <h:panelGroup>
-            <p:inputText size="15" value="#{refBean.strParam1}" placeholder="#{stMessages['g.FirstName']}"/>
+            <p:inputText id="cffirstname" size="15" value="#{refBean.strParam1}" placeholder="#{stMessages['g.FirstName']}"/>
+            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.FirstName']}" for="cffirstname"/>
             &#160;
-            <p:inputText size="15" value="#{refBean.strParam2}" placeholder="#{stMessages['g.LastName']}"/>                
+            <p:inputText id="cflastname" size="15" value="#{refBean.strParam2}" placeholder="#{stMessages['g.LastName']}"/>                
+            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="cflastname"/>
             </h:panelGroup>
 
             <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourEmail']}:"/>
             <p:inputText size="30" value="#{refBean.strParam3}" placeholder="#{stMessages['g.Email']}"/>
 
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.WhatWrong']}:"/>
-            <p:selectOneMenu value="#{refBean.intParam1}" style="max-width:450px">
+            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.WhatWrong']}:" for="cfreasontypeid"/>
+            <p:selectOneMenu id="cfreasontypeid" value="#{refBean.intParam1}" style="max-width:450px">
                 <f:selectItem itemValue="0" itemLabel="#{stMessages['g.PleaseChoose']}" />
                 <f:selectItem itemValue="1" itemLabel="#{stMessages['g.ConfFailForm.ErrNameWrong']}" />
                 <!-- <f:selectItem itemValue="2" itemLabel="#{stMessages['g.ConfFailForm.ErrDontKnowPerson']}" /> -->
                 <f:selectItem itemValue="99" itemLabel="#{stMessages['g.ConfFailForm.ErrOther']}" />
             </p:selectOneMenu>
 
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Note']}:"/>
-            <p:inputTextarea rows="3" styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam4}"/>
+            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.Note']}:" for="cfnotetb"/>
+            <p:inputTextarea id="cfnotetb" rows="3" styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam4}"/>
 
             <h:panelGroup></h:panelGroup>
             <p:commandButton ajax="false" action="#{refUtils.processConfirmFailFormSubmit}" value="#{stMessages['g.SubmitInfo']}">

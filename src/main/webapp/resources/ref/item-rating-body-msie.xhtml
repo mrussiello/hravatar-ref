@@ -69,15 +69,17 @@
                             </div>                            
                         </div>
                                                 
-                        <div style="width:640px;padding-left:80px;padding-right:80px;margin-top:5px;margin-bottom:0px;">
+                        <div style="width:800px;padding-left:80px;padding-right:80px;margin-top:5px;margin-bottom:0px;">
                             <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px"/>
                             <div id="sliderelediv" style="float:left;width:520px;height:95px;margin-top:0px;margin-left:0px;padding-top:35px">                                
                                 <p:selectOneRadio rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.scoreInteger}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                                     <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
                                 </p:selectOneRadio>
+                                
                                 <p:selectOneRadio rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.score}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                                     <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
                                 </p:selectOneRadio>
+                                
                             </div>
                             <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px"/>
                         </div>
@@ -112,7 +114,7 @@
                 </div>
             </h:panelGroup>
 
-            <ref:item-skipbutton />
+            <ref:item-skipbutton showToggleAccessible="#{raterRefBean.rcItem.includeNumRatingB and refBean.accessibleActive and not facesUtils.isMsieOrSamsungAndroid}" />
             
         </h:panelGrid>
     

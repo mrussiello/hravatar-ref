@@ -48,8 +48,8 @@
 
         <h:panelGrid columns="3" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="2" style="padding-top:30px;padding-bottom:5px;margin:0 auto">
 
-             <h:outputText styleClass="ttformtext" value="#{stMessages['g.EnterAccessCodeC']}"/>
-             <p:inputText styleClass="txtcoldark" tabindex="10" value="#{refBean.accessCode}" autocomplete="off" size="16" placeholder="#{stMessages['g.EnterAccessCodeHere']}"/>
+             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.EnterAccessCodeC']}" for="rfaccesscode"/>
+             <p:inputText id="rfaccesscode" styleClass="txtcoldark" tabindex="10" value="#{refBean.accessCode}" autocomplete="off" size="16" placeholder="#{stMessages['g.EnterAccessCodeHere']}"/>
              <p:commandButton tabindex="11" ajax="false" action="#{refUtils.processEnterAccessCode}" value="#{stMessages['g.SubmitAccessCd']}"/>
 
         </h:panelGrid>

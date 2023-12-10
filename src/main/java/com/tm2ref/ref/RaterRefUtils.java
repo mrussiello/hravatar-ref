@@ -106,7 +106,7 @@ public class RaterRefUtils extends BaseRefUtils
         
         if( refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript().getAllCommentsRequiredB() )
             return true;
-        
+                
         if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null || !raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getCanHaveComments() || raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments()<=1 )
             return false;
 
@@ -161,6 +161,9 @@ public class RaterRefUtils extends BaseRefUtils
         
         getRefBean();
         
+        if( refBean.getRcCheck().getRcScript().getNoCommentsRatingItemsB() && raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getIsRating() )
+            return false;
+                        
         // Has Thresholds
         if( raterRefBean.getRcItem()!=null && refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript()!=null )
         {
@@ -513,33 +516,27 @@ public class RaterRefUtils extends BaseRefUtils
             //out.add( new SelectItem( ((float)(10.0)), "   " ) );
         }
 
-        // Not discrete, this must be MSIE
+        // Not discrete, this must be MSIE or Accessible
         else
         {
             float[] vals = ratingScale.getDiscreteValuesMsie();
             SelectItem si;
             for( int i=0;i<vals.length;i++ )
             {
-                si= new SelectItem( ((float)(vals[i])), "   " );
+                si= new SelectItem( ((float)(vals[i])), " " );
 
                 if( noMiddle && ratingScale.getIsDefault() && (i==4 || i==5) )
                     si.setDisabled(true);
 
-                if( noMiddle && ratingScale.getIsOneToFive()&& i==4 )
+                if( noMiddle && ratingScale.getIsOneToFive() && i==2 )
                     si.setDisabled(true);
 
                 out.add( si );
             }
 
-
-            //for( int i=1;i<=10;i++ )
-            //{
-            //    ss = new SelectItem( ((int)(i)), "   " );
-            //    if( noMiddle && (i==5 || i==6) )
-            //        ss.setDisabled(true);
-            //    out.add( ss );
-            //}
         }
+        
+        LogService.logIt( "RaterRefUtils.getRcItemRadioSelectItemListForRating() selectItemList.size=" + out.size() );
         return out;
     }
 
@@ -714,6 +711,61 @@ public class RaterRefUtils extends BaseRefUtils
         
     }
 
+    public String processToggleAccessible()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = refBean.getRcCheck();
+        try
+        {
+            if( rc == null )
+            {
+                rc = repairRefBeanForCurrentAction(refBean, true );
+                if( rc!=null )
+                    return getViewFromPageType( refBean.getRefPageType() );
+            }
+            if( rc == null )
+                return CorpUtils.getInstance().processCorpHome();
+            if( rc.getRcRater()==null )
+                throw new Exception( "RcCheck.RcRater is null" );
+
+            refBean.setAccessibleActive( !refBean.getAccessibleActive() );
+            
+            RcItemWrapper rciw = raterRefBean.getRcItemWrapper();
+
+            // LogService.logIt( "RaterRefUtils.processToggleAccessible()" );
+
+            if( rciw == null )
+            {
+                // If this is the candidate. It's OK and can happen when RcCheck is set to capture ratings from candidate but all items are set to skip for candidate.
+                if( rc.getRcRater().getIsCandidateOrEmployee() && !rc.getRcScript().getHasAnyCandidateRatings()  )
+                {
+                    // throw new Exception( "RaterRefUtils.processGoBackToLastItem() Candidate. rcCheck is set to collect ratings from candidate, but there are no candidate ratings to collect for the associated script.  rcCheckId="  + rc.getRcCheckId() );
+                    throw new Exception( "Candidate. rcCheck is set to collect ratings from candidate, but there are no candidate ratings to collect for the associated script.  rcCheckId="  + rc.getRcCheckId() );
+
+                }
+                else
+                    throw new Exception( "Rater Cannot find RcItemWrapper()!" );
+            }
+
+            raterRefBean.setRcItemWrapper(rciw, rc.getRcRater().getIsCandidateOrEmployee() );
+            refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE2 : RefPageType.CORE );
+            // refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE3 : RefPageType.CORE );
+            return getNextViewFromRatings();
+        }
+        catch( STException e )
+        {
+            setMessage(e);
+            return "StayInSamePlace";
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RaterRefUtils.processToggleAccessible() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }        
+    }
+    
     public String processGoBackToLastItem()
     {
         getCorpBean();
@@ -1154,12 +1206,13 @@ public class RaterRefUtils extends BaseRefUtils
                     setStringInfoMessage( MessageFactory.getStringMessage(getLocale(), "g.XRQuestionSkipped" ) );
                 }
             }
+            
             else if( itmFmt.getIsRating() )
             {
                 if( itm.getIncludeNumRatingB() )
                 {
 
-                    score = getIsMsieOrSamsungAndroid() || refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB() ? rating.getScore() : getUnencryptedFloatFmRequest( "ratingvalue");
+                    score = getIsMsieOrSamsungAndroid() || refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB() || refBean.getAccessibleActive() ? rating.getScore() : getUnencryptedFloatFmRequest( "ratingvalue");
                     // LogService.logIt( "RaterRefUtils.doSaveItemResp() rating item. rating value selected=" + score + " comments=" + rating.getText() );
                     if( score<ratingScale.getMinScore() )
                     {

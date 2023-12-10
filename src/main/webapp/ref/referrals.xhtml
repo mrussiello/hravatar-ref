@@ -95,17 +95,23 @@
             <h:outputText styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P2']}"/>
         </h:panelGrid>
                 
+        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.XRCreateReferral']} #{stMessages['g.FirstName']}" for="referralformfn"/>
+        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="referralformln"/>
+        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="referralformem"/>
+        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="referralformmbl"/>
+        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.NoteToEmployer']}" for="referralformnote"/>
+        
         <h:panelGrid columns="1" cellpadding="3" style="padding-top:2px;padding-bottom:10px;margin-left:20px">
 
-            <p:inputText size="18" value="#{raterRefBean.referralUser.firstName}" placeholder="#{stMessages['g.FirstName']}"/>
+            <p:inputText id="referralformfn" size="18" value="#{raterRefBean.referralUser.firstName}" placeholder="#{stMessages['g.FirstName']}"/>
 
-            <p:inputText size="18" value="#{raterRefBean.referralUser.lastName}" placeholder="#{stMessages['g.LastName']}"/>
+            <p:inputText id="referralformln" size="18" value="#{raterRefBean.referralUser.lastName}" placeholder="#{stMessages['g.LastName']}"/>
 
-            <p:inputText size="18" value="#{raterRefBean.referralUser.email}" placeholder="#{stMessages['g.Email']}"/>
+            <p:inputText id="referralformem" size="18" value="#{raterRefBean.referralUser.email}" placeholder="#{stMessages['g.Email']}"/>
 
-            <p:inputText size="18" value="#{raterRefBean.referralUser.mobilePhone}" placeholder="#{stMessages['g.MobilePhone']}"/>
+            <p:inputText id="referralformmbl" size="18" value="#{raterRefBean.referralUser.mobilePhone}" placeholder="#{stMessages['g.MobilePhone']}"/>
 
-            <p:inputTextarea rows="3" cols="30" value="#{raterRefBean.referralNotes}" placeholder="#{stMessages['g.NoteToEmployer']}" />
+            <p:inputTextarea id="referralformnote" rows="3" cols="30" value="#{raterRefBean.referralNotes}" placeholder="#{stMessages['g.NoteToEmployer']}" />
             
             <p:commandButton ajax="false" action="#{raterRefUtils.processCreateReferral}" title="#{stMessages['g.XRCreateReferralInfo']}" value="#{stMessages['g.XRCreateReferral']}"/>
             

@@ -41,6 +41,7 @@ public class RefBean extends BaseRefBean implements Serializable
     private User tgtUser;
     
     boolean adminOverride;
+    boolean accessibleActive=false;
     
     
     // private String httpSessionId;
@@ -67,6 +68,7 @@ public class RefBean extends BaseRefBean implements Serializable
         recDevs=-1;
         medRecApi=false;
         hasGetUserMedia=0;
+        accessibleActive=false;
 
         adminOverride = false;
         
@@ -381,6 +383,14 @@ public class RefBean extends BaseRefBean implements Serializable
 
     public void setAdminOverride(boolean adminOverride) {
         this.adminOverride = adminOverride;
+    }
+
+    public boolean getAccessibleActive() {
+        return accessibleActive;
+    }
+
+    public void setAccessibleActive(boolean accessibleActive) {
+        this.accessibleActive = accessibleActive;
     }
 
 

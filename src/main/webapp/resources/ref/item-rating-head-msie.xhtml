@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <!-- INTERFACE -->
@@ -66,8 +67,25 @@
         .rpnlcolthumbup
         {
             min-width:80px;
-        }        
+        } 
+        
     </style> 
+
+    <ui:fragment rendered="#{refBean.rcCheck.rcScript.rcRatingScaleType.isOneToFive}">
+    <style>
+        #sliderelediv
+        {
+            padding-left:40px;
+        }
+        .ui-radiobutton.ui-widget
+        {
+            width:60px;
+        }
+    </style> 
+    </ui:fragment>
+    
+    
+
     <script type="text/javascript">
         //<![CDATA[
         

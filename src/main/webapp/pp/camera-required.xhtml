@@ -110,13 +110,15 @@
             <h:panelGroup>
                 <table style="margin-left:auto;margin-left:auto;padding:4px;padding-top:15px">
                     <tr>
-                        <td><p:inputText tabindex="11" size="24" value="#{proctorBean.email}" placeholder="#{stMessages['g.Email']}"/>                            
+                        <td><p:inputText id="cdemailbox" tabindex="11" size="24" value="#{proctorBean.email}" placeholder="#{stMessages['g.Email']}"/> 
+                            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="cdemailbox"/>
                         </td>
                         <td><p:commandButton tabindex="12" ajax="false" action="#{proctorUtils.processEmailDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlEmail']}"/>
                         </td>
                     </tr> 
                     <tr>
-                        <td><p:inputText tabindex="13" size="24" value="#{proctorBean.mobileNum}" placeholder="#{stMessages['g.MobilePhone']}"/>                            
+                        <td><p:inputText id="cdmobilebox" tabindex="13" size="24" value="#{proctorBean.mobileNum}" placeholder="#{stMessages['g.MobilePhone']}"/>                            
+                            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="cdmobilebox"/>
                         </td>
                         <td><p:commandButton tabindex="14" ajax="false" action="#{proctorUtils.processSmsDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlText']}"/>
                         </td>

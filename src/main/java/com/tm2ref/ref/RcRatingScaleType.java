@@ -120,7 +120,7 @@ public enum RcRatingScaleType implements Serializable
     public float[] getDiscreteValuesMsie()
     {
         if( getIsOneToFive() )
-            return new float[] {1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f,5f};
+            return new float[] {1f,2f,3f,4f,5f}; // {1f,1.5f,2f,2.5f,3f,3.5f,4f,4.5f,5f};
 
         return new float[] {1f,2f,3f,4f,5f,6f,7f,8f,9f,10f};
     }

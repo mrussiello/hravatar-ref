@@ -54,7 +54,8 @@
             <h:panelGroup>
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                        <p:inputTextarea rows="3"  styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam1}" placeholder="#{stMessages['g.XRRaterRejectCommentsPH']}"/>                        
+                        <p:inputTextarea id="raterrejectreasontb" rows="3"  styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam1}" placeholder="#{stMessages['g.XRRaterRejectCommentsPH']}"/>                        
+                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.XRRaterRejectCommentsPH']}" for="raterrejectreasontb"/>
                     </div>
                 </div>
             </h:panelGroup>

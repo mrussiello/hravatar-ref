@@ -61,7 +61,8 @@
             <h:panelGroup>
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                        <p:inputTextarea  styleClass="commenttextarea" style="width:550px" rows="4" autoResize="true" value="#{candidateRefBean.candidateInputStr}"/>
+                        <p:inputTextarea id="candinptquestiontb" styleClass="commenttextarea" style="width:550px" rows="4" autoResize="true" value="#{candidateRefBean.candidateInputStr}"/>
+                        <p:outputLabel styleClass="sr-only" value="#{candidateRefUtils.candidateInputQuestion}" for="candinptquestiontb"/>
                     </div>
                 </div>
             </h:panelGroup>

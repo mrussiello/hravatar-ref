@@ -330,6 +330,12 @@ public class CandidateRefUtils extends BaseRefUtils
         }
     }
     
+    public String getCandidateInputQuestion()
+    {
+        getRefBean();        
+        return refBean.getRcCheck().getRcScript().getCandidateStrQuestion( candidateRefBean.getCandidateInputNumber() );
+    }
+    
         
     public String getCandidateInputQuestionXhtml()
     {
