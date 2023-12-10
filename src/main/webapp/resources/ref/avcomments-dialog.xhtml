@@ -98,7 +98,7 @@
         </p:dialog>
     
     <p:dialog rendered="#{refBean.audioVideoCommentsOk}" width="800" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="font-size:1.3rem" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            
+            <div role="status">
             <h:panelGrid columns="1" cellpadding="4">
                 
                 <h:outputText value="#{stMessages['g.RecordComments.Uploading.P1']}" />
@@ -108,12 +108,13 @@
                 <h:panelGroup>
                     <div style="text-align:center;margin:30px">
                         <div style="display:inline-block">
-                            <h:graphicImage library="images" name="loading-6.gif" />
+                            <h:graphicImage library="images" name="loading-6.gif" alt=""/>
                         </div>
                     </div>
                 </h:panelGroup>
 
             </h:panelGrid>
+            </div>
 
         </p:dialog>
     

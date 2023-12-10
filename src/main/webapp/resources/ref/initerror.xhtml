@@ -27,7 +27,7 @@
 
 
         <h:panelGroup rendered="#{fn:length(refBean.errorMessage) gt 0}">
-            <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-right:10px;margin-bottom:8px"/>
+            <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-right:10px;margin-bottom:8px" alt=""/>
             <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{stMessages[ 'g.InitErrorMessageIsC' ]}"/>&#160;
             <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{refBean.errorMessage}"/>
         </h:panelGroup>

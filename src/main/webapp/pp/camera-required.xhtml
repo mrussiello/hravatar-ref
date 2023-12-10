@@ -73,7 +73,7 @@
             <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPCameraRequired']}" escape="false"/>
                         
             <h:panelGroup>
-                <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" />
+                <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" alt=""/>
                 <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P1']}">
                      <f:param value="#{refUtils.rcCheckTypeName}"/>
                 </h:outputFormat>
@@ -157,11 +157,13 @@
     
     <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
     
+        <div role="status">
         <p style="text-align: left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                 <f:param value="#{refUtils.rcCheckTypeName}"/>
             </h:outputFormat></p>
         
         <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+        </div>
     </p:dialog>
     
         <p:dialog width="550" modal="true" header="#{stMessages['g.ExitConfirm']}" style="font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">

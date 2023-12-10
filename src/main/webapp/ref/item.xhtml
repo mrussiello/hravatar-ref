@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
 
 <ui:composition template="#{corpBean.template}">
 
+<ui:define name="titletag">
+    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.RatingQ']}"/>
+        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.RatingQ']}"/></title>
+</ui:define>      
+    
+    
 <ui:define name="headspec">
     
     <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isButton}">

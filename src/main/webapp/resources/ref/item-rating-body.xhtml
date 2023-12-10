@@ -70,7 +70,7 @@
                         </div>
                                                 
                         <div style="width:740px;margin-top:5px;margin-bottom:0px;">
-                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px"/>
+                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px" alt=""/>
                             <div id="sliderelediv" style="float:left;width:570px;height:95px;margin-top:0px;margin-left:25px">                            
                                 <ui:fragment rendered="#{raterRefBean.rcItem.denyMiddleB}">
                                     <img id="trackbarimg" src="/tr/images/trackbar-no-neutral.png" style="width:570px;height:95px"/>                        
@@ -79,7 +79,7 @@
                                     <img id="trackbarimg" src="/tr/images/trackbar.png" style="width:570px;height:95px"/>                        
                                 </ui:fragment>
                             </div>
-                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px"/>
+                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px" alt=""/>
                         </div>
                     </div>
                 </div>
@@ -118,6 +118,7 @@
         </h:panelGrid>
     
         <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            <div role="error">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />
 
@@ -125,6 +126,7 @@
                         <p:button value="#{stMessages['g.OK']}" onclick="return PF( 'ratingrequireddialog' ).hide()"/>
                     </h:panelGroup>
                 </h:panelGrid>
+                </div>
         </p:dialog>
     
         <ref:avcomments-dialog />

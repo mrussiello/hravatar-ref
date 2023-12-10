@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
 <body>
 
 <ui:composition template="#{corpBean.template}">
 
+<ui:define name="titletag">
+    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
+        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
+</ui:define>      
+    
+    
 <ui:define name="coreinnersection">
 
     <ref:initerror />

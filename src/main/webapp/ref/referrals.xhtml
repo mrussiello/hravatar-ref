@@ -10,10 +10,13 @@
 
 <ui:composition template="#{corpBean.template}">
 
-<ui:define name="headspec">
-    <style>
-    </style> 
+<ui:define name="titletag">
+    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Referrals']}"/>
+        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Referrals']}"/></title>
+</ui:define>      
     
+    
+<ui:define name="headspec">
     
     <script type="text/javascript">
         //<![CDATA[

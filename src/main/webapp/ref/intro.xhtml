@@ -10,6 +10,11 @@
 
 <ui:composition template="#{corpBean.template}">
 
+<ui:define name="titletag">
+    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
+        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
+</ui:define>    
+    
 <ui:define name="headspec">
     <style>
         .pincolclass

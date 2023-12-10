@@ -135,12 +135,14 @@
     
     <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
     
+        <div role="status">
         <p><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                 <f:param value="#{refUtils.rcCheckTypeName}"/>
             </h:outputFormat>
         </p>
         
         <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+        </div>
     </p:dialog>
     
     </h:form>

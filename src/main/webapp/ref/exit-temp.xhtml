@@ -10,6 +10,12 @@
 
 <ui:composition template="#{corpBean.template}">
 
+<ui:define name="titletag">
+    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.ExitTemp']}"/>
+        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.ExitTemp']}"/></title>
+</ui:define>      
+    
+    
 <ui:define name="headspec">
     
     <script type="text/javascript">
@@ -95,12 +101,13 @@
     <div id="thetextspan"></div>
     
     <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
-    
+        <div role="status">
         <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                 <f:param value="#{refBean.strParam2}"/>
             </h:outputFormat></p>
         
         <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+        </div>
     </p:dialog>
     
     </h:form>

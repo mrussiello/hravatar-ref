@@ -87,6 +87,11 @@ public class RefBean extends BaseRefBean implements Serializable
         tgtUser=null;
     }
 
+    public boolean getIsMrf()
+    {
+        return rcCheck!=null && rcCheck.getRcCheckType().getIsEmployeeFeedback();
+    }
+    
     public String getAccessCode() {
         return accessCode;
     }

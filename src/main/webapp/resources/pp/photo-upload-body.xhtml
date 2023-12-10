@@ -95,12 +95,13 @@
         <pp:exit-dialog />
     
         <p:dialog closable="false" header="#{stMessages['g.PPT.candphoto.uploading']}" widgetVar="uploadingfiledialog" width="400">
+            <div role="status">
             <h:panelGrid columns="1" cellpadding="10" style="width:100%;margin-left:auto;margin-right:auto">
                 
                 <h:panelGroup>
                     <div style="text-align: center;padding-top:20px;padding-bottom:20px">
                         <div style="display:inline-block">
-                            <h:graphicImage library="images" name="loading-6.gif" />
+                            <h:graphicImage library="images" name="loading-6.gif" alt=""/>
                         </div>
                     </div>
                 </h:panelGroup>
@@ -117,10 +118,12 @@
                 
 
             </h:panelGrid>
+            </div>
         </p:dialog>
         
         <p:dialog closable="true" header="#{stMessages['g.PPT.candphoto.uperror']}" widgetVar="uploaderrordialog" width="700">
             <h:form>
+            <div role="error">
             <h:panelGrid columns="2" cellpadding="10" style="margin-left:auto;margin-right:auto">
                 
                 <h:panelGroup>
@@ -129,7 +132,7 @@
                         <p><span id="uploaderrormsgspan"></span></p>
                     </div>
                 </h:panelGroup>                
-                <h:graphicImage library="images" name="error-64.png" />
+                <h:graphicImage library="images" name="error-64.png" alt=""/>
                                 
                 <h:panelGroup>
                     <p:button id="uploaderrorcancelbut" value="#{stMessages['g.TryAgain']}"  onclick="PF('uploaderrordialog').hide()"/>
@@ -154,15 +157,17 @@
                 <h:panelGroup></h:panelGroup>
                 
             </h:panelGrid>
+            </div>
             </h:form>
         </p:dialog>
         
         <p:dialog closable="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" width="700">
             <h:form>
+            <div role="error">
             <h:panelGrid columns="1" cellpadding="5">               
                 
                 <h:panelGroup>
-                    <img style="float:right;margin-left:10px;margin-right:10px;margin-bottom:10px" src="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_16x1675891890610.png" />
+                    <img style="float:right;margin-left:10px;margin-right:10px;margin-bottom:10px" src="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_16x1675891890610.png"  alt=""/>
                     <span id="alertmsgtxtspan"></span>
                 </h:panelGroup>
 
@@ -194,6 +199,7 @@
                     </div>
                 </h:panelGroup>
             </h:panelGrid>
+            </div>
             </h:form>
         </p:dialog>
     

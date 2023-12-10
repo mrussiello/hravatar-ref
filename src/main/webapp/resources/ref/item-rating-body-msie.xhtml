@@ -70,7 +70,7 @@
                         </div>
                                                 
                         <div style="width:800px;padding-left:80px;padding-right:80px;margin-top:5px;margin-bottom:0px;">
-                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px"/>
+                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px" alt=""/>
                             <div id="sliderelediv" style="float:left;width:520px;height:95px;margin-top:0px;margin-left:0px;padding-top:35px">                                
                                 <p:selectOneRadio rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.scoreInteger}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                                     <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
@@ -81,7 +81,7 @@
                                 </p:selectOneRadio>
                                 
                             </div>
-                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px"/>
+                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px" alt=""/>
                         </div>
                     </div>
                 </div>
@@ -119,6 +119,7 @@
         </h:panelGrid>
     
         <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            <div role="error">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />
 
@@ -126,6 +127,7 @@
                         <p:button value="#{stMessages['g.OK']}" onclick="return PF( 'ratingrequireddialog' ).hide()"/>
                     </h:panelGroup>
                 </h:panelGrid>
+                </div>
         </p:dialog>
         
     </h:form>

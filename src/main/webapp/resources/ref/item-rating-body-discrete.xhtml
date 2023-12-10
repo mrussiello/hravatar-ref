@@ -86,7 +86,7 @@
                     <!-- Second Row -->
                     <h:panelGroup> 
                         <div style="position:absolute">
-                        <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:-5px"/>
+                        <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:-5px" alt=""/>
                         </div>
                     </h:panelGroup>
 
@@ -128,7 +128,7 @@
                                         
                     <h:panelGroup>                        
                         <div style="position:absolute;width:80px">
-                        <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:-5px"/>
+                        <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:-5px" alt=""/>
                         </div>
                     </h:panelGroup>
                     
@@ -174,6 +174,7 @@
         </h:panelGrid>
     
         <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            <div role="error">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />
 
@@ -181,6 +182,7 @@
                         <p:button value="#{stMessages['g.OK']}" onclick="return PF( 'ratingrequireddialog' ).hide()"/>
                     </h:panelGroup>
                 </h:panelGrid>
+                </div>
         </p:dialog>
     
         <ref:avcomments-dialog />
