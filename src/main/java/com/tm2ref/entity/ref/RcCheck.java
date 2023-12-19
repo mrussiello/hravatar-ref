@@ -515,7 +515,7 @@ public class RcCheck implements Serializable, Cloneable
         if( rcScript==null )
             return 0;
         int ct = rcScript.getCandidateQuestionCount();
-        if( rcScript.getHasAnyCandidateInput() )
+        if( getCollectRatingsFmCandidate() )
             ct += rcScript.getItemCount(true);
         return ct;
     }

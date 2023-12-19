@@ -974,6 +974,45 @@ public class RefUtils extends BaseRefUtils
         }
     }
 
+    
+    public String processSubmitPreQuestions()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = null;
+        try
+        {
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true );
+            if( rc == null )
+                return CorpUtils.getInstance().processCorpHome();
+
+            long rcChkReq = this.getRcCheckIdFmRequest();
+            if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
+            {
+                String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
+                LogService.logIt( "RefUtils.processSubmitPreQuestions() " + msg );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), msg , null, null, rc, rc.getRcRater(), true );
+            }
+
+            if( refBean.getRefUserType().getIsRater() )
+                throw new Exception( "RefUserType is rater. Not allowed for this method. "  );
+
+            // LogService.logIt( "RefUtils.processSubmitPreQuestions() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            refBean.setRefPageType( RefPageType.PRE_QUESTIONS );
+            RefPageType rpt = getNextPageTypeForRefProcess();
+            refBean.setRefPageType(rpt);
+            return getViewFromPageType( refBean.getRefPageType() );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.processSubmitPreQuestions() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }        
+    }
+            
 
     public String processSubmitSpecialInst()
     {

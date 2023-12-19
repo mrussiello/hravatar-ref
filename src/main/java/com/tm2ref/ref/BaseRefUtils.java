@@ -324,12 +324,25 @@ public class BaseRefUtils  extends FacesUtils
             if( nextRefPageType.equals( RefPageType.ID_PHOTO) && !getNeedsIdPhoto() )
                 nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
 
+            // Prequestions are only for candidtes that have questions or ratings
+            if( nextRefPageType.equals( RefPageType.PRE_QUESTIONS) && (refUserType.getIsRater() || !rc.getRequiresAnyCandidateInputOrSelfRating() ) )
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+            
+            // skip pre-questions if they are all answered.
+            if( nextRefPageType.equals( RefPageType.PRE_QUESTIONS) && refUserType.getIsCandidate() )
+            {
+                CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                cru.doEnterCore();
+                if( !cru.getNeedsCore() )
+                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+            }
+            
+            
             if( nextRefPageType.getIsCore() )
             {
                 if( refUserType.getIsCandidate() )
                 {
                     CandidateRefUtils cru = CandidateRefUtils.getInstance();
-
                     cru.doEnterCore();
                     if( !cru.getNeedsCore() )
                     {
@@ -593,6 +606,10 @@ public class BaseRefUtils  extends FacesUtils
             if( pt.equals( RefPageType.PHOTO)  )
                 pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
 
+            // Prequestions are only for candidtes that have questions or ratings
+            if( pt.equals( RefPageType.PRE_QUESTIONS) && (refUserType.getIsRater() || !rc.getRequiresAnyCandidateInputOrSelfRating() ) )
+                pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
+                        
             if( pt.equals( RefPageType.AVCOMMENTS) && !getHasAvComments())
                 pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
 

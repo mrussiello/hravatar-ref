@@ -17,6 +17,7 @@ public enum RefPageType
     AVCOMMENTS(41,"AvComments Allowed", "avcommentsallowed.xhtml", "avcommentsallowed.xhtml" ),
     PHOTO(45,"Photo", "photo.xhtml", "photo.xhtml" ),
     ID_PHOTO(46,"Id Photo", "photo-id.xhtml", "photo-id.xhtml" ),
+    PRE_QUESTIONS(47,"Pre-Questions", "pre-questions-candidate.xhtml", null ),
     CORE(50,"Core", "question.xhtml" , "item-rating.xhtml" ),
     CORE2(60,"Core2", "item-rating.xhtml", "referrals.xhtml" ),
     CORE3(70,"Core3", "references.xhtml", null ),
@@ -119,7 +120,9 @@ public enum RefPageType
             case PHOTO:
                 return ID_PHOTO;
             case ID_PHOTO:
-                return CORE;
+                return PRE_QUESTIONS;
+            case PRE_QUESTIONS:
+                 return CORE;
             case CORE:
                 return CORE2;
             case CORE2:
@@ -150,8 +153,10 @@ public enum RefPageType
                 return RELEASE;
             case AVCOMMENTS:
                 return SPECIAL;
-            case CORE:
+            case PRE_QUESTIONS:
                 return AVCOMMENTS;
+            case CORE:
+                return PRE_QUESTIONS;
             case CORE2:
                 return CORE;
             case CORE3:
