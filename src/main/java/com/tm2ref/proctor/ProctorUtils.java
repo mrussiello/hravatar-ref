@@ -6,6 +6,7 @@ package com.tm2ref.proctor;
 
 import com.amazonaws.services.rekognition.model.FaceDetail;
 import com.tm2ref.amazoncloud.AmazonRekognitionUtils;
+import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.User;
@@ -687,13 +688,20 @@ public class ProctorUtils extends FacesUtils {
         RcCheck rc = refBean.getRcCheck();
         
         try
-        {
+        {       
+            if( rc==null )
+                rc = RefUtils.getInstance().repairRefBeanForCurrentAction(refBean, true );
             
             if( rc==null )
-                throw new Exception( "RcCheck is null" );
+            {
+                LogService.logIt( "ProctorUtils.sendDeviceChangeRestartUrl() RcCheck is null and could not be recovered."  );
+                return CorpUtils.getInstance().processCorpHome();         
+            }
         
             if( refBean.getRefUserType()==null )
+            {
                 throw new Exception( "RefBean.refUserType is null" );
+            }
             
             // String restartUrl = getFullRestartUrl();
             User user = null;
