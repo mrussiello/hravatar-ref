@@ -113,7 +113,8 @@ public class RuntimeConstants
         // Note: This is the Amazon user S3AndAIAdministrator who has access to S3 and various AI tools like Polly and Translate and Rekognition
         cache.put( "awsAccessKeyRekognition", "" );
         cache.put( "awsSecretKeyRekognition", "" );
-
+        cache.put( "awsRekognitionRegionId", (Integer)1 );
+        
         cache.put( "useAwsTestFoldersForProctoring", false );
 
         cache.put( "awsS3BaseUrl", "https://s3.amazonaws.com/" );

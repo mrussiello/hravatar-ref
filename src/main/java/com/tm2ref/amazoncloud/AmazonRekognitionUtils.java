@@ -59,7 +59,7 @@ public class AmazonRekognitionUtils {
 
             rekognitionClient = AmazonRekognitionClientBuilder
                                     .standard()
-                                    .withRegion(Regions.US_EAST_1)
+                                    .withRegion(getClientRegion() )
                                     .withCredentials(new AWSStaticCredentialsProvider(bac))
                                     .build();
         }
@@ -69,6 +69,18 @@ public class AmazonRekognitionUtils {
             throw e;
         }
     }
+    
+    public Regions getClientRegion()
+    {
+        int rid = RuntimeConstants.getIntValue("awsRekognitionRegionId");
+        
+        if( rid==1 )
+            return Regions.US_EAST_1;
+        if( rid==12 )
+            return Regions.US_WEST_2;
+        return Regions.US_EAST_1;
+    }
+    
     
     /*
      * Returns Object[]:
