@@ -166,7 +166,10 @@ public class AdminRefUtils extends FacesUtils {
             {
                 rc = rcFacade.getRcCheck(rcCheckId, true );
                 if( rc==null )
-                    throw new Exception( "RcCheck not found for RcCheckId=" + rcCheckId );
+                {
+                    this.setStringErrorMessage("RcCheck not found for RcCheckId=" + rcCheckId );
+                    return "StayInSamePlace";
+                }
             }
             
             RcRater rater = null;
@@ -174,10 +177,16 @@ public class AdminRefUtils extends FacesUtils {
             {
                 rater = rcFacade.getRcRater(rcRaterId, true );
                 if( rater==null )
-                    throw new Exception( "RcRater not found for rcRaterId=" + rcRaterId );
+                {
+                    this.setStringErrorMessage("RcRater not found for rcRaterId=" + rcRaterId );
+                    return "StayInSamePlace";
+                }
                 
                 if( rc!=null && rc.getRcCheckId()!=rater.getRcCheckId() )
-                    throw new Exception( "RcRater.rcCheck (" + rater.getRcCheckId() + ") does not match rcCheckId=" + rcCheckId ); 
+                {
+                    this.setStringErrorMessage("RcRater.rcCheck (" + rater.getRcCheckId() + ") does not match rcCheckId=" + rcCheckId );
+                    return "StayInSamePlace";
+                } 
                 
                 rcCheckId=rater.getRcCheckId();
                 if(rc==null)
@@ -185,7 +194,10 @@ public class AdminRefUtils extends FacesUtils {
             }
             
             if( rc==null )
-                throw new Exception( "RcCheck is null for rcCheckId=" + rcCheckId );
+            {
+                this.setStringErrorMessage("RcCheck is null. rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId );
+                return "StayInSamePlace";
+            } 
             
             
             LogService.logIt( "AdminRefUtils.processRunAsAdmin() rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId ); 
