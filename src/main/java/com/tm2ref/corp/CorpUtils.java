@@ -195,13 +195,13 @@ public class CorpUtils extends FacesUtils
     
     public String processViewCameraHelp()
     {
-        return viewHelp( 2 );
+        return conditionUrlForSessionLossGet( viewHelp( 2 ) );
     }
 
     
     public String processViewHelp()
     {
-        return viewHelp( 1 );
+        return conditionUrlForSessionLossGet(viewHelp( 1 ));
     }
     
     /**
@@ -260,7 +260,7 @@ public class CorpUtils extends FacesUtils
             
             
             if( refBean.getRcCheck()!=null && refBean.getRefPageType()!=null )
-                return refUtils.getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( refUtils.getViewFromPageType( refBean.getRefPageType() ) );
                 // return refBean.getRefPageType().getPageFull(refBean.getRefUserType());
             
             return this.processCorpHome();
@@ -278,6 +278,38 @@ public class CorpUtils extends FacesUtils
     	}                
     }
     
+    
+    
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        return conditionUrlForSessionLossGet( url, true );
+    }
+
+    public String conditionUrlForSessionLossGet( String url, boolean includeRedirect )
+    {
+        // returns null if necessary.
+        RefBean refBean = RefBean.getInstance();
+        
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( includeRedirect && !url.contains("faces-redirect=") )
+            url += (url.contains("?") ? "&" : "?") + "faces-redirect=true";
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        if( refBean.getRcCheck()!=null  && !url.contains("rcide=") )
+            url += (url.contains("?") ? "&" : "?") + "rcide=" + refBean.getRcCheckIdEncrypted();            
+        
+        if( refBean.getRcRaterIdEncrypted()!=null && !refBean.getRcRaterIdEncrypted().isBlank() && !url.contains("rcride=") )
+            url += (url.contains("?") ? "&" : "?") + "rcride=" + refBean.getRcRaterIdEncrypted();            
+        
+        return url;
+    }
 
 
     public String processCorpHome()
@@ -292,7 +324,11 @@ public class CorpUtils extends FacesUtils
             if( !getNewRefStartsOk() )
                 return corpBean.getCorp().getOfflinePage();
 
-            // LogService.logIt( "CorpUtils.processCorpHome() BBB " + "/" + corpBean.getDirectory() + corpBean.getCorp().getHomePage() );
+            LogService.logIt( "CorpUtils.processCorpHome() BBB " + "/" + corpBean.getDirectory() + corpBean.getCorp().getHomePage() );
+            
+            //if( 1==1 )
+            //    throw new Exception( "CorpUtils.processCorpHome() TESTING ONLY ");
+            
             return "/" + corpBean.getDirectory() + corpBean.getCorp().getHomePage();
         }
 

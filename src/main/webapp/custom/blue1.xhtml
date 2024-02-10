@@ -124,7 +124,6 @@
 
 
 <f:view contentType="text/html" locale="#{userBean.locale}">
-<ref:checksession />
 <h:body>
 
     <ui:insert name="metadata">
@@ -156,6 +155,7 @@
             <!-- BEGIN FOOTER TABLE -->
             <ui:insert name="footertable">        
             <h:form id="footerform" prependId="false">
+            <ref:stdforminputs />                
             <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
             <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
                 <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">

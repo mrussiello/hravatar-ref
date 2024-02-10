@@ -104,9 +104,11 @@ public class RefEntryServlet  extends AbstractFacesServlet {
             if( accessCode==null || accessCode.isBlank() )
                 throw new Exception( "URLFORMAT " + request.getRequestURI() );
 
-            // LogService.logIt( "RefEntryServlet.processRequest() AAA.1 accessCode=" + accessCode );
+            LogService.logIt( "RefEntryServlet.processRequest() AAA.1 accessCode=" + accessCode );
 
             nextViewId = refUtils.performSimpleEntry(0, 0, 0, accessCode, false);
+            
+            nextViewId = conditionUrlForSessionLossGet(nextViewId);
             Tracker.addServletEntry();
 
             // LogService.logIt( "RefEntryServlet.processRequest() AAA.2 nextViewId=" + nextViewId );
@@ -114,6 +116,12 @@ public class RefEntryServlet  extends AbstractFacesServlet {
             if( nextViewId == null || nextViewId.isEmpty() )
                 nextViewId = "/index.xhtml";
 
+            if( 1==1 )
+            {
+                LogService.logIt( "RefEntryServlet.processRequest() Redirecting to " + nextViewId );
+                response.sendRedirect( "/tr" + nextViewId );
+                return;
+            }
 
             String forwardUrl = correctUrlForForward( nextViewId );
             // LogService.logIt( "TestKeyEntryServlet.processRequest() url=" + request.getRequestURI() + ", nextViewId=" + nextViewId + ", FORWARDING to=" + forwardUrl );
@@ -164,7 +172,7 @@ public class RefEntryServlet  extends AbstractFacesServlet {
                 String errKey = "g.UrlFormatErrorProcessingLink";
 
                 nextViewId = refUtils.systemError(null, null, null, errKey, errParams, null, null, true );
-
+                
                 String forwardUrl = correctUrlForForward( nextViewId );
                //  LogService.logIt( "RefEntryServlet.processRequest() Post Exception, Sending to Error Page url=" + request.getRequestURI() + ", nextViewId=" + nextViewId + ", FORWARDING to=" + forwardUrl );
 
@@ -261,6 +269,19 @@ public class RefEntryServlet  extends AbstractFacesServlet {
 
 
 
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        return url;
+    }
 
 
 }

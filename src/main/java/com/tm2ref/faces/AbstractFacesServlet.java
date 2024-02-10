@@ -5,6 +5,7 @@
  */
 package com.tm2ref.faces;
 
+import com.tm2ref.service.LogService;
 import java.io.IOException;
 import jakarta.faces.FactoryFinder;
 import jakarta.faces.application.Application;
@@ -74,6 +75,7 @@ public abstract class AbstractFacesServlet extends HttpServlet {
 
             InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
 
+						LogService.logIt( "AbstractFacesServlet setting viewRoot to index.xhtml");
             // set a new viewRoot, otherwise context.getViewRoot returns null
             UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "/index.xhtml");
             facesContext.setViewRoot(view);        

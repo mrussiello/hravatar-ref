@@ -34,8 +34,11 @@ public class JsfCorpBean implements Serializable {
 
             String viewId = fc.getViewRoot().getViewId();
 
-            // LogService.logIt( "JsfCorpBean.sessionMissingCheckEntry() Testing for corp. viewId=" + viewId );
+            LogService.logIt( "JsfCorpBean.sessionMissingCheckEntry() Testing for corp. viewId=" + viewId );
 
+            //if( 1==1 )
+            //    return;
+            
             CorpBean cb = CorpBean.getInstance();
 
             Corp corp = cb.getCorp();

@@ -192,8 +192,23 @@ public class ProctorUtils extends FacesUtils {
         {
             if( rc==null )
             {
-                LogService.logIt( "ProctorUtils.doPhotoUpload() No RcCheck in RefBean. Appears to be a session problem so stepping back. refBean.rcCheck is null." );
-                return RefUtils.getInstance().processStartOver();
+                LogService.logIt( "ProctorUtils.doPhotoUpload() No RcCheck in RefBean. Appears to be a session problem - refBean.rcCheck is null. Tryinig to recover." );
+                
+                refUtils = RefUtils.getInstance();
+                String nextViewId = refUtils.checkRepairSession(503, true );
+
+                
+                rc = refBean.getRcCheck();
+                refUserType = refBean.getRefUserType();
+                refPageType = refBean.getRefPageType();  
+                
+                LogService.logIt( "ProctorUtils.doPhotoUpload() nextViewId after calling repair is: "  + nextViewId + ", refBean.rcCheck.rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId())  );
+                
+                if( rc==null )
+                {
+                    LogService.logIt( "ProctorUtils.doPhotoUpload() Unable to recover session. Starting over."  );
+                    return refUtils.processStartOver();
+                }
             }
                               
             if( refUserType==null )
@@ -291,7 +306,8 @@ public class ProctorUtils extends FacesUtils {
                 fn = StringUtils.replaceStr( fn, ".IDX." , "." + uuf.getMaxThumbIndex() + "." ); 
             
             // Wait for the file to be uploaded.
-            BucketType bt = RuntimeConstants.getBooleanValue("useAwsTestFoldersForProctoring") ? BucketType.REFRECORDING_TEST : BucketType.REFRECORDING;            
+            BucketType bt = RuntimeConstants.getBooleanValue("useAwsTestFoldersForProctoring") ? BucketType.REFRECORDING_TEST : BucketType.REFRECORDING; 
+            FileXferUtils.init();
             FileXferUtils.waitForAwsObject(uuf.getDirectory(), fn, bt.getBucketTypeId() );
             
             // OK, got a valid file. 
@@ -632,7 +648,7 @@ public class ProctorUtils extends FacesUtils {
             RefUtils refUtils = RefUtils.getInstance();
             RefPageType rpt = refUtils.getNextPageTypeForRefProcess();            
             refBean.setRefPageType(rpt);      
-            return refUtils.getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(refUtils.getViewFromPageType( refBean.getRefPageType() ) );
         }        
         catch( STException e )
         {
@@ -658,7 +674,7 @@ public class ProctorUtils extends FacesUtils {
             if( refBean.getRefUserType()==null )
                 throw new Exception( "RefBean.refUserType is null" );
                         
-            return "/pp/change-devices.xhtml";
+            return conditionUrlForSessionLossGet( "/pp/change-devices.xhtml" );
         }        
         catch( STException e )
         {
@@ -782,13 +798,13 @@ public class ProctorUtils extends FacesUtils {
             if( rc==null )
             {
                 LogService.logIt( "ProctorUtils.processContinueWithoutCamera() RcCheck is null" );
-                return "/index.xhtml";
+                return conditionUrlForSessionLossGet("/index.xhtml" );
             }
         
             if( refBean.getRefUserType()==null )
             {
-                LogService.logIt( "ProctorUtils.processContinueWithoutCamera()RcCheck is null" );
-                return "/index.xhtml";
+                LogService.logIt( "ProctorUtils.processContinueWithoutCamera() RcCheck is null" );
+                return conditionUrlForSessionLossGet("/index.xhtml" );
             }
                         
             if( refBean.getRefUserType().getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getIsRequired() )
@@ -814,7 +830,7 @@ public class ProctorUtils extends FacesUtils {
             }  
             //RefPageType rpt = refUtils.getNextPageTypeForRefProcess();            
             //refBean.setRefPageType(rpt);      
-            return refUtils.getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet( refUtils.getViewFromPageType( refBean.getRefPageType() ) );
         }        
         catch( STException e )
         {
@@ -843,7 +859,7 @@ public class ProctorUtils extends FacesUtils {
             proctorBean.clearBean();
             proctorBean.init(rc, refBean.getRefUserType() );
 
-            return "/pp/browser-precheck.xhtml";
+            return conditionUrlForSessionLossGet( "/pp/browser-precheck.xhtml" );
             
         }        
         catch( STException e )
@@ -871,9 +887,38 @@ public class ProctorUtils extends FacesUtils {
         refBean.setStrParam1(fullRestartUrl);
         refBean.setStrParam2(refCheckTypeName);
         LogService.logIt( "ProctorUtils.processStopProcessForNow() Going to /ref/exit-temp.xhtml" );
-        return "/ref/exit-temp.xhtml";         
+        return conditionUrlForSessionLossGet( "/ref/exit-temp.xhtml" );         
     }
 
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        return conditionUrlForSessionLossGet( url, true );
+    }
+
+    public String conditionUrlForSessionLossGet( String url, boolean includeRedirect )
+    {
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( includeRedirect && !url.contains("faces-redirect=") )
+            url += (url.contains("?") ? "&" : "?") + "faces-redirect=true";
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        if( refBean.getRcCheck()!=null  && !url.contains("rcide=") )
+            url += (url.contains("?") ? "&" : "?") + "rcide=" + refBean.getRcCheckIdEncrypted();            
+        
+        if( refBean.getRcRaterIdEncrypted()!=null && !refBean.getRcRaterIdEncrypted().isBlank() && !url.contains("rcride=") )
+            url += (url.contains("?") ? "&" : "?") + "rcride=" + refBean.getRcRaterIdEncrypted();            
+        
+        return url;
+    }
+    
+    
     public boolean getBoolean1() {
         return boolean1;
     }

@@ -684,10 +684,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             }
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
                 throw new Exception( "RcCheck.RcRater is null" );
 
@@ -695,7 +699,7 @@ public class RaterRefUtils extends BaseRefUtils
             
             refBean.setRefPageType( RefPageType.CORE2 );
             doEnterCore2();
-            return getViewFromPageType(refBean.getRefPageType());
+            return conditionUrlForSessionLossGet(getViewFromPageType(refBean.getRefPageType()));
         }
         catch( STException e )
         {
@@ -722,10 +726,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
                 throw new Exception( "RcCheck.RcRater is null" );
 
@@ -751,7 +759,7 @@ public class RaterRefUtils extends BaseRefUtils
             raterRefBean.setRcItemWrapper(rciw, rc.getRcRater().getIsCandidateOrEmployee() );
             refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE2 : RefPageType.CORE );
             // refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE3 : RefPageType.CORE );
-            return getNextViewFromRatings();
+            return conditionUrlForSessionLossGet(getNextViewFromRatings());
         }
         catch( STException e )
         {
@@ -777,10 +785,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
                 throw new Exception( "RcCheck.RcRater is null" );
 
@@ -804,7 +816,7 @@ public class RaterRefUtils extends BaseRefUtils
             raterRefBean.setRcItemWrapper(rciwNew, rc.getRcRater().getIsCandidateOrEmployee() );
             refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE2 : RefPageType.CORE );
             // refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE3 : RefPageType.CORE );
-            return getNextViewFromRatings();
+            return conditionUrlForSessionLossGet(getNextViewFromRatings());
         }
         catch( STException e )
         {
@@ -830,10 +842,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
                 throw new Exception( "RcCheck.RcRater is null" );
 
@@ -860,7 +876,7 @@ public class RaterRefUtils extends BaseRefUtils
                     rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, rc.getRcRater(), false);
             }
 
-            return getNextViewFromRatings();
+            return conditionUrlForSessionLossGet(getNextViewFromRatings());
         }
         catch( STException e )
         {
@@ -965,7 +981,7 @@ public class RaterRefUtils extends BaseRefUtils
             refBean.setRefPageType(RefPageType.CORE2 );
             RefPageType pt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(pt);
-            return getViewFromPageType(pt);
+            return conditionUrlForSessionLossGet(getViewFromPageType(pt));
         }        
         catch( STException e )
         {
@@ -993,10 +1009,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return this.conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }
             if( rc==null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
             {
                 // throw new Exception( "RcCheck.RcRater is null" );
@@ -1037,7 +1057,8 @@ public class RaterRefUtils extends BaseRefUtils
             else
                 setErrorMessage("g.XRReferralExistsForX", new String[]{refUser.getFullname()} );
             
-            return "StayInSamePlace";
+            return conditionUrlForSessionLossGet("/ref/referrals.xhtml");
+            // return "StayInSamePlace";
         }
         catch( STException e )
         {
@@ -1056,11 +1077,11 @@ public class RaterRefUtils extends BaseRefUtils
     
     public String processSaveItemResp()
     {
-        return doSaveItemResp( false );
+        return conditionUrlForSessionLossGet(doSaveItemResp( false ));
     }
     public String processSkipItem()
     {
-        return doSaveItemResp( true );
+        return conditionUrlForSessionLossGet(doSaveItemResp( true ));
     }
 
     public String doSaveItemResp( boolean skip )
@@ -1078,7 +1099,11 @@ public class RaterRefUtils extends BaseRefUtils
                     return getViewFromPageType( refBean.getRefPageType() );
             }
             if( rc==null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
             if( rc.getRcRater()==null )
             {
                 // throw new Exception( "RcCheck.RcRater is null" );

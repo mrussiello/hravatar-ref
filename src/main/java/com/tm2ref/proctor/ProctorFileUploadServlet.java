@@ -4,6 +4,8 @@
  */
 package com.tm2ref.proctor;
 
+import com.tm2ref.corp.CorpBean;
+import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.faces.HttpReqUtils;
@@ -16,10 +18,12 @@ import com.tm2ref.global.STException;
 import com.tm2ref.ref.RcCheckLogUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.ref.RefBean;
+import com.tm2ref.ref.RefUtils;
 import com.tm2ref.service.AdminEmailUtils;
 import com.tm2ref.service.EncryptUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
+import com.tm2ref.user.UserBean;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -45,6 +49,21 @@ public class ProctorFileUploadServlet extends BaseFileUploadServlet
 
     @Inject
     RefBean refBean;
+    
+    @Inject
+    RefUtils refUtils;
+    
+    @Inject
+    CorpBean corpBean;
+    
+    @Inject
+    CorpUtils corpUtils;
+
+    @Inject
+    UserBean userBean;
+    
+    @Inject
+    ProctorBean  proctorBean;
     
     
 
@@ -106,6 +125,44 @@ public class ProctorFileUploadServlet extends BaseFileUploadServlet
                     LogService.logIt(ee, "ProctorFileUploadServlet.doPost() AAA Exception while sending success message. " + info );
                 }                
             }
+            
+            // session issue? Try to recover.
+            if( refBean.getRcCheck()==null )
+            {
+                LogService.logIt( "ProctorFileUploadServlet.doPost() refBean.rcCheck is null. checking for recoverability." );
+
+                String acidx = HttpReqUtils.getStringReqParam("acidx", req);
+
+                refUtils.setProctorBean(proctorBean);
+                refUtils.setRefBean(refBean);
+                refUtils.setCorpBean(corpBean);
+                refUtils.setCorpUtils(corpUtils);
+                refUtils.setUserBean(userBean);
+                refUtils.setHttpServletRequest(req);
+                refUtils.setHttpServletResponse(res);
+                corpUtils.setCorpBean(corpBean);
+                corpUtils.setUserBean(userBean);
+                corpUtils.setHttpServletRequest( req );
+
+                // cannot recover
+                if( requestHasParamsForRecovery(req) )
+                {
+                    LogService.logIt( "ProctorFileUploadServlet.doPost() recoverable session error. Recovering Session. acidx=" + acidx );
+
+                    try
+                    {                    
+                        String nextViewId = refUtils.checkRepairSession(500, true);
+                        LogService.logIt( "ProctorFileUploadServlet.doPost() recoverable Recovering Session. After checkRepair() nextViewId=" + nextViewId );
+                    }
+                    catch( Exception e )
+                    {
+                        LogService.logIt( e, "ProctorFileUploadServlet.doPost() Error Recovering Session for acidx=" + acidx );
+                    }
+                }
+                else
+                    LogService.logIt( "ProctorFileUploadServlet.doPost() refBean.rcCheck is null. Session appears to not be recoverable." );
+            }
+            
             
             // LogService.logIt( "ProctorFileUploadServlet.processRequest() AAA " );
             
@@ -505,6 +562,16 @@ public class ProctorFileUploadServlet extends BaseFileUploadServlet
     
     
 
+    private boolean requestHasParamsForRecovery( HttpServletRequest req )
+    {
+        if( refBean.getAdminOverride())
+            return false;
+        
+        else if( HttpReqUtils.getStringReqParam("acidx", req)!=null )
+            return true;
+
+        return false;
+    }
 
 
 

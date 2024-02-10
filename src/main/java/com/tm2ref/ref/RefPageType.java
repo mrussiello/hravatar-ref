@@ -54,6 +54,12 @@ public enum RefPageType
     {
         return equals(CORE3 );
     }
+
+    public boolean getIsAnyCore()
+    {
+        return equals(CORE ) || equals(CORE2 ) || equals(CORE3 );
+    }
+
     
     public boolean getIsAnyPhotoCapture()
     {

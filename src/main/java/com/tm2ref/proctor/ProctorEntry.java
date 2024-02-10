@@ -47,6 +47,8 @@ public class ProctorEntry
         try
         {
            String nextViewId = ProctorUtils.getInstance().doPhotoUpload();
+           nextViewId = conditionUrlForSessionLossGet(nextViewId);
+                      
            if( nextViewId != null )
                navigateTo( nextViewId );
 
@@ -70,6 +72,7 @@ public class ProctorEntry
            // LogService.logIt( "TestEntry.doSurveyExitEntry() testBean.key=" + (tb.getTestKey()==null ? "null" : "true " + tb.getTestKey().getTestKeyId() ) + ", tkidx=" + tkidx  + ", session=" + ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true) ).getId() ) ;
 
            nextViewId = cu.processViewCameraHelp();
+           nextViewId = conditionUrlForSessionLossGet(nextViewId);
            cb.setDirectCameraHelp(true);
 
            if( nextViewId != null )
@@ -90,7 +93,7 @@ public class ProctorEntry
            String nextViewId = "/index.xhtml";
 
            // if( 1==1 || recdevs<0 )
-           //     LogService.logIt("ProctorEntry.doBrowserCheckEntry() acidx=" + acidx + ", medrecapi=" + medrecapi + ", recdevs=" + recdevs + ", getusermedia=" + getusermedia ) ;
+           LogService.logIt("ProctorEntry.doBrowserCheckEntry() acidx=" + acidx + ", medrecapi=" + medrecapi + ", recdevs=" + recdevs + ", getusermedia=" + getusermedia ) ;
 
            if( acidx!=null && !acidx.isBlank() )
            {
@@ -186,6 +189,23 @@ public class ProctorEntry
     }
 
 
+
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        return url;
+    }
+
+    
+    
     public boolean isMedrecapi() {
         return medrecapi;
     }

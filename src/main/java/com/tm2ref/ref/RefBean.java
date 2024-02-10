@@ -4,6 +4,7 @@ import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.file.UploadedUserFileType;
 import com.tm2ref.global.RuntimeConstants;
+import com.tm2ref.service.LogService;
 import java.io.Serializable;
 
 import jakarta.faces.context.FacesContext;
@@ -59,15 +60,21 @@ public class RefBean extends BaseRefBean implements Serializable
     {
         FacesContext fc = FacesContext.getCurrentInstance();
 
+        if( fc==null )
+        {
+            LogService.logIt( "RefBean.getInstance() Cannot create an instance because fc is null." );
+            return null;
+        }
+        
         return (RefBean) fc.getApplication().getELResolver().getValue( fc.getELContext(), null, "refBean" );
     }
 
     public void clearBean()
     {
         // can remove this down road.
-        recDevs=-1;
-        medRecApi=false;
-        hasGetUserMedia=0;
+        // recDevs=-1;
+        // medRecApi=false;
+        // hasGetUserMedia=0;
         accessibleActive=false;
 
         adminOverride = false;
@@ -311,6 +318,7 @@ public class RefBean extends BaseRefBean implements Serializable
 
     public void setRefPageType(RefPageType refPageType) {
         this.refPageType = refPageType;
+        this.activeRefPageTypeIdX = refPageType==null ? "0" : Integer.toString(refPageType.getRefPageTypeId());
     }
 
     public User getRefUser()

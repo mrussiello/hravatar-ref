@@ -197,7 +197,35 @@ public class BaseRefUtils  extends FacesUtils
         }
     }
 
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        return conditionUrlForSessionLossGet( url, true );
+    }
 
+    public String conditionUrlForSessionLossGet( String url, boolean includeRedirect )
+    {
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( includeRedirect && !url.contains("faces-redirect=") )
+            url += (url.contains("?") ? "&" : "?") + "faces-redirect=true";
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        if( refBean.getRcCheck()!=null  && !url.contains("rcide=") )
+            url += (url.contains("?") ? "&" : "?") + "rcide=" + refBean.getRcCheckIdEncrypted();            
+        
+        if( refBean.getRcRaterIdEncrypted()!=null && !refBean.getRcRaterIdEncrypted().isBlank() && !url.contains("rcride=") )
+            url += (url.contains("?") ? "&" : "?") + "rcride=" + refBean.getRcRaterIdEncrypted();            
+        
+        return url;
+    }
+    
+    
     public String getViewFromPageType( RefPageType refPageType ) throws Exception
     {
         getRefBean();
@@ -269,7 +297,11 @@ public class BaseRefUtils  extends FacesUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
 
             if( !getNewRefStartsOk() && corpBean.getHasCorp() )
                 return corpBean.getCorp().getOfflinePage();
@@ -689,6 +721,8 @@ public class BaseRefUtils  extends FacesUtils
     }
 
 
+    
+    
 
     public RcCheck repairRefBeanForCurrentAction( RefBean rb, boolean useCookie ) throws Exception
     {
@@ -707,9 +741,11 @@ public class BaseRefUtils  extends FacesUtils
             if( req == null )
                 return null;
 
-            // LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() START useCookie=" + useCookie );
+            LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() START useCookie=" + useCookie );
 
-            if( rb.getRcCheck() == null ) // || tb.getTestEvent() == null )
+            // RefPageType refPageType = null;
+            
+            if( rb.getRcCheck()==null ) // || tb.getTestEvent() == null )
             {
                 // In case somehow the session is not null
                 String acidx = refBean.getActiveAccessCodeX();
@@ -717,7 +753,7 @@ public class BaseRefUtils  extends FacesUtils
                 int refPageTypeX = 0;
 
                 //if( tkid> 0 )
-                LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() Recovered acidx from RefBean.activeAccessCodeX=" + acidx);
+                LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() AAA.1 Recovered acidx from RefBean.activeAccessCodeX=" + acidx);
 
                 // at this point, the session must be null so look for the access code.
                 // look at the request.
@@ -725,29 +761,30 @@ public class BaseRefUtils  extends FacesUtils
                 {
                     acidx = req.getParameter( "acidx" );
                     if( acidx == null || acidx.isBlank() )
-                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() No acidx found in request parameter.acidx.");
+                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() AAA.2 No acidx found in request parameter.acidx.");
                     else
-                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() acidx Found in request: " + acidx );
+                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() AAA.3 acidx Found in request: " + acidx );
                 }
 
                 if( refpagex==null || refpagex.isBlank()  )
                 {
                     refpagex = req.getParameter( "refpagex" );
-                    if( refpagex == null || refpagex.isBlank() )
-                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() No refpagex found in request parameter.refpagex.");
+                    if( refpagex==null || refpagex.isBlank() )
+                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() CCC.1 No refpagex found in request parameter.refpagex.");
                     else
                     {
-                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() refpagex Found in request: " + refpagex );
+                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() CCC.2 refpagex Found in request: " + refpagex );
                         try
                         {
                             refPageTypeX = Integer.parseInt(refpagex);
                             if( rb.getRefPageType()==null )
                                 rb.setRefPageType( RefPageType.getValue(refPageTypeX) );
                             rb.setActiveRefPageTypeIdX( Integer.toString( refPageTypeX ) );
+                            // refPageType = RefPageType.getValue(refPageTypeX);
                         }
                         catch( NumberFormatException e )
                         {
-                            LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() Error parsing refpagex=" + refpagex );
+                            LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() CCC.3 Error parsing refpagex=" + refpagex );
                         }
                     }
                 }
@@ -756,7 +793,7 @@ public class BaseRefUtils  extends FacesUtils
                 if( (acidx==null || acidx.isBlank()) && useCookie )
                 {
                     acidx = getAccessCodeFmCookie();
-                    LogService.logIt( "RefUtils.repairRefBeanForCurrentAction()Recovered TestKeyId from cookie=" + acidx );
+                    LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() DDD.1 Recovered TestKeyId from cookie=" + acidx );
                 }
 
 
@@ -765,17 +802,22 @@ public class BaseRefUtils  extends FacesUtils
                 {
                     acidx = RcCheckUtils.conditionAccessCode(acidx);
 
+                    LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() EEE.1 Found an acidx=" + acidx );
+                    
                     // includes clone
                     RcCheck rc = lookupAccessCode(acidx);
 
                     rb.setRcCheck(rc);
 
                     if( rb.getRcCheck() == null )
-                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() AccessCode=" + acidx + " but RcBean.RcCheck is NULL after attempt to load from DBMS." );
+                        LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() EEE.2 AccessCode=" + acidx + " but RcBean.RcCheck is NULL after attempt to load from DBMS." );
                 }
 
-                if( rb.getRcCheck() == null )
+                if( rb.getRcCheck()==null )
+                {
+                    LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() EEE.3 AccessCode=" + (acidx==null ? "null" : acidx)+ " but RcBean.RcCheck is NULL." );
                     return null;
+                }
             }
 
             RcCheck rc = rb.getRcCheck();
@@ -783,11 +825,18 @@ public class BaseRefUtils  extends FacesUtils
             RefUserType refUserType = rc.getRcRater()==null ? RefUserType.CANDIDATE : RefUserType.RATER;
             refBean.setRefUserType(refUserType);
 
+            if( refBean.getRecDevs()<0 )
+            {
+                refBean.setRecDevs(2);
+                refBean.setMedRecApi(true);
+                refBean.setHasGetUserMedia(1);
+            }
+                        
             // at this point we have a valid RcCheck / RcRater
             performRcCheckStart(rc, refUserType, true, false );
-
-            RcCheckLogUtils.createRcCheckLogEntry( rc.getRcCheckId(), refUserType.getIsCandidate() ? 0 : rc.getRcRater().getRcRaterId(), 2, "RefUtils.repairRefBeanForCurrentAction() Completing process.", HttpReqUtils.getClientIpAddress(req), req.getHeader("User-Agent"));
-
+            
+            RcCheckLogUtils.createRcCheckLogEntry( rc.getRcCheckId(), refUserType.getIsCandidate() ? 0 : rc.getRcRater().getRcRaterId(), 2, "RefUtils.repairRefBeanForCurrentAction() Completing process. refPageType=" + (refBean.getRefPageType()==null ? "null" : refBean.getRefPageType().getPageFull(refUserType)), HttpReqUtils.getClientIpAddress(req), req.getHeader("User-Agent"));
+            
             return rc;
         }
         catch( STException e )
@@ -996,7 +1045,10 @@ public class BaseRefUtils  extends FacesUtils
             if( rc.getCorpId()>0 && ( !corpBean.getHasCorp() || corpBean.getCorp().getCorpId()!=rc.getCorpId() ) )
             {
                 corpBean.clearBean();
-                CorpUtils.getInstance().loadCorpIfNeeded(rc.getCorpId(), true, getHttpServletResponse() );
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                
+                corpUtils.loadCorpIfNeeded(rc.getCorpId(), true, getHttpServletResponse() );
             }
 
 

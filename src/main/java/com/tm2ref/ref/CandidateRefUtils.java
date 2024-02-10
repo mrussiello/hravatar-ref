@@ -75,7 +75,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -109,7 +109,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     refBean.setRefPageType(RefPageType.CORE3 );
                     if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
                         setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
-                    return getViewFromPageType( refBean.getRefPageType() );                                                
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ) );                                                
                 }  
                 // exit - we're done.
                 else
@@ -118,7 +118,7 @@ public class CandidateRefUtils extends BaseRefUtils
             }
 
             // next question.
-            return "/ref/question.xhtml";
+            return conditionUrlForSessionLossGet("/ref/question.xhtml");
         }
         catch( STException e )
         {
@@ -152,7 +152,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -163,7 +163,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             
             // RcScript sc = rc.getRcScript();
             boolean goBack = booleanParam1;
@@ -213,7 +213,7 @@ public class CandidateRefUtils extends BaseRefUtils
                         if( rc.getCollectRatingsFmCandidate() ) // getNeedsCore2() )
                         {
                             refBean.setRefPageType(RefPageType.CORE2 );
-                            return doEnterSelfRatings();                            
+                            return conditionUrlForSessionLossGet(doEnterSelfRatings());                            
                         }
                         
                         // move on to raters.
@@ -222,7 +222,7 @@ public class CandidateRefUtils extends BaseRefUtils
                             refBean.setRefPageType(RefPageType.CORE3 );                            
                             if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
                                 setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );                            
-                            return getViewFromPageType( refBean.getRefPageType() );                                                
+                            return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );                                                
                         } 
                         
                         // exit - we're done.
@@ -244,7 +244,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     if( rc.getCollectRatingsFmCandidate() ) // getNeedsCore2() )
                     {
                         refBean.setRefPageType(RefPageType.CORE2 );
-                        return doEnterSelfRatings();
+                        return conditionUrlForSessionLossGet(doEnterSelfRatings());
                     }
                     
                     // move on to raters.
@@ -253,7 +253,7 @@ public class CandidateRefUtils extends BaseRefUtils
                         refBean.setRefPageType(RefPageType.CORE3 );
                         if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
                             setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
-                        return getViewFromPageType( refBean.getRefPageType() );                                                
+                        return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));                                                
                     }  
                     // exit - we're done.
                     else
@@ -262,7 +262,7 @@ public class CandidateRefUtils extends BaseRefUtils
             }
 
             // next question.
-            return "/ref/question.xhtml";
+            return conditionUrlForSessionLossGet("/ref/question.xhtml");
         }
         catch( STException e )
         {
@@ -609,7 +609,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -620,7 +620,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             
             LogService.logIt( "CandidateRefUtils.processViewRaters() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));            
             RefUserType refUserType = refBean.getRefUserType();
@@ -634,7 +634,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 rcCheckUtils.loadRcCheckForAdmin(rc, refUserType, getLocale(), refBean.getAdminOverride() );
             }
             
-            return "/ref/references.xhtml";
+            return conditionUrlForSessionLossGet("/ref/references.xhtml");
         }
         catch( Exception e )
         {
@@ -732,7 +732,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -748,7 +748,7 @@ public class CandidateRefUtils extends BaseRefUtils
             if( rpt.getIsCore() && rc.getRcScript().getHasAnyCandidateInput() )
                 return this.processGoBackToLastCandidateInputQuestion();
                 
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
         }
         catch( Exception e )
         {
@@ -895,7 +895,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -928,7 +928,7 @@ public class CandidateRefUtils extends BaseRefUtils
             RefPageType rpt = getNextPageTypeForRefProcess();            
             refBean.setRefPageType(rpt);   
             // LogService.logIt( "CandidateRefUtils.processExitAllCore() next view=" + getViewFromPageType( refBean.getRefPageType() ) );
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
         }
         catch( STException e )
         {
@@ -959,7 +959,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -970,7 +970,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             
             
             //if( rcFacade==null )
@@ -1068,7 +1068,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -1079,7 +1079,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             
             rcRater = candidateRefBean.getRcRater2();            
             if( rcRater==null )
@@ -1134,7 +1134,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -1145,7 +1145,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             
             rcRater = candidateRefBean.getRcRater();            
             if( rcRater==null )
@@ -1222,7 +1222,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -1234,7 +1234,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             
             rcRater = candidateRefBean.getRcRater(); 
             //if( rcRater!=null && rcRater.getRcRaterId()>0 && rcRater.getCandidateCanSend() && !rcRater.getRcRaterStatusType().getSentOrHigher() )
@@ -1298,7 +1298,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
@@ -1310,7 +1310,7 @@ public class CandidateRefUtils extends BaseRefUtils
             
             RefPageType refPageType = refBean.getRefPageType();            
             if( !refPageType.getIsCore3() )
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             
             rcRater = candidateRefBean.getRcRater();            
             if( rcRater==null )
@@ -1582,7 +1582,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 RcRater rr = partlyCloneRcRaterForNewReference(  rcRater );                
                 candidateRefBean.setRcRater(rr);
                 
-                return "/ref/references.xhtml";
+                return conditionUrlForSessionLossGet("/ref/references.xhtml");
             }
             
             return "stayInSamePlace";
@@ -1630,7 +1630,7 @@ public class CandidateRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );                
                 if( rc!=null )
-                    return getViewFromPageType( refBean.getRefPageType() );
+                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }                        
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();

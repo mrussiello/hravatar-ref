@@ -82,5 +82,13 @@ public class HttpReqUtils {
             return null;
         }
     }
+    
+    public static String getStringReqParam( String param, HttpServletRequest req )
+    {
+        if( req==null )
+            return null;        
+        return req.getParameter(param);
+    }
+    
 
 }

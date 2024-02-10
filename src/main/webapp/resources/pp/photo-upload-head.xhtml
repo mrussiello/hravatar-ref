@@ -32,6 +32,8 @@
     var rcCheckId='#{refBean.rcCheck.rcCheckIdEncrypted}';
     var rcRaterId='#{refBean.rcRaterIdEncrypted}';
     var userId='#{refBean.userIdEncrypted}';
+    var acidx = '#{refBean.activeAccessCodeX}';
+    var refpagex = '#{refBean.activeRefPageTypeIdX}';
     var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']}";
     var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']}";
     var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
@@ -157,7 +159,7 @@
     
     function openCameraHelp()
     {
-        document.location.href='/tr/pp/help-camera-entry.xhtml';
+        document.location.href='/tr/pp/help-camera-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';
     }
         
         
@@ -179,9 +181,9 @@
         logIt( 'pp-photo-upload-head.xhtml.localDoOnImageUploadSuccess() SUCCESS!' );
         
         if( uploadedUserFileTypeId===201 || uploadedUserFileTypeId===211 )
-            location.href='/tr/pp/photo-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&pageidx=#{refBean.activeRefPageTypeIdX}';
+            location.href='/tr/pp/photo-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';   // &pageidx=
         else
-            location.href='/tr/pp/photo-id-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&pageidx=#{refBean.activeRefPageTypeIdX}';
+            location.href='/tr/pp/photo-id-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';  // &pageidx=
     }        
         
         

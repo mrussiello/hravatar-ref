@@ -60,8 +60,14 @@
 
 <factory>
   <exception-handler-factory>    
+    com.tm2ref.faces.RefExceptionHandlerFactory
+  </exception-handler-factory>
+    
+  <!--
+  <exception-handler-factory>    
     org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
   </exception-handler-factory>
+  -->
 </factory>
 
     

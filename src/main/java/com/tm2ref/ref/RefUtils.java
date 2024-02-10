@@ -62,7 +62,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {               
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
 
             RefUserType refUserType = refBean.getRefUserType();
             if( refUserType==null )
@@ -228,20 +232,20 @@ public class RefUtils extends BaseRefUtils
                 if( refUserType.getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture())
                 {
                     if( rc.getRcCandidatePhotoCaptureType().getIsRequired() )
-                        return "/pp/camera-required.xhtml";
+                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml");
                     else
-                        return "/pp/camera-optional.xhtml";
+                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml");
                 }
                 else if( refUserType.getIsRater() && rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture())
                 {
                     if( rc.getRcRaterPhotoCaptureType().getIsRequired() )
-                        return "/pp/camera-required.xhtml";
+                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml");
                     else
-                        return "/pp/camera-optional.xhtml";
+                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml");
                 }
             }
 
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             // return getNextViewForCorp(); // getNextViewForTestingProcess( tk );
         }
         catch( Exception e )
@@ -315,7 +319,7 @@ public class RefUtils extends BaseRefUtils
                 return corpBean.getCorp().getOfflinePage();
 
             RefUserType refUserType = rc.getRcRater()!=null && !rc.getRcRater().getIsCandidateOrEmployee() ? RefUserType.RATER : RefUserType.CANDIDATE ;
-            return performRcCheckStart(rc, refUserType, false, false );
+            return conditionUrlForSessionLossGet(performRcCheckStart(rc, refUserType, false, false ));
         }
 
         catch( STException e )
@@ -347,7 +351,11 @@ public class RefUtils extends BaseRefUtils
             if( rc==null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {               
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
@@ -514,7 +522,9 @@ public class RefUtils extends BaseRefUtils
                 LogService.logIt( "RefUtils.processExitCheck() NONFATAL Unable to obtain RcCheck even after Repairing. exiting." );
                 refBean.clearBean();
                 CookieUtils.removeRcCheckCookie( getHttpServletResponse() );
-                return CorpUtils.getInstance().processCorpHome();
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
             }
 
             Org o = rc.getOrg();
@@ -560,7 +570,9 @@ public class RefUtils extends BaseRefUtils
                     LogService.logIt( "RefUtils.processExitCheck() BBB.1 NONFATAL RcCheckId in request does not match. Value in request=" + rcChkReq + ", rcCheckId=" + rc.getRcCheckId() );
                     refBean.clearBean();
                     CookieUtils.removeRcCheckCookie( getHttpServletResponse() );
-                    return CorpUtils.getInstance().processCorpHome();
+                    if( corpUtils==null )
+                        corpUtils = CorpUtils.getInstance();
+                    return corpUtils.processCorpHome();
                 }
 
                 // if value is 0, they may have sent a get. Log it and use the RC if it's there.
@@ -578,7 +590,9 @@ public class RefUtils extends BaseRefUtils
                         LogService.logIt( "RefUtils.processExitCheck() BBB.3 NONFATAL RcRaterId in request does not match. Value in request rcRtrReq=" + rcRtrReq + ", rcRaterId()=" + rc.getRcRater().getRcRaterId() + ", rcCheckId=" + rc.getRcCheckId() );
                         refBean.clearBean();
                         CookieUtils.removeRcCheckCookie( getHttpServletResponse() );
-                        return CorpUtils.getInstance().processCorpHome();
+                        if( corpUtils==null )
+                            corpUtils = CorpUtils.getInstance();
+                        return corpUtils.processCorpHome();
                     }
 
                     // if value is 0, they may have sent a get. Log it and use the RC if it's there.
@@ -613,7 +627,9 @@ public class RefUtils extends BaseRefUtils
                 return null;
             }
 
-            return CorpUtils.getInstance().processCorpHome();
+            if( corpUtils==null )
+                corpUtils = CorpUtils.getInstance();
+            return corpUtils.processCorpHome();            
         }
         catch( Exception e )
         {
@@ -653,7 +669,11 @@ public class RefUtils extends BaseRefUtils
             if( rc==null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -676,7 +696,7 @@ public class RefUtils extends BaseRefUtils
             {
                 RefPageType pt = getNextPageTypeForRefProcess();
                 refBean.setRefPageType(pt);
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
             }
 
             // LogService.logIt( "RefUtils.processConfirmFail() Still a problem. rcCheckId=" + rc.getRcCheckId() + ", " + refBean.getRefUserType().getName() + ", " + refBean.getRefUser().getFullname() );
@@ -685,7 +705,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setStrParam3( refBean.getRefUser().getEmail());
             refBean.setStrParam4(null);
 
-            return "/ref/confirm-failure-form.xhtml";
+            return conditionUrlForSessionLossGet("/ref/confirm-failure-form.xhtml");
         }
         catch( Exception e )
         {
@@ -701,7 +721,7 @@ public class RefUtils extends BaseRefUtils
         getCorpBean();
         getRefBean();
 
-        // LogService.logIt( "RefUtils.processConfirmName() AAA Start" );
+        LogService.logIt( "RefUtils.processConfirmName() AAA Start" );
         
         RcCheck rc = null;
         try
@@ -712,7 +732,9 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
             {
                 LogService.logIt( "RefUtils.processConfirmName() rc=null after attempt to repair. Going to corp.home." );
-                return CorpUtils.getInstance().processCorpHome();
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
             }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
@@ -783,64 +805,15 @@ public class RefUtils extends BaseRefUtils
                 if( !refBean.getAdminOverride() && refBean.getNeedsBrowserPrecheck() )
                 {
                     // LogService.logIt( "RefUtils.processConfirmName() Going to Browser Precheck." );
-                    return "/pp/browser-precheck.xhtml";
+                    return conditionUrlForSessionLossGet("/pp/browser-precheck.xhtml");
                 }
 
-                /*
-                if( (refBean.getRefUserType().getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture()) ||
-                    (refBean.getRefUserType().getIsRater() && rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture()))
-                {
-                    getProctorBean();
-                    proctorBean.init( rc, refBean.getRefUserType() );
-
-                    // go to browser precheck if needed.
-                    if( refBean.getRefUserType().getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() && refBean.getRecDevs()<0 )
-                    {
-                        LogService.logIt( "RefUtils.processConfirmName() Candidate. Going to Browser Precheck." );
-                        return "/pp/browser-precheck.xhtml";
-                    }
-
-                    // go to browser precheck if needed.
-                    if( refBean.getRefUserType().getIsRater() && rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture() && refBean.getRecDevs()<0 )
-                    {
-                        if( rc.getRcRaterPhotoCaptureType().getSameIpOnly() )
-                        {
-                            if( rc.getRcRater().getIpAddress()==null || rc.getRcRater().getIpAddress().isBlank() )
-                            {
-                                rc.getRcRater().setIpAddress( HttpReqUtils.getClientIpAddress(getHttpServletRequest()));
-                                if( rc.getRcRater().getIpAddress()!=null && !rc.getRcRater().getIpAddress().isBlank() )
-                                {
-                                    if( rcFacade==null )
-                                        rcFacade=RcFacade.getInstance();
-                                    rcFacade.saveRcRater(rc.getRcRater(), true );
-                                }
-                            }
-
-                            if( rc.getIpAddress()!=null && !rc.getIpAddress().isBlank() &&
-                                rc.getRcRater().getIpAddress()!=null &&
-                                rc.getRcRater().getIpAddress().equals( rc.getIpAddress() ) )
-                            {
-                                LogService.logIt( "RefUtils.processConfirmName() Rater Same IP Address as Candidate (" + rc.getIpAddress() + "). Going to Browser Precheck." );
-                                return "/pp/browser-precheck.xhtml";
-                            }
-                        }
-
-                        // Not Same IP but does capture photos. So check.
-                        else
-                        {
-                            LogService.logIt( "RefUtils.processConfirmName() Rater All. Going to Browser Precheck." );
-                            return "/pp/browser-precheck.xhtml";
-                        }
-                    }
-                }
-                */
-
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             }
 
             LogService.logIt( "RefUtils.processConfirmName() Confirmation Denied. rcCheckId=" + rc.getRcCheckId() + ", " + refBean.getRefUserType().getName() + ", " + refBean.getRefUser().getFullname() );
             refBean.setRefPageType( RefPageType.CONFIRM );
-            return "/ref/confirm-failure.xhtml";
+            return conditionUrlForSessionLossGet("/ref/confirm-failure.xhtml");
         }
 
         catch( Exception e )
@@ -851,7 +824,155 @@ public class RefUtils extends BaseRefUtils
         }
     }
 
+    
+    public String processReturnToRefCheckProcess()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = null;
+        try
+        {
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true );
+            if( rc == null )
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
+            RefPageType cpt = refBean.getRefPageType();
+            RefUserType rut = refBean.getRefUserType();
+            
+            if( cpt.getIsAnyPhotoCapture() )
+            {
+                return conditionUrlForSessionLossGet( getViewFromPageType( cpt ) );
+            }            
+            
+            else if( cpt.getIsCore() )
+            {
+                if( rut.getIsCandidate() )
+                {
+                    CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                    cru.doEnterCore();
+                    if( !cru.getNeedsCore() )
+                    {
+                        cpt = cpt.getNextPageTypeNoNull(rut);
+
+                        // LogService.logIt( "BaseRefUtils.getNextPageTypeForRefProcess() BBB nextRefPageType=" + nextRefPageType.getName() +", refUserType=" + refUserType.getName() + ", needsCore2=" + cru.getNeedsCore2() + ", needsCore3=" + cru.getNeedsCore3() );
+
+                        if( cpt.getIsCore2() )
+                        {
+                            if( !cru.getNeedsCore2() )
+                                cpt = cpt.getNextPageTypeNoNull(rut);
+                            
+                            else
+                            {
+                                RaterRefUtils rru = RaterRefUtils.getInstance();
+                                rru.doEnterCore(true);
+                                if( !rru.getNeedsCore() )
+                                    cpt = cpt.getNextPageTypeNoNull(rut);
+                                refBean.setRefPageType(cpt);
+                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                                
+                            }
+                        }
+
+                        if( cpt.getIsCore3() && !cru.getNeedsCore3() )
+                            cpt = cpt.getNextPageTypeNoNull(rut);
+                    }
+
+                    // Candidate, but does need core. 
+                    else
+                    {
+                        // LogService.logIt( "RefUtils.processReturnToRefCheckProcess() CCC needsCore2=" + cru.getNeedsCore2() + ", needsCore3=" + cru.getNeedsCore3() );
+                        if( cru.getAllCandidateQuestionsAnswered() )
+                        {
+                            // Needs to do ratings (CORE2).
+                            if( cru.getNeedsCore2() )
+                            {
+                                cpt = RefPageType.CORE2;
+                                RaterRefUtils rru = RaterRefUtils.getInstance();
+                                rru.doEnterCore(true);
+                                refBean.setRefPageType(cpt);
+                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                            }
+
+                            // Needs to enter references (CORE3)
+                            else if( cru.getNeedsCore3() )
+                            {
+                                // refBean.setRefPageType( );
+                                cpt = RefPageType.CORE3;
+                                refBean.setRefPageType(cpt);
+                                if( !rc.getRcRaterListCandidate().isEmpty() && rc.getNeedsSupervisors() )
+                                    setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
+                            }
+                        }
+
+                        // If we will be asking for raters later (minRaters>=0) ...
+                        else if(  cru.getNeedsCore2() || cru.getNeedsCore3() )
+                        {
+                            setInfoMessage( "g.XCStartWithQuestions", null );
+                        }
+                    }
+                }
+
+                // Not candidate
+                else
+                {
+                    RaterRefUtils rru = RaterRefUtils.getInstance();
+                    rru.doEnterCore(true);
+                    if( !rru.getNeedsCore() )
+                    {
+                        // this will advance until a non-null page is found.
+                        cpt = cpt.getNextPageTypeNoNull(rut);
+                        
+                        // core 2
+                        if( cpt.getIsCore2() )
+                        {
+                            // doens't need core2, continue.
+                            if( !rru.getNeedsCore2() )
+                                cpt = cpt.getNextPageTypeNoNull(rut);
+                            
+                            else
+                            {
+                                rru.doEnterCore2();
+                            }
+                        }
+                    }
+                    refBean.setRefPageType(cpt);
+                    return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                }
+            }
+            
+            else if( cpt.getIsCore2() )
+            {
+                RaterRefUtils rru = RaterRefUtils.getInstance();
+                // doens't need core2, continue.
+                
+                if( !rru.getNeedsCore2() )
+                    cpt = cpt.getNextPageTypeNoNull(rut);
+
+                else
+                    rru.doEnterCore2();                
+
+                refBean.setRefPageType(cpt);
+                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+            }
+
+            refBean.setRefPageType(cpt);
+                        
+            return conditionUrlForSessionLossGet(getViewFromPageType(cpt));
+            // return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull(refBean.getRefUserType()));
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.processReturnToRefCheckProcess() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }        
+    }
 
 
     public String processGoBackOneStep()
@@ -865,13 +986,17 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             RefPageType cpt = refBean.getRefPageType();
             RefPageType pt = getPreviousPageTypeForRefProcess();
             //LogService.logIt( "RefUtils.processGoBackOneStep() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", current page type=" + cpt.getName() + ", going to PageType=" + pt.getName() );
             refBean.setRefPageType(pt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
         }
         catch( Exception e )
         {
@@ -892,7 +1017,12 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                LogService.logIt( "RefUtils.processSubmitIntro() rc=null after recovery attempt." );
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -920,7 +1050,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.setRefPageType( RefPageType.INTRO );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
         }
         catch( Exception e )
         {
@@ -930,6 +1060,62 @@ public class RefUtils extends BaseRefUtils
         }
     }
 
+   
+    /*
+      Returns redirect view
+    */
+    public String checkRepairSession( int srcCode, boolean expectRequestParams ) throws Exception
+    {
+        // LogService.logIt("TestUtils.checkRepairSession() START srcCode=" + srcCode ); // + " " + HttpInfoDumpUtils.getRequestInfo(getHttpServletRequest()));
+        String acidXFmRequest=null;
+        String acidXFmSession=null;
+        RcCheck rc = null;
+        String refpagex = null;
+        
+        try
+        {
+            getCorpBean();
+            getRefBean();
+            acidXFmSession = refBean.getActiveAccessCodeX();
+            rc = refBean.getRcCheck();
+            acidXFmRequest = HttpReqUtils.getStringReqParam("acidx", getHttpServletRequest());
+            
+            if( acidXFmSession!=null && !acidXFmSession.isBlank() && acidXFmRequest!=null && !acidXFmRequest.isBlank() && !acidXFmRequest.equals(acidXFmSession))
+                rc=null;
+            
+            if( rc!=null  )
+            {
+                // have session info
+                LogService.logIt( "RefUtils.checkRepairSession() Session appears OK. rcCheckId=" + rc.getRcCheckId() );
+                return null;
+            }
+            
+            rc = repairRefBeanForCurrentAction(refBean, true );
+            
+            if( rc==null )
+                return null;
+            
+            refpagex = getHttpServletRequest().getParameter( "refpagex" );
+            if( refpagex!=null && !refpagex.isBlank() )
+            {
+                RefPageType refPageType = RefPageType.getValue(Integer.parseInt(refpagex));
+                if( refPageType.getIsCore() || refPageType.getIsCore2() || refPageType.getIsAnyPhotoCapture() )
+                {
+                    refBean.setRefPageType(refPageType);                
+                    return conditionUrlForSessionLossGet("/r.xhtml" );
+                }
+                else
+                    refBean.setRefPageType(refPageType);                
+            }            
+
+            return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull( refBean.getRefUserType()) );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.checkRepairSession() acidXFmRequest=" + (acidXFmRequest==null ? "null" : acidXFmRequest) + ", refpagex=" + (refpagex==null ? "null" : refpagex) );
+            return null;
+        }        
+    } 
 
     public String processSubmitAvCommentsAllowed()
     {
@@ -942,9 +1128,15 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
+            
+            // check correct rcCheckId
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
             {
                 String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
@@ -953,6 +1145,7 @@ public class RefUtils extends BaseRefUtils
                 // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
             }
 
+            // check correct RcRater
             if( refBean.getRefUserType().getIsRater() )
             {
                 long rcRtrReq = getRcRaterIdFmRequest();
@@ -961,10 +1154,12 @@ public class RefUtils extends BaseRefUtils
             }
 
             // LogService.logIt( "RefUtils.processSubmitAvCommentsAllowed() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            
+            // advane to page
             refBean.setRefPageType( RefPageType.AVCOMMENTS );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
         }
         catch( Exception e )
         {
@@ -986,7 +1181,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1003,7 +1202,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.PRE_QUESTIONS );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
         }
         catch( Exception e )
         {
@@ -1025,7 +1224,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1047,7 +1250,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.SPECIAL );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
         }
         catch( Exception e )
         {
@@ -1068,7 +1271,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1121,7 +1328,7 @@ public class RefUtils extends BaseRefUtils
 
             refBean.setStrParam1( MessageFactory.getStringMessage( getLocale(), rst.getKey() + ".reasontext", new String[]{rc.getUser().getFullname()} ));
 
-            return "/ref/rater-reject-form.xhtml";
+            return conditionUrlForSessionLossGet("/ref/rater-reject-form.xhtml");
         }
         catch( Exception e )
         {
@@ -1142,7 +1349,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1210,7 +1421,7 @@ public class RefUtils extends BaseRefUtils
                 return null;
             }
 
-            return "/ref/index.xhtml";
+            return conditionUrlForSessionLossGet("/ref/index.xhtml");
         }
         catch( Exception e )
         {
@@ -1334,7 +1545,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1393,7 +1608,7 @@ public class RefUtils extends BaseRefUtils
 
                 RefPageType rpt = getNextPageTypeForRefProcess();
                 refBean.setRefPageType(rpt);
-                return getViewFromPageType( refBean.getRefPageType() );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
             }
 
             // REJECTION!!!!!!
@@ -1435,7 +1650,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.setStrParam1( MessageFactory.getStringMessage( getLocale(), "rcrst.rejectedrelease.reasontext" ));
                 //refBean.setStrParam5( startUrl );
                 //refBean.setRcCheck(rc);
-                return "/ref/release-denied.xhtml";
+                return conditionUrlForSessionLossGet("/ref/release-denied.xhtml");
             }
         }
         catch( Exception e )
@@ -1458,7 +1673,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1545,7 +1764,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( refPageType );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return getViewFromPageType( refBean.getRefPageType() );
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
 
         }
         catch( Exception e )
@@ -1567,7 +1786,11 @@ public class RefUtils extends BaseRefUtils
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );
             if( rc == null )
-                return CorpUtils.getInstance().processCorpHome();
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
@@ -1601,7 +1824,7 @@ public class RefUtils extends BaseRefUtils
             // Create CSCase with release comments.
 
             if( !booleanParam1 )
-                return getViewFromPageType( getNextPageTypeForRefProcess() );
+                return conditionUrlForSessionLossGet( getViewFromPageType( getNextPageTypeForRefProcess() ) );
 
             // Indicates that the release is not OK.
             else
@@ -1612,7 +1835,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.clearBean();
                 refBean.setStrParam1(null);
                 refBean.setStrParam5( startUrl );
-                return "/ref/index.xhtml";
+                return conditionUrlForSessionLossGet("/ref/index.xhtml");
             }
         }
         catch( Exception e )
@@ -1632,6 +1855,7 @@ public class RefUtils extends BaseRefUtils
         String accessCode = rcCheckId<=0 ? refBean.getAccessCode() : null;
         RcCheck rc = null;
 
+        LogService.logIt( "RefUtils.processStartOver() Start" );
         try
         {
             rc = refBean.getRcCheck();
@@ -1658,7 +1882,7 @@ public class RefUtils extends BaseRefUtils
 
             refBean.clearBean();
 
-            return performSimpleEntry(0, rcCheckId, rcRaterId, accessCode, adminOverride );
+            return conditionUrlForSessionLossGet(performSimpleEntry(0, rcCheckId, rcRaterId, accessCode, adminOverride ));
         }
         catch( Exception e )
         {

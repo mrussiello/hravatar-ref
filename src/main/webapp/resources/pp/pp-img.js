@@ -204,6 +204,13 @@ function sendBlob( uft, nthrd, blob )
         fd.append( 'blobsize', blob.size );
        
         var url = '/tr/ppfupload';
+        
+        if( typeof acidx !=='undefined' )
+        {    
+            url += '?acidx=' + acidx;
+            if( typeof refpagex !=='undefined')
+                url += '&refpagex=' + refpagex;
+        }
 
         var o=this;
         xhr = new XMLHttpRequest();

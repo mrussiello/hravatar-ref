@@ -118,6 +118,7 @@
 
     <ui:fragment  rendered="#{corpBean.corp.hasFooter}">
     <h:form id="footerform" prependId="false">
+    <ref:stdforminputs />
         <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
     </h:form>
     </ui:fragment>

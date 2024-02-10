@@ -165,6 +165,7 @@ public class RefEntry
              
             nextViewId = refUtils.performSimpleEntry(rcc.getCorpId(), rcc.getRcCheckId(), 0, null, false );
             
+            nextViewId = conditionUrlForSessionLossGet(nextViewId);
             LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1c nextViewId=" + nextViewId );
 
             if( nextViewId != null )
@@ -420,9 +421,48 @@ public class RefEntry
          
      }
      
+     
+     
+     public void doRefReturnEntry()
+     {
+        LogService.logIt( "RefEntry.doRefReturnEntry() acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+         
+        try
+        {
+            if( !refUtils.getNewRefStartsOk() )
+            {
+                CorpBean corpBean = CorpBean.getInstance();                
+                if( !corpBean.getHasCorp() )
+                    corpBean.loadDefaultCorp();
+                                
+                navigateTo( corpBean.getCorp().getOfflinePage() ); // "/ref/offline.xhtml" );
+                return;                
+            }
+                        
+            String nextViewId = refUtils.processReturnToRefCheckProcess();
+            
+            Tracker.addSimpleEntry();
+
+            LogService.logIt( "RefEntry.doRefReturnEntry() AAA.1 after refUtils.processReturnToRefCheckProcess() nextViewId=" + nextViewId );
+
+            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            response.sendRedirect("/tr" + nextViewId);
+            
+            //if( nextViewId != null )
+            //    navigateTo( nextViewId );
+         
+        }
+        catch( Exception e )
+        {
+             LogService.logIt( e, "RefEntry.doSimpleRefEntry() XXX.1  acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+        }         
+     }
+     
+     
+     
      public void doSimpleRefEntry()
      {
-        LogService.logIt( "RefEntry.doSimpleEntry() START cp=" + cp + ", rc=" + rc + ", rr=" + rr + ", ac=" + ac );
+        LogService.logIt( "RefEntry.doSimpleRefEntry() START cp=" + cp + ", rc=" + rc + ", rr=" + rr + ", ac=" + ac );
         int corpId = 0;
         long rcCheckId=0;
         long rcRaterId=0;
@@ -430,6 +470,9 @@ public class RefEntry
          
         try
         {
+            //if( 1==1 )
+            //    throw new Exception( "TESTING ONLY RefEntry.doSimpleRefEntry()");
+            
              if( cp!=null && !cp.isBlank() )
                  corpId = Integer.parseInt( EncryptUtils.urlSafeDecrypt(cp) );
 
@@ -441,11 +484,11 @@ public class RefEntry
         }
         catch( NumberFormatException e )
         {
-             LogService.logIt( "RefEntry.doSimpleEntry() AAA corpId=" + corpId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", accessCode=" + ac + ", " + e.toString() );
+             LogService.logIt( "RefEntry.doSimpleRefEntry() AAA corpId=" + corpId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", accessCode=" + ac + ", " + e.toString() );
         }
         catch( Exception e )
         {
-             LogService.logIt( e, "RefEntry.doSimpleEntry() AAA.1 corpId=" + corpId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", accessCode=" + ac );
+             LogService.logIt( e, "RefEntry.doSimpleRefEntry() AAA.1 corpId=" + corpId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", accessCode=" + ac );
         }
          
         try
@@ -462,9 +505,12 @@ public class RefEntry
             
             
             nextViewId = refUtils.performSimpleEntry(corpId, rcCheckId, rcRaterId, ac, false );
+            
+            nextViewId = conditionUrlForSessionLossGet(nextViewId);
+            
             Tracker.addSimpleEntry();
 
-            LogService.logIt( "RefEntry.doSimpleEntry() AAA.1 nextViewId=" + nextViewId );
+            LogService.logIt( "RefEntry.doSimpleRefEntry() AAA.1 nextViewId=" + nextViewId );
 
             if( nextViewId != null )
                 navigateTo( nextViewId );
@@ -529,7 +575,23 @@ public class RefEntry
         response.sendRedirect(stub + viewId);
     }
     
-     
+
+    public String conditionUrlForSessionLossGet( String url )
+    {
+        if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
+            return url;
+        
+        if( !url.contains( "acidx=") )
+            url += (url.contains("?") ? "&" : "?") + "acidx=" + refBean.getActiveAccessCodeX();
+        
+        if( !url.contains("refpagex=") && refBean.getRefPageType()!=null )
+            url += (url.contains("?") ? "&" : "?") + "refpagex=" + refBean.getRefPageType().getRefPageTypeId();
+
+        return url;
+    }
+    
+    
+    
      
     public String getCp() {
         return cp;
