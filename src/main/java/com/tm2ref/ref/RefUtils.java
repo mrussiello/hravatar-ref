@@ -1098,14 +1098,30 @@ public class RefUtils extends BaseRefUtils
             refpagex = getHttpServletRequest().getParameter( "refpagex" );
             if( refpagex!=null && !refpagex.isBlank() )
             {
-                RefPageType refPageType = RefPageType.getValue(Integer.parseInt(refpagex));
-                if( refPageType.getIsCore() || refPageType.getIsCore2() || refPageType.getIsAnyPhotoCapture() )
+                RefPageType refPageType = null;
+                
+                try
+                {
+                    refPageType = RefPageType.getValue(Integer.parseInt(refpagex));
+                }
+                catch( NumberFormatException e )
+                {
+                    LogService.logIt( "RefUtils.checkRepairSession() unable to parse refpagex=" + refpagex + ", rcCheckId=" + rc.getRcCheckId() );                    
+                    refPageType = null;
+                }
+                
+                if( refPageType!=null && (refPageType.getIsCore() || refPageType.getIsCore2() || refPageType.getIsAnyPhotoCapture()) )
                 {
                     refBean.setRefPageType(refPageType);                
                     return conditionUrlForSessionLossGet("/r.xhtml" );
                 }
+                else if( refPageType!=null )
+                    refBean.setRefPageType(refPageType); 
                 else
-                    refBean.setRefPageType(refPageType);                
+                {
+                    LogService.logIt( "RefUtils.checkRepairSession()unable to parse refpagex=" + refpagex + ", rcCheckId=" + rc.getRcCheckId() );
+                    return null;
+                }
             }            
 
             return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull( refBean.getRefUserType()) );

@@ -105,7 +105,19 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                         refpagex = HttpReqUtils.getStringReqParam("refpagex", req);
                     
                     if( refpagex!=null && !refpagex.isBlank() && rb!=null )
+                    {
+                        try
+                        {
+                            int rbx = Integer.parseInt(refpagex);
+                        }
+                        catch( NumberFormatException e )
+                        {
+                            LogService.logIt( "RefExceptionHandler.handle() DDD.2b Unable to parse refpagex from request or refBean, so erasing and ignoring. refpagex=" + refpagex + ", " + t.toString() + ", acidx=" + acidx + ", refBean.refpagex=" + (rb==null ? "null" : rb.getActiveRefPageTypeIdX()) );
+                            refpagex = "";
+                        }
+                        
                         rb.setActiveRefPageTypeIdX(refpagex);
+                    }
                     
                     if( refpagex==null )
                         refpagex="";
