@@ -478,7 +478,8 @@ public class StandardReportSettings implements ReportSettings
 
     
     public String getBaseImageUrl() {
-        return RuntimeConstants.getStringValue("baseurl") + "/images/coretest2";
+        return RuntimeConstants.getStringValue("ReportImagesBaseUrl") + "/images/coretest2";
+        // return RuntimeConstants.getStringValue("baseurl") + "/images/coretest2";
     }
 
     

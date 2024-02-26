@@ -267,7 +267,7 @@ public class ReportData {
 
     public String getBaseImageUrl()
     {
-        return RuntimeConstants.getStringValue( "baseurl" ) + "/images/coretest";
+        return RuntimeConstants.getStringValue( "ReportImagesBaseUrl" ) + "/images/coretest";
     }
 
     

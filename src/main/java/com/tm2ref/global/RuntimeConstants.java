@@ -158,7 +158,6 @@ public class RuntimeConstants
         cache.put( "mediaServerWebapp", "sm" );
         cache.put( "mediaServerDomain", "media.clicflic.com" );
         cache.put( "primaryMediaServerDomain", "media.clicflic.com" );
-
         cache.put( "mediaServerPort", (int) 80 );
 
         cache.put( "applicationSystemId", (int) 1201  );
@@ -218,7 +217,8 @@ public class RuntimeConstants
         cache.put( "StandardRefCheckReportClassPrehire", "com.tm2ref.custom.ct2.CT2RcReport" );
         cache.put( "StandardRefCheckReportClassEmployee", "com.tm2ref.custom.ct2.CT2RcReport" );
 
-
+        cache.put( "ReportImagesBaseUrl", "https://cdn.hravatar.com/web/ref" );
+        
         cache.put( "RcPdfDownloadUrl", "https://www.hravatar.com/ta/rcpdfdnld.pdf" );
 
         cache.put( "RcPdfInterQuesStarUrl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_2x1602882693191.png" );
