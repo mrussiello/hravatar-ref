@@ -185,14 +185,14 @@
                 <p:dataTable value="#{adminRefBean.pdfReportList}" var="pdfReport">
 
                     <p:column>
-                        <h:commandLink>
+                        <p:commandLink ajax="false">
                             <h:graphicImage library="images" name="report.png" style="width:20px" alt=""/>
                             <!-- NOTE: The SetPropertyActionListener MUST go above the FileDownload component to ensure that the
                                  TestEventScore is in the right place before the code looks for it. -->
                             <f:setPropertyActionListener target="#{adminRefBean.pdfReport}" value="#{pdfReport}"/>
                             <p:fileDownload value="#{adminRefUtils.reportFileToDownload}">
                             </p:fileDownload>
-                        </h:commandLink>
+                        </p:commandLink>
                     </p:column>
 
                     <p:column>

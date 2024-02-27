@@ -241,7 +241,20 @@ public class AdminRefUtils extends FacesUtils {
             
             LogService.logIt( "AdminRefUtils.processCreateRcReportPdf() START rcCheckId=" + rcCheckId + ", langStr=" + langStr + ", reportId=" + reportId ); 
             List<Object[]> rout = rm.generateReportsForRcCheckAndLanguage(rcCheckId, reportId, langStr);
-                        
+                     
+            if( rout==null )
+            {
+                this.setStringErrorMessage("ReportList is null" );
+                return "StayInSamePLace";
+            }
+
+            if( rout.isEmpty() )
+            {
+                this.setStringErrorMessage("ReportList is empty" );
+                return "StayInSamePLace";
+            }
+
+            
             byte[] bytes;
             String name;
             for( Object[] out : rout )

@@ -16,6 +16,16 @@
     </properties>
     
     <dependencies>
+        
+        <!-- IMPORTANT - THIS dependency is here to account for Payara BUG FISH 7644 to support file downloads. Once this bug is corrected remove the jakarta.faces dependency! -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish/jakarta.faces -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.faces</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+        
+        
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
