@@ -197,12 +197,7 @@ public class BaseRefUtils  extends FacesUtils
         }
     }
 
-    public String conditionUrlForSessionLossGet( String url )
-    {
-        return conditionUrlForSessionLossGet( url, true );
-    }
-
-    public String conditionUrlForSessionLossGet( String url, boolean includeRedirect )
+    public String conditionUrlForSessionLossGet( String url, boolean includeRedirect)
     {
         if( refBean==null || refBean.getActiveAccessCodeX()==null || refBean.getActiveAccessCodeX().isBlank() || url==null || url.isBlank() )
             return url;

@@ -232,20 +232,20 @@ public class RefUtils extends BaseRefUtils
                 if( refUserType.getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture())
                 {
                     if( rc.getRcCandidatePhotoCaptureType().getIsRequired() )
-                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml");
+                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml", true);
                     else
-                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml");
+                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml", true);
                 }
                 else if( refUserType.getIsRater() && rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture())
                 {
                     if( rc.getRcRaterPhotoCaptureType().getIsRequired() )
-                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml");
+                        return conditionUrlForSessionLossGet("/pp/camera-required.xhtml", true);
                     else
-                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml");
+                        return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml", true);
                 }
             }
 
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             // return getNextViewForCorp(); // getNextViewForTestingProcess( tk );
         }
         catch( Exception e )
@@ -319,7 +319,7 @@ public class RefUtils extends BaseRefUtils
                 return corpBean.getCorp().getOfflinePage();
 
             RefUserType refUserType = rc.getRcRater()!=null && !rc.getRcRater().getIsCandidateOrEmployee() ? RefUserType.RATER : RefUserType.CANDIDATE ;
-            return conditionUrlForSessionLossGet(performRcCheckStart(rc, refUserType, false, false ));
+            return conditionUrlForSessionLossGet(performRcCheckStart(rc, refUserType, false, false ), true);
         }
 
         catch( STException e )
@@ -696,7 +696,7 @@ public class RefUtils extends BaseRefUtils
             {
                 RefPageType pt = getNextPageTypeForRefProcess();
                 refBean.setRefPageType(pt);
-                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
 
             // LogService.logIt( "RefUtils.processConfirmFail() Still a problem. rcCheckId=" + rc.getRcCheckId() + ", " + refBean.getRefUserType().getName() + ", " + refBean.getRefUser().getFullname() );
@@ -705,7 +705,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setStrParam3( refBean.getRefUser().getEmail());
             refBean.setStrParam4(null);
 
-            return conditionUrlForSessionLossGet("/ref/confirm-failure-form.xhtml");
+            return conditionUrlForSessionLossGet("/ref/confirm-failure-form.xhtml", true);
         }
         catch( Exception e )
         {
@@ -805,15 +805,15 @@ public class RefUtils extends BaseRefUtils
                 if( !refBean.getAdminOverride() && refBean.getNeedsBrowserPrecheck() )
                 {
                     // LogService.logIt( "RefUtils.processConfirmName() Going to Browser Precheck." );
-                    return conditionUrlForSessionLossGet("/pp/browser-precheck.xhtml");
+                    return conditionUrlForSessionLossGet("/pp/browser-precheck.xhtml", true);
                 }
 
-                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
 
             LogService.logIt( "RefUtils.processConfirmName() Confirmation Denied. rcCheckId=" + rc.getRcCheckId() + ", " + refBean.getRefUserType().getName() + ", " + refBean.getRefUser().getFullname() );
             refBean.setRefPageType( RefPageType.CONFIRM );
-            return conditionUrlForSessionLossGet("/ref/confirm-failure.xhtml");
+            return conditionUrlForSessionLossGet("/ref/confirm-failure.xhtml", true);
         }
 
         catch( Exception e )
@@ -847,7 +847,7 @@ public class RefUtils extends BaseRefUtils
             
             if( cpt.getIsAnyPhotoCapture() )
             {
-                return conditionUrlForSessionLossGet( getViewFromPageType( cpt ) );
+                return conditionUrlForSessionLossGet(getViewFromPageType( cpt ), true );
             }            
             
             else if( cpt.getIsCore() )
@@ -874,7 +874,7 @@ public class RefUtils extends BaseRefUtils
                                 if( !rru.getNeedsCore() )
                                     cpt = cpt.getNextPageTypeNoNull(rut);
                                 refBean.setRefPageType(cpt);
-                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt), true);
                                 
                             }
                         }
@@ -896,7 +896,7 @@ public class RefUtils extends BaseRefUtils
                                 RaterRefUtils rru = RaterRefUtils.getInstance();
                                 rru.doEnterCore(true);
                                 refBean.setRefPageType(cpt);
-                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt), true);
                             }
 
                             // Needs to enter references (CORE3)
@@ -942,7 +942,7 @@ public class RefUtils extends BaseRefUtils
                         }
                     }
                     refBean.setRefPageType(cpt);
-                    return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                    return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt), true);
                 }
             }
             
@@ -958,12 +958,12 @@ public class RefUtils extends BaseRefUtils
                     rru.doEnterCore2();                
 
                 refBean.setRefPageType(cpt);
-                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt));
+                return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt), true);
             }
 
             refBean.setRefPageType(cpt);
                         
-            return conditionUrlForSessionLossGet(getViewFromPageType(cpt));
+            return conditionUrlForSessionLossGet(getViewFromPageType(cpt), true);
             // return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull(refBean.getRefUserType()));
         }
         catch( Exception e )
@@ -996,7 +996,7 @@ public class RefUtils extends BaseRefUtils
             RefPageType pt = getPreviousPageTypeForRefProcess();
             //LogService.logIt( "RefUtils.processGoBackOneStep() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", current page type=" + cpt.getName() + ", going to PageType=" + pt.getName() );
             refBean.setRefPageType(pt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
         }
         catch( Exception e )
         {
@@ -1050,7 +1050,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.setRefPageType( RefPageType.INTRO );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
         }
         catch( Exception e )
         {
@@ -1113,7 +1113,7 @@ public class RefUtils extends BaseRefUtils
                 if( refPageType!=null && (refPageType.getIsCore() || refPageType.getIsCore2() || refPageType.getIsAnyPhotoCapture()) )
                 {
                     refBean.setRefPageType(refPageType);                
-                    return conditionUrlForSessionLossGet("/r.xhtml" );
+                    return conditionUrlForSessionLossGet("/r.xhtml", true );
                 }
                 else if( refPageType!=null )
                     refBean.setRefPageType(refPageType); 
@@ -1124,7 +1124,8 @@ public class RefUtils extends BaseRefUtils
                 }
             }            
 
-            return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull( refBean.getRefUserType()) );
+            // no redirects here.
+            return conditionUrlForSessionLossGet(refBean.getRefPageType().getPageFull( refBean.getRefUserType()), false );
         }
         catch( Exception e )
         {
@@ -1175,7 +1176,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.AVCOMMENTS );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
         }
         catch( Exception e )
         {
@@ -1218,7 +1219,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.PRE_QUESTIONS );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
         }
         catch( Exception e )
         {
@@ -1266,7 +1267,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( RefPageType.SPECIAL );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
         }
         catch( Exception e )
         {
@@ -1344,7 +1345,7 @@ public class RefUtils extends BaseRefUtils
 
             refBean.setStrParam1( MessageFactory.getStringMessage( getLocale(), rst.getKey() + ".reasontext", new String[]{rc.getUser().getFullname()} ));
 
-            return conditionUrlForSessionLossGet("/ref/rater-reject-form.xhtml");
+            return conditionUrlForSessionLossGet("/ref/rater-reject-form.xhtml", true);
         }
         catch( Exception e )
         {
@@ -1437,7 +1438,7 @@ public class RefUtils extends BaseRefUtils
                 return null;
             }
 
-            return conditionUrlForSessionLossGet("/ref/index.xhtml");
+            return conditionUrlForSessionLossGet("/ref/index.xhtml", true);
         }
         catch( Exception e )
         {
@@ -1624,7 +1625,7 @@ public class RefUtils extends BaseRefUtils
 
                 RefPageType rpt = getNextPageTypeForRefProcess();
                 refBean.setRefPageType(rpt);
-                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+                return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
 
             // REJECTION!!!!!!
@@ -1666,7 +1667,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.setStrParam1( MessageFactory.getStringMessage( getLocale(), "rcrst.rejectedrelease.reasontext" ));
                 //refBean.setStrParam5( startUrl );
                 //refBean.setRcCheck(rc);
-                return conditionUrlForSessionLossGet("/ref/release-denied.xhtml");
+                return conditionUrlForSessionLossGet("/ref/release-denied.xhtml", true);
             }
         }
         catch( Exception e )
@@ -1780,7 +1781,7 @@ public class RefUtils extends BaseRefUtils
             refBean.setRefPageType( refPageType );
             RefPageType rpt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(rpt);
-            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
 
         }
         catch( Exception e )
@@ -1840,7 +1841,7 @@ public class RefUtils extends BaseRefUtils
             // Create CSCase with release comments.
 
             if( !booleanParam1 )
-                return conditionUrlForSessionLossGet( getViewFromPageType( getNextPageTypeForRefProcess() ) );
+                return conditionUrlForSessionLossGet(getViewFromPageType( getNextPageTypeForRefProcess() ), true );
 
             // Indicates that the release is not OK.
             else
@@ -1851,7 +1852,7 @@ public class RefUtils extends BaseRefUtils
                 refBean.clearBean();
                 refBean.setStrParam1(null);
                 refBean.setStrParam5( startUrl );
-                return conditionUrlForSessionLossGet("/ref/index.xhtml");
+                return conditionUrlForSessionLossGet("/ref/index.xhtml", true);
             }
         }
         catch( Exception e )
@@ -1898,7 +1899,7 @@ public class RefUtils extends BaseRefUtils
 
             refBean.clearBean();
 
-            return conditionUrlForSessionLossGet(performSimpleEntry(0, rcCheckId, rcRaterId, accessCode, adminOverride ));
+            return conditionUrlForSessionLossGet(performSimpleEntry(0, rcCheckId, rcRaterId, accessCode, adminOverride ), true);
         }
         catch( Exception e )
         {

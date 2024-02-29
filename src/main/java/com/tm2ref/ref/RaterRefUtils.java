@@ -684,7 +684,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ));
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
             if( rc == null )
             {
@@ -699,7 +699,7 @@ public class RaterRefUtils extends BaseRefUtils
             
             refBean.setRefPageType( RefPageType.CORE2 );
             doEnterCore2();
-            return conditionUrlForSessionLossGet(getViewFromPageType(refBean.getRefPageType()));
+            return conditionUrlForSessionLossGet(getViewFromPageType(refBean.getRefPageType()), true);
         }
         catch( STException e )
         {
@@ -726,7 +726,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
             if( rc == null )
             {
@@ -759,7 +759,7 @@ public class RaterRefUtils extends BaseRefUtils
             raterRefBean.setRcItemWrapper(rciw, rc.getRcRater().getIsCandidateOrEmployee() );
             refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE2 : RefPageType.CORE );
             // refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE3 : RefPageType.CORE );
-            return conditionUrlForSessionLossGet(getNextViewFromRatings());
+            return conditionUrlForSessionLossGet(getNextViewFromRatings(), true);
         }
         catch( STException e )
         {
@@ -785,7 +785,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
             if( rc == null )
             {
@@ -816,7 +816,7 @@ public class RaterRefUtils extends BaseRefUtils
             raterRefBean.setRcItemWrapper(rciwNew, rc.getRcRater().getIsCandidateOrEmployee() );
             refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE2 : RefPageType.CORE );
             // refBean.setRefPageType( rc.getRcRater().getIsCandidateOrEmployee() ? RefPageType.CORE3 : RefPageType.CORE );
-            return conditionUrlForSessionLossGet(getNextViewFromRatings());
+            return conditionUrlForSessionLossGet(getNextViewFromRatings(), true);
         }
         catch( STException e )
         {
@@ -842,7 +842,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
+                    return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
             if( rc == null )
             {
@@ -876,7 +876,7 @@ public class RaterRefUtils extends BaseRefUtils
                     rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, rc.getRcRater(), false);
             }
 
-            return conditionUrlForSessionLossGet(getNextViewFromRatings());
+            return conditionUrlForSessionLossGet(getNextViewFromRatings(), true);
         }
         catch( STException e )
         {
@@ -981,7 +981,7 @@ public class RaterRefUtils extends BaseRefUtils
             refBean.setRefPageType(RefPageType.CORE2 );
             RefPageType pt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(pt);
-            return conditionUrlForSessionLossGet(getViewFromPageType(pt));
+            return conditionUrlForSessionLossGet(getViewFromPageType(pt), true);
         }        
         catch( STException e )
         {
@@ -1009,7 +1009,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
                 if( rc!=null )
-                    return this.conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ) );
+                    return this.conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
             if( rc==null )
             {
@@ -1057,7 +1057,7 @@ public class RaterRefUtils extends BaseRefUtils
             else
                 setErrorMessage("g.XRReferralExistsForX", new String[]{refUser.getFullname()} );
             
-            return conditionUrlForSessionLossGet("/ref/referrals.xhtml");
+            return conditionUrlForSessionLossGet("/ref/referrals.xhtml", true);
             // return "StayInSamePlace";
         }
         catch( STException e )
@@ -1077,11 +1077,11 @@ public class RaterRefUtils extends BaseRefUtils
     
     public String processSaveItemResp()
     {
-        return conditionUrlForSessionLossGet(doSaveItemResp( false ));
+        return conditionUrlForSessionLossGet(doSaveItemResp( false ), true);
     }
     public String processSkipItem()
     {
-        return conditionUrlForSessionLossGet(doSaveItemResp( true ));
+        return conditionUrlForSessionLossGet(doSaveItemResp( true ), true);
     }
 
     public String doSaveItemResp( boolean skip )
