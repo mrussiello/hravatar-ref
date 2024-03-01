@@ -768,7 +768,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck(); 
             if( rc == null )
                 rc = repairRefBeanForCurrentAction(refBean, true );                                    
-            LogService.logIt( "CandidateRefUtils.doExitCoreBeacon() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcCheckId=" + rcCheckId );            
+            // LogService.logIt( "CandidateRefUtils.doExitCoreBeacon() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcCheckId=" + rcCheckId );            
             if( rc == null )
                 return;
 
@@ -1550,12 +1550,12 @@ public class CandidateRefUtils extends BaseRefUtils
             if( rc.getRcCheckType().getIsPrehire() && rcRater.getCandidateRoleResp()!=null && !rcRater.getCandidateRoleResp().isBlank()  )
                 candidateRefBean.setStrParam4( rcRater.getCandidateRoleResp() );
             
-            LogService.logIt( "CandidateRefUtils.processSaveRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));            
+            // LogService.logIt( "CandidateRefUtils.processSaveRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));            
             
             if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
             {
                 int[] out = sendRcCheckToRater(rc, rcRater, false, false, true);
-                LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );                            
+                // LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );                            
             }
 
             else if( refBean.getAdminOverride() && send && rcRater.getRaterNoSend()==1 )

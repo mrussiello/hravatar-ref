@@ -536,7 +536,7 @@ public class RaterRefUtils extends BaseRefUtils
 
         }
         
-        LogService.logIt( "RaterRefUtils.getRcItemRadioSelectItemListForRating() selectItemList.size=" + out.size() );
+        // LogService.logIt( "RaterRefUtils.getRcItemRadioSelectItemListForRating() selectItemList.size=" + out.size() );
         return out;
     }
 

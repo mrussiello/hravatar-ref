@@ -75,7 +75,7 @@ public abstract class AbstractFacesServlet extends HttpServlet {
 
             InnerFacesContext.setFacesContextAsCurrentInstance(facesContext);
 
-						LogService.logIt( "AbstractFacesServlet setting viewRoot to index.xhtml");
+						// LogService.logIt( "AbstractFacesServlet setting viewRoot to index.xhtml");
             // set a new viewRoot, otherwise context.getViewRoot returns null
             UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "/index.xhtml");
             facesContext.setViewRoot(view);        

@@ -1344,7 +1344,7 @@ public class RcCheckUtils {
             // already complete.
             if( !updateIfAlreadyComplete && rc.getRcCheckStatusType().getCompleteOrHigher() )
             {
-                LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() RcCheck is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() );
+                // LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() RcCheck is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() );
                 return;                
             }
             //if( !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
@@ -1392,7 +1392,7 @@ public class RcCheckUtils {
                 
                 if( skipCandidate )
                 {
-                    LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() AAA.3 Candidate is not complete but no other input than raters and we have enough raters. So setting Candidate to complete. rcCheckId=" + rc.getRcCheckId() );                    
+                    // LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() AAA.3 Candidate is not complete but no other input than raters and we have enough raters. So setting Candidate to complete. rcCheckId=" + rc.getRcCheckId() );                    
                     rc.setCandidateCompleteDate( new Date() );
                     rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
                     if( rcFacade==null )
@@ -1420,7 +1420,7 @@ public class RcCheckUtils {
             
             if( !pastExpireDate && !candComplete )
             {
-                LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() Candidate not yet complete and rcCheck is not expired. rcCheckId=" + rc.getRcCheckId() );
+                // LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() Candidate not yet complete and rcCheck is not expired. rcCheckId=" + rc.getRcCheckId() );
                 return;                                
             }
             
@@ -1431,7 +1431,7 @@ public class RcCheckUtils {
                     rcFacade=RcFacade.getInstance();                
                 if( !rcFacade.getAreAllRcRatersCompleteOrHigher(rc.getRcCheckId()) )
                 {                    
-                    LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() All current RcRaters are not yet complete and not expired. rcCheckId=" + rc.getRcCheckId() );
+                    // LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() All current RcRaters are not yet complete and not expired. rcCheckId=" + rc.getRcCheckId() );
                     return;      
                 }
             }
@@ -1473,7 +1473,7 @@ public class RcCheckUtils {
             if( !adminOverride )
                 doCheckForSuspiciousActivity( rc );
                         
-            LogService.logIt( "RcCheckUtils.performRcCheckCompletionIfReady() Setting RcCheck to complete!" );
+            // LogService.logIt( "RcCheckUtils.performRcCheckCompletionIfReady() Setting RcCheck to complete!" );
             rc.setRcCheckStatusTypeId( RcCheckStatusType.COMPLETED.getRcCheckStatusTypeId() );
             rc.setCompleteDate( new Date() );
             rc.setPercentComplete(100);

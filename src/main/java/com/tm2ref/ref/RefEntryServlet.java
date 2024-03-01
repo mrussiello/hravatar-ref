@@ -104,7 +104,7 @@ public class RefEntryServlet  extends AbstractFacesServlet {
             if( accessCode==null || accessCode.isBlank() )
                 throw new Exception( "URLFORMAT " + request.getRequestURI() );
 
-            LogService.logIt( "RefEntryServlet.processRequest() AAA.1 accessCode=" + accessCode );
+            // LogService.logIt( "RefEntryServlet.processRequest() AAA.1 accessCode=" + accessCode );
 
             nextViewId = refUtils.performSimpleEntry(0, 0, 0, accessCode, false);
             

@@ -60,7 +60,7 @@ public class RefEntry
      //
      public void doCoreExitEntry()
      {
-        LogService.logIt( "RefEntry.doCoreExitEntry() START rc=" + rc + ", rr=" + rr );
+        // LogService.logIt( "RefEntry.doCoreExitEntry() START rc=" + rc + ", rr=" + rr );
         long rcCheckId=0;
         long rcRaterId=0;
         String nextViewId = null;
@@ -86,7 +86,7 @@ public class RefEntry
         {
             nextViewId = refUtils.performCoreExitEntry( rcCheckId, rcRaterId, rut );
 
-            LogService.logIt( "RefEntry.doCoreExitEntry() AAA.1 rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId +  ", nextViewId=" + nextViewId );
+            // LogService.logIt( "RefEntry.doCoreExitEntry() AAA.1 rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId +  ", nextViewId=" + nextViewId );
 
             //if( nextViewId != null )
             //    navigateTo( nextViewId );         
@@ -100,7 +100,7 @@ public class RefEntry
 
      public void doTestKeyRefEntry()
      {
-        LogService.logIt( "RefEntry.doTestKeyRefEntry() START tk=" + (tk==null ? "null" : tk )+ ", cuid=" + (cuid==null ? "null" : cuid) + ", rcsid=" + (rcsid==null ? "null" : rcsid) + ", orgAutoTestId=" + orgAutoTestId );
+        // LogService.logIt( "RefEntry.doTestKeyRefEntry() START tk=" + (tk==null ? "null" : tk )+ ", cuid=" + (cuid==null ? "null" : cuid) + ", rcsid=" + (rcsid==null ? "null" : rcsid) + ", orgAutoTestId=" + orgAutoTestId );
         long testKeyId=0;
         long userId=0;
         int rcScriptId=0;
@@ -146,7 +146,7 @@ public class RefEntry
                 return;
             }
             
-            LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1 testKeyId=" + testKeyId + ", userId=" + userId + ", rcScriptId=" + rcScriptId );
+            // LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1 testKeyId=" + testKeyId + ", userId=" + userId + ", rcScriptId=" + rcScriptId );
             
             Tracker.addTestKeyEntry();
 
@@ -166,7 +166,7 @@ public class RefEntry
             nextViewId = refUtils.performSimpleEntry(rcc.getCorpId(), rcc.getRcCheckId(), 0, null, false );
             
             nextViewId = conditionUrlForSessionLossGet(nextViewId);
-            LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1c nextViewId=" + nextViewId );
+            // LogService.logIt( "RefEntry.doTestKeyRefEntry() AAA.1c nextViewId=" + nextViewId );
 
             if( nextViewId != null )
                 navigateTo( nextViewId );

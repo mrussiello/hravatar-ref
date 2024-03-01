@@ -66,7 +66,7 @@ public class PhoneUtils
             {
                 LogService.logIt("PhoneUtils.sendTextMessage() To number is not valid for country code using E164. Trying Intl. to=" + to + ", countryCode=" + countryCode + ", " + msg );
                 to = GooglePhoneUtils.getFormattedPhoneNumberIntl(to, countryCode);
-                LogService.logIt("PhoneUtils.sendTextMessage() to number changed to to=" + to + " using Intl version, countryCode=" + countryCode + ", valid=" + GooglePhoneUtils.isNumberValid(to, countryCode ) );
+                // LogService.logIt("PhoneUtils.sendTextMessage() to number changed to to=" + to + " using Intl version, countryCode=" + countryCode + ", valid=" + GooglePhoneUtils.isNumberValid(to, countryCode ) );
                 if( to==null )
                 {
                     LogService.logIt( "PhoneUtils.sendTextMessage() BBB.3 TO phone number is null after E164 conversion. countryCode=" + countryCode + ", from=" + from + ", " + msg );
@@ -82,7 +82,7 @@ public class PhoneUtils
                 else if( to.startsWith("0"))
                     to = to.substring(1, to.length() );                
                 to = GooglePhoneUtils.getFormattedPhoneNumberE164(to, countryCode );
-                LogService.logIt("PhoneUtils.sendTextMessage() to number changed to to=" + to + " uafter stripping leading numbers, countryCode=" + countryCode + ", valid=" + GooglePhoneUtils.isNumberValid(to, countryCode ) );                
+                // LogService.logIt("PhoneUtils.sendTextMessage() to number changed to to=" + to + " uafter stripping leading numbers, countryCode=" + countryCode + ", valid=" + GooglePhoneUtils.isNumberValid(to, countryCode ) );                
             }
             
             if( !GooglePhoneUtils.isNumberValid(to, countryCode ) )

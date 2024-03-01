@@ -721,7 +721,7 @@ public class RefUtils extends BaseRefUtils
         getCorpBean();
         getRefBean();
 
-        LogService.logIt( "RefUtils.processConfirmName() AAA Start" );
+        // LogService.logIt( "RefUtils.processConfirmName() AAA Start" );
         
         RcCheck rc = null;
         try
