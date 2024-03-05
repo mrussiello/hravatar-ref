@@ -631,6 +631,15 @@ public class RefUtils extends BaseRefUtils
                 corpUtils = CorpUtils.getInstance();
             return corpUtils.processCorpHome();            
         }
+        
+        catch( IllegalStateException e )
+        {
+            LogService.logIt( e, "RefUtils.processExitCheck() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", returnUrl=" + returnUrl );
+            if( corpUtils==null )
+                corpUtils = CorpUtils.getInstance();
+            return corpUtils.processCorpHome();            
+        }
+        
         catch( Exception e )
         {
             LogService.logIt( e, "RefUtils.processExitCheck() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", returnUrl=" + returnUrl );
@@ -644,6 +653,10 @@ public class RefUtils extends BaseRefUtils
                 if( returnUrl!=null && !returnUrl.isBlank() && fc!=null && fc.getExternalContext()!=null )
                 {
                     // must be absolute.
+                    returnUrl=returnUrl.trim();
+                    if( !returnUrl.toLowerCase().startsWith("http") )
+                        returnUrl = "http://" + returnUrl;
+
                     ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( returnUrl );
                     return null;
                 }
