@@ -4,4 +4,5 @@
   <context-root>tr</context-root>
   <class-loader delegate="false"/>
   <property name="useBundledJsf" value="true"/>
+  <parameter-encoding default-charset="UTF-8"/>    
 </payara-web-app>
