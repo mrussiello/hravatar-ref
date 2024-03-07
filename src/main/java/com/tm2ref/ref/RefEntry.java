@@ -427,6 +427,7 @@ public class RefEntry
      {
         LogService.logIt( "RefEntry.doRefReturnEntry() acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
          
+        FacesContext fc = FacesContext.getCurrentInstance();
         try
         {
             if( !refUtils.getNewRefStartsOk() )
@@ -445,11 +446,16 @@ public class RefEntry
 
             LogService.logIt( "RefEntry.doRefReturnEntry() AAA.1 after refUtils.processReturnToRefCheckProcess() nextViewId=" + nextViewId );
 
-            HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-            response.sendRedirect("/tr" + nextViewId);
+            if( fc!=null )
+            {
+                HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+                fc.responseComplete();
+                response.sendRedirect("/tr" + nextViewId);
+                return;
+            }            
             
-            //if( nextViewId != null )
-            //    navigateTo( nextViewId );
+            if( nextViewId != null )
+                navigateTo( nextViewId );
          
         }
         catch( Exception e )
@@ -544,9 +550,10 @@ public class RefEntry
     {
         String stub = "";
 
+        FacesContext fc = FacesContext.getCurrentInstance();
         try
         {
-                HttpServletRequest req =  (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+                HttpServletRequest req =  (HttpServletRequest) fc.getExternalContext().getRequest();
 
                 if( viewId.toLowerCase().indexOf( "http" )<0 )
                 {
@@ -570,9 +577,18 @@ public class RefEntry
             stub="";
         }
 
-        LogService.logIt( "RefEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        response.sendRedirect(stub + viewId);
+        if( fc!=null )
+        {
+            fc.responseComplete();
+            ((HttpServletResponse)fc.getExternalContext().getResponse()).sendRedirect(stub + viewId);
+            LogService.logIt( "RefEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
+        }
+        else
+            LogService.logIt( "RefEntry.sendRedirect() Could not redirect to stub=" + stub + ", viewId=" + viewId + " because FacesContext is null!");
+        
+        //LogService.logIt( "RefEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
+        //HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        //response.sendRedirect(stub + viewId);
     }
     
 

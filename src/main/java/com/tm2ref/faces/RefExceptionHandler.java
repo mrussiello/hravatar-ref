@@ -19,6 +19,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ExceptionQueuedEvent;
 import jakarta.faces.event.ExceptionQueuedEventContext;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -62,7 +63,17 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
 
                 String viewId = fc.getViewRoot()!=null ? fc.getViewRoot().getViewId() : "ViewRoot unavailable (FacesContext or FacesContext.viewRoot is null) fc=" + (fc==null ? "null" : "not null");
                 
-                LogService.logIt("RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", " + t.getMessage() );
+                // LogService.logIt("RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", " + t.getMessage() );
+                
+                Throwable rootCause = t;
+                Throwable cause=null;
+                while(null != (cause = rootCause.getCause())  && (rootCause != cause) ) {
+                        rootCause = cause;
+                }                
+                
+                if( !rootCause.equals(t))
+                    LogService.logIt( "RefExceptionHandler.handle() AAA.2 Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
+                
                 
                 RefBean rb = (RefBean) fc.getApplication().getELResolver().getValue( fc.getELContext(), null, "refBean" );
                 
@@ -74,8 +85,10 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 
                 HttpServletRequest req = (HttpServletRequest) fc.getExternalContext().getRequest();                        
                 
-                if( viewId==null || !viewId.contains("/tools/admin/") )                
-                    LogService.logIt("RefExceptionHandler.handle() viewId=" + viewId + ", Exception: " + t.toString() + ", " + t.getMessage() );
+                LogService.logIt("RefExceptionHandler.handle() AAA.3 Handling viewId=" + (viewId==null ? "null" : viewId) + ", Exception: " + rootCause.toString() );
+                
+                //if( viewId==null || !viewId.contains("/tools/admin/") )                
+                //    LogService.logIt("RefExceptionHandler.handle() viewId=" + viewId + ", Exception: " + t.toString() + ", " + t.getMessage() );
                 
                 // Recover from errors we can recover from.
                 // if( t instanceof IllegalStateException || t instanceof ELException || t instanceof FacesException || t instanceof ViewExpiredException || t instanceof ProtectedViewException || t instanceof IllegalStateException )
@@ -89,7 +102,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 {
                     String acidx = rb!=null ? rb.getActiveAccessCodeX(): null;
                     
-                    LogService.logIt( "RefExceptionHandler.handle() DDD.1 Attempting to recover from error: " + t.toString() + ", refBean.acidx=" + acidx );
+                    LogService.logIt( "RefExceptionHandler.handle() DDD.1 Attempting to recover from error: " + rootCause.toString() + ", refBean.acidx=" + acidx );
                     
                     if( acidx==null || acidx.isBlank() )
                         acidx = HttpReqUtils.getStringReqParam("acidx", req);
@@ -157,7 +170,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
 
                 if( nextViewId==null || nextViewId.isBlank() )
                 {
-                    nextViewId = "/ref/index.xhtml";
+                    // nextViewId = "/ref/index.xhtml";
                     
                     if( rb!=null )
                     {
@@ -165,6 +178,13 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                         rm.put("acidx", rb.getActiveAccessCodeX());
                         rm.put("refpagex", rb.getActiveRefPageTypeIdX());
                     }                    
+                    
+                    LogService.logIt( "RefExceptionHandler.handle() WWW.2 redirecting to entry page." );
+	            HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+                    fc.responseComplete();
+                    response.sendRedirect("/tr/ref/index.html");
+                    return;                    
+                    
                 }
                 
 

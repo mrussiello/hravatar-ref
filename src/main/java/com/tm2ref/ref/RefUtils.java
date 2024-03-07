@@ -436,7 +436,9 @@ public class RefUtils extends BaseRefUtils
             if( o.getDefaultCorpExitUrl()!=null && !o.getDefaultCorpExitUrl().isBlank() )
             {
                 FacesContext fc = FacesContext.getCurrentInstance();
-                ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( o.getDefaultCorpExitUrlHttp() );
+                HttpServletResponse res = ((HttpServletResponse)  fc.getExternalContext().getResponse());
+                fc.responseComplete();
+                res.sendRedirect( o.getDefaultCorpExitUrlHttp() );
                 return null;
             }
 
@@ -615,7 +617,9 @@ public class RefUtils extends BaseRefUtils
                     returnUrl = "http://" + returnUrl;
 
                 FacesContext fc = FacesContext.getCurrentInstance();
-                ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( returnUrl );
+                HttpServletResponse res = ((HttpServletResponse)  fc.getExternalContext().getResponse());
+                fc.responseComplete();
+                res.sendRedirect( returnUrl );
                 return null;
             }
 
@@ -623,7 +627,9 @@ public class RefUtils extends BaseRefUtils
             {
                 FacesContext fc = FacesContext.getCurrentInstance();
                 // must be absolute.
-                ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( o.getDefaultCorpExitUrlHttp() );
+                HttpServletResponse res = ((HttpServletResponse)  fc.getExternalContext().getResponse());
+                fc.responseComplete();
+                res.sendRedirect( o.getDefaultCorpExitUrlHttp() );
                 return null;
             }
 
@@ -657,7 +663,9 @@ public class RefUtils extends BaseRefUtils
                     if( !returnUrl.toLowerCase().startsWith("http") )
                         returnUrl = "http://" + returnUrl;
 
-                    ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( returnUrl );
+                    HttpServletResponse res = ((HttpServletResponse)  fc.getExternalContext().getResponse());
+                    fc.responseComplete();
+                    res.sendRedirect( returnUrl );
                     return null;
                 }
             }
@@ -1447,7 +1455,9 @@ public class RefUtils extends BaseRefUtils
             if( o.getDefaultCorpExitUrl()!=null && !o.getDefaultCorpExitUrl().isBlank() )
             {
                 FacesContext fc = FacesContext.getCurrentInstance();
-                ((HttpServletResponse)  fc.getExternalContext().getResponse()).sendRedirect( o.getDefaultCorpExitUrlHttp() );
+                HttpServletResponse res = ((HttpServletResponse)  fc.getExternalContext().getResponse());
+                fc.responseComplete();
+                res.sendRedirect( o.getDefaultCorpExitUrlHttp() );
                 return null;
             }
 

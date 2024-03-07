@@ -156,9 +156,10 @@ public class ProctorEntry
     {
         String stub = "";
 
+        FacesContext fc = FacesContext.getCurrentInstance();
         try
         {
-            HttpServletRequest req =  (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            HttpServletRequest req =  (HttpServletRequest) fc.getExternalContext().getRequest();
 
             if( viewId.toLowerCase().indexOf( "http" )<0 )
             {
@@ -182,10 +183,18 @@ public class ProctorEntry
             stub="";
         }
 
+        if( fc!=null )
+        {
+            fc.responseComplete();
+            ((HttpServletResponse)fc.getExternalContext().getResponse()).sendRedirect(stub + viewId);
+            LogService.logIt( "ProctorEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
+        }
+        else
+            LogService.logIt( "ProctorEntry.sendRedirect() Could not redirect to stub=" + stub + ", viewId=" + viewId + " because FacesContext is null!");
 
-        LogService.logIt( "ProctorEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        response.sendRedirect(stub + viewId);
+       // LogService.logIt( "ProctorEntry.sendRedirect() Redirecting to stub=" + stub + ", viewId=" + viewId );
+       // HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+       // response.sendRedirect(stub + viewId);
     }
 
 

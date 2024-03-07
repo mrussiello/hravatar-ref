@@ -27,6 +27,7 @@ import com.tm2ref.util.CookieUtils;
 import com.tm2ref.util.IpUtils;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
+import jakarta.faces.context.FacesContext;
 import java.util.Date;
 import java.util.List;
 import jakarta.servlet.http.Cookie;
@@ -1506,9 +1507,12 @@ public class BaseRefUtils  extends FacesUtils
             if( rc != null && rc.getRcCheckStatusType().getCompleteOrHigher() && corp!=null && corp.getUseDirectExit()==1   )
             {
                 if( exitUrl !=null &&  !exitUrl.isEmpty() )
-                {
+                {                    
                     if( getHttpServletResponse()!=null )
                     {
+                        FacesContext fc = FacesContext.getCurrentInstance();
+                        if( fc!=null )
+                            fc.responseComplete();
                         LogService.logIt("RcUtils.systemError() RcCheck is already complete.  RcCheck: " + rc.getRcCheckId() + ", sending to Return URL=" + exitUrl  );
                         getHttpServletResponse().sendRedirect( exitUrl );
                         return "redirect";
