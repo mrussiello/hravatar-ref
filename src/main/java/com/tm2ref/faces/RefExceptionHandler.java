@@ -182,7 +182,15 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                     LogService.logIt( "RefExceptionHandler.handle() WWW.2 redirecting to entry page." );
 	            HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
                     fc.responseComplete();
-                    response.sendRedirect("/tr/ref/index.html");
+                    try
+                    {
+                        response.sendRedirect("/tr/ref/index.html");
+                    }
+                    catch( IllegalStateException e )
+                    {
+                        LogService.logIt( "RefExceptionHandler.handle() WWW.3 redirecting to home page. " + e.toString() + " Returning without redirect or navigation." );                        
+                    }
+                    // response.sendRedirect("/tr/ref/index.html");
                     return;                    
                     
                 }
