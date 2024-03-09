@@ -13,7 +13,7 @@
     <property name="prod.username" value="ec2-user" />
     <property name="prod.keyfile" value="C:/dev/AmazonAWS/ClicFlicKeyPair2.pem" />
 
-    <property name="glassfishlocation" value="/usr/pgms/payara6.2023.9/payara6/glassfish" />
+    <property name="glassfishlocation" value="/usr/pgms/payara6.2024.1/payara6/glassfish" />
 
     <property name="test1_dns" value="directtest1.hravatar.com" />
     <property name="test2_dns" value="directtest2.hravatar.com" />
@@ -455,12 +455,12 @@
             username="${stage.username}"
             keyfile="${stage.keyfile}"
                 trust="true"
-                command="/usr/pgms/payara6.2023.9/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
+                command="/usr/pgms/payara6.2024.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2ref2-1.0"/>
 		<sshexec host="${stage_dns}"
                         username="${stage.username}"
                         keyfile="${stage.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.9/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+			      command="/usr/pgms/payara6.2024.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
             <antcall target="datetime" />
 	</target>
 
@@ -479,7 +479,7 @@
                         username="${stage.username}"
                         keyfile="${stage.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.9/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
+			      command="/usr/pgms/payara6.2024.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot tr --force=true ${stage.dist.dir}/${today.date}${today.month}${today.year}/tm2ref2-1.0.war"/>
             <antcall target="datetime" />
 	</target>
 
