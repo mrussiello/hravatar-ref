@@ -14,8 +14,7 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
 
-        <p:idleMonitor rendered="#{userBean.userLoggedOnAsAdmin}" timeout="#{idleMonitorUtils.sessionTimeoutMilliseconds}">
-            <p:ajax event="idle" listener="#{idleMonitorUtils.onIdle}"/>
+        <p:idleMonitor rendered="#{userBean.userLoggedOnAsAdmin}" timeout="#{idleMonitorUtils.sessionTimeoutMilliseconds}" onidle="document.location.href='/tr/misc/idle/idle-entry.xhtml'">
         </p:idleMonitor>
         
     </cc:implementation>

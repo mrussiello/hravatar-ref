@@ -3,12 +3,7 @@ package com.tm2ref.faces;
 
 
 import com.tm2ref.global.Constants;
-import com.tm2ref.service.LogService;
-import com.tm2ref.user.UserBean;
-import com.tm2ref.user.UserUtils;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.faces.context.FacesContext;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 
@@ -17,15 +12,15 @@ import jakarta.inject.Named;
 public class IdleMonitorUtils
 {
 
-    @Inject 
-    UserBean userBean; 
+    //@Inject 
+    //UserBean userBean; 
       
     public int getSessionTimeoutMilliseconds()
     {
         return Constants.IDLE_SESSION_TIMEOUT_MINS*60*1000;
     }
     
-    
+    /*
     public void onIdle() 
     {
         try
@@ -47,7 +42,5 @@ public class IdleMonitorUtils
             LogService.logIt( "IdleMonitorUtils.onIdle() " + userBean.getUserLoggedOnAsAdmin() );
         }
     }
- 
-    
-
+    */
 }
