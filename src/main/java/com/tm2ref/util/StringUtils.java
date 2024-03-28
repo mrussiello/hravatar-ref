@@ -2,6 +2,7 @@ package com.tm2ref.util;
 
 import com.tm2ref.global.STException;
 import com.tm2ref.service.LogService;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -766,7 +767,7 @@ public class StringUtils
         if( inStr == null || inStr.length() == 0 )
             return "";
 
-        StringBuffer outStr = new StringBuffer();
+        StringBuilder outStr = new StringBuilder();
 
         for ( int i = 0; i < inStr.length(); i++ )
         {
@@ -787,7 +788,7 @@ public class StringUtils
       if ( ( inStr == null ) || ( inStr.length() == 0 ) )
         return ( "" );
 
-      StringBuffer outStr = new StringBuffer( "" );
+      StringBuilder outStr = new StringBuilder( "" );
 
       for ( int i = 0; i < inStr.length(); i++ )
       {
@@ -805,7 +806,7 @@ public class StringUtils
       if ( ( inStr == null ) || ( inStr.length() == 0 ) )
         return ( "" );
 
-      StringBuffer outStr = new StringBuffer( "" );
+      StringBuilder outStr = new StringBuilder( "" );
 
       for ( int i = 0; i < inStr.length(); i++ )
       {
@@ -826,7 +827,7 @@ public class StringUtils
 
     public static String removeChar( String inStr, char out )
     {
-      StringBuffer outStr = new StringBuffer();
+      StringBuilder outStr = new StringBuilder();
 
       for ( int i = 0;i < inStr.length();i++ )
       {
@@ -851,7 +852,7 @@ public class StringUtils
         if( newPiece == null )
             newPiece = "";
 
-        StringBuffer outStr = new StringBuffer();
+        StringBuilder outStr = new StringBuilder();
 
         int index = inStr.indexOf( oldPiece , 0 );
 
@@ -1151,16 +1152,6 @@ public class StringUtils
     }
 
 
-    /**
-     * Convert a nibble to a hex character
-     * @param   nibble  the nibble to convert.
-
-    private static char toHex( int nibble )
-    {
-        return hexDigit[(nibble & 0xF)];
-    }
-     */
-
     
     public static String generateRandomStringForPin( int length )
     {
@@ -1185,27 +1176,18 @@ public class StringUtils
      */
     public static String generateRandomString( int length )
     {
-        StringBuffer sb = new StringBuffer();
-
-        // char ch = ' ';
-
-        int index = 0;
-
-        double random = 0f;
-
+        StringBuilder sb = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom();
+        int index;
         for( int i=0 ; i<length ; i++ )
         {
-            random = Math.random() * ( alphaDigits.length );
-
-            index = (int) random;
+            index = secureRandom.nextInt(alphaDigits.length);
 
             sb.append( alphaDigits[ index ] );
         }
 
         return sb.toString();
-    }
-
-
+    }    
 
 
     public static String correctOddQuotes( String inStr )
@@ -1311,7 +1293,7 @@ public class StringUtils
 
         char ch2 = Character.toUpperCase( ch );
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append( ch2 );
 
@@ -1403,7 +1385,7 @@ public class StringUtils
      */
     public static String stripNonValidXMLCharacters(String in)
     {
-        StringBuffer out = new StringBuffer(); // Used to hold the output.
+        StringBuilder out = new StringBuilder(); // Used to hold the output.
         char current; // Used to reference the current character.
 
         if (in == null || ("".equals(in))) return ""; // vacancy test.

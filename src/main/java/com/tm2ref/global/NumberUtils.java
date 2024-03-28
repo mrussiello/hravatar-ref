@@ -2,7 +2,6 @@ package com.tm2ref.global;
 
 import com.tm2ref.service.LogService;
 import java.text.DecimalFormat;
-import java.util.Random;
 
 
 
@@ -11,13 +10,6 @@ import java.util.Random;
  */
 public class NumberUtils
 {
-
-    /**
-     * Random number generator used by various
-     */
-    private static Random random = null;
-
-
     public static int intFmString( String inStr ) throws STException
     {
     	return intFmString( inStr, true );
@@ -136,58 +128,6 @@ public class NumberUtils
             return 1;
 
         return 0;
-    }
-
-
-
-    /**
-     * Returns a double between 0 (inclusive) - 1.0 (exclusive) on a uniform distribution.
-     */
-    public static double getUniformRandom()
-    {
-        if( random == null )
-            random = new Random( new java.util.Date().getTime() );
-
-        return random.nextFloat();
-    }
-
-
-    /**
-     * Returns the next pseudorandom, Gaussian ( "normally") distributed double value
-     * with mean 0.0 and standard deviation 1.0 from this random number generator's sequence.
-     */
-    public static double getNormalRandom()
-    {
-        if( random == null )
-            random = new Random( new java.util.Date().getTime() );
-
-        return random.nextGaussian();
-    }
-
-
-    /**
-     * Returns the lowest digit of the sum of all the digits in the provided number.
-     */
-    public static int computeCheckSumDigit( int theNumber )
-    {
-        String tempStr = new Integer( theNumber ).toString();
-
-        int sum = 0;
-
-        String ch = null;
-
-        for( int i=0 ; i<tempStr.length() ; i++ )
-        {
-            ch = tempStr.substring( i , i + 1 );
-
-            sum += new Integer( ch ).intValue();
-        }
-
-        // get first digit of string as a sum
-        tempStr = new Integer( sum ).toString().substring( 0 , 1 );
-
-        // return first digit of string as an integer
-        return new Integer( tempStr ).intValue();
     }
 
 }
