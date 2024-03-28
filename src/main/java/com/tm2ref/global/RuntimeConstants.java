@@ -14,6 +14,10 @@ import com.tm2ref.service.LogService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
 
 public class RuntimeConstants
 {
@@ -23,6 +27,7 @@ public class RuntimeConstants
 
     public static boolean DEBUG = false;
 
+    public static SecretKey sealedObjectSecretKey = null;
     /**
      * Init
      */
@@ -94,9 +99,7 @@ public class RuntimeConstants
         cache.put( "adminappbasuri", "https://www.hravatar.com/ta" );
 
         cache.put( "hraCompanyLogoSmall", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_1416868391352.png" );
-        // cache.put( "hraCompanyLogoSmall", "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_1416868391352.png" );
         cache.put( "translogoimageurl" , "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_1429216573950.png" );
-        // cache.put( "hraCompanyLogoSmall", "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_1416868391352.png" );
         cache.put( "ivrCustomTestAudioPlayIconUrl", "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_3x1517685008793.png" );
         cache.put( "ivrCustomTestAudioPlayIconUrlEmail", "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_3x1517685008793.png" );
         cache.put( "avCustomTestVideoPlayIconUrl", "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_2x1517685008793.png" );
@@ -118,12 +121,6 @@ public class RuntimeConstants
         cache.put( "useAwsTestFoldersForProctoring", false );
 
         cache.put( "awsS3BaseUrl", "https://s3.amazonaws.com/" );
-
-        //cache.put( "awsBucket", "cfmedia-hravatar-com" );
-        //cache.put( "awsBaseKey", "web/" );
-
-        //cache.put( "awsBucketFileUpload", "ful-hravatar-com" );
-        //cache.put( "awsBaseKeyFileUpload", "" );
 
         cache.put( "awsBucket", "cfmedia-hravatar-com" );
         cache.put( "awsBaseKey", "web/" );
@@ -153,8 +150,6 @@ public class RuntimeConstants
         cache.put( "awsTempUrlMinutes", ((Integer)15));
         cache.put( "mediaTempUrlSourcePath", "/suri" );
 
-
-
         cache.put( "mediaServerWebapp", "sm" );
         cache.put( "mediaServerDomain", "media.clicflic.com" );
         cache.put( "primaryMediaServerDomain", "media.clicflic.com" );
@@ -162,6 +157,10 @@ public class RuntimeConstants
 
         cache.put( "applicationSystemId", (int) 1201  );
 
+        cache.put( "stringEncryptorKey",  "" );
+        cache.put( "stringEncryptorKeyFileSafe",  "" );
+        
+               
         cache.put( "newRefStartsOK", true );
 
         cache.put( "newTwilioCallsOK", true );
@@ -281,6 +280,89 @@ public class RuntimeConstants
         propertiesFile = (String) cache.get( "secretsFile" );
         if( propertiesFile != null && !propertiesFile.isBlank() )
             loadProperties( propertiesFile );
+        convertSecretsToSealedObjects();                
+    }
+    
+    private static synchronized void convertSecretsToSealedObjects()
+    {
+        if( sealedObjectSecretKey!=null )
+            return;
+        
+        try
+        {
+            sealedObjectSecretKey = KeyGenerator.getInstance("DES").generateKey();
+            Cipher ecipher = Cipher.getInstance("DES");
+            ecipher.init(Cipher.ENCRYPT_MODE, sealedObjectSecretKey );
+
+            substituteStringWithSealedObject( "secretsFile", ecipher );
+            substituteStringWithSealedObject( "stringEncryptorKey", ecipher );
+            substituteStringWithSealedObject( "stringEncryptorKeyFileSafe", ecipher );
+            substituteStringWithSealedObject( "awsSecretKey", ecipher );
+            substituteStringWithSealedObject( "awsSecretKeyRekognition", ecipher );
+            substituteStringWithSealedObject( "twilio.auhtoken", ecipher );
+            substituteStringWithSealedObject( "IpStackAccessKey", ecipher );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RuntimeConstants.convertSecretsToSealedObjects()" );
+        }
+    }
+    
+    private static String getStringValueFromSealedObject( String cacheKey, SealedObject so )
+    {
+        if( cacheKey==null || cacheKey.isBlank() )
+            return null;
+        
+        try
+        {
+            if( so==null )
+            {
+                Object o = cache.get(cacheKey);
+                if( o ==null )
+                    return null;
+                else if( o instanceof String )
+                    return (String)o;
+                else if( o instanceof SealedObject )
+                    so = (SealedObject)o;
+                else
+                    throw new Exception( "Cache value for key=" + cacheKey + " is not a String or SealedObject: " + o.getClass().getName() );                
+            }
+            Cipher dcipher = Cipher.getInstance("DES");
+            dcipher.init(Cipher.DECRYPT_MODE, sealedObjectSecretKey);
+            return (String) so.getObject(dcipher);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt("RuntimeConstants.getStringValueFromSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey ); 
+        }
+        return null;
+    }
+    
+    private static void substituteStringWithSealedObject( String cacheKey, Cipher cipher )
+    {
+        try
+        {
+            if( cacheKey==null || cacheKey.isBlank() )
+            {
+                LogService.logIt( "RuntimeConstants.substituteStringWithSealedObject() cacheKey is invalid (null or empty). Skipping." );
+                return;
+            }
+            
+            Object o = cache.get(cacheKey );
+            if( o==null )
+                throw new Exception( "no entry found for CacheKey " + cacheKey );
+            
+            if( !(o instanceof String) )
+                throw new Exception( "Value for CacheKey " + cacheKey + " is not a String. Class="  + (o.getClass().getName()) );
+            
+            SealedObject so = new SealedObject((String)o, cipher);
+            cache.put( cacheKey, so );
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt("RuntimeConstants.substituteStringWithSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey );
+        }
     }
 
     private static void loadProperties( String propertiesFile )
@@ -456,7 +538,14 @@ public class RuntimeConstants
      */
     public static String getStringValue( String theKey )
     {
-        return (String) cache.get( theKey );
+        Object o = cache.get( theKey );
+        
+        if( o==null )
+            return null;
+        if( o instanceof SealedObject )
+            return RuntimeConstants.getStringValueFromSealedObject(theKey, (SealedObject)o);
+        
+        return (String)o;
     }
 
     public static List<String> getStringList( String theKey )

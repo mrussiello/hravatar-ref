@@ -4,6 +4,7 @@
  */
 package com.tm2ref.service;
 
+import com.tm2ref.global.RuntimeConstants;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -18,12 +19,10 @@ import javax.crypto.spec.DESedeKeySpec;
 
 import com.tm2ref.util.Base64Encoder;
 import java.net.URLDecoder;
-import javax.crypto.BadPaddingException;
 
 
 public class StringEncrypter
 {
-
     public static final String  DESEDE_ENCRYPTION_SCHEME = "DESede";
 
     public static final String  DES_ENCRYPTION_SCHEME    = "DES";
@@ -38,7 +37,7 @@ public class StringEncrypter
 
     public StringEncrypter(String encryptionScheme) throws EncryptionException
     {
-        this(encryptionScheme, EncryptUtils.DEFAULT_ENCRYPTION_KEY);
+        this(encryptionScheme, RuntimeConstants.getStringValue("stringEncryptorKey"));
     }
 
     public StringEncrypter(String encryptionScheme, String encryptionKey)
@@ -98,6 +97,7 @@ public class StringEncrypter
             throw new EncryptionException(e);
         }
     }
+
 
     /*
     public String decrypt_OLD(String encryptedString) throws EncryptionException
@@ -190,12 +190,7 @@ public class StringEncrypter
             byte[] cleartext = Base64Encoder.decode( encryptedString );
             byte[] ciphertext = cipher.doFinal(cleartext);
             return bytes2String(ciphertext);
-        } 
-        catch(IllegalArgumentException | BadPaddingException e )
-        {
-            return null;
-        }        
-        catch (Exception e)
+        } catch (Exception e)
         {
             LogService.logIt( "StringEncryptor.decryptNoError() NONFATAL ERROR " + encryptedString + ", " + e.toString() );
             return null;
@@ -203,9 +198,31 @@ public class StringEncrypter
         }
     }
 
+    /*
+    public String decrypt(String encryptedString) throws EncryptionException
+    {
+        if (encryptedString == null || encryptedString.trim().length() <= 0)
+            throw new IllegalArgumentException(
+                    "encrypted string was null or empty");
+        try
+        {
+            SecretKey key = keyFactory.generateSecret(keySpec);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] cleartext = Base64Encoder.decode( encryptedString );
+            byte[] ciphertext = cipher.doFinal(cleartext);
+            return bytes2String(ciphertext);
+        }
+
+        catch (Exception e)
+        {
+                throw new EncryptionException(e);
+        }
+    }
+    */
+
     private static String bytes2String(byte[] bytes)
     {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         for (int i = 0; i < bytes.length; i++)
         {
             stringBuffer.append((char) bytes[i]);
