@@ -6,38 +6,37 @@ package com.tm2ref.service;
 
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 
 
 public class EncryptUtils
 {
-    public static StringEncrypter ENCRYPTER;
-    public static StringEncrypter FILE_ENCRYPTER;
+    // public  StringEncrypter ENCRYPTER;
+    // public StringEncrypter FILE_ENCRYPTER;
 
-    public static synchronized void init()
+    public static StringEncrypter init( boolean file ) throws Exception
     {
-        if( ENCRYPTER!=null )
-            return;
-        
+         
         try
         {
-            ENCRYPTER = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKey") );
-            FILE_ENCRYPTER = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKeyFileSafe") );            
+            if( file )
+                return new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKeyFileSafe") );                            
+            return new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKey") );
         }
         catch( Exception e )
         {
-            LogService.logIt(e, "EncryptUtils.init()" );
+            LogService.logIt(e, "EncryptUtils.init() file=" + file );
+            throw e;
         }
     }
 
     public static String urlSafeEncrypt( long i ) throws Exception
-    {
-       if( EncryptUtils.ENCRYPTER==null )
-           init();
-       
+    {       
         try
         {
-            return urlSafeEncrypt( Long.toString( i ), EncryptUtils.ENCRYPTER );
+            return urlSafeEncrypt( Long.toString( i ), init( false ) );
         }
         catch( Exception e )
         {
@@ -50,13 +49,10 @@ public class EncryptUtils
 
 
    public static String urlSafeEncrypt( String s ) throws Exception
-   {
-       if( EncryptUtils.ENCRYPTER==null )
-           init();
-       
+   {      
        try
        {
-           return urlSafeEncrypt( s , EncryptUtils.ENCRYPTER );
+           return urlSafeEncrypt( s , init( false ) );
        }
        catch( Exception e )
        {
@@ -85,11 +81,8 @@ public class EncryptUtils
      */
     public static String urlSafeEncrypt( String s , StringEncrypter encrypter ) throws Exception
     {
-       if( EncryptUtils.ENCRYPTER==null )
-           init();
-       
-        if( encrypter==null )
-            encrypter = EncryptUtils.ENCRYPTER;
+       if( encrypter==null )
+            encrypter = init( false );
        
         try
         {
@@ -134,13 +127,10 @@ public class EncryptUtils
     {
         try
         {
-            if( EncryptUtils.ENCRYPTER==null )
-                init();
-            
             if( s != null )
                 s = s.trim();
 
-            String newStr = urlSafeEncrypt( s , EncryptUtils.FILE_ENCRYPTER );
+            String newStr = urlSafeEncrypt( s , init( true ) );
             newStr = newStr.replace( '*', '-');
             return newStr;
         }
@@ -158,9 +148,6 @@ public class EncryptUtils
 
     public static String fileSafeDecrypt( String s ) throws Exception
     {
-        if( EncryptUtils.ENCRYPTER==null )
-            init();
-            
         try
         {
             if( s != null )
@@ -170,7 +157,7 @@ public class EncryptUtils
             {
                 s = s.replace( '-', '=');
                 s = s.replace('_', '+');
-                s = decryptString(s , EncryptUtils.FILE_ENCRYPTER );
+                s = decryptString(s , init( true ) );
             }
 
             return s;
@@ -198,15 +185,12 @@ public class EncryptUtils
      */
     public static String javascriptSafeEncrypt( String s ) throws Exception
     {
-        if( EncryptUtils.ENCRYPTER==null )
-            init();
-        
         try
         {
             if( s != null )
                 s = s.trim();
 
-            String newStr = urlSafeEncrypt( s , EncryptUtils.FILE_ENCRYPTER );
+            String newStr = urlSafeEncrypt( s , init( true ) );
 
             newStr = newStr.replace( '*', '_');
 
@@ -230,15 +214,12 @@ public class EncryptUtils
     public static String urlSafeDecrypt( String s ) throws Exception
     {
 
-        if( EncryptUtils.ENCRYPTER==null )
-            init();
-        
         //try
         //{
             if( s == null || s.length() == 0 )
                 return s;
 
-            return urlSafeDecrypt( s , EncryptUtils.ENCRYPTER );
+            return urlSafeDecrypt( s , init( false ) );
         //}
 
         //catch( Exception e )
@@ -259,11 +240,8 @@ public class EncryptUtils
 
     public static String urlSafeDecrypt(String s , StringEncrypter encrypter ) throws Exception
     {
-       if( EncryptUtils.ENCRYPTER==null )
-           init();
-       
-        if( encrypter==null )
-            encrypter = EncryptUtils.ENCRYPTER;
+       if( encrypter==null )
+            encrypter = init( false );
         
         String newStr = s;
 
@@ -325,6 +303,32 @@ public class EncryptUtils
     }
 
 
+    public static String getHashAsHexStr( String inStr ) throws Exception
+    {
+        if( inStr==null || inStr.isBlank() )
+            return "";
+        try
+        {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedhash = digest.digest(inStr.getBytes(StandardCharsets.UTF_8));
+            
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < encodedhash.length; i++) 
+            {
+                String hex = Integer.toHexString(0xff & encodedhash[i]);
+                if(hex.length() == 1) sb.append('0');
+                    sb.append(hex);
+            }
+            return sb.toString();            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EncryptUtils.getHashAsHexStr() " + inStr );
+            throw new STException(e);
+        }
+    }
+    
+    
     public void LogIt( String message )
     {
         LogService.logIt( message );
