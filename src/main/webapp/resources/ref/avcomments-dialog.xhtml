@@ -48,6 +48,21 @@
                 
                 <h:panelGroup>
                     <div id="recordinginprogressdiv" style="text-align:center;color:red;font-size:1.2rem"></div>
+                    
+                    <div id="visualizerouterdiv" style="text-align:center;display:none">
+                        <table id="visualizertable" class="visualizertable" style="margin-left:auto;margin-right:auto">
+                            <tr>
+                                <td style="padding-right:10px;vertical-align: top;padding-bottom:5px"><h:outputText style="font-size:1rem" value="#{stMessages['g.SoundLevel']}:"/></td>
+                                <td style="vertical-align: middle">
+                                    <div id="visualizerouter" class="visualizerouter">                    
+                                        <div class="audiobar" id="volume-visualizer"></div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>   
+                    
                 </h:panelGroup>
 
                 <h:panelGroup>

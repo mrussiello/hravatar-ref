@@ -38,10 +38,48 @@
         {
             width:250px;
         }
+        .visualizertable
+        {
+            display:inline-block;
+            margin-bottom: 10px;            
+        }
+        
+        .visualizerouter {
+            display:inline-block;
+            max-width:220px;
+            min-width:130px;
+            border:1px solid green;
+            padding:1px;
+        }
+        
+        .audiobar {
+            --volume: 0%;
+            position: relative;
+            width: 100%;
+            height: 15px;
+            border-radius: 3px;
+            margin-bottom: 0px;
+        }
+
+        .audiobar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            border-radius: 3px;
+            width: var(--volume);
+            background-color: green;
+            transition: width 100ms linear;
+        }
+        
+        
     </style>
     
     <script type="text/javascript">
         //<![CDATA[
+        
+    var visualizerActive = true;
         
     var rcCheckId='#{refBean.rcCheck.rcCheckIdEncrypted}';
     var rcRaterId='#{refBean.rcRaterIdEncrypted}';
@@ -228,13 +266,34 @@
             playbackMedEle.setAttribute( 'playsinline','true'); 
                         
             var pes = playbackMedEle.style;
-                        
+            var el3; 
             // video playback
             if( !recordingIsAudioOnly )
             {
                 playbackMedEle.disablePictureInPicture=true;
                 pes.width=desWid + 'px';
                 pes.height=desHgt + 'px';
+
+                el3=document.getElementById('visualizerouterdiv');
+                if( (el3) )
+                    el3.style.display='none';
+                
+                visualizerActive = false;
+                
+                logIt( 'avcomments-head.initForMediaCapture() Visualizer hidden. '  ); 
+            }
+            
+            else if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
+            {
+                visualizerActive = true;
+                setupMicrophoneMonitor();
+                el3 = document.getElementById('visualizertable');
+                if( (el3) )
+                    el3.style.display='inline-block';
+                el3=document.getElementById('visualizerouterdiv');
+                if( (el3) )
+                    el3.style.display='block';
+                logIt( 'avcomments-head.initForMediaCapture() Set up visualizer. '  ); 
             }
             
             var recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
@@ -359,13 +418,37 @@
     
     function doStartMediaRecording()
     {
-        logIt( 'avcomments-head.xhtml.doStartMediaRecording() START ');
+        logIt( 'avcomments-head.xhtml.doStartMediaRecording() START recordingIsAudioOnly=' + recordingIsAudioOnly);
         if( !(mrOptions) )
             initForMediaCapture();
         
             
         // swap media players - show recording player.
         swapMediaPlayers( false );
+        var el3;
+
+        if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
+        {
+            visualizerActive = true;
+            setupMicrophoneMonitor();
+            el3 = document.getElementById('visualizertable');
+            if( (el3) )
+            {    
+                el3.style.display='inline-block';
+                logIt( 'avcomments-head.xhtml.doStartMediaRecording() SET viz table');
+            }
+            
+            el3=document.getElementById('visualizerouterdiv');
+            if( (el3) )
+                el3.style.display='block';            
+        }
+        
+        else
+        {
+            el3=document.getElementById('visualizerouterdiv');
+            if( (el3) )
+                el3.style.display='none';            
+        }
 
         // hide play but
         // var playbut = document.getElementById( 'playpausebut' );
@@ -403,6 +486,20 @@
 
         if( !(mrOptions) )
             initForMediaCapture();
+
+        visualizerActive = false;
+
+        var el3;
+        if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
+        {
+            setupMicrophoneMonitor();
+            el3 = document.getElementById('visualizertable');
+            if( (el3) )
+                el3.style.display='none';
+        }
+        el3=document.getElementById('visualizerouterdiv');
+        if( (el3) )
+            el3.style.display='none';                        
 
         // switch to start.
         if( stopRec2() )
@@ -482,6 +579,8 @@
         if( playing || !(playbackMedEle) )
             return;
         
+         visualizerActive = false;
+        
         // swap media players
         swapMediaPlayers( true );
         
@@ -495,6 +594,8 @@
         logIt( 'avcomments-head.xhtml.doStopPlayback() START playing=' + playing );
         if( !(playbackMedEle) )
             return;
+
+        visualizerActive = true;
 
         playbackMedEle.pause();
         
@@ -656,84 +757,6 @@
         return true;
     }
     
-    
-    /*
-     * 
-    function startRec()
-    {
-        try
-        {
-            theBlob = null;
-            recordedBlobs = [];
-                
-            if( !(medStrmProm) )
-            {
-                logIt( 'avcomments-head.xhtml.startRec() calling getUserMedia() ' );
-                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
-            }
-            
-            
-            if( (medStrmProm) )
-            {
-                medStrmProm.then( function(stream) 
-                {
-                    medStrm = stream;
-                    
-                    // connect streeam to the video element so user can see self.
-                    recordMedEle.srcObject = stream;
-                    recordMedEle.setAttribute( 'playsinline','true'); 
-                    recordMedEle.setAttribute( 'defaultMuted',''); 
-                    recordMedEle.setAttribute( 'muted',''); 
-                    recordMedEle.volume=0;
-                    recordMedEle.load();
-                    recordMedEle.play();                    
-                    
-                    logIt( 'avcomments-head.xhtml.startRec() have stream. ' );
-
-                    // reset for next time.
-                    medStrmProm=null;
-                    
-                    // create a new Media Recorder
-                    mRecorder = new MediaRecorder( stream, mrOptions );
-                    mRecorder.ondataavailable = function(e) {dataAvail(e);};
-
-                           // show the image if there is one and hide the recording div.
-                    // mRecorder.onstop = function(e) {mrecStop(e);};
-
-                            // this will hide the image if there is one and show the recording div if there is one.
-                    // mRecorder.onstart = function(e) {mrecStart(e);};
-                    mRecorder.onerror = function(e) {mrecError(e);};
-                                 
-                    // start the media recorder.
-                    if( (mRecorder.state) && mRecorder.state!=='recording' )
-                    {
-                        // mrecStart();
-                        mRecorder.start(1000*sliceTm);
-                        recAvInProg = true;
-                        
-                    }                                      
-                },
-                function(e) 
-                {
-                    medStrmProm=null;
-                } );
-            }
-            
-            
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.startRec() ' + e.message );      
-            showErrorMessage( 'avcomments-head.xhtml.startRec() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-     * 
-     */
-
-
-
     function stopRec2()
     {
         try
@@ -784,80 +807,6 @@
         return true;
     }
 
-
-    /*
-     * 
-     *
-    function stopRec()
-    {
-        try
-        {
-            if( (recordMedEle) )
-                recordMedEle.pause();
-            // recordMedEle.volume=1.0;
-            
-            if( (mRecorder) )
-            {
-                logIt( 'avcomments-head.xhtml.stopRec() mRecorder=true, state=' + mRecorder.state );
-                
-                if( (mRecorder.state) && mRecorder.state!=='inactive' )                
-                {
-                    mRecorder.stop();
-                    recAvInProg = false;
-                }
-
-                mRecorder = null;
-
-                if( (medStrm) )
-                {
-                    // stop the tracks.
-                    var trks = medStrm.getTracks();
-                    var trk;
-                    for( var i=0; i<trks.length; i++ )
-                    {
-                        trk = trks[i];
-                        trk.stop();
-                    }
-
-                    // medStrm.getTracks().forEach(track => track.stop());
-
-                    // clear the stream.
-                    // medStrm=null; 
-                }  
-                
-                if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
-                {
-                    theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
-
-                    fileSize = theBlob.size;
-                    // medEle.type=(mrOptions)  ? mrOptions.mimeType : "video/webm";
-                    playbackMedEle.srcObject=null;
-                    playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
-                    // logIt( 'CMedCapItm.stopRec() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
-                    playbackMedEle.load();
-                    playbackMedEle.pause(); 
-                    playbackMedEle.currentTime=0;
-                    //medEle.play();
-                    sent=false;
-                    // chcPnl.updateSubmtShw();
-                    var upldbut = document.getElementById('uploadbuttondiv');
-                    upldbut.style.display='inline';
-                }                       
-                
-            }                                    
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.stopRec() ' + e.message );  
-            showErrorMessage( 'avcomments-head.xhtml.stopRec() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-     * 
-     */
-    
-    
     function dataAvail(e)
     {
         // logIt( 'avcomments-head.xhtml.dataAvail() slices=' + sliceCt + ', size=' + e.data.size );
@@ -984,6 +933,79 @@
             
         }
     }
+    
+    function setupMicrophoneMonitor()
+    {
+        if( !(navigator.mediaDevices) )
+        {
+           console.log( 'avcomments-head.xhtml.setupMicrophoneMonitor() No video devices detected.' );
+           return;
+        }
+      
+        var volumeVisualizer = document.getElementById('volume-visualizer');
+
+        console.log( 'avcomments-head.xhtml.setupMicrophoneMonitor() START volumeVisualizer=' + (volumeVisualizer) );
+
+        if( !(volumeVisualizer) )
+            return;
+
+        var constraints = { audio: {
+                echoCancellation: true
+            } 
+        };
+
+        if( (selMicrophoneDevice) )
+            constraints.audio.deviceId={exact:selMicrophoneDevice};        
+
+        navigator.mediaDevices.getUserMedia( constraints ).then( function (audioStream) 
+        {
+            try
+            {
+                // console.log( '/alt/test/help-camera.xhtml.doSetupMicTest() have stream=' + (audioStream) );
+                const audioContext = new AudioContext();
+                const audioSource = audioContext.createMediaStreamSource(audioStream);
+                const analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.minDecibels = -127;
+                analyser.maxDecibels = 0;
+                analyser.smoothingTimeConstant = 0.4;
+                audioSource.connect(analyser);
+                const volumes = new Uint8Array(analyser.frequencyBinCount);
+                // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
+                volumeCallback = () => 
+                {
+                    //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
+                    analyser.getByteFrequencyData(volumes);
+                    let volumeSum = 0;
+                    for (const volume of volumes)
+                        volumeSum += volume;
+                    const averageVolume = volumeSum / volumes.length;
+                    
+                    var vistable = document.getElementById('visualizertable');
+                    if( (vistable) )
+                        vistable.style.display=visualizerActive ? 'inline-block' : 'none';
+                    
+                    volumeVisualizer.style.setProperty('--volume', (averageVolume * 100/100) + '%');
+                    
+                    //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
+                };
+                // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
+                volumeInterval = setInterval(volumeCallback, 100);
+            }
+            catch( e )
+            {
+                logIt( 'avcomments-head.xhtml.setupMicrophoneMonitor() XXX Error setting up Microphone in window: ' + e.message );                
+            }
+        }).catch( function (err) {
+            logIt( 'avcomments-head.xhtml.setupMicrophoneMonitor() YYY Error setting up Microphone in window: ' + err.message );
+            var taxi;
+            taxi = document.getElementById("audioerrordiv");
+            if( (taxi) )
+                taxi.innerHTML = microphoneNotWorkingStr + ' ' + err.message;
+        });        
+
+    }
+    
     
     
     // ]]>        
