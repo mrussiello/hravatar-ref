@@ -8,7 +8,7 @@ $baseurl="stage1.hravatar.com"
 
 $prefix="${app}-1.0"
 $identityfile="C:/dev/AmazonAWS/HRA-Stage-Oregon.pem"
-$glassfishlocation="/usr/pgms/payara6.2023.12/payara6/glassfish"
+$glassfishlocation="/usr/pgms/payara6.2024.3/payara6/glassfish"
 $basedir="c:/work/${app}"
 $targetdir="$basedir/target"
 

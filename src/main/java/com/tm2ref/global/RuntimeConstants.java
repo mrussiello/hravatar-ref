@@ -62,6 +62,7 @@ public class RuntimeConstants
         cache.put( "baseurl", "https://test.hravatar.com/tr" );
         cache.put( "baseadminurl", "https://www.hravatar.com/ta" );
 
+        cache.put( "corssourceurl", "https://*.hravatar.com");
 
         cache.put( "filesroot", "/work/tm2ref2/files" );
 
