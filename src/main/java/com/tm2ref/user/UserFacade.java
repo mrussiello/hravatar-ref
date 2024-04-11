@@ -606,64 +606,6 @@ public class UserFacade
 
 
 
-    public String resetPassword( User user ) throws Exception
-    {
-        String password = StringUtils.generateRandomString( 8 );
-        user.setPassword( password );
-        user.setResetPwd( Constants.YES );
-        saveUser(user, false );
-        updatePassword( user );
-        return password;
-    }
-
-
-
-    public void updatePassword( User user ) throws Exception
-    {
-        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
-
-        if( pool == null )
-            throw new Exception( "Can not find Datasource" );
-
-        try (Connection con = pool.getConnection() )
-        {
-            if( user == null )
-                throw new Exception( "User is null" );
-
-            if( user.getUserId() <= 0 )
-                throw new Exception( "User userId is invalid " + user.getUserId() );
-
-            String password = user.getPassword();
-
-            if( password != null && !password.equals( StringUtils.sanitizeStringFull( password ) ) )
-                throw new STException( "g.PasswordInvalid" );
-
-            if( password == null || password.length() < Constants.MIN_PASSWORD_LENGTH )
-                throw new STException( "g.PasswordMustBe4Chars" );
-
-            if( password.equals( Constants.DUMMY_PASSWORD ) )
-                throw new STException( "g.PasswordInvalid" );
-
-            // no special stuff
-            if( !password.equals( StringUtils.sanitizeStringFull( password ) ) )
-                throw new STException( "g.PasswordInvalid" );
-
-            PreparedStatement ps = con.prepareStatement( "UPDATE xuser SET xpass=MD5( ? ) WHERE userid=?" );
-
-            ps.setString( 1, password );
-
-            ps.setLong( 2, user.getUserId() );
-
-            ps.executeUpdate();
-        }
-
-        catch( Exception e )
-        {
-            LogService.logIt( e, "UserFacade.updatePassword() " + ( user == null ? "User is NULL" : user.toString() ) );
-            throw new STException( e );
-        }
-    }
-
 
 
     public boolean checkPassword( long userId, String password ) throws Exception
@@ -693,7 +635,7 @@ public class UserFacade
 
             password = StringUtils.sanitizeForSqlQuery( password );
 
-            PreparedStatement ps = con.prepareStatement( "SELECT username FROM xuser WHERE xpass=MD5( ? ) AND userid=?" );
+            PreparedStatement ps = con.prepareStatement( "SELECT username FROM xuser WHERE zpass IS NOT NULL AND zpass=SHA2( ?, 224 ) AND userid=?" );
 
             ps.setString( 1, password );
 
@@ -710,6 +652,29 @@ public class UserFacade
 
             ps.close();
 
+            if( !recordFound )
+            {
+                ps = con.prepareStatement( "SELECT username FROM xuser WHERE xpass IS NOT NULL AND xpass=MD5( ? ) AND userid=?" );
+                ps.setString( 1, password );
+                ps.setLong( 2, userId );            
+                rs = ps.executeQuery();
+                if( rs.next() )
+                    recordFound = true;
+                rs.close();
+                ps.close();   
+
+                // if it matched on old password storage, change to new password storage.
+                if( recordFound )
+                {
+                    LogService.logIt( "UserFacade.checkPassword() Converting User to new password storage. userId=" + userId );
+                    ps = con.prepareStatement( "UPDATE xuser SET xpass3=null,xpass2=null,xpass1=null,xpass=null,zpass=SHA2( ?, 224 ) WHERE userid=?" );
+                    ps.setString( 1, password );
+                    ps.setLong( 2, userId );
+                    ps.executeUpdate();                    
+                }
+            }
+            
+            
             return recordFound;
         }
 
@@ -740,25 +705,25 @@ public class UserFacade
             User user = getUserByUsername( username );
 
             // try email if not found for username
-            if( user == null ) // && EmailUtils.validateEmailNoErrors(username) )
-            {
-                List<User> ul = getUserByEmail( username );
+            //if( user == null ) // && EmailUtils.validateEmailNoErrors(username) )
+            //{
+            //    List<User> ul = getUserByEmail( username );
 
-                if( ul.size() == 1 )
-                    user = ul.get(0); // getUserByEmail( username );
+            //    if( ul.size() == 1 )
+            //        user = ul.get(0); // getUserByEmail( username );
 
-                if( ul.size()>1 && password != null && password.length()>0 )
-                {
-                    for( User tu : ul )
-                    {
-                        if( checkPassword( tu.getUserId(), password ) )
-                        {
-                            user = tu;
-                            break;
-                        }
-                    }
-                }
-            }
+            //    if( ul.size()>1 && password != null && password.length()>0 )
+            //    {
+            //        for( User tu : ul )
+            //        {
+            //            if( checkPassword( tu.getUserId(), password ) )
+            //            {
+            //                user = tu;
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
 
             // if this is a superuser password
             /*
