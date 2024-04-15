@@ -1062,8 +1062,11 @@ public class RcCheck implements Serializable, Cloneable
         return userAgent;
     }
 
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
+    public void setUserAgent(String ua) {
+        if( ua!=null && ua.length()>1490 )
+            ua = ua.substring(0, 1490) + "...";
+        
+        this.userAgent = ua;
     }
 
     public String getTextStr1() {
