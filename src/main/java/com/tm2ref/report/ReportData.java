@@ -33,19 +33,19 @@ import jakarta.json.JsonObject;
  */
 public class ReportData {
     
-     public static String hraLogoBlackTextFilename = "hralogoblacktext-blue.png";
+     public static String hraLogoBlackTextFilename = "hra-two-color-tagline-logo-trans-800.png";// "hralogoblacktext-blue.png";
      //public static String hraLogoBlackTextPurpleFilename = "hralogoblacktext-purple.png";
 
-     public static String hraLogoWhiteTextFilename = "hralogowhitetext-blue.png";
+     public static String hraLogoWhiteTextFilename = "hra-white-tagline-logo-trans-800.png"; // "hralogowhitetext-blue.png";
      //public static String hraLogoWhiteTextPurpleFilename = "hralogowhitetext-purple.png";
 
-     public static String hraLogoBlackTextSmallFilename = "hralogoblacktext-small-blue.png";
+     public static String hraLogoBlackTextSmallFilename = "hra-two-color-tagline-logo-trans-420.png"; // "hralogoblacktext-small-blue.png";
      //public static String hraLogoBlackTextSmallPurpleFilename = "hralogoblacktext-small-purple.png";
      
      
-     public static String hraLogoWhiteTextSmallFilename = "hralogowhitetext-small-blue.png";     
-     //public static String hraLogoWhiteTextSmallPurpleFilename = "hralogowhitetext-small-purple.png";
-    
+     public static String hraLogoWhiteTextSmallFilename = "hra-white-tagline-logo-trans-412.png"; // "hralogowhitetext-small-blue.png";     
+     //public static String hraLogoWhiteTextSmallPurpleFilename = "hralogowhitetext-small-purple.png";     
+     
     
     Locale reportLocale;
     TimeZone timeZone;
