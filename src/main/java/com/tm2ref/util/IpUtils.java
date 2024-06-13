@@ -23,6 +23,7 @@ import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
 
 /**
  *
@@ -93,7 +94,7 @@ public class IpUtils {
 
         try
         {            
-            CloseableHttpResponse r = null;
+            // CloseableHttpResponse r = null;
 
             int statusCode = 0;
             
@@ -108,30 +109,35 @@ public class IpUtils {
                 get.addHeader( "Accept", "application/json" );
                 
                 //LogService.logIt( "IpUtils.getIPLocationData() BBB sending to  uri=" + uri );
-                r = client.execute(get );
-                //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getStatusLine().getStatusCode() );
-
-                statusCode = r.getStatusLine().getStatusCode();
-
-                if( statusCode != HttpStatus.SC_OK )
+                try( CloseableHttpResponse r = client.execute(get ))
                 {
-                    //LogService.logIt( "IpUtils.getIPLocationData() BBB.1 Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
-                    LogService.logIt( "IpUtils.getIPLocationData() ERROR connecting to service. Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
-                    return out;
-                    // throw new Exception( "Logon failed with code " + r.getStatusLine().toString() );
-                }
-                
-                //LogService.logIt( "IpUtils.getIPLocationData() CCC Parsing Response." );
-                
-                resultStr = getJsonFromResponse( r );
+                    //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getStatusLine().getStatusCode() );
 
-                if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
-                {
-                    LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
-                    return out;                    
+                    statusCode = r.getStatusLine().getStatusCode();
+
+                    if( statusCode != HttpStatus.SC_OK )
+                    {
+                        //LogService.logIt( "IpUtils.getIPLocationData() BBB.1 Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
+                        LogService.logIt( "IpUtils.getIPLocationData() ERROR connecting to service. Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
+                        return out;
+                        // throw new Exception( "Logon failed with code " + r.getStatusLine().toString() );
+                    }
+
+                    //LogService.logIt( "IpUtils.getIPLocationData() CCC Parsing Response." );
+
+                    resultStr = getJsonFromResponse( r );
+
+                    if( r.getEntity()!=null )
+                        EntityUtils.consume(r.getEntity());
+                    
+                    if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
+                    {
+                        LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
+                        return out;                    
+                    }
+
+                    //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
                 }
-                
-                //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
             }
 
             catch( NoHttpResponseException | SocketException | SSLHandshakeException e )
@@ -147,8 +153,8 @@ public class IpUtils {
             
             finally
             {
-                if( r != null )
-                    r.close();                
+                //if( r != null )
+                //    r.close();                
             }
 
             
