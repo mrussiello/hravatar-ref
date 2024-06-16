@@ -10,168 +10,165 @@
       dir="#{userBean.textDirection}"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
 
-<ui:insert name="headsection">
-	<h:head>
+    <ui:insert name="headsection">
+        <h:head>
 
-	<ui:insert name="cachetags">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-	<meta http-equiv="Pragma" content="no-cache"/>
-	<meta http-equiv="Expires" content="0"/>
-	</ui:insert>
-            
-	<ui:insert name="titletag">
-        <title><h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) gt 0}" value="#{corpBean.corp.pageTitle}"/>
-               <h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) eq 0}" value="#{corpBean.corp.name}"/>
-        </title>
-	</ui:insert>            
-            
-        <meta name="viewport" content="width=#{refUtils.viewportWidth}, initial-scale=1" />
-            
-        <h:outputStylesheet library="css" name="default.css"/>
-            
-        <h:outputScript library="js" name="keepalive.js"/>
-        <h:outputScript library="js" name="core.js"/>
-
-        
-        <!-- <ui:debug /> -->
-
-        <link rel="apple-touch-icon" sizes="60x60" href="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_19x1717875839593.png"/>
-        <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_20x1717875839605.png"/>
-        <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png"/>
-        <link rel="shortcut icon" href="#{corpBean.corp.faviconUriWithDef}" type="image/x-icon" />
-
-        <h:outputText rendered="#{corpBean.corp.hasHeadCode}" value="#{corpBean.corp.headCode}" escape="false" />
-
-	<ui:insert name="headspec">
-	</ui:insert>
-
-        <script type="text/javascript">            
-        /////////////////////
-        // ref/ref/template.xhtml
-        /////////////////////
-        </script>
-
-<style>
-@media(min-width: 821px)
-{
-    .pageinnerdivwidth
-    {
-    }  
-
-    .mobileheadertopdiv
-    {
-        display:table-cell;
-    }
-}
-
-@media(max-width: 820px)
-{
-    .mobileheadertopdiv
-    {
-        display:none;
-    }
-}
-
-@media(max-width: 600px)
-{
-    .smalltextarea
-    {
-        width:400px;
-    }
-    .commenttextarea
-    {
-        width:450px;
-    }
-}
-
-@media(max-width: 400px)
-{
-    .smalltextarea
-    {
-        width:300px;
-    }
-    .commenttextarea
-    {
-        width:350px;
-    }
-}
-
-.pageinnerdiv
-{
-    margin-left:auto;
-    margin-right:auto;
-}
-
-.pageinnerdivwidth
-{
-    max-width:820px;
-    min-width:#{refUtils.viewportMinWidth}px;
-}
-
-
-*:focus
-{
-    outline: none;
-}
-</style>
-        
-        <ref:standardhdrjs />
-        
-	</h:head>
-</ui:insert>
-
-
-<f:view contentType="text/html" locale="#{userBean.locale}">
-<h:body>
-
-    <ui:insert name="metadata">
-    </ui:insert>  
-
-    
-    <div id="pagebgdiv" class="pagewrapper pagebgdiv">
-        <div id="pageinnerdiv" class="pageinnerdiv pageinnerdivwidth" tabindex="-1">
-            
-            <!-- BEGIN HEADER SECTION -->
-            <ui:insert name="headtable">
-                <div class="mobileheadertopdiv" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-bottom:8px">
-                    <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" value="#{corpBean.corpImageIconUrl}" alt=""/>
-                    <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>                    
-                </div>
-            </ui:insert>        
-            <!-- END HEADER TABLE -->
-
-            <!-- <br style="clear:both"/> -->
-
-            <!-- BEGIN CONTENTS OF CORE -->
-            <ui:insert name="coreinnersection">
-                            CORE PAGE SHOULD BE HERE!
+            <ui:insert name="cachetags">
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+                <meta http-equiv="Pragma" content="no-cache"/>
+                <meta http-equiv="Expires" content="0"/>
             </ui:insert>
-            <!-- END CONTENTS OF CORE -->
-            
-            <!-- <br style="clear:both"/> -->
-            
-            <!-- BEGIN FOOTER TABLE -->
-            <ui:insert name="footertable">        
-            <h:form id="footerform" prependId="false">
-            <ref:stdforminputs />
-            <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
-            <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
-                <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
-                    <ui:insert name="footerhelplink"><p:commandLink id="pmtemplatehelplink" tabindex="31010" styleClass="textmedium ttfooter" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText style="text-decoration:underline" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
-                </div>
-            </ui:fragment>
-            </h:form>
+
+            <ui:insert name="titletag">
+                <title><h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) gt 0}" value="#{corpBean.corp.pageTitle}"/>
+                    <h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) eq 0}" value="#{corpBean.corp.name}"/>
+                </title>
+            </ui:insert>            
+
+            <meta name="viewport" content="width=#{refUtils.viewportWidth}, initial-scale=1" />
+
+            <h:outputStylesheet library="css" name="default.css"/>
+
+            <h:outputScript library="js" name="keepalive.js"/>
+            <h:outputScript library="js" name="core.js"/>
+
+
+            <!-- <ui:debug /> -->
+
+            <link rel="shortcut icon" href="#{corpBean.corp.faviconUriWithDef}" type="image/x-icon" />
+
+            <h:outputText rendered="#{corpBean.corp.hasHeadCode}" value="#{corpBean.corp.headCode}" escape="false" />
+
+            <ui:insert name="headspec">
             </ui:insert>
-            <!-- END FOOTER TABLE -->
-                        
 
-        </div>                 
-    </div>
-    
-    
+            <script type="text/javascript">
+                /////////////////////
+                // ref/ref/template.xhtml
+                /////////////////////
+            </script>
 
-    </h:body>
-</f:view>
+            <style>
+                @media(min-width: 821px)
+                {
+                    .pageinnerdivwidth
+                    {
+                    }
+
+                    .mobileheadertopdiv
+                    {
+                        display:table-cell;
+                    }
+                }
+
+                @media(max-width: 820px)
+                {
+                    .mobileheadertopdiv
+                    {
+                        display:none;
+                    }
+                }
+
+                @media(max-width: 600px)
+                {
+                    .smalltextarea
+                    {
+                        width:400px;
+                    }
+                    .commenttextarea
+                    {
+                        width:450px;
+                    }
+                }
+
+                @media(max-width: 400px)
+                {
+                    .smalltextarea
+                    {
+                        width:300px;
+                    }
+                    .commenttextarea
+                    {
+                        width:350px;
+                    }
+                }
+
+                .pageinnerdiv
+                {
+                    margin-left:auto;
+                    margin-right:auto;
+                }
+
+                .pageinnerdivwidth
+                {
+                    max-width:820px;
+                    min-width:#{refUtils.viewportMinWidth}px;
+                }
+
+
+                *:focus
+                {
+                    outline: none;
+                }
+            </style>
+
+            <ref:standardhdrjs />
+
+        </h:head>
+    </ui:insert>
+
+
+    <f:view contentType="text/html" locale="#{userBean.locale}">
+        <h:body>
+
+            <ui:insert name="metadata">
+            </ui:insert>  
+
+
+            <div id="pagebgdiv" class="pagewrapper pagebgdiv">
+                <div id="pageinnerdiv" class="pageinnerdiv pageinnerdivwidth" tabindex="-1">
+
+                    <!-- BEGIN HEADER SECTION -->
+                    <ui:insert name="headtable">
+                        <div class="mobileheadertopdiv" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-bottom:8px">
+                            <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" value="#{corpBean.corpImageIconUrl}" alt=""/>
+                            <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>                    
+                        </div>
+                    </ui:insert>        
+                    <!-- END HEADER TABLE -->
+
+                    <!-- <br style="clear:both"/> -->
+
+                    <!-- BEGIN CONTENTS OF CORE -->
+                    <ui:insert name="coreinnersection">
+                        CORE PAGE SHOULD BE HERE!
+                    </ui:insert>
+                    <!-- END CONTENTS OF CORE -->
+
+                    <!-- <br style="clear:both"/> -->
+
+                    <!-- BEGIN FOOTER TABLE -->
+                    <ui:insert name="footertable">        
+                        <h:form id="footerform" prependId="false">
+                            <ref:stdforminputs />
+                            <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
+                            <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
+                                <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
+                                    <ui:insert name="footerhelplink"><p:commandLink id="pmtemplatehelplink" tabindex="31010" styleClass="textmedium ttfooter" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText style="text-decoration:underline" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
+                                </div>
+                            </ui:fragment>
+                        </h:form>
+                    </ui:insert>
+                    <!-- END FOOTER TABLE -->
+
+
+                </div>                 
+            </div>
+
+
+
+        </h:body>
+    </f:view>
 
 </html>

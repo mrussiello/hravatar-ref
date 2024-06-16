@@ -168,6 +168,9 @@ public class RuntimeConstants
 
 
         cache.put( "defaultfaviconuri", "/tr/favicon.ico" );
+        cache.put( "defaultfaviconuri16", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png" );
+        cache.put( "defaultfaviconuri32", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_20x1717875839605.png" );
+        cache.put( "defaultfaviconuri60", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_19x1717875839593.png" );
 
         cache.put( "fileUploadErrorEmails", "mike@hravatar.com" );
         cache.put( "dbmsErrorEmails", "mike@hravatar.com" );

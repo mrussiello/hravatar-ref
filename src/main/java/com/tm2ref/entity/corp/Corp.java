@@ -69,6 +69,17 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
     @Column( name = "faviconuri" )
     private String faviconUri;
 
+    @Column( name = "faviconuri16" )
+    private String faviconUri16;
+
+    @Column( name = "faviconuri32" )
+    private String faviconUri32;
+
+    @Column( name = "faviconuri60" )
+    private String faviconUri60;
+    
+    
+    
     @Column( name = "imageiconfilename" )
     private String imageIconFilename;
 
@@ -495,6 +506,32 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
         return RuntimeConstants.getStringValue( "defaultfaviconuri" );
     }
 
+    public String getFaviconUri16WithDef() {
+
+        if( faviconUri16 != null && !faviconUri16.isBlank() )
+           return faviconUri16;
+
+        return RuntimeConstants.getStringValue( "defaultfaviconuri16" );
+    }
+
+    public String getFaviconUri32WithDef() {
+
+        if( faviconUri32 != null && !faviconUri32.isBlank() )
+           return faviconUri32;
+
+        return RuntimeConstants.getStringValue( "defaultfaviconuri32" );
+    }
+
+    public String getFaviconUri60WithDef() {
+
+        if( faviconUri60 != null && !faviconUri60.isBlank() )
+           return faviconUri60;
+
+        return RuntimeConstants.getStringValue( "defaultfaviconuri60" );
+    }
+
+    
+    
 
     public String getFaviconUri() {
         return faviconUri;
@@ -560,6 +597,30 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
 
     public void setCorpTypeId(int corpTypeId) {
         this.corpTypeId = corpTypeId;
+    }
+
+    public String getFaviconUri16() {
+        return faviconUri16;
+    }
+
+    public void setFaviconUri16(String faviconUri16) {
+        this.faviconUri16 = faviconUri16;
+    }
+
+    public String getFaviconUri32() {
+        return faviconUri32;
+    }
+
+    public void setFaviconUri32(String faviconUri32) {
+        this.faviconUri32 = faviconUri32;
+    }
+
+    public String getFaviconUri60() {
+        return faviconUri60;
+    }
+
+    public void setFaviconUri60(String faviconUri60) {
+        this.faviconUri60 = faviconUri60;
     }
     
 }
