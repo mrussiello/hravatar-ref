@@ -66,6 +66,9 @@ public class RuntimeConstants
 
         cache.put( "filesroot", "/work/tm2ref2/files" );
 
+        cache.put( "no-reply-email", "no-reply@hravatar.com" );        
+        cache.put( "support-email", "support@hravatar.com" );        
+        cache.put( "system-admin-email", "mike@hravatar.com" );        
 
         cache.put( "refappbasedomain", "test.hravatar.com" );
 
@@ -83,6 +86,10 @@ public class RuntimeConstants
 
         cache.put( "defaultsuborgid", ( 0 ) );
 
+        cache.put( "public-orgid", 17);
+        cache.put( "public-suborgid", 16 );
+        
+        
         cache.put( "useAwsForUploadedRefMedia", true);
 
         cache.put( "useAwsMediaServer", true);

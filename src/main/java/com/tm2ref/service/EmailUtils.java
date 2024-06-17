@@ -1,6 +1,6 @@
 package com.tm2ref.service;
 
-import com.tm2ref.global.Constants;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
@@ -85,10 +85,10 @@ public class EmailUtils
             msg = EmailUtils.addNoReplyMessage(msg, false, Locale.US );                        
             emailMap.put( EmailConstants.CONTENT, msg );
 
-            emailMap.put( EmailConstants.TO, Constants.SYSTEM_ADMIN_EMAIL );
+            emailMap.put( EmailConstants.TO, RuntimeConstants.getStringValue("system-admin-email") );
 
             // emailMap.put( EmailUtils.FROM, Constants.SUPPORT_EMAIL + "|" + MessageFactory.getStringMessage( locale , "g.SupportEmailKey", null ) );
-            emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL_NOREPLY );
+            emailMap.put( EmailConstants.FROM, RuntimeConstants.getStringValue("no-reply-email") );
 
             sendEmail( emailMap );
 

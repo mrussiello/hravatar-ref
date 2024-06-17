@@ -14,6 +14,7 @@ import com.tm2ref.entity.user.User;
 import com.tm2ref.entity.user.UserAction;
 import com.tm2ref.global.Constants;
 import com.tm2ref.global.I18nUtils;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
 import com.tm2ref.ref.results.RcResultEmailFormatter;
 import com.tm2ref.ref.results.ResultFormatterFactory;
@@ -22,7 +23,6 @@ import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.PhoneUtils;
 import com.tm2ref.service.Tracker;
-import com.tm2ref.user.UserActionFacade;
 import com.tm2ref.user.UserActionType;
 import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.GooglePhoneUtils;
@@ -256,7 +256,7 @@ public class RcMessageUtils {
                 content = MessageFactory.getStringMessage(l, key, params );
             }
 
-            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : Constants.SUPPORT_EMAIL_NOREPLY;
+            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : RuntimeConstants.getStringValue("no-reply-email");
             
             boolean includeVia = rc.getOrg()==null || !rc.getOrg().getHasCustomSupportSendEmail();
             
@@ -539,7 +539,7 @@ public class RcMessageUtils {
                 content = MessageFactory.getStringMessage(l, key, params );
             }
             
-            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : Constants.SUPPORT_EMAIL_NOREPLY;
+            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : RuntimeConstants.getStringValue("no-reply-email");
                         
             // wrap content
             content = wrapEmailContent( content, l );
@@ -663,7 +663,7 @@ public class RcMessageUtils {
             if( rc.getOrg()==null )
                 rc.setOrg( UserFacade.getInstance().getOrg( rc.getOrgId() ));                
             
-            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : Constants.SUPPORT_EMAIL_NOREPLY;
+            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : RuntimeConstants.getStringValue("no-reply-email");
             
             // wrap content
             content = wrapEmailContent( content, l );
@@ -1094,7 +1094,7 @@ public class RcMessageUtils {
             Map<String, Object> emailMap = new HashMap<>();
             emailMap.put( EmailConstants.MIME_TYPE, "text/html" );            
             emailMap.put( EmailConstants.OVERRIDE_BLOCK, "true" );                        
-            emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL_NOREPLY );            
+            emailMap.put( EmailConstants.FROM, RuntimeConstants.getStringValue("no-reply-email") );            
             EmailUtils emailUtils = EmailUtils.getInstance();            
             String subject;                        
             String content;

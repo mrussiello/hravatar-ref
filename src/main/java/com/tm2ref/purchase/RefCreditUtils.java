@@ -620,7 +620,7 @@ public class RefCreditUtils {
             emailMap.put( EmailConstants.SUBJECT, subj  );
             emailMap.put( EmailConstants.CONTENT, MessageFactory.getStringMessage( loc , contentKey, params) + affiliateTxt );
             emailMap.put( EmailConstants.TO, adminUser.getEmail() );
-            emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL  );
+            emailMap.put( EmailConstants.FROM, RuntimeConstants.getStringValue("support-email")  );
             emailMap.put(EmailConstants.BCC, RuntimeConstants.getStringValue( "lowCreditsBccEmails" ) + ( extraEmail==null ? "" : "," + extraEmail ) );
 
             boolean sent = emailerFacade.sendEmail( emailMap );            

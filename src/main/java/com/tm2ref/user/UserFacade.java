@@ -487,10 +487,9 @@ public class UserFacade
 
             if( user.getOrgId() <= 0 )
             {
-                user.setOrgId( Constants.PUBLIC_ORG_ID );
+                user.setOrgId( RuntimeConstants.getIntValue("public-orgid") );
 
-                if( user.getSuborgId() <= 0 )
-                    user.setSuborgId( Constants.PUBLIC_SUBORG_ID );
+                user.setSuborgId( RuntimeConstants.getIntValue("public-suborgid") );
             }
 
             user.setLastUpdate( new Date() );

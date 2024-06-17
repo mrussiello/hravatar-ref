@@ -46,7 +46,7 @@ public class AdminEmailUtils {
 
             emailMap.put(EmailConstants.TO, RuntimeConstants.getStringValue(emailsRuntimeConstantsKey ) );
 
-            emailMap.put( EmailConstants.FROM, Constants.SUPPORT_EMAIL_NOREPLY  );
+            emailMap.put( EmailConstants.FROM, RuntimeConstants.getStringValue("no-reply-email")  );
 
             emailerFacade.sendEmail( emailMap );
 
