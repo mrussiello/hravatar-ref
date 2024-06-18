@@ -6,6 +6,7 @@ package com.tm2ref.user;
 
 import com.tm2ref.entity.user.User;
 import com.tm2ref.global.I18nUtils;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.service.LogService;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -110,7 +111,16 @@ public class UserBean implements Serializable
     }
 
 
+    public String getBaseLogoUrl()
+    {
+        return RuntimeConstants.getStringValue("baselogourl");
+    }
 
+    public String getBaseIconUrl()
+    {
+        return RuntimeConstants.getStringValue("baseiconurl");
+    }
+    
     /*
     public String getLanguageName()
     {
