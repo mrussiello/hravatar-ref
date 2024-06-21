@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -94,7 +93,9 @@
                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
             </h:outputFormat>
 
-            <h:outputText styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false"/>
+            <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
+                <f:param value="#{userBean.baseAdminDomain}"/>
+            </h:outputFormat>
             
             <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P5']}" escape="false">
                 <f:param value="#{refBean.rcCheck.org.name}"/>

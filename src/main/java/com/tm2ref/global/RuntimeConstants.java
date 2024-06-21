@@ -60,6 +60,7 @@ public class RuntimeConstants
 
         cache.put( "baseprotocol", "https" );
         cache.put( "basedomain", "test.hravatar.com" );
+        cache.put( "baseadmindomain", "www.hravatar.com" );
 
         cache.put( "baseurl", "https://test.hravatar.com/tr" );
         cache.put( "baseadminurl", "https://www.hravatar.com/ta" );
@@ -180,6 +181,10 @@ public class RuntimeConstants
         cache.put( "defaultfaviconuri16", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png" );
         cache.put( "defaultfaviconuri32", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_20x1717875839605.png" );
         cache.put( "defaultfaviconuri60", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_19x1717875839593.png" );
+        
+        cache.put( "default-site-name", "HR Avatar" );
+        cache.put( "default-site-name-cap", "HR Avatar" );
+        
 
         cache.put( "fileUploadErrorEmails", "mike@hravatar.com" );
         cache.put( "dbmsErrorEmails", "mike@hravatar.com" );

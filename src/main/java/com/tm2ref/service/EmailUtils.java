@@ -140,10 +140,10 @@ public class EmailUtils
             content="";
         
         if( html )
-            return content + "<p style=\"font-family: arial,calibri,sans-serif;width:600px;\">" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc") + "</p>";
+            return content + "<p style=\"font-family: arial,calibri,sans-serif;width:600px;\">" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc", new String[]{RuntimeConstants.getStringValue("support-email")}) + "</p>";
         
         else
-            return content + "\n\n" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc");
+            return content + "\n\n" + MessageFactory.getStringMessage(locale, "g.EmailBoxNotMonitoredRc", new String[]{RuntimeConstants.getStringValue("support-email")});
     }
     
     

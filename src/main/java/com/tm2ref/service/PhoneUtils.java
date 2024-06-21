@@ -7,7 +7,6 @@ package com.tm2ref.service;
 import com.tm2ref.email.SmsBlockFacade;
 import com.tm2ref.entity.email.SmsBlock;
 import com.tm2ref.global.RuntimeConstants;
-import com.tm2ref.global.STException;
 import com.tm2ref.util.GooglePhoneUtils;
 import com.tm2ref.util.MessageFactory;
 import com.twilio.Twilio;
@@ -103,7 +102,7 @@ public class PhoneUtils
             if( smsBlock!=null && smsBlock.getIsActiveBlock() )
                 return smsBlock.getSmsBlockReasonId()==1 ? -3 : -2;
             
-            msg += " " + MessageFactory.getStringMessage(locale, "g.SMSSenderId" );
+            msg += " " + MessageFactory.getStringMessage(locale, "g.SMSSenderId", new String[]{RuntimeConstants.getStringValue("default-site-name")} );
                         
             if( TWILIO_ON )
             {

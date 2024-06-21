@@ -12,7 +12,6 @@ import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.user.Org;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.entity.user.UserAction;
-import com.tm2ref.global.Constants;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
@@ -268,7 +267,7 @@ public class RcMessageUtils {
                 String om = useAdminName ? rc.getAdminUser().getFullname() :  rc.getOrg().getName();
                 om = StringUtils.replaceStr(om, "\"", "" );
                 om = StringUtils.truncateString(om, 60 );
-                sb.append( "|" + MessageFactory.getStringMessage(l, "g.TestInviteOrgName" , new String[]{ om } ));
+                sb.append( "|" + MessageFactory.getStringMessage(l, "g.TestInviteOrgName" , new String[]{ om, RuntimeConstants.getStringValue("default-site-name") } ));
             }
             else if( rc.getOrg()!=null )
                 sb.append( "|" + rc.getOrg().getName() );
@@ -651,7 +650,7 @@ public class RcMessageUtils {
             if( emailBlockFacade==null )
                 emailBlockFacade=EmailBlockFacade.getInstance();
             if( emailBlockFacade.hasEmailBlock(email, true, true))
-                throw new STException( "g.EmailBlocked", new String[]{email} );                
+                throw new STException( "g.EmailBlocked", new String[]{email, RuntimeConstants.getStringValue("support-email")} );                
             
             if( refUserType.getIsCandidate() )
                 key = "g.RCRestartEmailContent";
@@ -1340,7 +1339,7 @@ public class RcMessageUtils {
         if( locale==null )
             locale = Locale.US;
         
-        String[] out = new String[26];        
+        String[] out = new String[28];        
         out[0] = adminUser.getFullname();
         out[1] = rc.getOrg().getName();
         out[2] = rc.getUser().getFullname();
@@ -1369,6 +1368,9 @@ public class RcMessageUtils {
         }
         
         // out[20] - out[25] are custom slots.
+        out[26]=RuntimeConstants.getStringValue("baseadmindomain");
+        out[27]=RuntimeConstants.getStringValue("default-site-name");
+        
         
         return out;
     }

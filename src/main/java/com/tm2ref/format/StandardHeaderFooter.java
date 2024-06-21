@@ -12,7 +12,7 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.tm2ref.custom.ct2.ITextUtils;
-import com.tm2ref.format.StandardReportSettings;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.report.ReportData;
 import com.tm2ref.report.ReportSettings;
 import com.tm2ref.service.LogService;
@@ -82,7 +82,7 @@ public class StandardHeaderFooter extends PdfPageEventHelper
 
         Calendar c = new GregorianCalendar();
 
-        copyright = lmsg( "g.copyrightforreport", new String[]{ Integer.toString( c.get( Calendar.YEAR) ) } );
+        copyright = lmsg( "g.copyrightforreport", new String[]{ Integer.toString( c.get( Calendar.YEAR) ), RuntimeConstants.getStringValue( "default-site-name-cap") } );
         
         // copyright = MessageFactory.getStringMessage(rptLocale, "g.copyrightforreport", new String[]{ Integer.toString( c.get( Calendar.YEAR) ) } );
 

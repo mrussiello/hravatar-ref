@@ -90,7 +90,9 @@
             </h:outputFormat>   
             <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.P4.employee']}" escape="false"/>
 
-            <h:outputText styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false"/>
+            <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
+                <f:param value="#{userBean.baseAdminDomain}"/>
+            </h:outputFormat>
             
             <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.candidateCanAddRaters}" styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.P5']}" escape="false">
                 <f:param value="#{refBean.rcCheck.org.name}"/>

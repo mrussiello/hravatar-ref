@@ -34,11 +34,11 @@
     var userId='#{refBean.userIdEncrypted}';
     var acidx = '#{refBean.activeAccessCodeX}';
     var refpagex = '#{refBean.activeRefPageTypeIdX}';
-    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']}";
-    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']}";
+    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']} #{userBean.supportEmail}.";
+    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']} #{userBean.supportEmail}.";
     var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
     var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
-    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']}"; 
+    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}."; 
     var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
         
     var selCameraDevice = '#{userBean.selCamera}';

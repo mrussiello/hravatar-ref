@@ -90,11 +90,11 @@
     var hasPrevUpload = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null};
     var prevUploadIsAudio = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile.isAudio};
     var mRecErrorStr = "#{stMessages['g.RecordingError.Title']}";
-    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']}";
-    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']}";
+    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']} #{userBean.supportEmail}.";
+    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']} #{userBean.supportEmail}.";
     var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
     var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
-    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']}"; 
+    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}."; 
     var errorNoBlobToUpload = "#{stMessages['g.PPErrorNoUploadBlobMessage']}"; 
     var errorDuringUpload = "#{stMessages['g.PPErrorDuringUpload']}"; 
     var errorDuringUploadAbort = "#{stMessages['g.PPErrorDuringUploadAbort']}"; 
