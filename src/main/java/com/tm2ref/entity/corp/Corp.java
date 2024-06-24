@@ -87,7 +87,7 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
     private int width;
 
     @Column( name = "pagetitle" )
-    private String pageTitle = "HR Avatar - Automated Reference Checks";
+    private String pageTitle = "Automated Reference Checks";
 
 
     /*

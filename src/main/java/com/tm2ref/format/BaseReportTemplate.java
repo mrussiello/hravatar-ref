@@ -416,7 +416,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
         if( reportData.getReportRuleAsBoolean( "hidedatespdf" ) )
             dtStr="***";
 
-        String  note = "HR Avatar Use Only: Rc: " + reportData.getRc().getRcCheckId() + ", R: " + reportData.getR().getReportId() + ", loc: " + reportData.getLocale().toString() + ", " + dtStr;
+        String  note = "Internal Use: Rc: " + reportData.getRc().getRcCheckId() + ", R: " + reportData.getR().getReportId() + ", loc: " + reportData.getLocale().toString() + ", " + dtStr;
         if( reportData.getRc().getUserAgent()!=null && !reportData.getRc().getUserAgent().isBlank() )
             note += "\nUser-Agent: " + reportData.getRc().getUserAgent();        
         return note;

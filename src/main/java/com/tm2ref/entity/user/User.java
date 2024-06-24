@@ -102,7 +102,7 @@ public class User implements Serializable
 
 
     /**
-     * This is ALWAYS the Browser-detected Locale of the user, unless set on HR Avatar.com.
+     * This is ALWAYS the Browser-detected Locale of the user, unless set on admin site.
      * This can be any language, not just a supported language.
      */
     @Column(name="language")

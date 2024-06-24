@@ -21,7 +21,7 @@ public enum RoleType
     ACCOUNT_LEVEL1B(22,"ult.acctlevel1b") , // Account Viewer - Create Test Keys and View Incomplete Test Keys Only, can be org or suborg level (org or suborg level access - if suborg is set, then use is restricted to a specific suborg)
     ACCOUNT_LEVEL2(25,"ult.acctlevel2") , // Account - Results, create pins, email test takers, etc. (org or suborg level access)
     ACCOUNT_LEVEL3(30,"ult.acctlevel3") , // Account - Create sub-orgs, Create account users (org access only)
-    CSR(90,"ult.hracsr") , // HR Avatar CSR
+    CSR(90,"ult.hracsr") ,
     ADMIN(100,"ult.admin");
 
     private final int roleTypeId;

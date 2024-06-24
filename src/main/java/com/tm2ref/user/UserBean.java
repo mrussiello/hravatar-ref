@@ -131,17 +131,17 @@ public class UserBean implements Serializable
         return RuntimeConstants.getStringValue( "baseadmindomain");
     }
     
-    public static String getSiteName()
+    public String getSiteName()
     {
         return RuntimeConstants.getStringValue( "default-site-name");
     }
     
-    public static String getSiteNameCap()
+    public String getSiteNameCap()
     {
         return RuntimeConstants.getStringValue( "default-site-name-cap");
     }
     
-    public static String getSupportEmail()
+    public String getSupportEmail()
     {
         return RuntimeConstants.getStringValue( "support-email");
     }

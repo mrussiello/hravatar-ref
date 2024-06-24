@@ -56,8 +56,11 @@ public class RuntimeConstants
 
         cache.put( "contactFormUrl", "https://www.hravatar.com/ta/help/candidate-contact-request.xhtml" );
         cache.put( "baselogourl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png" );
-        cache.put( "baseiconurl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png" );
+        cache.put( "baselogourlwhite", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png" );
+        
+        cache.put( "basewhiteiconurl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_12x1715795136877.png" );
 
+        
         cache.put( "baseprotocol", "https" );
         cache.put( "basedomain", "test.hravatar.com" );
         cache.put( "baseadmindomain", "www.hravatar.com" );

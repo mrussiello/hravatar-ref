@@ -20,7 +20,7 @@ public class Skin implements Serializable
 
     private String baseDirectory = "default";
 
-    private String title = "HR Avatar - Automated Reference Checks";
+    private String title = "Automated Reference Checks";
 
     private String defaultLocaleStr = "en";
 

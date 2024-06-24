@@ -1378,8 +1378,8 @@ public class RcMessageUtils {
     protected static String wrapEmailContent( String html, Locale locale )
     {
         // String baseUrl = RuntimeConstants.getStringValue( "baseprotocol" ) + "://" + RuntimeConstants.getStringValue( "basedomain" ) + "/" + RuntimeConstants.getStringValue( "basewebapp" );
-        String iconUrl = "https://www.hravatar.com/ta/images/ref-check-icon-white-54.png"; 
-        String logoUrl = "https://www.hravatar.com/ta/images/hr-avatar-logo-white.png";
+        String iconUrl = "https://" + RuntimeConstants.getStringValue("baseadmindomain") + "/ta/images/ref-check-icon-white-54.png"; 
+        String logoUrl = RuntimeConstants.getStringValue("baselogourlwhite"); //  
         
         String[] params = new String[]{iconUrl, logoUrl};
         

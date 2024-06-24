@@ -18,15 +18,7 @@ public class Constants
 
     public static final String SERVER_START_LOG_MARKER = "*************************************** SERVER START ******************************************";
 
-    //public static String SUPPORT_EMAIL = "support@hravatar.com";
-
-    //public static String SYSTEM_ADMIN_EMAIL = "mike@hravatar.com";
-
-    //public static String SUPPORT_EMAIL_NOREPLY = "no-reply@hravatar.com";
-
     public final static String SYSTEM_SESSION_COUNTER = "tm2refSystemSessionCounter";
-
-    // public static String SUPER_USER_PASSWORD = "b1sykle";
 
     public static String DUMMY_PASSWORD = "******";
 
