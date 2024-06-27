@@ -851,10 +851,16 @@ public class ProctorUtils extends FacesUtils {
         try
         {            
             if( rc==null )
-                throw new Exception( "RcCheck is null" );
+            {
+                LogService.logIt( "ProctorUtils.processCheckForCameraAgain() RcCheck is null. Sending back to RC Process." );
+                return RefUtils.getInstance().processReturnToRefCheckProcess();
+            }
         
             if( refBean.getRefUserType()==null )
-                throw new Exception( "RefBean.refUserType is null" );
+            {
+                LogService.logIt( "ProctorUtils.processCheckForCameraAgain() RefBean.refUserType is null Sending back to RC Process." );
+                return RefUtils.getInstance().processReturnToRefCheckProcess();
+            }
             
             proctorBean.clearBean();
             proctorBean.init(rc, refBean.getRefUserType() );
@@ -862,11 +868,11 @@ public class ProctorUtils extends FacesUtils {
             return conditionUrlForSessionLossGet( "/pp/browser-precheck.xhtml" );
             
         }        
-        catch( STException e )
-        {
-            setMessage( e );
-            return "StayInSamePlace";
-        }        
+        //catch( STException e )
+        //{
+        //    setMessage( e );
+        //    return "StayInSamePlace";
+        //}        
         catch( Exception e )
         {
             LogService.logIt( e, "ProctorUtils.processCheckForCameraAgain() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
