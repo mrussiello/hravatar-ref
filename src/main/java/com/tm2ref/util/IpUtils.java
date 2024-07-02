@@ -18,12 +18,11 @@ import jakarta.json.stream.JsonParsingException;
 import java.net.SocketException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.commons.validator.routines.InetAddressValidator;
-import org.apache.http.HttpStatus;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
 
 /**
  *
@@ -67,7 +66,7 @@ public class IpUtils {
         String[] out = new String[5];
 
         
-        if( ipAddress==null || ipAddress.equalsIgnoreCase("127.0.0.1") )
+        if( ipAddress==null || ipAddress.equalsIgnoreCase("127.0.0.1") || !RuntimeConstants.getBooleanValue("IpLocationOn") )
         {
             out[0] = "US";
             out[1] = "VA";
@@ -79,13 +78,13 @@ public class IpUtils {
         
         if( ipAddress.indexOf(",")>0 )
             ipAddress=ipAddress.substring(0,ipAddress.indexOf(",")).trim();
-
+        
         if( !getIsIpAddressValid( ipAddress ) )
         {
             LogService.logIt( "IpFacade.updateIpLocationData() ipAddress is NOT Valid. ipAddress=" + ipAddress );
             return out;
         }
-
+                
         
         // String uri = RuntimeConstants.getStringValue("FreeGeoIpURI") + ipAddress;
         String uri = RuntimeConstants.getStringValue("FreeGeoIpURI") + ipAddress + "?access_key=" + RuntimeConstants.getStringValue( "IpStackAccessKey" );
@@ -94,7 +93,7 @@ public class IpUtils {
 
         try
         {            
-            // CloseableHttpResponse r = null;
+            CloseableHttpResponse r = null;
 
             int statusCode = 0;
             
@@ -109,42 +108,38 @@ public class IpUtils {
                 get.addHeader( "Accept", "application/json" );
                 
                 //LogService.logIt( "IpUtils.getIPLocationData() BBB sending to  uri=" + uri );
-                try( CloseableHttpResponse r = client.execute(get ))
+                r = client.execute(get );
+                //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getCode() );
+
+                statusCode = r.getCode();
+
+                if( statusCode != HttpStatus.SC_OK )
                 {
-                    //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getStatusLine().getStatusCode() );
-
-                    statusCode = r.getStatusLine().getStatusCode();
-
-                    if( statusCode != HttpStatus.SC_OK )
-                    {
-                        //LogService.logIt( "IpUtils.getIPLocationData() BBB.1 Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
-                        LogService.logIt( "IpUtils.getIPLocationData() ERROR connecting to service. Method failed: " + r.getStatusLine().toString() + ", url=" + uri );
-                        return out;
-                        // throw new Exception( "Logon failed with code " + r.getStatusLine().toString() );
-                    }
-
-                    //LogService.logIt( "IpUtils.getIPLocationData() CCC Parsing Response." );
-
-                    resultStr = getJsonFromResponse( r );
-
-                    if( r.getEntity()!=null )
-                        EntityUtils.consume(r.getEntity());
-                    
-                    if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
-                    {
-                        LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
-                        return out;                    
-                    }
-
-                    //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
+                    LogService.logIt( "IpUtils.getIPLocationData() ERROR Connecting to service. BBB.1 Method failed: " + r.getReasonPhrase() + ", url=" + uri );
+                    return out;
+                    // throw new Exception( "Logon failed with code " + r.getReasonPhrase() );
                 }
+                
+                //LogService.logIt( "IpUtils.getIPLocationData() CCC Parsing Response." );
+                
+                resultStr = getJsonFromResponse( r );
+
+                if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
+                {
+                    LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
+                    return out;                    
+                }
+                
+                
+                //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
             }
 
             catch( NoHttpResponseException | SocketException | SSLHandshakeException e )
             {
-                LogService.logIt( "IpUtils.getIPLocationData() ERROR " + e.toString() +", ip=" + ipAddress + ", uri=" + uri );
+                LogService.logIt( "IpUtils.getIPLocationData() ERROR getting IP Data. " + e.toString() +", ip=" + ipAddress + ", uri=" + uri );
                 return out;
             }
+            
             catch( Exception e )
             {
                 LogService.logIt( e, "IpUtils.getIPLocationData() EEE Exception getting IP Data ip=" + ipAddress + ", uri=" + uri );
@@ -153,8 +148,8 @@ public class IpUtils {
             
             finally
             {
-                //if( r != null )
-                //    r.close();                
+                if( r != null )
+                    r.close();                
             }
 
             

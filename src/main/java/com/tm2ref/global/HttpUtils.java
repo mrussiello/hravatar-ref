@@ -29,53 +29,53 @@ public class HttpUtils {
         {
             supportedLanguages = new HashMap<>();
 
-            supportedLanguages.put( "ar_JO", new Locale("ar", "JO") );
-            supportedLanguages.put( "ar_LB", new Locale("ar", "LB") );
-            supportedLanguages.put( "da_DK", new Locale("da", "DK") );
-            supportedLanguages.put( "de_DE", new Locale("de", "DE") );
-            supportedLanguages.put( "en_AU", new Locale("en", "AU") );
-            supportedLanguages.put( "en_CA", new Locale("en", "CA") );
-            supportedLanguages.put( "en_GB", new Locale("en", "GB") );
-            supportedLanguages.put( "en_IN", new Locale("en", "IN") );
-            supportedLanguages.put( "en_US", new Locale("en", "US") );
-            supportedLanguages.put( "es_ES", new Locale("es", "ES") );
-            supportedLanguages.put( "es_MX", new Locale("es", "MX") );
-            supportedLanguages.put( "fr_CA", new Locale("fr", "CA") );
-            supportedLanguages.put( "fr_FR", new Locale("fr", "FR") );
-            supportedLanguages.put( "it_IT", new Locale("it", "IT") );
-            supportedLanguages.put( "he_IL", new Locale("he", "IL") );
-            supportedLanguages.put( "in_ID", new Locale("in", "ID") );
-            supportedLanguages.put( "ja_JP", new Locale("ja", "JP") );
-            supportedLanguages.put( "ko_KR", new Locale("ko", "KR") );
-            supportedLanguages.put( "nb_NO", new Locale("nb", "NO") );
-            supportedLanguages.put( "nl_NL", new Locale("nl", "NL") );
-            supportedLanguages.put( "ru_RU", new Locale("ru", "RU") );
-            supportedLanguages.put( "ro_RO", new Locale("ro", "RO") );
-            supportedLanguages.put( "pl_PL", new Locale("pl", "PL") );
-            supportedLanguages.put( "pt_BR", new Locale("pt", "BR") );
-            supportedLanguages.put( "pt_PT", new Locale("pt", "PT") );
-            supportedLanguages.put( "sv_SE", new Locale("sv", "SE") );
-            supportedLanguages.put( "zh_CN", new Locale("zh", "CN") );
+            supportedLanguages.put( "ar_JO", Locale.of("ar", "JO") );
+            supportedLanguages.put( "ar_LB", Locale.of("ar", "LB") );
+            supportedLanguages.put( "da_DK", Locale.of("da", "DK") );
+            supportedLanguages.put( "de_DE", Locale.of("de", "DE") );
+            supportedLanguages.put( "en_AU", Locale.of("en", "AU") );
+            supportedLanguages.put( "en_CA", Locale.of("en", "CA") );
+            supportedLanguages.put( "en_GB", Locale.of("en", "GB") );
+            supportedLanguages.put( "en_IN", Locale.of("en", "IN") );
+            supportedLanguages.put( "en_US", Locale.of("en", "US") );
+            supportedLanguages.put( "es_ES", Locale.of("es", "ES") );
+            supportedLanguages.put( "es_MX", Locale.of("es", "MX") );
+            supportedLanguages.put( "fr_CA", Locale.of("fr", "CA") );
+            supportedLanguages.put( "fr_FR", Locale.of("fr", "FR") );
+            supportedLanguages.put( "it_IT", Locale.of("it", "IT") );
+            supportedLanguages.put( "he_IL", Locale.of("he", "IL") );
+            supportedLanguages.put( "in_ID", Locale.of("in", "ID") );
+            supportedLanguages.put( "ja_JP", Locale.of("ja", "JP") );
+            supportedLanguages.put( "ko_KR", Locale.of("ko", "KR") );
+            supportedLanguages.put( "nb_NO", Locale.of("nb", "NO") );
+            supportedLanguages.put( "nl_NL", Locale.of("nl", "NL") );
+            supportedLanguages.put( "ru_RU", Locale.of("ru", "RU") );
+            supportedLanguages.put( "ro_RO", Locale.of("ro", "RO") );
+            supportedLanguages.put( "pl_PL", Locale.of("pl", "PL") );
+            supportedLanguages.put( "pt_BR", Locale.of("pt", "BR") );
+            supportedLanguages.put( "pt_PT", Locale.of("pt", "PT") );
+            supportedLanguages.put( "sv_SE", Locale.of("sv", "SE") );
+            supportedLanguages.put( "zh_CN", Locale.of("zh", "CN") );
 
             
             
-            supportedLanguages.put( "ar", new Locale("ar", "JO") );
-            supportedLanguages.put( "da", new Locale("da", "DK") );
-            supportedLanguages.put( "de", new Locale("de", "DE") );
-            supportedLanguages.put( "en", new Locale("en", "US") );
-            supportedLanguages.put( "es", new Locale("es", "ES") );
-            supportedLanguages.put( "fr", new Locale("fr", "FR") );
-            supportedLanguages.put( "it", new Locale("it", "IT") );
-            supportedLanguages.put( "ja", new Locale("jp", "JP") );
-            supportedLanguages.put( "ko", new Locale("ko", "KR") );
-            supportedLanguages.put( "nb", new Locale("nb", "NO") );
-            supportedLanguages.put( "nl", new Locale("nl", "NL") );
-            supportedLanguages.put( "pl", new Locale("pl", "PL") );
-            supportedLanguages.put( "pt", new Locale("pt", "PT") );
-            supportedLanguages.put( "ro", new Locale("ro", "RO") );
-            supportedLanguages.put( "ru", new Locale("ru", "RU") );
-            supportedLanguages.put( "sv", new Locale("sv", "SE") );
-            supportedLanguages.put( "zh", new Locale("zh", "CN") );
+            supportedLanguages.put( "ar", Locale.of("ar", "JO") );
+            supportedLanguages.put( "da", Locale.of("da", "DK") );
+            supportedLanguages.put( "de", Locale.of("de", "DE") );
+            supportedLanguages.put( "en", Locale.of("en", "US") );
+            supportedLanguages.put( "es", Locale.of("es", "ES") );
+            supportedLanguages.put( "fr", Locale.of("fr", "FR") );
+            supportedLanguages.put( "it", Locale.of("it", "IT") );
+            supportedLanguages.put( "ja", Locale.of("jp", "JP") );
+            supportedLanguages.put( "ko", Locale.of("ko", "KR") );
+            supportedLanguages.put( "nb", Locale.of("nb", "NO") );
+            supportedLanguages.put( "nl", Locale.of("nl", "NL") );
+            supportedLanguages.put( "pl", Locale.of("pl", "PL") );
+            supportedLanguages.put( "pt", Locale.of("pt", "PT") );
+            supportedLanguages.put( "ro", Locale.of("ro", "RO") );
+            supportedLanguages.put( "ru", Locale.of("ru", "RU") );
+            supportedLanguages.put( "sv", Locale.of("sv", "SE") );
+            supportedLanguages.put( "zh", Locale.of("zh", "CN") );
             
             
             

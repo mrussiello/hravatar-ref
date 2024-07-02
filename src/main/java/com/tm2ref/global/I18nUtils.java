@@ -324,10 +324,10 @@ public class I18nUtils
                 return Locale.US;
 
             if( pieces.length == 1 )
-                return new Locale( pieces[0] );
+                return Locale.of( pieces[0] );
 
             else
-                return new Locale( pieces[0] , pieces[1] );
+                return Locale.of( pieces[0] , pieces[1] );
         }
 
         catch( Exception e )

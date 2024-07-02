@@ -20,7 +20,6 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.tm2ref.custom.ct2.ITextUtils;
-import com.tm2ref.entity.user.Org;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
 import com.tm2ref.ref.RcCheckUtils;
@@ -33,6 +32,7 @@ import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -118,7 +118,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
                 
                 try
                 {
-                    custLogo = Image.getInstance( new URL( logo2 ) );                    
+                    custLogo = Image.getInstance( new URI( logo2 ).toURL() );                    
                 }                
                 catch( IOException ee )
                 {
@@ -252,7 +252,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
             return null;
         try
         {
-            Image photoImg = Image.getInstance( new URL( url ) );
+            Image photoImg = Image.getInstance( new URI( url ).toURL() );
             if( photoImg!=null )
             {
                  LogService.logIt( "BaseReportTemplate.getItextThumbImage() wid hgt=" + photoImg.getWidth() + "," + photoImg.getHeight() );
