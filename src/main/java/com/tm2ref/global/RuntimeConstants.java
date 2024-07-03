@@ -285,6 +285,7 @@ public class RuntimeConstants
         //////////////////////////////////////////////////////////////////////////////
 
 
+        cache.put( "IpLocationOn", true );
         cache.put( "IpStackAccessKey", "" );
         cache.put( "FreeGeoIpURI", "https://api.ipstack.com/" );
 
