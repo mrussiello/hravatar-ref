@@ -21,8 +21,11 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NoHttpResponseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 /**
  *
@@ -93,9 +96,9 @@ public class IpUtils {
 
         try
         {            
-            CloseableHttpResponse r = null;
+            // CloseableHttpResponse r = null;
 
-            int statusCode = 0;
+            // int statusCode = 0;
             
             // CloseableHttpClient client = null;
 
@@ -108,27 +111,36 @@ public class IpUtils {
                 get.addHeader( "Accept", "application/json" );
                 
                 //LogService.logIt( "IpUtils.getIPLocationData() BBB sending to  uri=" + uri );
-                r = client.execute(get );
+                resultStr = client.execute(get, (ClassicHttpResponse response) -> {
+                    int status = response.getCode();
+                    // LogService.logIt( "IpUtils.getIPLocationData() statusCode="+ statusCode );
+                    if( status<200 || status>=300 )
+                        throw new IOException( "IpUtils.getIPLocationData() statusCode="+ status);                    
+                    final HttpEntity entity2 = response.getEntity();
+                    String ss = EntityUtils.toString(entity2); 
+                    EntityUtils.consume(entity2);
+                    return ss;
+                    } );
                 //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getCode() );
 
-                statusCode = r.getCode();
+                //statusCode = r.getCode();
 
-                if( statusCode != HttpStatus.SC_OK )
-                {
-                    LogService.logIt( "IpUtils.getIPLocationData() ERROR Connecting to service. BBB.1 Method failed: " + r.getReasonPhrase() + ", url=" + uri );
-                    return out;
+                //if( statusCode != HttpStatus.SC_OK )
+                //{
+                //    LogService.logIt( "IpUtils.getIPLocationData() ERROR Connecting to service. BBB.1 Method failed: " + r.getReasonPhrase() + ", url=" + uri );
+               //     return out;
                     // throw new Exception( "Logon failed with code " + r.getReasonPhrase() );
-                }
+                //}
                 
                 //LogService.logIt( "IpUtils.getIPLocationData() CCC Parsing Response." );
                 
-                resultStr = getJsonFromResponse( r );
+                //resultStr = getJsonFromResponse( r );
 
-                if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
-                {
+                //if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
+                //{
                     LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
-                    return out;                    
-                }
+                //    return out;                    
+                //}
                 
                 
                 //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
@@ -146,11 +158,11 @@ public class IpUtils {
                 throw e;
             }
             
-            finally
-            {
-                if( r != null )
-                    r.close();                
-            }
+            //finally
+            //{
+            //    if( r != null )
+            //        r.close();                
+            //}
 
             
             JsonReader jr = Json.createReader(new StringReader( resultStr ));
