@@ -23,7 +23,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
@@ -114,11 +113,11 @@ public class IpUtils {
                 resultStr = client.execute(get, (ClassicHttpResponse response) -> {
                     int status = response.getCode();
                     // LogService.logIt( "IpUtils.getIPLocationData() statusCode="+ statusCode );
-                    if( status<200 || status>=300 )
-                        throw new IOException( "IpUtils.getIPLocationData() statusCode="+ status);                    
                     final HttpEntity entity2 = response.getEntity();
                     String ss = EntityUtils.toString(entity2); 
                     EntityUtils.consume(entity2);
+                    if( status<200 || status>=300 )
+                        throw new IOException( "IpUtils.getIPLocationData() statusCode="+ status + ", response=" + ss );                    
                     return ss;
                     } );
                 //LogService.logIt( "IpUtils.getIPLocationData() uri=" + uri + ", Response Code : " + r.getCode() );
