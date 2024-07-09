@@ -33,19 +33,13 @@ import jakarta.json.JsonObject;
  */
 public class ReportData {
     
-     public static String hraLogoBlackTextFilename = "hra-two-color-tagline-logo-trans-800.png";// "hralogoblacktext-blue.png";
-     //public static String hraLogoBlackTextPurpleFilename = "hralogoblacktext-purple.png";
+     public static String hraLogoBlackTextFilename = null; // "hra-two-color-tagline-logo-trans-800.png";
 
-     public static String hraLogoWhiteTextFilename = "hra-white-tagline-logo-trans-800.png"; // "hralogowhitetext-blue.png";
-     //public static String hraLogoWhiteTextPurpleFilename = "hralogowhitetext-purple.png";
+     public static String hraLogoWhiteTextFilename = null; // "hra-white-tagline-logo-trans-800.png"; 
 
-     public static String hraLogoBlackTextSmallFilename = "hra-two-color-tagline-logo-trans-420.png"; // "hralogoblacktext-small-blue.png";
-     //public static String hraLogoBlackTextSmallPurpleFilename = "hralogoblacktext-small-purple.png";
+     public static String hraLogoBlackTextSmallFilename = null; // "hra-two-color-tagline-logo-trans-420.png"; 
      
-     
-     public static String hraLogoWhiteTextSmallFilename = "hra-white-tagline-logo-trans-412.png"; // "hralogowhitetext-small-blue.png";     
-     //public static String hraLogoWhiteTextSmallPurpleFilename = "hralogowhitetext-small-purple.png";     
-     
+     public static String hraLogoWhiteTextSmallFilename = null; // "hra-white-tagline-logo-trans-412.png"; 
     
     Locale reportLocale;
     TimeZone timeZone;
@@ -78,7 +72,23 @@ public class ReportData {
             timeZone = u.getTimeZone();
         if( timeZone == null )
             timeZone = TimeZone.getDefault();
+        
+        if( hraLogoBlackTextFilename==null  || hraLogoBlackTextFilename.isBlank() )
+            init();
     }
+    
+    
+    public static synchronized void init()
+    {
+        if( hraLogoBlackTextFilename!=null && !hraLogoBlackTextFilename.isBlank() )
+            return;
+        
+        hraLogoBlackTextFilename = RuntimeConstants.getStringValue("hraLogoBlackTextFilename");
+        hraLogoWhiteTextFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextFilename");
+        hraLogoBlackTextSmallFilename = RuntimeConstants.getStringValue("hraLogoBlackTextSmallFilename");
+        hraLogoWhiteTextSmallFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextSmallFilename");    
+    }
+    
     
     
     public String getOrgName() {

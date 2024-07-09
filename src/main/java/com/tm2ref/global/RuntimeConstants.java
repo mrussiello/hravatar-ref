@@ -226,6 +226,21 @@ public class RuntimeConstants
         // REPORTING
         // ////////////////////////////////////////////////////////////////////////////
 
+        cache.put("hraLogoBlackTextFilename","hra-two-color-tagline-logo-trans-800.png");
+        cache.put("hraLogoBlackTextPurpleFilename","hra-two-color-tagline-logo-trans-800.png"); 
+
+        cache.put("hraLogoWhiteTextFilename","hra-white-tagline-logo-trans-800.png"); 
+        cache.put("hraLogoWhiteTextPurpleFilename","hra-white-tagline-logo-trans-800.png"); 
+
+        cache.put("hraLogoBlackTextSmallFilename","hra-two-color-tagline-logo-trans-420.png"); 
+        cache.put("hraLogoBlackTextSmallPurpleFilename","hra-two-color-tagline-logo-trans-420.png"); 
+
+
+        cache.put("hraLogoWhiteTextSmallFilename","hra-white-tagline-logo-trans-412.png");      
+        cache.put("hraLogoWhiteTextSmallPurpleFilename","hra-white-tagline-logo-trans-412.png"); 
+        
+        
+        
         cache.put( "DefaultRcReportPrehire", 81 );
         cache.put( "DefaultRcReportEmployee", 82 );
         cache.put( "DefaultRcReportEmployeeFbk", 83 );
