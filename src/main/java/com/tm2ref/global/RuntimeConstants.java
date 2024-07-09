@@ -426,6 +426,9 @@ public class RuntimeConstants
 
                     strValue = props.getProperty( name );
 
+                    if( strValue!=null )
+                        strValue=strValue.trim();
+                        
                     if( name != null && name.length() > 0 && strValue != null && strValue.length() > 0 )
                     {
                         currentValue = cache.get( name );
