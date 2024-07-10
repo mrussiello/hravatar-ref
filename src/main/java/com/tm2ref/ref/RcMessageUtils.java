@@ -1379,7 +1379,7 @@ public class RcMessageUtils {
     {
         // String baseUrl = RuntimeConstants.getStringValue( "baseprotocol" ) + "://" + RuntimeConstants.getStringValue( "basedomain" ) + "/" + RuntimeConstants.getStringValue( "basewebapp" );
         String iconUrl = "https://" + RuntimeConstants.getStringValue("baseadmindomain") + "/ta/images/ref-check-icon-white-54.png"; 
-        String logoUrl = RuntimeConstants.getStringValue("baselogourlwhite"); //  
+        String logoUrl = RuntimeConstants.getStringValue("default-email-logo"); //  
         
         String[] params = new String[]{iconUrl, logoUrl};
         

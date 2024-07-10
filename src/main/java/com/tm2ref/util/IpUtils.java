@@ -22,6 +22,7 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -145,6 +146,12 @@ public class IpUtils {
                 //LogService.logIt( "IpUtils.getIPLocationData() DDD uri=" + uri + ", resultStr: " + resultStr );
             }
 
+        catch( ConnectionRequestTimeoutException e )
+        {
+            LogService.logIt( "IpUtils.getIPLocationData()  STERR " + e.toString()+ ", req stats=" + HttpUtils.getConnManagerStatsStr() ); 
+            HttpUtils.resetPooledConnectionManagerIfNeeded();
+                return out;
+        }        
             catch( NoHttpResponseException | SocketException | SSLHandshakeException e )
             {
                 LogService.logIt( "IpUtils.getIPLocationData() ERROR getting IP Data. " + e.toString() +", ip=" + ipAddress + ", uri=" + uri );

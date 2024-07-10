@@ -59,6 +59,7 @@ public class RuntimeConstants
         cache.put( "baselogourlwhite", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png" );
         
         cache.put( "basewhiteiconurl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_12x1715795136877.png" );
+        cache.put( "default-email-logo", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png");
 
         
         cache.put( "baseprotocol", "https" );
