@@ -6,6 +6,7 @@
 package com.tm2ref.ws;
 
 import com.tm2ref.entity.user.User;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.user.UserFacade;
@@ -69,6 +70,11 @@ public class BaseApiResource {
             if( pwd!=null )
                 pwd=pwd.trim();
             
+            if( checkCreds(username, pwd) )
+            {
+                return;
+            }
+            
             if( userFacade==null )
                 userFacade = UserFacade.getInstance();
 
@@ -100,6 +106,37 @@ public class BaseApiResource {
             throw new ApiException( "Unknown System Authentication Error: " + e.getMessage(), 0, Response.Status.UNAUTHORIZED.getStatusCode() );
         }
     }
+    
+    protected boolean checkCreds( String username, String password ) 
+    {
+        try
+        {
+            // LogService.logIt( "BaseBuilderRest.checkCreds() un=" + username + ", pw=" + password );
+            if( username==null || username.isBlank())
+                return false;
+            if( password==null || password.isBlank() )
+                return false;
+
+            username=username.trim();
+            password=password.trim();
+            
+            if( !username.equalsIgnoreCase( RuntimeConstants.getStringValue("tm2ref_rest_api_username").trim()))
+                return false;
+            
+            if( !password.equals(  RuntimeConstants.getStringValue("tm2ref_rest_api_password").trim() ) )
+                return false;
+                        
+            return true;
+        }
+        
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseApiResource.checkCreds() " );            
+            return false;
+        }
+    }
+    
+    
     
     protected String getJoString( JsonObject j, String key )
     {        

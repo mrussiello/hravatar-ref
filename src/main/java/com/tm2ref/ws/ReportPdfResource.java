@@ -56,9 +56,9 @@ public class ReportPdfResource extends BaseApiResource {
     public Response doPost( @Context HttpServletRequest request , @Context HttpHeaders headers, String jsonContent ) 
     {        
         long rcCheckId = 0;
-        String rcid = null;
-        String langStr = null;
-        int reportId = 0;
+        String rcid;
+        String langStr;
+        int reportId;
         
         try
         {
