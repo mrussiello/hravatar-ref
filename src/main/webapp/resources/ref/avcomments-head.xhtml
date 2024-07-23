@@ -901,17 +901,20 @@
 
     function doUploadError( e )
     {
-        logIt( 'avcomments-head.xhtml.doUploadError()' );
+        var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown' );
+        logIt( 'tm2ref/resources/ref/avcomments-head.xhtml.doUploadError() ' + info );
+        
         PF('avcommentsuploadingdialog').hide();
-        showErrorMessage( errorDuringUpload + " (" + e.message + ") ");
+        showErrorMessage( errorDuringUpload + " (" + info + ") ");
         uploadStatus = 3;        
     }
 
     function doUploadAbort( e )
     {
-        logIt( 'avcomments-head.xhtml.doUploadAbort()' );
+        var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown' );
+        logIt( 'tm2ref/resources/ref/avcomments-head.xhtml.doUploadAbort() ' + info );
         PF('avcommentsuploadingdialog').hide();
-        showErrorMessage( errorDuringUploadAbort + " (" + e.message + ") " );
+        showErrorMessage( errorDuringUploadAbort + " (" + info + ") " );
         uploadStatus = 3;
         
     }

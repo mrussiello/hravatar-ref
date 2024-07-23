@@ -265,8 +265,8 @@ function piDataURItoBlob(u)
 function piDoOnImageUploadError( e )
 {
     piImgFailedCount++;
-    doLocalErrorNotifications( 'piDoOnImageUploadError() Error: ' + ( (e) ? e.message : 'No error message available.' ), false );
-    ppHandleError( 'pp-img.js.piDoOnImageUploadError() BB piImgCaptCount=' + piImgCaptCount + ', piImgFailedCount=' + piImgFailedCount + ', ' + ( (e) ? e.message + ',\n' + e.stack : ' e is not present.' ) );   
+    doLocalErrorNotifications( 'piDoOnImageUploadError() Error event: ' + ((e) && typeof e!=='undefined' ? 'type=' + e.type + ', loaded=' + e.loaded + ', total=' + e.total : 'No error info available.' ), false );
+    ppHandleError( 'pp-img.js.piDoOnImageUploadError() BB piImgCaptCount=' + piImgCaptCount + ', piImgFailedCount=' + piImgFailedCount + ', Error event: ' + ((e) && typeof e!=='undefined' ? 'type=' + e.type + ', loaded=' + e.loaded + ', total=' + e.total : ' e info not available.' ) );   
     
 }
 
