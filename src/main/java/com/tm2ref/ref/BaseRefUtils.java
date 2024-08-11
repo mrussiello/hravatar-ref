@@ -1061,7 +1061,7 @@ public class BaseRefUtils  extends FacesUtils
             if( !adminOverride )
             {
                 RefCreditUtils rcu = new RefCreditUtils();
-                rcu.checkRcPreAuthorization( rc );
+                rcu.checkRcPreAuthorization(rc, refUserType.getIsRater() ? rc.getRcRater() : null );
             }
 
             if( rc.getReportId()<=0 )

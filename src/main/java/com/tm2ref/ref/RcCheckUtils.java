@@ -1210,7 +1210,7 @@ public class RcCheckUtils {
             
             // useful data from candidate - charge credit.
             if( !adminOverride &&  (rc.getCollectRatingsFmCandidate() || rc.getRcScript().getHasAnyCandidateInput()) )
-                chargeCreditIfNeeded( rc );
+                chargeCreditIfNeeded(rc, null );
 
             performRcCheckCompletionIfReady(rc, false, adminOverride );
         }
@@ -1270,7 +1270,7 @@ public class RcCheckUtils {
             Tracker.addRaterComplete();     
             
             if( !adminOverride )
-                chargeCreditIfNeeded( rc );
+                chargeCreditIfNeeded(rc, rater );
             
             // see if candidate is now complete.
             if( rater.getIsCandidateOrEmployee() )
@@ -1303,7 +1303,7 @@ public class RcCheckUtils {
         
     }
 
-    public void chargeCreditIfNeeded( RcCheck rc ) throws Exception
+    public void chargeCreditIfNeeded( RcCheck rc, RcRater rater ) throws Exception
     {
         if( rc.getCreditId()>0 )
             return;
@@ -1327,7 +1327,7 @@ public class RcCheckUtils {
         }
         
         RefCreditUtils rcu = new RefCreditUtils();
-        rcu.chargeCreditsIfNeeded( rc.getOrg(), rc );
+        rcu.chargeCreditsIfNeeded(rc.getOrg(), rc, rater );
     }
     
     

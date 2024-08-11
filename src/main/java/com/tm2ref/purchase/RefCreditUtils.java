@@ -6,6 +6,7 @@ import com.tm2ref.affiliate.AffiliateAccountType;
 import com.tm2ref.email.EmailBlockFacade;
 import com.tm2ref.entity.purchase.Credit;
 import com.tm2ref.entity.ref.RcCheck;
+import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.user.Org;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.global.Constants;
@@ -56,7 +57,7 @@ public class RefCreditUtils {
     }
 
     
-    public void checkRcPreAuthorization( RcCheck rc ) throws STException
+    public void checkRcPreAuthorization( RcCheck rc, RcRater rater) throws STException
     {
         // already has credits charged.
         if( rc.getCreditId()>0 )
@@ -114,18 +115,18 @@ public class RefCreditUtils {
         {
             try
             {
-                performCreditsNotification(rc.getOrgId(), -1, rc);
+                performCreditsNotification(rc.getOrgId(), -1, rc, rater );
             }
             catch( Exception ee )
             {
-                LogService.logIt(ee, "RefCreditUtils.checkRcPreAuthorization() Sending Credits Notification. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", initial STException: " + e.getKey() );
+                LogService.logIt(ee, "RefCreditUtils.checkRcPreAuthorization() Sending Credits Notification. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) + ", initial STException: " + e.getKey() );
             }
             
             throw e;
         }
         catch( Exception e )
         {
-            LogService.logIt(e, "RefCreditUtils.checkRcPreAuthorization() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) );                         
+            LogService.logIt(e, "RefCreditUtils.checkRcPreAuthorization() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) );                         
         }
     }
 
@@ -158,7 +159,7 @@ public class RefCreditUtils {
     
     
     
-    public void chargeCreditsIfNeeded( Org o, RcCheck rc ) throws STException
+    public void chargeCreditsIfNeeded( Org o, RcCheck rc, RcRater rater) throws STException
     {
         if( o==null && rc!=null )
             o=rc.getOrg();
@@ -276,7 +277,7 @@ public class RefCreditUtils {
                     rcFacade = RcFacade.getInstance();
                 rcFacade.saveRcCheck(rc, false);                
 
-                LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );
+                LogService.logIt("RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );
                 
             }
         }
@@ -284,18 +285,18 @@ public class RefCreditUtils {
         {
             try
             {
-                performCreditsNotification(o.getOrgId(), -1, rc);                    
+                performCreditsNotification(o.getOrgId(), -1, rc, rater);                    
             }
             catch( Exception ee )
             {
-                LogService.logIt(ee, "RefCreditUtils.chargeCreditsIfNeeded() Sending Credits Notification. testKeyId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", initial STException: " + e.getKey() );
+                LogService.logIt(ee, "RefCreditUtils.chargeCreditsIfNeeded() Sending Credits Notification. testKeyId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) + ", initial STException: " + e.getKey() );
             }
             
             throw e;
         }
         catch( Exception e )
         {
-            LogService.logIt(e, "RefCreditUtils.chargeCreditsIfNeeded() testKeyId=" + (rc==null ? "null" : rc.getRcCheckId()) );   
+            LogService.logIt(e, "RefCreditUtils.chargeCreditsIfNeeded() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) );   
             throw new STException( e.getMessage() );
         }
     }
@@ -401,7 +402,7 @@ public class RefCreditUtils {
     
     
     
-    public void performCreditsNotification( int orgId, int balance, RcCheck rcCheck) throws Exception
+    public void performCreditsNotification( int orgId, int balance, RcCheck rcCheck, RcRater rater) throws Exception
     {
          try
          {
@@ -488,8 +489,7 @@ public class RefCreditUtils {
                     adminUser = admins.get(0);
             }
             
-            User authUser = null;
-                        
+            User authUser = null;                        
             if( rcCheck!=null )
             {
                 if( rcCheck.getAdminUser()!=null )
@@ -503,17 +503,32 @@ public class RefCreditUtils {
                     authUser = rcCheck.getAdminUser();
                 }                    
             }
-                        
+            
+            String raterName = "";
+            
+            if( rater!=null )
+            {
+                if( rater.getUser()==null )
+                {
+                    if( userFacade==null )
+                        userFacade=UserFacade.getInstance();
+                    rater.setUser( userFacade.getUser( rater.getUserId() ));
+                }
+
+                if( rater.getUser()!=null )
+                    raterName = rater.getUser().getFullname() + ", " + rater.getUser().getEmail();
+            }
+            
             String candidate = "";
             
             if( rcCheck != null && rcCheck.getUser()!=null )
                 candidate = rcCheck.getUser().getFullname() + ", " + rcCheck.getUser().getEmail() + " (" + rcCheck.getUser().getUserId() + ") ";
             
-            Locale loc = null;
+            Locale loc;
             Map<String, Object> emailMap = new HashMap<>();
             String[] params = new String[10];
 
-            boolean affiliateIsAdmin = false;
+            //boolean affiliateIsAdmin = false;
 
             if( adminUser == null )
             {
@@ -524,7 +539,7 @@ public class RefCreditUtils {
 
                 else
                 {
-                    affiliateIsAdmin = true;
+                    //affiliateIsAdmin = true;
                     adminUser = affiliateSrcOrgAdminUser;
                     LogService.logIt( m );
                 }
@@ -537,6 +552,9 @@ public class RefCreditUtils {
                 if( ub != null )
                     locale = ub.getLocale();
             }
+
+            if( locale == null )
+                locale = loc;
 
             if( locale == null )
                 locale = Locale.US;
@@ -559,14 +577,15 @@ public class RefCreditUtils {
             params[1] = Integer.toString( balance );
             params[2] = org.getName() + " (" + org.getOrgId() + ") ";
             
-            params[3] = rcCheck==null ? "NF" : "(" + Long.toString(rcCheck.getRcCheckId() ) + ")";
+            params[3] = rcCheck==null ? "NF" : Long.toString(rcCheck.getRcCheckId() );
 
             params[4] = authUser == null ? "" : (authUser.getFullname() + " (" + authUser.getUserId() + ")" );
             params[5] = candidate == null ? "" : candidate;
             params[6] = rcCheck==null ? "Reference Check" : rcCheck.getRcCheckName();
             params[7] =  affiliateSourceOrg==null ? "" : affiliateSourceOrg.getAffiliateId();            
             params[8] = affiliateSrcOrgAdminUser==null ? "" : affiliateSrcOrgAdminUser.getFullname() + ", " + affiliateSrcOrgAdminUser.getEmail();
-                                    
+            params[9] = raterName == null ? "" : raterName;
+                                   
             boolean isResultCredit = org.getOrgCreditUsageType().getAnyResultCredit();
             boolean isUnlimited =    org.getOrgCreditUsageType().getUnlimited();         
 
