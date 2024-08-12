@@ -14,7 +14,7 @@ public enum RcCheckStatusType
     CREATED(0,"Created", "rccst.created"),
     SENT(10,"Sent", "rccst.sent"),
     STARTED(20,"Started", "rccst.started"),
-    //PARTIALLY_COMPLETED(100,"Partially Completed", "rccst.partiallycompleted"),
+    // PARTIALLY_COMPLETED(100,"Partially Completed", "rccst.partiallycompleted"),
     COMPLETED(101,"Completed", "rccst.completed"),
     //PARTIALLY_SCORED(110,"Partially Scored", "rccst.partiallyscored"),
     //SCORED(111,"Scored", "rccst.scored"),

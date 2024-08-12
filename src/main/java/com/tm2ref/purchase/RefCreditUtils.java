@@ -12,6 +12,7 @@ import com.tm2ref.entity.user.User;
 import com.tm2ref.global.Constants;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import com.tm2ref.ref.RcCheckLogUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.service.EmailConstants;
 import com.tm2ref.service.EmailUtils;
@@ -169,14 +170,13 @@ public class RefCreditUtils {
             if( rc==null )
                 throw new Exception( "RcCheck is null. OrgId=" + (o==null ? "null" : o.getOrgId() + " " +o.getName()) );
                     
-            if( o==null && (rc!=null ) )
+            if( o==null )
             {
                     if( userFacade==null )
                         userFacade = UserFacade.getInstance();
                     o = userFacade.getOrg(rc.getOrgId() );
 
-                    if( rc!=null )
-                        rc.setOrg(o);
+                    rc.setOrg(o);
             }
 
             if( rc==null )
@@ -187,8 +187,7 @@ public class RefCreditUtils {
 
             if( rc.getOrg()!=null && rc.getOrg().getOrgCreditUsageType().getUnlimited() && rc.getOrg().getOrgCreditUsageEndDate()!=null && rc.getOrg().getOrgCreditUsageEndDate().after( new Date() ) )
                 return;
-        
-                        
+                                
             if( o.getOrgCreditUsageType().getUnlimited() )
             {
                 if( o.getOrgCreditUsageEndDate()!=null && o.getOrgCreditUsageEndDate().before( new Date() ) )
@@ -275,14 +274,22 @@ public class RefCreditUtils {
                 rc.setCreditIndex( credit.getInitialCount() - credit.getRemainingCount() );
                 if( rcFacade==null )
                     rcFacade = RcFacade.getInstance();
-                rcFacade.saveRcCheck(rc, false);                
-
-                LogService.logIt("RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );
+                rcFacade.saveRcCheck(rc, false);    
                 
+                if( rc.getCreditId()>0 && rc.getCreditIndex()<=0 )
+                {
+                    String logMsg = "Tm2Ref.chargeCreditsIfNeeded() TTT.1 creditId=" + rc.getCreditId() + " but creditIndex=" + rc.getCreditIndex() + ". This indicates a credit overage was added to this credit record for this RcCheck.";
+                    RcCheckLogUtils.createRcCheckLogEntry( rc.getRcCheckId(), rater==null ? 0 : rater.getRcRaterId(), 1, logMsg, null, null);                    
+                    
+                }
+
+                LogService.logIt("RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );                
             }
         }
         catch( STException e )
         {
+            String logMsg = "Tm2Ref.chargeCreditsIfNeeded() XXX.1 " + e.toString();
+            RcCheckLogUtils.createRcCheckLogEntry( rc.getRcCheckId(), rater==null ? 0 : rater.getRcRaterId(), 1, logMsg, null, null);                    
             try
             {
                 performCreditsNotification(o.getOrgId(), -1, rc, rater);                    
@@ -296,6 +303,8 @@ public class RefCreditUtils {
         }
         catch( Exception e )
         {
+            String logMsg = "Tm2Ref.chargeCreditsIfNeeded() XXX.2 " + e.toString();
+            RcCheckLogUtils.createRcCheckLogEntry( rc.getRcCheckId(), rater==null ? 0 : rater.getRcRaterId(), 0, logMsg, null, null);                    
             LogService.logIt(e, "RefCreditUtils.chargeCreditsIfNeeded() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) );   
             throw new STException( e.getMessage() );
         }
@@ -316,7 +325,7 @@ public class RefCreditUtils {
 
         int charged = 0;
 
-        int chgThisCredit = 0;
+        int chgThisCredit;
 
         Credit lastCredit = null;
 
@@ -337,7 +346,7 @@ public class RefCreditUtils {
 
                 c.setRemainingCount( c.getInitialCount() - c.getUsedCount() );
 
-                if( c.getRemainingCount() < 0 )
+                if( c.getRemainingCount()<0 )
                     c.setRemainingCount( 0 );
 
                 if( c.getRemainingCount()==0 )
@@ -352,7 +361,7 @@ public class RefCreditUtils {
 
                 charged += chgThisCredit;
 
-                if( charged >= qua )
+                if( charged>=qua )
                     break;
             }
         }
@@ -392,7 +401,7 @@ public class RefCreditUtils {
                 purchaseFacade.saveCredit( lastCredit );
             }
             else
-                LogService.logIt("PurchaseFacade.chargeCredit( " + orgId + " ) Cannot find a Credit Record to decrement for Result-Credit." );
+                LogService.logIt("PurchaseFacade.chargeCredit( " + orgId + " ) Cannot find a Credit Record to decrement for Result-Credit." );        
         }
         
         return lastCredit;

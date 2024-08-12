@@ -107,12 +107,13 @@ public class Credit implements Serializable, Comparable<Credit>
     @Transient
     private Locale locale;
 
+    @Override
     public int compareTo( Credit c )
     {
         if( createDate != null && c.getCreateDate() != null )
             return createDate.compareTo( c.getCreateDate() );
 
-        return new Long( creditId ).compareTo( new Long( c.getCreditId() ) );
+        return Long.valueOf(creditId).compareTo(c.getCreditId());
     }
 
     public void appendNote( String msg )
@@ -130,6 +131,30 @@ public class Credit implements Serializable, Comparable<Credit>
     }
 
 
+    public synchronized boolean containsOverage( long rcCheckId )
+    {
+        if( this.note==null )
+            return false;
+        
+        return note.contains("OVRC:" + rcCheckId + ";");
+    }
+    
+    public synchronized void addOverage(long rcCheckId )
+    {
+        if( this.note==null )
+            note = "";
+                
+        else if( note.contains("OVRC:" + rcCheckId + ";") )
+            return;
+
+        if( note.length()>50000 )
+            note="";
+        
+        note += (!note.isBlank() && !note.endsWith(";") ? "; " : "" ) + "OVRC:" + rcCheckId + ";";
+    }
+
+    
+    
 
     public CreditStatusType getCreditStatusType()
     {
