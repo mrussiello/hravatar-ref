@@ -1201,7 +1201,7 @@ public class BaseRefUtils  extends FacesUtils
                 return RefPageType.EXPIRED.getPageFull(refUserType);
             }
 
-            if( rc.getRcCheckStatusType().getIsCancelled() || (refUserType.getIsRater() && rc.getRcRater().getRcRaterStatusType().getIsDeactivated()) )
+            if( rc.getRcCheckStatusType().getIsCancelled() || (refUserType.getIsRater() && rc.getRcRater()!=null && rc.getRcRater().getRcRaterStatusType().getIsDeactivated()) )
             {
                 if( getSessionListener() != null )
                     getSessionListener().updateStatus( getHttpSession().getId(), "Cancelled Page",null, null, rc, rc.getRcRater(), refUserType);
