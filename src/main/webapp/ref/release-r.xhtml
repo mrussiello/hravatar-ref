@@ -54,7 +54,7 @@
             <h:outputText value="#{stMessages['g.XCRelease']}"/>
         </div>
 
-        <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:650px;max-height:400px;overflow-y: scroll;padding:5px;margin:15px auto">
+        <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:800px;max-height:2000px;overflow-y: scroll;padding:5px;margin:15px auto">
         <h:panelGrid rendered="#{refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
         
             <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customReleaseXhtml}" escape="false"/>
@@ -85,19 +85,23 @@
                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
             </h:outputFormat>
             
+            <!--
             <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4']}" escape="false">
                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
             </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4.employee']}" escape="false">
+            -->
+            <h:outputText styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.P6']}" escape="false"/>
+                                    
+            <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
+                <f:param value="#{userBean.baseAdminDomain}"/>
+            </h:outputFormat>
+
+            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P5']}" escape="false">
                 <f:param value="#{refBean.rcCheck.org.name}"/>
                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
             </h:outputFormat>
 
-            <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
-                <f:param value="#{userBean.baseAdminDomain}"/>
-            </h:outputFormat>
-            
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P5']}" escape="false">
+            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4.employee']}" escape="false">
                 <f:param value="#{refBean.rcCheck.org.name}"/>
                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
             </h:outputFormat>
