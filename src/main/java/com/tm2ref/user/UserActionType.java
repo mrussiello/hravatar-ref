@@ -30,7 +30,9 @@ public enum UserActionType
     ACCOUNT_USER_CREATE(81,"Account User Creation" ),
     SENT_EMAIL_BLOCKED(82,"Sent Email Blocked" ),
     UNFINISHED_PURCHASE(83,"Unfinished Purchase" ),
-    UNFINISHED_REGISTRATION(84,"Unfinished Registration" );
+    UNFINISHED_REGISTRATION(84,"Unfinished Registration" ),
+    EMAIL_UNBLOCK(85,"Email Unblock" ),
+    ACCOUNT_USER_CHANGE(86,"Account User Infro Change" );
 
     private final int userActionTypeId;
 
