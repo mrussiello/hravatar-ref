@@ -37,72 +37,65 @@
             </h:outputFormat>            
         </div>
 
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:5px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
+        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:0px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
 
             <ref:item-infoquestion />
             
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeNumRatingB}">
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                                      
-                    <div id="anchordivouter" class="anchordivouter customanchordivouter">
-                        <div id="lowanchordiv" class="lowanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
-                            <h:outputText value="#{raterRefBean.rcItem.choice2}"/>
+                                                
+                        <div style="width:740px;padding-left:110px;padding-right:110px;margin-top:5px;margin-bottom:0px;vertical-align:bottom;display:table-cell">
+                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;float:left;text-align:left">
+                                <h:outputText value="#{raterRefBean.rcItem.choice2}"/>
+                            </div>
+                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice4) gt 0}">
+                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
+                                <h:outputText value="#{raterRefBean.rcItem.choice4}"/>
+                            </div>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice3) gt 0}">
+                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
+                                <h:outputText value="#{raterRefBean.rcItem.choice3}"/>
+                            </div>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice5) gt 0}">
+                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
+                                <h:outputText value="#{raterRefBean.rcItem.choice5}"/>
+                            </div>
+                            </ui:fragment>
+                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;float:right;text-align:right;">
+                                <h:outputText value="#{raterRefBean.rcItem.choice1}"/>
+                            </div>                            
                         </div>
-                        <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice4) gt 0}">
-                        <div id="lowmedanchordiv" class="lowmedanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
-                            <h:outputText value="#{raterRefBean.rcItem.choice4}"/>
+                                                
+                        <div style="width:800px;padding-left:80px;padding-right:80px;margin-top:5px;margin-bottom:0px;">
+                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px" alt=""/>
+                            <div id="sliderelediv" style="float:left;width:520px;height:95px;margin-top:0px;margin-left:0px;padding-top:35px">                                
+                                <p:selectOneRadio rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.scoreInteger}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+                                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
+                                </p:selectOneRadio>
+                                
+                                <p:selectOneRadio rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.score}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+                                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
+                                </p:selectOneRadio>
+                                
+                            </div>
+                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px" alt=""/>
                         </div>
-                        </ui:fragment>
-                        <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice3) gt 0}">
-                        <div id="medanchordiv" class="medanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
-                            <h:outputText value="#{raterRefBean.rcItem.choice3}"/>
-                        </div>
-                        </ui:fragment>
-                        <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice5) gt 0}">
-                        <div id="medhighanchordiv" class="medhighanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
-                            <h:outputText value="#{raterRefBean.rcItem.choice5}"/>
-                        </div>
-                        </ui:fragment>
-                        <div id="highanchordiv" class="highanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
-                            <h:outputText value="#{raterRefBean.rcItem.choice1}"/>
-                        </div>
-                    </div>
-
-                    <div id="trackdivouter" style="width:740px;margin-top:5px;margin-bottom:0px;margin-left:auto;margin-right:auto">
-                        
-                        <img id="thumbsdownimg" class="thumbsdownimg" src="/tr/images/thumbsdown-trans.png" alt=""/>
-                        
-                        <div id="sliderelediv" style="float:left;width:570px;margin-top:0px;margin-left:25px">
-                            
-                                <ui:fragment rendered="#{raterRefBean.rcItem.denyMiddleB}">
-                                    <img id="trackbarimg" src="/tr/images/trackbar-no-neutral.png" style="width:570px;height:95px" alt="#{stMessages['g.SliderTrackAlt']}"/>                        
-                                </ui:fragment>
-                                <ui:fragment rendered="#{not raterRefBean.rcItem.denyMiddleB}">
-                                    <img id="trackbarimg" src="/tr/images/trackbar.png" style="width:570px;height:95px" alt="#{stMessages['g.SliderTrackAlt']}"/>                        
-                                </ui:fragment>                                                        
-                        </div>
-                        
-                        <img id="thumbsupimg" class="thumbsupimg" src="/tr/images/thumbsup-trans.png" alt=""/>
-                    </div>
-                        
                     </div>
                 </div>
             </h:panelGroup>
             
             <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.noCommentsRatingItemsB or not raterRefBean.rcItem.includeNumRatingB}">
-                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>                
+            <ref:item-comments avCommentsOk="false" />
             </h:panelGroup>
 
-            
-            <!--
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments le 0 or (refBean.rcCheck.rcScript.noCommentsRatingItemsB and raterRefBean.rcItem.includeNumRatingB)}">
                 <div>
                     &#160;
                 </div>
             </h:panelGroup>
-            -->
-            
             
             <h:panelGroup>
                 <div style="text-align: center">
@@ -121,7 +114,7 @@
                 </div>
             </h:panelGroup>
 
-            <ref:item-skipbutton showToggleAccessible="#{raterRefBean.rcItem.includeNumRatingB}"/>
+            <ref:item-skipbutton showToggleAccessible="#{raterRefBean.rcItem.includeNumRatingB and refBean.accessibleActive and not facesUtils.isMsieOrSamsungAndroid}" />
             
         </h:panelGrid>
     
@@ -136,15 +129,10 @@
                 </h:panelGrid>
                 </div>
         </p:dialog>
-    
-        <ref:avcomments-dialog />
-    
-    </h:form>
         
+    </h:form>
         <ref:avcomments-uploadform />
     </div>
-    
-    
 
     <br />&#160;
 

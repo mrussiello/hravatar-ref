@@ -22,9 +22,9 @@
                         <p:outputLabel  rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbnotsamsung"/>
                         <p:outputLabel  rendered="#{facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbsamsung"/>
 
-                        <p:inputTextarea rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" id="cmntstbnotsamsung" styleClass="commenttextarea" style="width:550px" rows="4" autoResize="true" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" requiredMessage="#{stMessages['g.XRCommentsReqd']}" placeholder="#{raterRefUtils.commentsPlaceholderStr}">
+                        <p:inputTextarea rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" id="cmntstbnotsamsung" styleClass="commenttextarea" style="width:100%;max-width:550px" cols="50" rows="4" autoResize="true" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" requiredMessage="#{stMessages['g.XRCommentsReqd']}" placeholder="#{raterRefUtils.commentsPlaceholderStr}">
                         </p:inputTextarea>
-                        <p:inputTextarea rendered="#{facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" id="cmntstbsamsung" styleClass="commenttextarea" style="width:550px" rows="4" autoResize="false" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false">
+                        <p:inputTextarea rendered="#{facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" id="cmntstbsamsung" styleClass="commenttextarea" style="width:100%;max-width:550px" cols="50" rows="4" autoResize="false" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false">
                         </p:inputTextarea>
                         
                         
@@ -34,8 +34,8 @@
                         <ui:fragment rendered="#{cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk}">
                             <h:panelGrid columns="2">
 
-                                <p:inputTextarea rendered="#{not facesUtils.isMsieOrSamsungAndroid}" id="cmntstbnotsamsungav" styleClass="smalltextarea" style="width:450px" rows="4" autoResize="true" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" requiredMessage="#{stMessages['g.XRCommentsReqd']}" placeholder="#{raterRefUtils.commentsPlaceholderStr}"/>
-                                <p:inputTextarea rendered="#{facesUtils.isMsieOrSamsungAndroid}" id="cmntstbsamsungav" styleClass="smalltextarea" style="width:450px" rows="4" autoResize="false" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" />
+                                <p:inputTextarea rendered="#{not facesUtils.isMsieOrSamsungAndroid}" id="cmntstbnotsamsungav" styleClass="smalltextarea" style="width:100%;max-width:450px" cols="50" rows="4" autoResize="true" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" requiredMessage="#{stMessages['g.XRCommentsReqd']}" placeholder="#{raterRefUtils.commentsPlaceholderStr}"/>
+                                <p:inputTextarea rendered="#{facesUtils.isMsieOrSamsungAndroid}" id="cmntstbsamsungav" styleClass="smalltextarea" style="width:100%;max-width:450px" cols="50" rows="4" autoResize="false" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" />
                                 
                                 <h:panelGroup>
                                     <div style="text-align:center;padding-left:10px;padding-top:20px">

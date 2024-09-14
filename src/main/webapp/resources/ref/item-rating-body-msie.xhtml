@@ -44,45 +44,145 @@
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeNumRatingB}">
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                                                
-                        <div style="width:740px;padding-left:110px;padding-right:110px;margin-top:5px;margin-bottom:0px;vertical-align:bottom;display:table-cell">
-                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;float:left;text-align:left">
-                                <h:outputText value="#{raterRefBean.rcItem.choice2}"/>
+                                     
+                        <p:selectOneRadio id="customRadio" rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.scoreInteger}" styleClass="ttformtext" layout="custom" required="false">                
+                            <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
+                        </p:selectOneRadio>
+
+                        <p:selectOneRadio id="customRadioDiscrete" rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.score}" styleClass="ttformtext" layout="custom" required="false">                
+                            <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
+                        </p:selectOneRadio>
+                        
+                        
+                        <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown rpnlthumbtd,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolthumbup rpnlthumbtd">
+
+                        <!-- First Row Anchors -->
+                        <h:panelGroup>
+                        <!-- EMPTY -->&#160;
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span id="lowanchordiv">
+                                <h:outputLabel rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb0" value="#{raterRefBean.rcItem.choice2}"/>
+                                <h:outputLabel rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb0d" value="#{raterRefBean.rcItem.choice2}"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span id="lowmedanchordiv">
+                                <h:outputLabel rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb1" value="#{raterRefBean.rcItem.choice4}"/>
+                                <h:outputLabel rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb1d" value="#{raterRefBean.rcItem.choice4}"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span id="medanchordiv">
+                                <h:outputLabel rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb2" value="#{raterRefBean.rcItem.choice3}"/>
+                                <h:outputLabel rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb2d" value="#{raterRefBean.rcItem.choice3}"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span id="medhighanchordiv">
+                                <h:outputLabel rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb3" value="#{raterRefBean.rcItem.choice5}"/>
+                                <h:outputLabel rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb3d" value="#{raterRefBean.rcItem.choice5}"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span id="highanchordiv">
+                                <h:outputLabel rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb4" value="#{raterRefBean.rcItem.choice1}"/>
+                                <h:outputLabel rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" styleClass="prottext ttformtext" for="rtgrb4d" value="#{raterRefBean.rcItem.choice1}"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <!-- EMPTY -->&#160;
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+                        
+                       
+                    <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;margin-top:6px" columnClasses="rpnlcolthumbdown rpnlthumbtd,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolthumbup rpnlthumbtd">
+                        
+
+                        <!-- Second Row -->
+                        <h:panelGroup>
+                            <div id="thumbsdowndiv" style="position:absolute">
+                            <img id="thumbsdownimg" src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:-5px" alt=""/>
                             </div>
-                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice4) gt 0}">
-                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
-                                <h:outputText value="#{raterRefBean.rcItem.choice4}"/>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px;padding-left:20px">
+                            <p:radioButton id="rtgrb0"  for="customRadio" itemIndex="0"/>
                             </div>
-                            </ui:fragment>
-                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice3) gt 0}">
-                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
-                                <h:outputText value="#{raterRefBean.rcItem.choice3}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb1"  for="customRadio" itemIndex="1"/>
                             </div>
-                            </ui:fragment>
-                            <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice5) gt 0}">
-                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;margin-left:10px;float:left;text-align:center">
-                                <h:outputText value="#{raterRefBean.rcItem.choice5}"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px;">
+                            <p:radioButton id="rtgrb2"  for="customRadio" itemIndex="2"/>
                             </div>
-                            </ui:fragment>
-                            <div class="ttformtext" style="width:#{raterRefBean.rcItem.anchorwidthPixMsie}px;float:right;text-align:right;">
-                                <h:outputText value="#{raterRefBean.rcItem.choice1}"/>
-                            </div>                            
-                        </div>
-                                                
-                        <div style="width:800px;padding-left:80px;padding-right:80px;margin-top:5px;margin-bottom:0px;">
-                            <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:16px" alt=""/>
-                            <div id="sliderelediv" style="float:left;width:520px;height:95px;margin-top:0px;margin-left:0px;padding-top:35px">                                
-                                <p:selectOneRadio rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.scoreInteger}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
-                                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
-                                </p:selectOneRadio>
-                                
-                                <p:selectOneRadio rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}" value="#{raterRefBean.rcItemWrapper.rcRating.score}" styleClass="ttformtext" layout="lineDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
-                                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
-                                </p:selectOneRadio>
-                                
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb3" for="customRadio" itemIndex="3"/>
                             </div>
-                            <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:16px" alt=""/>
-                        </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb4" for="customRadio" itemIndex="4"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb0d"  for="customRadioDiscrete" itemIndex="0"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb1d"  for="customRadioDiscrete" itemIndex="1"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px;">
+                            <p:radioButton id="rtgrb2d"  for="customRadioDiscrete" itemIndex="2"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb3d" for="customRadioDiscrete" itemIndex="3"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
+                            <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px">
+                            <p:radioButton id="rtgrb4d" for="customRadioDiscrete" itemIndex="4"/>
+                            </div>
+                        </h:panelGroup>
+                        
+                        
+                        <h:panelGroup>
+                            <div id="thumbsupdiv" style="position:absolute;margin-left:20px">
+                            <img id="thumbsupimg" src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:-5px" alt=""/>
+                            </div>
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+                        
                     </div>
                 </div>
             </h:panelGroup>

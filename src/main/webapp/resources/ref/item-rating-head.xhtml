@@ -16,6 +16,94 @@
         {
             vertical-align: middle;
         }
+        
+        .prottext 
+        {
+            user-select: none;
+        }
+        .anchordivouter
+        {
+            width:740px;margin-top:5px;margin-bottom:5px;vertical-align:bottom;display:table-cell
+        }
+
+        .lowanchordiv
+        {
+            float:left;
+            text-align:left;
+        }
+        .lowmedanchordiv
+        {
+            margin-left:10px;
+            float:left;
+            text-align:center;
+        }
+        .medanchordiv
+        {
+            margin-left:10px;
+            float:left;
+            text-align:center;
+        }
+        .medhighanchordiv
+        {
+            margin-left:10px;
+            float:left;
+            text-align:center;
+        }
+        .highanchordiv
+        {
+            float:right;
+            margin-left:10px;
+            text-align:right;
+        }
+
+        .thumbsdownimg
+        {
+            float:left;
+            width:60px;
+            height:60px;
+            margin-top:16px;
+        }
+
+        .thumbsupimg
+        {
+            float:right;
+            width:60px;
+            height:60px;
+            margin-top:16px;
+        }
+        
+        
+        
+        @media(max-width: 739px)
+        {
+            #lowmedanchordiv
+            {
+                display:none;
+            }
+            #medanchordiv
+            {
+                display:none;
+            }
+            #medhighanchordiv
+            {
+                display:none;
+            }  
+        }        
+
+        @media(max-width: 600px)
+        {
+            #lowanchordiv
+            {
+                font-size:1rem;
+            }
+            
+            
+            #highanchordiv
+            {
+                font-size:1rem;
+            }            
+        }  
+                
     </style> 
     <script type="text/javascript">
         //<![CDATA[
@@ -28,6 +116,68 @@
             // window.addEventListener( 'mousemove', function(){isMouse=true;} );
             
             // logIt( 'doLocalPageOnload() isPointer=' + isPointer + ', isTouch=' + isTouch + ', isMouse=' + isMouse + ', needsSlider=' + needsSlider );
+            
+            // adjust sizes based on media queries
+            var twid = window.innerWidth;
+
+            if( twid<739 )
+            {
+                var aboxwid = Math.max(340,twid-20);
+
+                var awid = (aboxwid/2)-20;
+
+                var sboxwid = Math.max(240,twid-120);
+
+                document.getElementById('anchordivouter').style.width=aboxwid + 'px';
+
+                document.getElementById('trackdivouter').style.width=aboxwid + 'px';
+
+                document.getElementById('lowanchordiv').style.width=awid + 'px';
+                document.getElementById('highanchordiv').style.width=awid + 'px';
+
+                var sldrRelEle = document.getElementById('sliderelediv');
+                sldrRelEle.style.width=sboxwid + 'px';
+                sldrRelEle.style.marginLeft=0;
+
+                var trkEleImg = document.getElementById('trackbarimg');
+
+                trkEleImg.style.maxWidth=sboxwid + 'px';
+                trkEleImg.style.maxHeight=parseInt( 95*sboxwid/570 ) + 'px';
+
+                trackWid = trkEleImg.getBoundingClientRect().width;
+                trackHgt = trkEleImg.getBoundingClientRect().height;
+
+                var thumbWid = Math.max( 34, parseInt(48*trackWid/570) );
+                var thumbMarg = parseInt( 16*trackHgt/95 );
+
+                var tes = document.getElementById('thumbsdownimg').style;
+                tes.marginTop=thumbMarg + 'px';
+                tes.width=thumbWid + 'px';
+                tes.height=thumbWid + 'px';
+
+                tes = document.getElementById('thumbsupimg').style;
+                tes.marginTop=thumbMarg + 'px';
+                tes.width=thumbWid + 'px';
+                tes.height=thumbWid + 'px';
+
+                var topMarg = parseInt( (2*thumbMarg + thumbWid - trackHgt)/2 );
+
+                var leftMrg = parseInt( (aboxwid - sboxwid - 2*thumbWid)/2 );
+
+                trkEleImg.style.marginTop=topMarg + 'px';
+                trkEleImg.style.marginLeft=leftMrg + 'px';
+
+                sliderWid = parseInt( 48*sboxwid/570 );
+                sliderHgt = sliderWid;
+
+                //var lowerThumbsDiv = document.getElementById('lowerthumbsdivouter');                    
+                //lowerThumbsDiv.style.width=aboxwid + 'px';
+                //lowerThumbsDiv.style.display = 'table-cell';
+
+                logIt( 'item-rating-head.xhtml.doLocalPageOnload() twid=' + twid + ', adjusting values. aboxwid=' + aboxwid + ', sliderWid=' + sliderWid + ', trackimgwid=' + trackWid + ', trackimghgt=' + trackHgt );            
+            }
+            
+            
             
             if( needsSlider )
                 setupSlider();
@@ -179,10 +329,19 @@
                     sliderEle.setAttribute( 'src' , '/tr/images/slider.png' );
                     var ses = sliderEle.style;
                     ses.position='absolute';
-                    ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
-                    ses.width='48px';
-                    ses.height='48px';
+
+                    var sldrTop = parseInt( (trackHgt - sliderHgt)/2);                
+                    ses.top= (trackPos.y + sldrTop + window.pageYOffset) + 'px';
+                    ses.width=sliderWid + 'px';
+                    ses.height=sliderWid + 'px';
                     ses.cursor='move';
+        
+        
+                    
+                    //ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
+                    //ses.width='48px';
+                    //ses.height='48px';
+                    //ses.cursor='move';
 
                     if( isTouch )
                         sliderEle.addEventListener( 'touchstart' , function(e){e.preventDefault();msDnList(e);}, true); 

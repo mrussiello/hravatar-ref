@@ -114,7 +114,7 @@
 
             <p:inputText id="referralformmbl" size="18" value="#{raterRefBean.referralUser.mobilePhone}" placeholder="#{stMessages['g.MobilePhone']}"/>
 
-            <p:inputTextarea id="referralformnote" rows="3" cols="30" value="#{raterRefBean.referralNotes}" placeholder="#{stMessages['g.NoteToEmployer']}" />
+            <p:inputTextarea id="referralformnote" rows="3" cols="30" style="width:100%;max-width:400px" value="#{raterRefBean.referralNotes}" placeholder="#{stMessages['g.NoteToEmployer']}" />
             
             <p:commandButton ajax="false" action="#{raterRefUtils.processCreateReferral}" title="#{stMessages['g.XRCreateReferralInfo']}" value="#{stMessages['g.XRCreateReferral']}"/>
             

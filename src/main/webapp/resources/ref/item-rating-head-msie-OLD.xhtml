@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<!-- INTERFACE -->
+<cc:interface>
+    <!-- <cc:attribute name="value" required="false"/> -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+    <style>
+        .pincolclass
+        {
+            vertical-align: middle;
+        }
+        
+        .rpnlcolthumbdown
+        {
+            min-width:80px;
+        }
+        
+        .rpnlcol1
+        {
+            padding:10px 0 0 0;  
+            text-align:center;
+            vertical-align:middle;
+            width:160px;
+        }
+        
+        .rpnlcol2
+        {
+            padding:10px 0 0 0;            
+            text-align:center;
+            vertical-align:middle;
+            width:160px;
+        }
+        
+        .rpnlcol3
+        {
+            padding:10px 0 0 0;
+            text-align:center;
+            vertical-align:middle;
+            width:160px;
+            
+        }
+        
+        .rpnlcol4
+        {
+            padding:10px 0 0 0;
+            text-align:center;
+            vertical-align:middle;
+            width:160px;
+            
+        }
+        
+        .rpnlcol5
+        {
+            padding:10px 0 0 0;
+            text-align:center;
+            vertical-align:middle;            
+            width:160px;
+        }
+        
+        .rpnlcolthumbup
+        {
+            min-width:80px;
+        } 
+        
+    </style> 
+
+    <ui:fragment rendered="#{refBean.rcCheck.rcScript.rcRatingScaleType.isOneToFive}">
+    <style>
+        #sliderelediv
+        {
+            padding-left:40px;
+        }
+        .ui-radiobutton.ui-widget
+        {
+            width:60px;
+        }
+    </style> 
+    </ui:fragment>
+    
+    
+
+    <script type="text/javascript">
+        //<![CDATA[
+        
+        function doLocalPageOnload()
+        {
+            logIt( 'doLocalPageOnload() ' );
+        }
+        
+        function doLocalPageOnUnload()
+        {
+        }
+        
+        function doSkipButton()
+        {
+            skipped = true;
+        }
+        
+        function logIt( m )
+        {
+            console.log( 'item-rating.xhtml ' + m );
+        }
+
+        function logErr( e, m )
+        {
+            console.log( 'item-rating.xhtml ' + m + (e ? ", " + e.message + ",\n" + e.stack : "" ));
+        }
+    
+        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
+        
+        //////////////////////////////////////////////
+        // SLIDER VARIABLES
+        //////////////////////////////////////////////
+        var isPointer = false;
+        var isTouch = false;
+        var isMouse = false;
+        
+        var needsSlider = #{raterRefBean.rcItem.includeNumRatingB};
+        
+        var sliderUrl = '/tr/images/slider.png';
+        var trackEle = null;
+        var trackWid = 570;
+        var trackHgt = 95;
+        var trkMargin = 0;
+        var vertOffset = 5;
+        var trackLeft = 0;
+        var trackRight = 0;
+        var trackPos = null;
+        var sliderDiv = null;
+        var sliderEle = null;
+        var sliderWid = 48;
+        var sliderHgt = 48;
+        var dragRect = null;
+        var middleX = 0;
+        var middleY = 0;
+        
+        var valueLeft = #{refBean.rcCheck.rcScript.rcRatingScaleType.minScore};
+        var valueRight = #{refBean.rcCheck.rcScript.rcRatingScaleType.maxScore};
+        
+        var hasPrev = false;
+        var prev = #{raterRefBean.rcItemWrapper.rcRating.score};
+        
+        var msOutTmout=0;
+        var msOvrListRef=null;
+        var msMvListRef=null;
+        var msUpListRef=null;
+        var msDnX = 0;
+        var msDnY = 0;
+        
+        var dragng = false;
+        var stM = null;
+        var ptrId = 0
+        var rqdMsg = "#{stMessages['g.XRRatingReqd']}";
+        
+        var skipped = false;
+
+    
+        function doValidateRating()
+        {
+            logIt( 'doValidateRating() ' );
+            return false;
+        }
+    
+    // ]]>        
+    </script>
+
+
+</cc:implementation>
+</html>

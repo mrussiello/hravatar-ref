@@ -74,7 +74,7 @@
             </p:selectOneMenu>
 
             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.Note']}:" for="cfnotetb"/>
-            <p:inputTextarea id="cfnotetb" rows="3" styleClass="smalltextarea" style="width:450px" autoResize="true" value="#{refBean.strParam4}"/>
+            <p:inputTextarea id="cfnotetb" cols="50" rows="3" styleClass="smalltextarea" style="width:100%;max-width:450px" autoResize="true" value="#{refBean.strParam4}"/>
 
             <h:panelGroup></h:panelGroup>
             <p:commandButton ajax="false" action="#{refUtils.processConfirmFailFormSubmit}" value="#{stMessages['g.SubmitInfo']}">

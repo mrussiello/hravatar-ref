@@ -23,6 +23,71 @@
         {
             vertical-align: middle;
         }
+        
+        .refinputtextname
+        {
+            width:100%;
+            max-width:200px;
+        }
+        
+        .refinputtext
+        {
+            width:100%;
+            max-width:300px;
+            
+        }
+        
+        .reflabelcol
+        {
+            vertical-align:top;
+        }
+        
+        @media(max-width: 800px)
+        {            
+            .reffieldreqd
+            {
+                display:none;
+            }
+
+            .refinfobubble
+            {
+                display:none;
+            }
+
+            .refdatepicker
+            {
+                padding-top:2px;
+                padding-bottom:2px;
+            }            
+        } 
+        
+        @media(max-width: 620px)
+        {
+            
+            .reflabel
+            {
+                display:none;
+            }
+            
+            .reffieldreqd
+            {
+                display:none;
+            }
+
+            .refinfobubble
+            {
+                display:none;
+            }
+            
+            .refdatepicker
+            {
+                padding-top:0px;
+                padding-bottom:0px;
+            }            
+        } 
+        
+        
+        
     </style> 
     <script type="text/javascript">
         //<![CDATA[
@@ -68,30 +133,42 @@
         </div>
 
 
-        <h:panelGrid columns="3" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+        <h:panelGrid columns="3" columnClasses="pincolclass reflabelcol,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
 
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.Name']}:"/>
+            <h:outputText styleClass="ttformtext reflabel" value="#{stMessages['g.FirstName']}:"/>
             <h:panelGroup style="white-space:nowrap">
-                <p:inputText id="rffirstname" size="12" value="#{candidateRefBean.rcRater.user.firstName}" maxlength="250" placeholder="#{stMessages['g.FirstName']}"/>
+                <p:inputText id="rffirstname" styleClass="refinputtextname" size="18" value="#{candidateRefBean.rcRater.user.firstName}" maxlength="250" placeholder="#{stMessages['g.FirstName']}"/>
                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.FirstName']}" for="rffirstname"/>
-                &#160;
-                <p:inputText id="rflastname" size="18" value="#{candidateRefBean.rcRater.user.lastName}" maxlength="250" placeholder="#{stMessages['g.LastName']}"/>
-                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.FirstName']}" for="rflastname"/>
+                <span class="reffieldreqd">                    
                 &#160;
                 <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
+            </h:panelGroup>
+            <h:panelGroup></h:panelGroup>
+
+            <h:outputText styleClass="ttformtext reflabel" value="#{stMessages['g.LastName']}:"/>
+            <h:panelGroup style="white-space:nowrap">
+                <p:inputText id="rflastname" styleClass="refinputtextname" size="18" value="#{candidateRefBean.rcRater.user.lastName}" maxlength="250" placeholder="#{stMessages['g.LastName']}"/>
+                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="rflastname"/>
+                <span class="reffieldreqd">                    
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup></h:panelGroup>
             
-            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.Email']}:" for="rfemailtb"/>
+            <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.Email']}:" for="rfemailtb"/>
             <h:panelGroup style="white-space:nowrap">
-                <p:inputText id="rfemailtb" size="30" value="#{candidateRefBean.rcRater.user.email}" maxlength="250" placeholder="#{stMessages['g.Email']}"/>
+                <p:inputText id="rfemailtb" styleClass="refinputtext" size="30" value="#{candidateRefBean.rcRater.user.email}" maxlength="250" placeholder="#{stMessages['g.Email']}"/>
+                <span class="reffieldreqd">                    
                 &#160;
                 <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup></h:panelGroup>
 
-            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.MobilePhone']}:" for="rfrefmobile"/>
-            <p:inputText id="rfrefmobile" size="30" value="#{candidateRefBean.rcRater.user.mobilePhone}" maxlength="79" placeholder="#{stMessages['g.MobilePhone']}"/>
+            <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.MobilePhone']}:" for="rfrefmobile"/>
+            <p:inputText id="rfrefmobile" styleClass="refinputtext" size="30" value="#{candidateRefBean.rcRater.user.mobilePhone}" maxlength="79" placeholder="#{stMessages['g.MobilePhone']}"/>
             <h:panelGroup></h:panelGroup>
             
             <h:panelGroup rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and (refBean.rcCheck.noSendRaterCount le 0 or candidateRefBean.rcRater.raterNoSendB)}"></h:panelGroup>
@@ -101,62 +178,87 @@
                 <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.XCNoSend']}" for="rfrefnosendbx"/>
             </h:panelGroup>
             <h:panelGroup rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and (refBean.rcCheck.noSendRaterCount le 0 or candidateRefBean.rcRater.raterNoSendB)}">
+                <div class="refinfobubble">
                 <misc:infobubble theDivId="nosendraterinfodiv" theText="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
+                </div>
             </h:panelGroup>
             
-            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.Role']}:" for="rfrefrole"/>
+            <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.Role']}:" for="rfrefrole"/>
             <h:panelGroup style="white-space:nowrap">
-                <p:selectOneMenu id="rfrefrole" value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}">
+                <p:selectOneMenu id="rfrefrole" styleClass="refinputtext" value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}">
                     <f:selectItems value="#{candidateRefUtils.rcRaterRoleTypeSelectItemList}"/>
                 </p:selectOneMenu>
+                <span class="reffieldreqd">                    
                 &#160;
                 <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup>
+                <div class="refinfobubble">
                 <misc:infobubble theDivId="raterroleinfodiv" theText="#{stMessages['g.RoleInfo']}"/>
+                </div>
             </h:panelGroup>
 
-            <p:outputLabel rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.RCCompanyName']}:" for="refcompanyname"/>
+            <p:outputLabel rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext reflabel" value="#{stMessages['g.RCCompanyName']}:" for="refcompanyname"/>
             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
-                <p:inputText id="refcompanyname" value="#{candidateRefBean.rcRater.companyName}" size="30" required="true" requiredMessage="#{stMessages['g.RCCompanyNameReqd']}"/>
-                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+                <p:inputText id="refcompanyname" styleClass="refinputtext" value="#{candidateRefBean.rcRater.companyName}" size="30" required="true" requiredMessage="#{stMessages['g.RCCompanyNameReqd']}" placeholder="#{stMessages['g.RCCompanyName']}"/>
+                <span class="reffieldreqd">                    
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                <div class="refinfobubble">
                  <misc:infobubble theDivId="companynameinfo" theText="#{stMessages['g.RCCompanyNameInfo']}"/>
+                </div>
             </h:panelGroup>
 
             
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.RCObservationPeriod']}:"/>
+            <h:outputText styleClass="ttformtext reflabel" value="#{stMessages['g.RCObservationPeriod']}:"/>
             <h:panelGroup>
                 <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.From']}" for="reffrmfrom"/>&#160;
-                <p:datePicker id="reffrmfrom" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationStartDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodRqd']}"/>
+                <p:datePicker id="reffrmfrom" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationStartDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodRqd']}"/>
                 &#160;<p:outputLabel styleClass="ttformtext" value="#{stMessages['g.to']}" for="refformto"/>&#160;
-                <p:datePicker id="refformto" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
-                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+                <p:datePicker id="refformto" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" required="true" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
+                <span class="reffieldreqd">                    
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup>
+                <div class="refinfobubble">
                  <misc:infobubble theDivId="observationdatesinfo" theText="#{stMessages['g.RCObservationPeriodInfo']}"/>
+                </div>
             </h:panelGroup>
                         
-            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.Country']}:" for="rfrefcountrycode"/>
+            <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.Country']}:" for="rfrefcountrycode"/>
             <h:panelGroup style="white-space:nowrap">
                 <p:selectOneMenu id="rfrefcountrycode" value="#{candidateRefBean.rcRater.user.countryCode}">
                     <f:selectItems value="#{candidateRefUtils.countryCodeSelectItemList}"/>
                 </p:selectOneMenu>
+                <span class="reffieldreqd">                    
                 &#160;
                 <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup>
+                <div class="refinfobubble">
                 <misc:infobubble theDivId="countryinfodiv" theText="#{stMessages['g.CountryInfo']}"/>
+                </div>
             </h:panelGroup>
             
-            <p:outputLabel rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCRoleResp4Rater']}:" for="candroleresptb"/>
+            <p:outputLabel rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext reflabel" value="#{stMessages['g.XCRoleResp4Rater']}:" for="candroleresptb"/>
             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
-                <p:inputTextarea id="candroleresptb" rows="3" cols="35" maxlength="1999" autoResize="true" value="#{candidateRefBean.rcRater.candidateRoleResp}" required="true" requiredMessage="#{stMessages['g.XCRoleResp4RaterReqd']}"/>
-                &#160;<h:outputText style="color:red;font-weight:bold" value="*"/>
+                <p:inputTextarea id="candroleresptb" rows="3" cols="30" maxlength="1999" style="width:100%;max-width:450px" autoResize="true" value="#{candidateRefBean.rcRater.candidateRoleResp}" placeholder="#{stMessages['g.XCRoleResp4Rater']}" required="true" requiredMessage="#{stMessages['g.XCRoleResp4RaterReqd']}"/>
+                <span class="reffieldreqd">                    
+                &#160;
+                <h:outputText style="color:red;font-weight:bold" value="*"/>
+                </span>
             </h:panelGroup>
             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
+                <div class="refinfobubble">
                 <misc:infobubble theDivId="randrolerespinfo" theText="#{stMessages['g.XCRoleResp4RaterInfo']}"/>
+                </div>
             </h:panelGroup>
 
             
