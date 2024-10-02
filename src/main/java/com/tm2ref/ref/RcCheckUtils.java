@@ -1877,6 +1877,32 @@ public class RcCheckUtils {
         return s;
     }
     
+
+    public String performPostXhtmlSubstitutions( String s, RcCheck rc, RcRater rater, Locale locale )
+    {
+        if( s==null || s.isBlank() )
+            return s;
+        
+        if( locale==null )
+            locale=rc.getLocale();
+        if( locale==null )
+            locale = I18nUtils.getLocaleFromCompositeStr( rc.getLangCode() );
+        if( locale==null )
+            locale=Locale.US;
+        
+        s = StringUtils.replaceStr( s, "[CANDIDATEROLERESP]", rater!=null && rater.getCandidateRoleResp()!=null && !rater.getCandidateRoleResp().isBlank() ? rater.getCandidateRoleResp() : MessageFactory.getStringMessage(locale, "g.XRNoCandRoleRespFnd" ) );
+        s = StringUtils.replaceStr( s, "[CANDIDATEINPUTSTR1]", rc.getCandidateInputStr1() );
+        s = StringUtils.replaceStr( s, "[CANDIDATEINPUTSTR2]", rc.getCandidateInputStr2() );
+        s = StringUtils.replaceStr( s, "[CANDIDATEINPUTSTR3]", rc.getCandidateInputStr3() );
+        s = StringUtils.replaceStr( s, "[CANDIDATEINPUTSTR4]", rc.getCandidateInputStr4() );
+        s = StringUtils.replaceStr( s, "[CANDIDATEINPUTSTR5]", rc.getCandidateInputStr5() );
+        
+        if( rater!=null )
+            s = StringUtils.replaceStr( s, "[OBSERVATIONPERIOD]", getRaterObservationPeriod( rater, locale ) );
+
+        return s;
+    }
+
     
     
     public String getRaterObservationPeriod( RcRater rater, Locale locale )

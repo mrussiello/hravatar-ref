@@ -259,8 +259,12 @@ public class RefEntry
             rc.setRaterPhotoCaptureTypeId(rsop!=null && rsop.getRaterPhotoCaptureTypeId()>=0 ? rsop.getRaterPhotoCaptureTypeId() : rcop.getRaterPhotoCaptureTypeId() );
             rc.setAvCommentsTypeId( rcop.getAvCommentsTypeId() );
             rc.setMinSupervisors( rsop!=null && rsop.getMinSupervisors()>=0 ? rsop.getMinSupervisors() : rcop.getMinSupervisors());
-            rc.setMaxRaters( rsop!=null && rsop.getMaxRaters()>=0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
-            rc.setMinRaters( rsop!=null && rsop.getMinRaters()>=0 ? rsop.getMinRaters() : rcop.getMinRaters() );
+            rc.setMaxRaters( rsop!=null && rsop.getMaxRaters()>0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
+            rc.setMinRaters( rsop!=null && rsop.getMinRaters()>0 ? rsop.getMinRaters() : rcop.getMinRaters() );
+            
+            if( rc.getMinRaters()<=0 )
+                rc.setMinRaters(1);
+            
             rc.setSendDate( new Date() );
             rc.setFirstCandidateSendDate( new Date() );
             rc.setRcCandidateStatusTypeId( RcCandidateStatusType.STARTED.getRcCandidateStatusTypeId() );
@@ -389,7 +393,11 @@ public class RefEntry
             rcc.setAvCommentsTypeId( rcop.getAvCommentsTypeId() );
             rcc.setMinSupervisors( rsop!=null && rsop.getMinSupervisors()>=0 ? rsop.getMinSupervisors() : rcop.getMinSupervisors());
             rcc.setMaxRaters( rsop!=null && rsop.getMaxRaters()>=0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
-            rcc.setMinRaters( rsop!=null && rsop.getMinRaters()>=0 ? rsop.getMinRaters() : rcop.getMinRaters() );
+            rcc.setMinRaters( rsop!=null && rsop.getMinRaters()>0 ? rsop.getMinRaters() : rcop.getMinRaters() );
+            
+            if( rcc.getMinRaters()<=0 )
+                rcc.setMinRaters(1);
+            
             rcc.setSendDate( new Date() );
             rcc.setFirstCandidateSendDate( new Date() );
             rcc.setRcCandidateStatusTypeId( RcCandidateStatusType.STARTED.getRcCandidateStatusTypeId() );

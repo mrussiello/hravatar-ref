@@ -118,7 +118,10 @@ public class BaseRefUtils  extends FacesUtils
         s = rcCheckUtils.performSubstitutions( s, refBean.getRcCheck(), refBean.getRcCheck().getRcRater(), getLocale() );
 
         if( s.contains("<") && s.contains( ">" ) )
-            return StringUtils.addLineBreaksXhtml( s );
+            return s;
+        
+        // if( s.contains("<") && s.contains( ">" ) )
+        //    return StringUtils.addLineBreaksXhtml( s );
         return StringUtils.replaceStandardEntities(s);
     }
 
@@ -131,7 +134,7 @@ public class BaseRefUtils  extends FacesUtils
             r = getHttpServletRequest().getParameter(name);
             if( r==null || r.isBlank() )
                 return 0;
-            Float f = Float.parseFloat( r );
+            Float f = Float.valueOf( r );
             if( f.isNaN() )
             {
                 LogService.logIt( "BaseRefUtils.getUnencryptedFloatFmRequest() value is NaN, r=" + r + ", name=" + name );
