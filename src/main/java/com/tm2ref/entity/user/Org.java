@@ -135,11 +135,6 @@ public class Org implements Serializable
     @Column( name = "affiliatedemoacct" )
     private int affiliateDemoAcct;
 
-
-    //@Temporal(TemporalType.TIMESTAMP)
-    //@Column(name="orgcreditusagestartdate")
-    //private Date orgCreditUsageStartDate;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="orgcreditusageenddate")
     private Date orgCreditUsageEndDate;
@@ -152,68 +147,13 @@ public class Org implements Serializable
     private String defaultCorpErrorUrl;
 
 
-    //@Column(name="autotestverifyurl")
-    //private String autotestVerifyUrl;
 
-    //@Column(name="emailcandidateok")
-    //private int emailCandidateOk;
-
-    //@Column( name = "feedbackreportok" )
-    //private int feedbackReportOk = 0;
-    
-    //@Column(name="emaillogomessageok")
-    //private int emailLogoMessageOk;
-
-    //@Column(name="emailonettasklistok")
-    //private int emailOnetTaskListOk;
-
-    //@Column(name="emailactivitylistok")
-    //private int emailActivityListOk;
-
-    //@Column(name="emailoverallscoresok")
-    //private int emailOverallScoresOk;
-
-    //@Column(name="emailcompetencyscoresok")
-    //private int emailCompetencyScoresOk;
-
-    //@Column(name="emailtaskscoresok")
-    //private int emailTaskScoresOk;
-
-    //@Column(name="emailaltscoresok")
-    //private int emailAltScoresOk;
-    
-    // @Column(name="disablephoneautolinkage")
-    //private int disablePhoneAutoLinkage;
-
-    
-    //@Column(name="defaultmessagetext")
-    //private String defaultMessageText;
 
     @Column(name="emailresultsto")
     private String emailResultsTo;
 
     @Column(name="textresultsto")
     private String textResultsTo;
-
-    //@Column(name="findlyaccountcredentials")
-    //private String findlyAccountCredentials;
-
-    //@Column(name="findlyok")
-    //private int findlyOk;
-
-    
-    //@Column( name = "premprocok" )
-    //private int premProctoringOk;
-
-    
-    //@Column(name="unlimitedincludesvoicetests")
-    //private int unlimitedIncludesVoiceTests;
-
-    //@Column( name = "onlineproctoringtypeid" )
-    //private int onlineProctoringTypeId = 0;
-
-    //@Column(name="defaulttestkeyexpiredays")
-    //private int defaultTestKeyExpireDays;
 
     
     
@@ -224,47 +164,12 @@ public class Org implements Serializable
     private String reportFlags;
 
 
-    //@Column(name="directtestsuborgid")
-    //private int directTestSuborgId = 0;
-
-    //@Column(name="directtestuserid")
-    //private long directTestUserId = 0;
-
-    //@Column(name="testwelcomemessagetext")
-    //private String testWelcomeMessageText;
-
-    //@Column(name="testlogourl")
-    //private String testLogoUrl;
-
-    //@Column(name="reportlogourl")
-    // private String reportLogoUrl;
-
-    //@Column(name="defaultmaxadminsperperson")
-    //private int defaultMaxAdminsPerPerson;
-
-    //@Column(name="defaultmaxadminsmonths")
-    //private int defaultMaxAdminsMonths;
 
     
     
     @Column(name="hqcountry")
     private String hqCountry;
 
-    //@Column(name="percentilecountry")
-    //private String percentileCountry;
-
-    //@Column(name="campaigncode")
-    //private String campaignCode;
-       
-    /*
-     *  0=DEFAULT (enabled)
-     *  1=OFF - Never disable or turn off
-    */
-    //@Column( name = "autodisabletypeid" )
-    //private int autoDisableTypeId = 0;
-        
-    
-   
 
     @Transient
     private User adminUser;
