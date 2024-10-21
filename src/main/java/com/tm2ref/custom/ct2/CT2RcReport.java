@@ -29,14 +29,14 @@ public class CT2RcReport extends BaseRcReportTemplate implements ReportTemplate
         try
         {
             // LogService.logIt( "CTSelectionReport.generateReport() STARTING for " + reportData.getTestEvent().toString()  );
-            addCoverPage(true);
+            addCoverPageV2(true);
 
             addNewPage();
 
             addReportInfoHeader();
 
             // If not for Employee, but it's an Employee Feedback Report, place top/bottom at the top.
-            if( !devel && reportData.getRc().getRcCheckType().getIsEmployeeFeedback() )
+            if( 1==2 ||  (!devel && reportData.getRc().getRcCheckType().getIsEmployeeFeedback()) )
             {
                 addTopCompetenciesTable( true );
                 addTopCompetenciesTable( false );                
@@ -45,7 +45,7 @@ public class CT2RcReport extends BaseRcReportTemplate implements ReportTemplate
                 addTopItemsTable( false );                
 
             }
-            
+
             addCompetencySummaryTable();
                         
             addReferencesTable();

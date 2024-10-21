@@ -89,7 +89,7 @@
           <dependency>
               <groupId>org.primefaces</groupId>
               <artifactId>primefaces</artifactId>
-              <version>14.0.5</version>
+              <version>14.0.6</version>
 
               <type>jar</type>
               <classifier>jakarta</classifier>
@@ -261,6 +261,30 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb</groupId>
+                <artifactId>jaxb-maven-plugin</artifactId>
+                <version>4.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaIncludes>
+                                <include>jaxb/AssessmentResult/*.xsd</include>
+                            </schemaIncludes>
+                            <episodeFile>${project.build.directory}/generated-sources/xjc-AssessmentResult/META-INF/jaxb-AssessmentResult.episode</episodeFile>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-AssessmentResult</generateDirectory>
+                            <generatePackage>com.tm2ref.api</generatePackage>
+                        </configuration>
+                        <id>jaxb-generate-AssessmentResult</id>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>true</verbose>
+                </configuration>
             </plugin>
         </plugins>
     </build>

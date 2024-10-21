@@ -1,5 +1,7 @@
 package com.tm2ref.entity.event;
 
+import com.tm2ref.api.ApiType;
+import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.util.JsonUtils;
 import java.io.Serializable;
 import java.util.Date;
@@ -15,6 +17,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Entity
@@ -35,6 +39,9 @@ public class TestKey implements Serializable
     @Column( name = "statustypeid" )
     private int testKeyStatusTypeId;
 
+    @Column(name="testkeysourcetypeid")
+    private int testKeySourceTypeId;
+    
     @Column( name = "creditid" )
     private long creditId;
 
@@ -50,6 +57,13 @@ public class TestKey implements Serializable
     @Column( name = "userid" )
     private long userId = 0;
 
+    @Column( name = "productid" )
+    private int productId;
+
+    @Column( name = "producttypeid" )
+    private int productTypeId;
+
+    
     @Column( name = "authorizinguserid" )
     private long authorizingUserId = 0;
 
@@ -68,6 +82,15 @@ public class TestKey implements Serializable
     @Column(name="returnurl")
     private String returnUrl;
 
+    @Column(name="resultposturl")
+    private String resultPostUrl;
+
+    @Column(name="apitypeid")
+    private int apiTypeId;
+
+    @Column(name="resultposttypeid")
+    private int resultPostTypeId;
+
     @Column(name="customparameters")
     private String customParameters;
 
@@ -83,6 +106,60 @@ public class TestKey implements Serializable
     private TestKeyArchive testKeyArchive;
     
 
+    public TestKeyArchive getTestKeyArchiveToSave()
+    {
+        if( testKeyArchive==null )
+            return null;
+        
+        testKeyArchive.setTestKeyStatusTypeId(testKeyStatusTypeId);
+        return testKeyArchive;
+    }
+    
+    
+    
+    public Map<String,String> getBasicAuthParmsForResultsPost()
+    {
+        String s =  getCustomParameterValue( "basicAuthParmsForResultsPost" );
+
+        if( s == null || s.trim().isEmpty() )
+            return null;
+
+        String delim = ";";
+
+        if( !s.contains(";") && s.indexOf( ":" )>0 )
+            delim = ":";
+
+        String[] sa = s.split( delim );
+
+        if( sa.length<2 )
+            return null;
+
+        String un = sa[0].trim();
+        String pwd = sa[1].trim();
+
+        if( un.isEmpty() || pwd.isEmpty() )
+            return null;
+
+        Map<String,String> out = new HashMap<>();
+
+        out.put( "username", un );
+        out.put( "password", pwd );
+
+        return out;
+    }
+
+    public TestKeyStatusType getTestKeyStatusType()
+    {
+        return TestKeyStatusType.getValue( testKeyStatusTypeId );
+    }
+
+    
+    public ApiType getApiType()
+    {
+        return ApiType.getValue( apiTypeId );
+    }
+    
+    
     public int getRcScriptId()
     {
         return getIntCustomParameterValue( "rcscrpid" );
@@ -244,6 +321,54 @@ public class TestKey implements Serializable
 
     public void setCreditIndex(int creditIndex) {
         this.creditIndex = creditIndex;
+    }
+
+    public int getTestKeySourceTypeId() {
+        return testKeySourceTypeId;
+    }
+
+    public void setTestKeySourceTypeId(int testKeySourceTypeId) {
+        this.testKeySourceTypeId = testKeySourceTypeId;
+    }
+
+    public String getResultPostUrl() {
+        return resultPostUrl;
+    }
+
+    public void setResultPostUrl(String resultPostUrl) {
+        this.resultPostUrl = resultPostUrl;
+    }
+
+    public int getResultPostTypeId() {
+        return resultPostTypeId;
+    }
+
+    public void setResultPostTypeId(int resultPostTypeId) {
+        this.resultPostTypeId = resultPostTypeId;
+    }
+
+    public int getApiTypeId() {
+        return apiTypeId;
+    }
+
+    public void setApiTypeId(int apiTypeId) {
+        this.apiTypeId = apiTypeId;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getProductTypeId() {
+        return productTypeId;
+    }
+
+    public void setProductTypeId(int productTypeId) {
+        this.productTypeId = productTypeId;
     }
 
 

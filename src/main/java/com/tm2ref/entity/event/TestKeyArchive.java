@@ -41,6 +41,9 @@ public class TestKeyArchive implements Serializable
     @Column( name = "statustypeid" )
     private int testKeyStatusTypeId;
 
+    @Column(name="testkeysourcetypeid")
+    private int testKeySourceTypeId;
+    
     @Column( name = "creditid" )
     private long creditId;
 
@@ -53,6 +56,13 @@ public class TestKeyArchive implements Serializable
     @Column( name = "userid" )
     private long userId = 0;
 
+    @Column( name = "productid" )
+    private int productId;
+
+    @Column( name = "producttypeid" )
+    private int productTypeId;
+
+    
     @Column( name = "authorizinguserid" )
     private long authorizingUserId = 0;
 
@@ -71,6 +81,15 @@ public class TestKeyArchive implements Serializable
     @Column(name="returnurl")
     private String returnUrl;
 
+    @Column(name="resultposturl")
+    private String resultPostUrl;
+
+    @Column(name="apitypeid")
+    private int apiTypeId;
+    
+    @Column(name="resultposttypeid")
+    private int resultPostTypeId;
+    
     @Column(name="customparameters")
     private String customParameters;
 
@@ -98,6 +117,12 @@ public class TestKeyArchive implements Serializable
         tk.setTextResultsTo(textResultsTo);
         tk.setReturnUrl(returnUrl);
         tk.setCustomParameters(customParameters);
+        tk.setTestKeySourceTypeId(testKeySourceTypeId);
+        tk.setApiTypeId(apiTypeId);
+        tk.setResultPostTypeId(resultPostTypeId);
+        tk.setResultPostUrl(resultPostUrl);
+        tk.setProductId( productId);
+        tk.setProductTypeId(productTypeId);
         tk.setTestKeyArchive( this );
         return tk;
     }
@@ -220,6 +245,54 @@ public class TestKeyArchive implements Serializable
 
     public void setLastAccessDate(Date lastAccessDate) {
         this.lastAccessDate = lastAccessDate;
+    }
+
+    public int getTestKeySourceTypeId() {
+        return testKeySourceTypeId;
+    }
+
+    public void setTestKeySourceTypeId(int testKeySourceTypeId) {
+        this.testKeySourceTypeId = testKeySourceTypeId;
+    }
+
+    public String getResultPostUrl() {
+        return resultPostUrl;
+    }
+
+    public void setResultPostUrl(String resultPostUrl) {
+        this.resultPostUrl = resultPostUrl;
+    }
+
+    public int getResultPostTypeId() {
+        return resultPostTypeId;
+    }
+
+    public void setResultPostTypeId(int resultPostTypeId) {
+        this.resultPostTypeId = resultPostTypeId;
+    }
+
+    public int getApiTypeId() {
+        return apiTypeId;
+    }
+
+    public void setApiTypeId(int apiTypeId) {
+        this.apiTypeId = apiTypeId;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getProductTypeId() {
+        return productTypeId;
+    }
+
+    public void setProductTypeId(int productTypeId) {
+        this.productTypeId = productTypeId;
     }
 
 

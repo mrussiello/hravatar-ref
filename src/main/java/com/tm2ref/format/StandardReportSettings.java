@@ -176,6 +176,8 @@ public class StandardReportSettings implements ReportSettings
     public String videoCommentConvIconUrl;
     public String audioCommentIconUrl;
     public String videoCommentIconUrl;
+    
+    public Image hraCoverPageImage;
 
     
     public static String interviewStarFilename = "interview_star.png";
@@ -443,6 +445,8 @@ public class StandardReportSettings implements ReportSettings
             headerFontLargeWhite.setColor( whiteFontColor  );
 
 
+            hraCoverPageImage = reportData==null ? null : Image.getInstance(reportData.getHRACoverPageUrl() );
+            
             hraLogoBlackText = Image.getInstance( reportData.getHRALogoBlackTextUrl() );
             hraLogoWhiteText = Image.getInstance( reportData.getHRALogoWhiteTextUrl() );
             hraLogoBlackTextSmall= Image.getInstance( reportData.getHRALogoBlackTextSmallUrl() );
@@ -1345,6 +1349,10 @@ public class StandardReportSettings implements ReportSettings
     @Override
     public void setBarGraphCoreShade2(BaseColor o) {
         this.barGraphCoreShade2 = o;
+    }
+
+    public Image getHraCoverPageImage() {
+        return hraCoverPageImage;
     }
 
 

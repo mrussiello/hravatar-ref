@@ -240,6 +240,7 @@ public class RuntimeConstants
         cache.put("hraLogoBlackTextSmallFilename","hra-two-color-tagline-logo-trans-420.png"); 
         cache.put("hraLogoWhiteTextSmallFilename","hra-white-tagline-logo-trans-412.png");      
         
+        cache.put( "hraCoverPageFilename", "https://cfmedia-hravatar-com.s3.us-east-1.amazonaws.com/web/misc/report/cover-bg-1.png" );
         
         
         cache.put( "DefaultRcReportPrehire", 81 );

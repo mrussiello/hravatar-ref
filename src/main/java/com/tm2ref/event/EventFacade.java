@@ -1,5 +1,6 @@
 package com.tm2ref.event;
 
+import com.tm2ref.entity.event.TestEventLog;
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.event.TestKeyArchive;
 import com.tm2ref.entity.user.OrgAutoTest;
@@ -11,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.PersistenceContext;
+import java.util.Date;
 
 
 
@@ -101,4 +103,63 @@ public class EventFacade
         TestKeyArchive tka = this.getTestKeyArchive(testKeyId);
         return tka!=null ? tka.getTestKey() : null;        
     }
+    
+    public void saveTestKey( TestKey tk ) throws Exception
+    {
+        try
+        {
+            if( tk.getTestKeyId()<=0 )
+                throw new Exception( "TestKey.testKeyId is 0" );
+                        
+            em.merge(tk.getTestKeyArchive()==null ? tk : tk.getTestKeyArchiveToSave() );
+
+            // This causes any exceptions to be thrown here instead of in the EJB transaction.
+            // Makes it easier to figure out what went wrong.
+            em.flush();
+        }     
+        catch( Exception e )
+        {
+            LogService.logIt(e, "EventFacade.saveTestKey() " + tk.toString() );
+            throw new STException( e );
+        }
+    }    
+    
+
+    public void saveTestEventLog( TestEventLog tel )
+    {
+        try
+        {
+            if( tel.getLog()==null )
+                return; // tel;
+
+            //if( tel.getTestEventId()<=0 )
+            //    throw new Exception( "TestEventId=0" );
+
+            if( tel.getLogDate()==null )
+                tel.setLogDate( new Date() );
+
+            if( tel.getTestEventLogId() > 0 )
+            {
+                em.merge( tel );
+            }
+
+            else
+            {
+                // em.detach( tel );
+
+                em.persist( tel );
+            }
+
+            // This causes any exceptions to be thrown here instead of in the EJB transaction.
+            // Makes it easier to figure out what went wrong.
+            em.flush();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.saveTestEventLog() " + ( tel == null ? "testEvent is null" : tel.toString() ) );
+            // throw new STException( e );
+        }
+    }
+    
+    
 }

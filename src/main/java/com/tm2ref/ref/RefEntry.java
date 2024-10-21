@@ -189,34 +189,34 @@ public class RefEntry
             if( rcFacade==null )
                 rcFacade = RcFacade.getInstance();        
             
-            RcCheck rc = rcFacade.getRcCheckForTestKeyId(testKeyId);
-            if( rc!=null )
+            RcCheck rcx = rcFacade.getRcCheckForTestKeyId(testKeyId);
+            if( rcx!=null )
             {
-                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Found existing RC Check for testKeyId=" + testKeyId + ", rcCheckId=" + rc.getRcCheckId() );
-                return rc;
+                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Found existing RC Check for testKeyId=" + testKeyId + ", rcCheckId=" + rcx.getRcCheckId() );
+                return rcx;
             }
             
             LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() AAA Creating a new RcCheck. testKeyId=" + testKeyId );
             // get the test key
             EventFacade eventFacade = EventFacade.getInstance();
-            TestKey tk = eventFacade.getTestKey(testKeyId);
-            if( tk==null )
+            TestKey tkx = eventFacade.getTestKey(testKeyId);
+            if( tkx==null )
                 throw new Exception( "TestKey not found for TestKeyId=" + testKeyId );
             UserFacade userFacade = UserFacade.getInstance();
-            User user = userFacade.getUser( tk.getUserId() );
-            Org org = userFacade.getOrg( tk.getOrgId() );
-            RcOrgPrefs rcop = rcFacade.getRcOrgPrefsForOrgId( tk.getOrgId() );
+            User user = userFacade.getUser( tkx.getUserId() );
+            Org org = userFacade.getOrg( tkx.getOrgId() );
+            RcOrgPrefs rcop = rcFacade.getRcOrgPrefsForOrgId( tkx.getOrgId() );
             if( rcop==null )
             {
-                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Creating a new RcOrgPrefs for OrgId=" + tk.getOrgId() + ", testKeyId=" + testKeyId );
+                LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() Creating a new RcOrgPrefs for OrgId=" + tkx.getOrgId() + ", testKeyId=" + testKeyId );
                 rcop = new RcOrgPrefs();
             }
             
             RcSuborgPrefs rsop = null;            
-            if( tk.getSuborgId()>0 )
-                rsop = rcFacade.getRcSuborgPrefsForSuborgId(tk.getSuborgId() );
+            if( tkx.getSuborgId()>0 )
+                rsop = rcFacade.getRcSuborgPrefsForSuborgId(tkx.getSuborgId() );
             
-            int rcScriptId = tk.getRcScriptId();
+            int rcScriptId = tkx.getRcScriptId();
             if( rcScriptId<=0 )
                 throw new Exception( "RcScriptId invalid: " + rcScriptId );
 
@@ -226,67 +226,67 @@ public class RefEntry
                 throw new Exception( "RcScript not found." );
 
             
-            rc = new RcCheck();
-            rc.setUserId( tk.getUserId() );
-            rc.setOrgId( tk.getOrgId() );
-            rc.setSuborgId( tk.getSuborgId() );
-            rc.setTestKeyId(testKeyId);
-            rc.setRcScriptId(rcScriptId);
-            rc.setJobTitle( rcScript.getName() );
-            rc.setLangCode( rcScript.getLangCode() );
-            rc.setCreateDate( new Date() );
-            rc.setAdminUserId( tk.getAuthorizingUserId() );
-            rc.setRcCheckTypeId( RcCheckType.PREHIRE.getRcCheckTypeId() );
-            rc.setEmailResultsTo( tk.getEmailResultsTo() );
-            rc.setTextResultsTo( tk.getTextResultsTo() );
+            rcx = new RcCheck();
+            rcx.setUserId( tkx.getUserId() );
+            rcx.setOrgId( tkx.getOrgId() );
+            rcx.setSuborgId( tkx.getSuborgId() );
+            rcx.setTestKeyId(testKeyId);
+            rcx.setRcScriptId(rcScriptId);
+            rcx.setJobTitle( rcScript.getName() );
+            rcx.setLangCode( rcScript.getLangCode() );
+            rcx.setCreateDate( new Date() );
+            rcx.setAdminUserId( tkx.getAuthorizingUserId() );
+            rcx.setRcCheckTypeId( RcCheckType.PREHIRE.getRcCheckTypeId() );
+            rcx.setEmailResultsTo( tkx.getEmailResultsTo() );
+            rcx.setTextResultsTo( tkx.getTextResultsTo() );
             
             //if( (rc.getEmailResultsTo()!=null && !rc.getEmailResultsTo().isBlank()) || (rc.getTextResultsTo()!=null && !rc.getTextResultsTo().isBlank()) )
             //    rc.setDistributionTypeId( RcDistributionType.EACH_RATER.getRcDistributionTypeId() );
             
-            rc.setReturnUrl( tk.getReturnUrl() );
-            rc.setCreditId( tk.getCreditId() );
-            rc.setCreditIndex( tk.getCreditIndex() );
-            rc.setExtRef( tk.getExtRef() );
-            rc.setCorpId( rsop!=null && rsop.getCorpId()>=0 ? rsop.getCorpId() : rcop.getCorpId() );
-            rc.setCandidateCannotAddRaters( rsop!=null && rsop.getCandidateCannotAddRaters()>=0 ? rsop.getCandidateCannotAddRaters() : rcop.getCandidateCannotAddRaters() );
-            rc.setCollectCandidateRatings( rsop!=null && rsop.getCollectCandidateRatings()>=0 ? rsop.getCollectCandidateRatings() : rcop.getCollectCandidateRatings() );
+            rcx.setReturnUrl( tkx.getReturnUrl() );
+            rcx.setCreditId( tkx.getCreditId() );
+            rcx.setCreditIndex( tkx.getCreditIndex() );
+            rcx.setExtRef( tkx.getExtRef() );
+            rcx.setCorpId( rsop!=null && rsop.getCorpId()>=0 ? rsop.getCorpId() : rcop.getCorpId() );
+            rcx.setCandidateCannotAddRaters( rsop!=null && rsop.getCandidateCannotAddRaters()>=0 ? rsop.getCandidateCannotAddRaters() : rcop.getCandidateCannotAddRaters() );
+            rcx.setCollectCandidateRatings( rsop!=null && rsop.getCollectCandidateRatings()>=0 ? rsop.getCollectCandidateRatings() : rcop.getCollectCandidateRatings() );
             
             // LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() rsop=" + (rsop==null ? "null" : "not null, distid=" + rsop.getDistributionTypeId() ) + ", rcop.distid=" + rcop.getDistributionTypeId() );
             
-            rc.setDistributionTypeId( rsop!=null && rsop.getDistributionTypeId()>=0 ? rsop.getDistributionTypeId() : rcop.getDistributionTypeId() );
-            rc.setReminderTypeId( rsop!=null && rsop.getReminderTypeId()>=0 ? rsop.getReminderTypeId() : rcop.getReminderTypeId() );
-            rc.setCandidatePhotoCaptureTypeId(rsop!=null && rsop.getCandidatePhotoCaptureTypeId()>=0 ? rsop.getCandidatePhotoCaptureTypeId() : rcop.getCandidatePhotoCaptureTypeId() );
-            rc.setRaterPhotoCaptureTypeId(rsop!=null && rsop.getRaterPhotoCaptureTypeId()>=0 ? rsop.getRaterPhotoCaptureTypeId() : rcop.getRaterPhotoCaptureTypeId() );
-            rc.setAvCommentsTypeId( rcop.getAvCommentsTypeId() );
-            rc.setMinSupervisors( rsop!=null && rsop.getMinSupervisors()>=0 ? rsop.getMinSupervisors() : rcop.getMinSupervisors());
-            rc.setMaxRaters( rsop!=null && rsop.getMaxRaters()>0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
-            rc.setMinRaters( rsop!=null && rsop.getMinRaters()>0 ? rsop.getMinRaters() : rcop.getMinRaters() );
+            rcx.setDistributionTypeId( rsop!=null && rsop.getDistributionTypeId()>=0 ? rsop.getDistributionTypeId() : rcop.getDistributionTypeId() );
+            rcx.setReminderTypeId( rsop!=null && rsop.getReminderTypeId()>=0 ? rsop.getReminderTypeId() : rcop.getReminderTypeId() );
+            rcx.setCandidatePhotoCaptureTypeId(rsop!=null && rsop.getCandidatePhotoCaptureTypeId()>=0 ? rsop.getCandidatePhotoCaptureTypeId() : rcop.getCandidatePhotoCaptureTypeId() );
+            rcx.setRaterPhotoCaptureTypeId(rsop!=null && rsop.getRaterPhotoCaptureTypeId()>=0 ? rsop.getRaterPhotoCaptureTypeId() : rcop.getRaterPhotoCaptureTypeId() );
+            rcx.setAvCommentsTypeId( rcop.getAvCommentsTypeId() );
+            rcx.setMinSupervisors( rsop!=null && rsop.getMinSupervisors()>=0 ? rsop.getMinSupervisors() : rcop.getMinSupervisors());
+            rcx.setMaxRaters( rsop!=null && rsop.getMaxRaters()>0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
+            rcx.setMinRaters( rsop!=null && rsop.getMinRaters()>0 ? rsop.getMinRaters() : rcop.getMinRaters() );
             
-            if( rc.getMinRaters()<=0 )
-                rc.setMinRaters(1);
+            if( rcx.getMinRaters()<=0 )
+                rcx.setMinRaters(1);
             
-            rc.setSendDate( new Date() );
-            rc.setFirstCandidateSendDate( new Date() );
-            rc.setRcCandidateStatusTypeId( RcCandidateStatusType.STARTED.getRcCandidateStatusTypeId() );
-            rc.setRcCheckStatusTypeId( RcCheckStatusType.STARTED.getRcCheckStatusTypeId() );
+            rcx.setSendDate( new Date() );
+            rcx.setFirstCandidateSendDate( new Date() );
+            rcx.setRcCandidateStatusTypeId( RcCandidateStatusType.STARTED.getRcCandidateStatusTypeId() );
+            rcx.setRcCheckStatusTypeId( RcCheckStatusType.STARTED.getRcCheckStatusTypeId() );
             
             Calendar cal = new GregorianCalendar();
             cal.add( Calendar.DAY_OF_MONTH, 10 );
-            rc.setExpireDate(cal.getTime() );
+            rcx.setExpireDate(cal.getTime() );
             
-            rc.setCandidateAccessCode( Integer.toHexString( rc.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );
-            RcCheck rcr = rcFacade.getRcCheckByCandidateAccessCode( rc.getCandidateAccessCode());                
+            rcx.setCandidateAccessCode( Integer.toHexString( rcx.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );
+            RcCheck rcr = rcFacade.getRcCheckByCandidateAccessCode( rcx.getCandidateAccessCode());                
             while( rcr!=null )
             {
-                rc.setCandidateAccessCode( Integer.toHexString( rc.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );  
-                rcr = rcFacade.getRcCheckByCandidateAccessCode( rc.getCandidateAccessCode() );                
+                rcx.setCandidateAccessCode( Integer.toHexString( rcx.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );  
+                rcr = rcFacade.getRcCheckByCandidateAccessCode( rcx.getCandidateAccessCode() );                
             } 
             
-            rc.setUser(user);
-            rc.setOrg(org);
-            rcFacade.saveRcCheck( rc, false );
-            LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() BBB Created new RcCheck for testKeyId=" + testKeyId + ", with rcCheckId=" + rc.getRcCheckId() );            
-            return rc;
+            rcx.setUser(user);
+            rcx.setOrg(org);
+            rcFacade.saveRcCheck( rcx, false );
+            LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() BBB Created new RcCheck for testKeyId=" + testKeyId + ", with rcCheckId=" + rcx.getRcCheckId() );            
+            return rcx;
          }
          catch( Exception e )
          {
@@ -306,7 +306,7 @@ public class RefEntry
             UserFacade userFacade = UserFacade.getInstance();
             
             EventFacade eventFacade = EventFacade.getInstance();
-            OrgAutoTest oat = eventFacade.getOrgAutoTest( orgAutoTestId );
+            OrgAutoTest oat = orgAutoTestId>0 ? eventFacade.getOrgAutoTest( orgAutoTestId ) : null;
             // if( oat==null )
             //     throw new Exception( "OrgAutoTest not found for orgAutoTestId=" + orgAutoTestId );
             

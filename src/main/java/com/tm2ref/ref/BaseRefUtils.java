@@ -8,15 +8,19 @@ package com.tm2ref.ref;
 import com.tm2ref.corp.CorpBean;
 import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.corp.Corp;
+import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.user.Org;
 import com.tm2ref.entity.user.Suborg;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.event.EventFacade;
+import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.faces.FacesUtils;
 import com.tm2ref.faces.HttpReqUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.proctor.ProctorBean;
+import com.tm2ref.purchase.ProductType;
 import com.tm2ref.purchase.RefCreditUtils;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.EncryptUtils;
@@ -1246,6 +1250,23 @@ public class BaseRefUtils  extends FacesUtils
                     return RefPageType.COMPLETE.getPageFull(refUserType);
                 }
 
+            }
+            
+            if( refUserType.getIsCandidate() && rc.getTestKeyId()>0  )
+            {
+                EventFacade eventFacade = EventFacade.getInstance();
+                TestKey tk = eventFacade.getTestKey(rc.getTestKeyId());
+                
+                if( tk!=null && tk.getProductTypeId()!=ProductType.REFERENCECHECK.getProductTypeId() )
+                    booleanParam1=true;
+                
+                if( tk!=null && !tk.getTestKeyStatusType().getIsCompleteOrHigher() )
+                {
+                    tk.setLastAccessDate(new Date());
+                    if( tk.getTestKeyStatusType().getIsActive() )
+                        tk.setTestKeyStatusTypeId( TestKeyStatusType.STARTED.getTestKeyStatusTypeId() );
+                    eventFacade.saveTestKey(tk);                    
+                }
             }
 
             if( refUserType.getIsCandidate() && !rc.getRequiresAnyCandidateInputOrSelfRating() )

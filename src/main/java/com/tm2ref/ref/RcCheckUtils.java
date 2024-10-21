@@ -5,6 +5,9 @@
  */
 package com.tm2ref.ref;
 
+import com.tm2ref.api.ResultPoster;
+import com.tm2ref.api.ResultPosterFactory;
+import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcOrgPrefs;
@@ -12,12 +15,15 @@ import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
+import com.tm2ref.event.EventFacade;
+import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.file.FileUploadFacade;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.NumberUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
 import com.tm2ref.proctor.ProctorUtils;
+import com.tm2ref.purchase.ProductType;
 import com.tm2ref.purchase.RefCreditUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
@@ -49,6 +55,7 @@ public class RcCheckUtils {
     UserFacade userFacade;
     RcFacade rcFacade;
     RcScriptFacade rcScriptFacade;
+    EventFacade eventFacade;
     
     private static String[] ALPHABET = new String[]{"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
     
@@ -1763,6 +1770,41 @@ public class RcCheckUtils {
         if( rater!=null && !rc.getRcCheckStatusType().getIsComplete() && rater.getIsCandidateOrEmployee() )
             return new int[2];
         
+        if( rc.getRcCheckStatusType().getIsComplete() && rc.getTestKeyId()>0 )
+        {
+            try
+            {
+                if( eventFacade==null )
+                    eventFacade=EventFacade.getInstance();
+                TestKey tk = eventFacade.getTestKey(rc.getTestKeyId() );
+                if( tk==null )
+                    throw new Exception( "Could not find TestKey for testKeyId=" + rc.getTestKeyId() );
+                
+                if( tk.getResultPostUrl()!=null && !tk.getResultPostUrl().isBlank() && tk.getProductTypeId()==ProductType.REFERENCECHECK.getProductTypeId() ) // && tk.getApiTypeId()>=0 )
+                {
+                    ResultPoster resultPoster = ResultPosterFactory.getResultPosterInstance(tk, rc);
+                    if( resultPoster!=null )
+                    {
+                        LogService.logIt( "RcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete() BBB.1 Posting API Test Results. testKeyId=" + rc.getTestKeyId() +", rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) + " rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId() ) + ", forceSend=" + forceSend  );
+                        resultPoster.postTestResults();
+                    }
+                }
+
+                if( !tk.getTestKeyStatusType().getIsCompleteOrHigher() )
+                {
+                    tk.setTestKeyStatusTypeId( TestKeyStatusType.DISTRIBUTION_COMPLETE.getTestKeyStatusTypeId() );
+                    eventFacade.saveTestKey(tk);
+                }
+                
+            }
+            catch( Exception e )
+            {
+                LogService.logIt( e, "RcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete() XXX.2 rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) + " rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId() ) + ", forceSend=" + forceSend  );
+                
+            }
+            
+        }
+        
         try
         {
             // if( rc.getLocale()==null && rc.getLangCode()!=null && !rc.getLangCode().isBlank() )
@@ -1774,7 +1816,7 @@ public class RcCheckUtils {
         }
         catch( Exception e )
         {
-            LogService.logIt( e, "RcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) + " rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId() ) + ", forceSend=" + forceSend  );
+            LogService.logIt( e, "RcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete() ZZZ.2 rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) + " rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId() ) + ", forceSend=" + forceSend  );
         }
         return new int[2];        
     }

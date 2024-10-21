@@ -52,7 +52,7 @@
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 
-            <h:panelGroup rendered="#{refBean.rcCheck.testKeyId gt 0}">
+            <h:panelGroup rendered="#{refBean.rcCheck.testKeyId gt 0 and refUtils.booleanParam1}">
                 <h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.XCFmTestMsg.P0']}"/>&#160;    
                 <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCFmTestMsg.P1']}"/>                
             </h:panelGroup>

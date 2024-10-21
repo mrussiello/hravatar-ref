@@ -102,6 +102,16 @@ public class CT2Colors
         return ctc;
     }
     
+    public void clearBorders()
+    {
+        scoreBoxBorderColor=BaseColor.WHITE;
+        scoreBoxBorderWidth = 0f;
+
+        lightBoxBorderColor=BaseColor.WHITE;
+        // lighterBoxBorderColor=BaseColor.WHITE;        
+    }
+    
+    
     
     public BaseColor getGray() {
         return gray;

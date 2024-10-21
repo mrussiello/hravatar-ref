@@ -48,6 +48,8 @@ import java.util.Locale;
  */
 public abstract class BaseReportTemplate extends StandardReportSettings implements ReportTemplate {
 
+    public static float MAX_CUSTLOGO_W_V2 = 110; // 80
+    public static float MAX_CUSTLOGO_H_V2 = 60;  // 40
     
     public boolean devel = false;
     public Image custLogo = null;
@@ -90,6 +92,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
     public String competencySummaryStr = null;
     
     public RcCheckUtils rcCheckUtils;
+    
 
     @Override
     public abstract byte[] generateReport() throws Exception;
@@ -204,7 +207,18 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
         
         initFonts();
         
-        initColors();        
+        initColors();  
+        
+        if( 1==1 )
+        {
+            if( ct2Colors!=null )
+                ct2Colors.clearBorders();
+
+            scoreBoxBorderWidth = 0;
+            lightBoxBorderWidth=0;
+        }
+
+        
 
         prepNotes = new ArrayList<>();
 
@@ -339,9 +353,9 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
                 }
 
                 c = new PdfPCell();
-                c.setBorder( Rectangle.BOX );
+                c.setBorder( Rectangle.NO_BORDER );
                 c.setBackgroundColor( BaseColor.WHITE );
-                c.setBorderColor( ct2Colors.scoreBoxBorderColor );
+                //c.setBorderColor( ct2Colors.scoreBoxBorderColor );
                 c.setPaddingTop( 8 );
                 c.setPaddingLeft(10);
                 c.setPaddingRight(5);
@@ -372,9 +386,9 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
                 }
 
                 c = new PdfPCell();
-                c.setBorder( Rectangle.BOX );
+                c.setBorder( Rectangle.NO_BORDER );
                 c.setBackgroundColor( BaseColor.WHITE );
-                c.setBorderColor( ct2Colors.scoreBoxBorderColor );
+                //c.setBorderColor( ct2Colors.scoreBoxBorderColor );
                 c.setPaddingTop( 8 );
                 c.setPaddingLeft(10);
                 c.setPaddingRight(5);

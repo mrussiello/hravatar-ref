@@ -1,0 +1,504 @@
+<?xml version="1.0"?>
+<xs:schema xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+
+    <xs:element name="AssessmentResult">
+      <xs:complexType>
+        <xs:sequence>
+
+          <xs:element name="ClientId" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  <!-- OrgId - this is the HR Avatar Org Id  for this customer, encrypted. -->
+                  <xs:element name="IdValue" type="IdValue" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+          <xs:element name="ClientOrderId" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  <!-- OrderId - this is a unique identifier for this assessment event (order). Must be unique for the third party organization. -->
+                  <xs:element name="IdValue" type="IdValue" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+
+          <!-- The subject is the test-taker. HR Avatar needs First and Last name in order to create a useful report. If not provided,
+                the assessment will ask for name and emamil from the test taker, unless SubjectId.IdValue.@name=userreferenceid
+                is provided and exists on the HR Avatar system already.  -->
+          <xs:element name="AssessmentSubject" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  <xs:element name="SubjectId" minOccurs="0">
+                      <xs:complexType>
+                          <xs:sequence>
+                             <!-- customfield1 - Optional information provided when the test key is created. Can be used as metadata to track aspects of this test event that are not used by HR Avatar. -->
+                             <!-- customfield2 - Optional information provided when the test key is created. Can be used as metadata to track aspects of this test event that are not used by HR Avatar. -->
+                             <!-- customfield3 - Optional information provided when the test key is created. Can be used as metadata to track aspects of this test event that are not used by HR Avatar. -->
+                             <!-- userreferenceid - a unique identifier for this test taker on the 3rd party system. -->
+                             <!-- userid - a unique identifier for this test taker on the HR avatar system (encrypted). -->
+                             <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+                          </xs:sequence>
+                      </xs:complexType>
+                  </xs:element>
+                  <xs:element name="PersonName" minOccurs="0">
+                      <xs:complexType>
+                          <xs:sequence>
+                             <xs:element name="GivenName" type="xs:string" minOccurs="0"/>
+                             <xs:element name="MiddleName" type="xs:string" minOccurs="0"/>
+                             <xs:element name="FamilyName" type="xs:string" minOccurs="0"/>
+                          </xs:sequence>
+                      </xs:complexType>
+                  </xs:element>
+                  <xs:element name="ContactMethod" minOccurs="0">
+                      <xs:complexType>
+                          <xs:sequence>
+                             <xs:element name="InternetEmailAddress" type="xs:string" minOccurs="0"/>
+                          </xs:sequence>
+                      </xs:complexType>
+                  </xs:element>
+                  <xs:element name="AssessmentPersonDescriptors" minOccurs="0">
+                      <xs:complexType>
+                          <xs:sequence>
+                              <xs:element name="BiologicalDescriptors" minOccurs="0">
+                                  <xs:complexType>
+                                      <xs:sequence>
+                                         <xs:element name="BirthDate" type="xs:dateTime" minOccurs="0"/>
+                                         <xs:element name="EnthicityCode" type="xs:string" minOccurs="0"/>
+                                         <!-- 9=Unknown, 1=Male, 2=Female -->
+                                         <xs:element name="GenderCode" type="xs:int" minOccurs="0"/>
+                                         <xs:element name="NationalityCode" type="xs:string" minOccurs="0"/>
+                                         <xs:element name="RaceCode" type="xs:string" minOccurs="0"/>
+                                         <xs:element name="LanguageCode" type="xs:string" minOccurs="0"/>
+                                      </xs:sequence>
+                                  </xs:complexType>
+                              </xs:element>
+                          </xs:sequence>
+                      </xs:complexType>
+                  </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+          <xs:element name="AssessmentStatus" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  
+                  <!-- This is the HR Avatar BatteryId for this battery, only included if it is a battery. -->
+                  <xs:element name="BatteryId" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- This is the HR Avatar BatteryScore  for this battery if it is a battery.
+                       If this test result represents a single test and not a battery, then this 
+                       value is equal to the Results.AssessmentOverallResult.ScoreNumeric in the section below.
+                  -->
+                  <xs:element name="BatteryOverallScore" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                  
+                  <!-- This is the HR Avatar URL to view results for this battery if it is a battery. 
+                       If this test result represents a single test and not a battery, then this 
+                       value is equal to the Results.AssessmentOverallResult.ResultsViewUrl in the section below.
+                  -->
+                  <xs:element name="BatteryResultsViewUrl" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- Incomplete, Complete, Scored, Error, Other Error -->
+                  <xs:element name="Status" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                 
+                  <!-- Status code for this assessment event (called Test Key Status). Possible "Test Key" status codes are listed in our API document at https://www.hravatar.com/api -->
+                  <xs:element name="StatusCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                  
+                  <!-- HR Avatar name associated with this status code Possible "Test Key" status codes are listed in our API document at https://www.hravatar.com/api -->
+                  <xs:element name="StatusName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                                    
+                  <!-- If there is an error, this tag contains the error message -->
+                  <xs:element name="ErrorMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- If there is an error, this tag contains the error code. Possible error codes are listed in our API document at https://www.hravatar.com/api -->
+                  <xs:element name="ErrorCode" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                  
+                  <!-- If Error this contains the error message -->
+                  <xs:element name="Details" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                  
+                  <!-- Date that this request was processed. yyyy-mm-dd -->
+                  <xs:element name="StatusDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- The last time the Test-Taker accessed this Test. yyyy-mm-dd -->
+                  <xs:element name="LastAccessDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- The percentage of completion for this Test Event. 0-100 -->
+                  <xs:element name="PercentComplete" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                  
+                  
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+
+          <!-- An assessment result usually has only one test event to be reported. However, it is possible for a test event to be a test battery instead
+          and have multiple tests. Therefore, there is a List of Results elements, each with the results of one test.  -->
+          <xs:element name="Results" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+
+                    <!--  - this is the name of the assessment that was completed. -->
+                    <xs:element name="Profile" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                    <!-- Profile - this is the name of the assessment that was completed, in english. -->
+                    <xs:element name="ProfileEnglish" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                    <!-- This is the date the assessment was completed -->
+                    <xs:element name="AssessmentCompleteDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+
+                    <!-- This is the HR Avatar Product Id (encrypted)  for this assessment -->
+                    <xs:element name="AssessmentId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                                        
+                    <xs:element name="AssessmentOverallResult" minOccurs="0" maxOccurs="1">
+                      <xs:complexType>
+                          <xs:sequence>
+
+                              <xs:element name="ScoreNumeric" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="ScoreText" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="Interval" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                              <xs:element name="PercentileAll" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="PercentileAllCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                              <!-- This is an approximate percentile, calculated when the test is normatively scored and based on an overall Z-Score which can be converted mathematically to a percentile. -->
+                              <xs:element name="PercentileAllApprox" type="xs:float" minOccurs="0" maxOccurs="1"/>
+
+                              <xs:element name="PercentileClient" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="PercentileClientCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="PercentileCountry" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="PercentileCountryCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                              <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="Comments" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              <xs:element name="ResultsViewUrl" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                              <!-- 
+                                  IPCountry - Recorded country based on IP Address lookup 
+                              -->
+                              <xs:element name="IdValue" type="IdValue" minOccurs="0"/>
+                              
+                              <!-- Some tests have uploaded media that is not scored in a competency. --> 
+                              <xs:element name="UploadedMedia" minOccurs="0" maxOccurs="unbounded">
+                                   <xs:complexType>
+                                       <xs:sequence>
+
+                                           <!-- Question - the question that was asked, if any -->
+                                           <xs:element name="Question" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                           <!-- Url - Full direct download url of the media -->
+                                           <xs:element name="Url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                           <!-- Thumb Url - Full direct download url of a thumbnail of this video (if present) -->
+                                           <xs:element name="ThumbUrl" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                           <!-- Transcript - Speech-to-Text Transcript (if present) -->
+                                           <xs:element name="Transcript" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                           <!-- Transcript English - Speech-to-Text Transcript in US English (if present) -->
+                                           <xs:element name="TranscriptEnglish" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                       </xs:sequence>
+
+                                       <!-- a sequential integer starting at 1 and unique to the DetailResult (see below) that this media is associated with -->
+                                       <xs:attribute name="SequenceId" type="xs:int" default="0" />
+                                       <xs:attribute name="Identifier" type="xs:string" />
+                                       <xs:attribute name="Width" type="xs:int" />
+                                       <xs:attribute name="Height" type="xs:int" />
+                                       <xs:attribute name="Duration" type="xs:float" />
+                                       <xs:attribute name="LangStr" type="xs:string" />
+                                       <xs:attribute name="MimeType" type="xs:string" />
+
+                                   </xs:complexType>
+                              </xs:element>
+                              
+                              
+                              
+                          </xs:sequence>
+                          
+                          <!--
+                            ASSESSMENT_JOBSPECIFIC(0, "cpt.AssessJobSpec"),
+                            ASSESSMENTBATTERY(1, "cpt.Battery"),
+                            ASSESSMENT_SKILLS(2, "cpt.AssessSkills"),
+                            ASSESSMENT_PERSONALITY(3, "cpt.AssessPersonality"),
+                            ASSESSMENT_COGNITIVE(4, "cpt.AssessCognitive"),
+                            ASSESSMENT_OTHER(5, "cpt.AssessOther"),
+                            ASSESSMENT_DEVELOPMENT(6, "cpt.AssessDevel"),
+                            ASSESSMENT_COMPETENCY(7, "cpt.AssessCompetency"),
+                            ASSESSMENT_POPMSOFFICE(8, "cpt.AssessPopularMSOfficeSims"),
+                            ASSESSMENT_VOICE(9, "cpt.AssessVoiceIVR"),
+                            ASSESSMENT_WHOLEPERSON(10, "cpt.AssessWholePerson"),
+                            ASSESSMENT_VIDEOINTERVIEW(11, "cpt.AssessVidInterview"),
+                            ASSESSMENT_VIDEOINTERVIEW_LIVE(12, "cpt.AssessVidInterviewLive"),
+                            ASSESSMENT_ANIMATED_SIM(13, "cpt.AssessAnimatedSim" ),                             
+                          -->
+                          <xs:attribute name="ConsumerProductTypeId" type="xs:int"  />
+
+                          <!-- 
+                            SIM(40),   common HR Avatar assessment
+                            IFRAMETEST(41),  external assessment
+                            FINDLY(42),  Findly assessment
+                            IVR(43),  Interactive Voice Response-based test
+                            VOT(44),  Phone-only test (no web)
+                            BATTERY(50), Test Battery        
+                          -->
+                          <xs:attribute name="ProductTypeId" type="xs:int"  />
+                          
+                                                    
+                          <!--
+                             0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                             1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                          -->
+                          <xs:attribute name="HideOverall" type="xs:int"  />
+
+                          <!--
+                             0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                             1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                          -->
+                          <xs:attribute name="HideOverallNumeric" type="xs:int"  />
+
+                          <!--
+                             0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                             1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                          -->
+                          <xs:attribute name="HideOverallText" type="xs:int"  />
+                          
+                          <!--
+                             0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                             1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                          -->
+                            <xs:attribute name="HideDetail" type="xs:int"  />
+
+                            <!--
+                                 0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                                 1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                              -->
+                            <xs:attribute name="HideDetailNumeric" type="xs:int"  />
+
+                            <!--
+                                 0=Flags set for this test result (for the account, sub-account, product, or report) indicate do not hide                            
+                                 1=Flags set for this test result (for the account, sub-account, product, or report) indicate hide                            
+                              -->
+                            <xs:attribute name="HideDetailText" type="xs:int"  />
+                          
+                          
+                      </xs:complexType>
+                    </xs:element>
+
+                    <!-- Each detail result can be for a specific competency. -->
+                    <xs:element name="DetailResult" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+
+                            <!-- ScoreName  Name of the score, like Overall, or Competency Name -->
+                            <!-- ScoreNameEnglish - English language name of the score. This is a key across languages for a particular competency. -->
+                            <!-- ScoreTypeId    NONCOGNITIVE(0,"Personality/ Non-Cog"),
+                                                ABILITY(1,"Ability"),
+                                                CORESKILL(2,"Core Skill"),
+                                                KNOWLEDGE(3,"Knowledge"),
+                                                EQ(4,"Emotional Intelligence"),
+                                                SCOREDTASK(100,"Scored Task"),
+                                                SCOREDINTEREST(120,"Scored Interest"),
+                                                SCOREDEXPERIENCE(130,"Scored Experience"),
+                                                SCOREDBIODATA(140,"Scored Biodata"),
+                                                SCOREDTYPING(141,"Scored Typing"),
+                                                SCOREDDATAENTRY(146,"Scored Data Entry"),
+                                                SCOREDESSAY(142,"Scored Essay"),
+                                                SCOREDAUDIO(143,"Scored Audio" ),
+                                                SCOREDAVUPLOAD(144,"Scored Audio/Video Upload" ),
+                                                SCOREDIMAGEUPLOAD(145,"Scored Image Upload" ),
+                                                SCOREDCHAT(147,"Scored Chat" ),
+                                                ABILITY_COMBO(150,"Ability Combination"),
+                                                SKILL_COMBO(151,"Skill Combination"),
+                                                NONCOG_COMBO(152,"Non-Cognitive Combination"),                                                
+                                                TEST_CUSTOM(500,"Test-Specific Custom 1")  // this type varies for different tests
+                                                TEST_CUSTOM(501,"Test-Specific Custom 2")  // this type varies for different tests
+                                                TEST_CUSTOM(502,"Test-Specific Custom 3")  // this type varies for different tests
+                            -->
+                           <!-- ScoreTypeName - see above-->
+                           <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+                           <xs:element name="ScoreNumeric" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="ScoreText" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                           <!-- Meta scores are additional numeric scores specific to the score type. For example, for Typing, meta2=wpm, meta3=accuracy adjusted wpm, and meta4=accuracy 
+                           -->
+                           <xs:element name="metascores" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <!-- indicates this is a canonical score for this competency -->
+                                 <xs:attribute name="canon2" type="xs:int" />
+                                 <xs:attribute name="name2" type="xs:string" />
+                                 <xs:attribute name="score2" type="xs:float" />
+
+                                 <xs:attribute name="canon3" type="xs:int" />
+                                 <xs:attribute name="name3" type="xs:string" />
+                                 <xs:attribute name="score3" type="xs:float" />
+
+                                 <xs:attribute name="canon4" type="xs:int" />
+                                 <xs:attribute name="name4" type="xs:string" />
+                                 <xs:attribute name="score4" type="xs:float" />
+
+                                 <xs:attribute name="canon5" type="xs:int" />
+                                 <xs:attribute name="name5" type="xs:string" />
+                                 <xs:attribute name="score5" type="xs:float" />
+
+                                 <xs:attribute name="canon6" type="xs:int" />
+                                 <xs:attribute name="name6" type="xs:string" />
+                                 <xs:attribute name="score6" type="xs:float" />
+
+                                 <xs:attribute name="canon7" type="xs:int" />
+                                 <xs:attribute name="name7" type="xs:string" />
+                                 <xs:attribute name="score7" type="xs:float" />
+
+                                 <xs:attribute name="canon8" type="xs:int" />
+                                 <xs:attribute name="name8" type="xs:string" />
+                                 <xs:attribute name="score8" type="xs:float" />
+
+                                 <xs:attribute name="canon9" type="xs:int" />
+                                 <xs:attribute name="name9" type="xs:string" />
+                                 <xs:attribute name="score9" type="xs:float" />
+                            </xs:complexType>
+                           </xs:element>
+                           
+                           <!-- Interval - Some types of test results break the result into one of a discrete number of groups - red, yellow, green, or something like that. This
+                                value provides the id of that group in the system.
+                                For HR Avatar Tests, the codes are:
+                                Green=11, Green-Yellow=8, Yellow=5, Yellow-Red=3, Red=1
+                            -->
+                           <xs:element name="Interval" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                           <xs:element name="PercentileAll" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="PercentileAllCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="PercentileClient" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="PercentileClientCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="PercentileCountry" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="PercentileCountryCount" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+                           <xs:element name="Description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                           <xs:element name="Comments" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                           <xs:element name="UploadedMedia" minOccurs="0" maxOccurs="unbounded">
+                              <xs:complexType>
+                                  <xs:sequence>
+
+                                      <!-- Question - the question that was asked, if any -->
+                                      <xs:element name="Question" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                                      
+                                      <!-- Url - Full direct download url of the media -->
+                                      <xs:element name="Url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                      <!-- Thumb Url - Full direct download url of a thumbnail of this video (if present) -->
+                                      <xs:element name="ThumbUrl" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                                      
+                                      <!-- Transcript - Speech-to-Text Transcript (if present) -->
+                                      <xs:element name="Transcript" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                      <!-- Transcript English - Speech-to-Text Transcript in US English (if present) -->
+                                      <xs:element name="TranscriptEnglish" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                  </xs:sequence>
+                                  
+                                  <xs:attribute name="SequenceId" type="xs:int" default="0" />
+                                  <xs:attribute name="Identifier" type="xs:string" />
+                                  <xs:attribute name="Width" type="xs:int" />
+                                  <xs:attribute name="Height" type="xs:int" />
+                                  <xs:attribute name="Duration" type="xs:float" />
+                                  <xs:attribute name="LangStr" type="xs:string" />
+                                  <xs:attribute name="MimeType" type="xs:string" />
+
+                              </xs:complexType>
+                           </xs:element>
+
+                        </xs:sequence>
+                        
+                        
+                      </xs:complexType>
+                    </xs:element>
+
+                    <xs:element name="SupportingMaterials" minOccurs="0" maxOccurs="1">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="ReportId" minOccurs="0" maxOccurs="unbounded">
+                              <xs:complexType>
+                                  <xs:sequence>
+                                      <!-- ReportId  Name of the Report -->
+                                      <!-- MimeType  application/pdf -->
+                                      <!-- ReportLangStr  Report Language Code -->
+                                      <!-- PdfDownloadUrl   This is URL that can be used to download this report directly as a PDF. --> 
+                                      <!-- CompactInfoStr  Compacted Information String - specific to the reportId in use. For instance, for BestJobsReports (Career Interest) this contains compacted strings for top-matched jobs and EEOC categories. -->
+                                      <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+
+                                      <!-- This is a Base64 Encoded String representing the PDF Report Document -->
+                                      <xs:element name="EncodedContent" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                                  </xs:sequence>
+                                  <xs:attribute name="Id" type="xs:int" />
+                              </xs:complexType>
+                          </xs:element>
+
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+
+              </xs:sequence>
+
+              <xs:attribute name="LangStr" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+
+
+
+          <!-- These are proprietary fields used by the HR Avatar System. Only included if order request succeeded -->
+          <xs:element name="UserArea" minOccurs="0">
+              <xs:complexType>
+                  <xs:sequence>
+                    <!-- The Test Key id is a permenant unique identifier for this testing event on the the HR Avatar system.
+                         In general, you can reference a Test Key either by including this value or by using the ClientOrderId.IdValue (name=orderId) -->
+                    <xs:element name="TestKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                  <!-- Test Key StatusTypeId -->
+                  <!-- <xs:element name="AssessmentStatusTypeId" type="xs:int" minOccurs="0" default="0"/> -->
+
+                  <!-- errorCode:  0=No Error (success), 1=Account Unauthorized Error, 2= Unknown system error. -->
+                  <!-- <xs:element name="ErrorCode" type="xs:int" minOccurs="0" default="0"/> -->
+
+                  <!-- AssessmentId - This is the AssessmentId used to create the TestKey -->
+                  
+                  <!-- DuplicateClientOrderId1,DuplicateClientOrderId2,DuplicateClientOrderId3 - 20  - This are duplicate AssessmentOrderRequest.ClientOrderId.IdValue (orderId) 
+                       from AssessmentOrderRequest that were associated with this existing TestKey. 
+                       This typically happens when AssessmentOrderRequest.PackageId.IdValue(DuplicateCheckId) is set to 1. -->
+
+                  <!-- AssessmentStatusTypeId - this is an HR Avatar status identifier. Unstarted tests use a status identifer of 0. Completed tests used a status identifier of 100.
+                       For a full list of status codes, please contact support@hravatar.com -->
+                       
+                  <!-- AssessmentStatusTypeName - text explanation of the statys -->
+
+                  <!-- UserAgent - Most recent Browser User-Agent Code recorded -->
+                  <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+
+                  </xs:sequence>
+              </xs:complexType>
+          </xs:element>
+
+        </xs:sequence>
+
+        <!-- this is the HR Avatar Test Key Status TypeId -->
+        <xs:attribute name="AssessmentStatusTypeId" type="xs:int" default="0" />
+
+        <xs:attribute name="AssessmentStatusTypeName" type="xs:string"/>
+
+        <!-- Shortcut result type 0=Normal, 1=Error -->
+        <xs:attribute name="ResponseTypeId" type="xs:int" default="0" />
+
+      </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="IdValue">
+                <xs:simpleContent msdata:ColumnName="idvalue_text" msdata:Ordinal="1">
+                <xs:extension base="xs:string">
+                    <xs:attribute name="name" type="xs:string" />
+                </xs:extension>
+                </xs:simpleContent>
+    </xs:complexType>
+
+</xs:schema>
