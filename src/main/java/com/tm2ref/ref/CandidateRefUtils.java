@@ -687,7 +687,7 @@ public class CandidateRefUtils extends BaseRefUtils
         RcCheck rc = refBean.getRcCheck();
 
         // No inputs and no self rating. No reason to go back.
-        return rc.getRequiresAnyCandidateInputOrSelfRating();
+        return  rc.getCandidateQuestionsAndSelfRatingCount()>0; // rc.getRequiresAnyCandidateInputOrSelfRating();
 
         /*
         if( !rc.getRequiresAnyCandidateInputOrSelfRating() )

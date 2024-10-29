@@ -10,6 +10,7 @@ import com.tm2ref.entity.ref.RcRating;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 /**
@@ -88,6 +89,27 @@ public class RcCompetencyWrapper implements Comparable<RcCompetencyWrapper>, Ser
                 return w;
         }
         return null;
+    }
+    
+    public synchronized void removeRcItemWrapper( RcItemWrapper rciw )
+    {
+        if( rcItemWrapperList==null )
+            return;
+        
+        ListIterator<RcItemWrapper> iter = rcItemWrapperList.listIterator();
+        RcItemWrapper w;
+        int dispOrder = 1;
+        while( iter.hasNext() )
+        {
+            w = iter.next();
+            if( w.getRcItemId()==rciw.getRcItemId() )
+            {
+                iter.remove();
+                continue;
+            }
+            w.getRcItem().setDisplayOrder(dispOrder);
+            dispOrder++;
+        }
     }
     
     

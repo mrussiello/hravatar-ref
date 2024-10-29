@@ -24,7 +24,8 @@ import jakarta.persistence.Transient;
 @Table( name = "rcitem" )
 @NamedQueries({  
     @NamedQuery( name = "RcItem.findByRcItemId", query = "SELECT o FROM RcItem AS o WHERE o.rcItemId=:rcItemId" ),
-    @NamedQuery( name = "RcItem.findByCompetencyId", query = "SELECT o FROM RcItem AS o WHERE o.rcCompetencyId=:rcCompetencyId ORDER BY o.displayOrder" )
+    @NamedQuery( name = "RcItem.findByCompetencyId", query = "SELECT o FROM RcItem AS o WHERE o.rcCompetencyId=:rcCompetencyId ORDER BY o.displayOrder" ),
+    @NamedQuery( name = "RcItem.findByCompetencyIdAndStatus", query = "SELECT o FROM RcItem AS o WHERE o.rcCompetencyId=:rcCompetencyId AND o.rcItemStatusTypeId=:rcItemStatusTypeId ORDER BY o.displayOrder" )
 })
 public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
 {
@@ -51,6 +52,9 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     @Column(name="displayorder")
     private int displayOrder;
     
+    @Column(name="rcitemstatustypeid")
+    private int rcItemStatusTypeId;
+                
     
     //@Column(name="name")
     // private String name;
@@ -790,6 +794,14 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
 
     public boolean getDenyMiddleB() {
         return denyMiddle==1;
+    }
+
+    public int getRcItemStatusTypeId() {
+        return rcItemStatusTypeId;
+    }
+
+    public void setRcItemStatusTypeId(int rcItemStatusTypeId) {
+        this.rcItemStatusTypeId = rcItemStatusTypeId;
     }
 
 

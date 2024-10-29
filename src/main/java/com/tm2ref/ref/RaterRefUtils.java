@@ -574,6 +574,60 @@ public class RaterRefUtils extends BaseRefUtils
     }
     
     
+    public int getDiscreteRadioDivMinWidth()
+    {
+        return 62;
+        /*
+        RcItemWrapper rciw = raterRefBean.getRcItemWrapper();
+        if( rciw==null || rciw.getRcItem()==null || ( !raterRefBean.getRcItemFormatType().getIsRadio() && !raterRefBean.getRcItemFormatType().getIsCheckbox()) )
+            return 40;
+        int wid = 0;
+        int incr = 40;
+        RcItem itm = rciw.getRcItem();
+        if( rciw.getRcItem().getHasChoice1() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice2() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice3() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice4() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice5() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice6() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice7() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice8() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice9() )
+            wid += incr;
+        else
+            return wid;
+        if( rciw.getRcItem().getHasChoice10() )
+            wid += incr;
+        return wid;
+        */
+    }
+    
+    
+    
     public List<SelectItem> getRcItemRadioSelectItemList()
     {
         List<SelectItem> out = new ArrayList<>();

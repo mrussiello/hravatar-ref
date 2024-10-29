@@ -53,9 +53,14 @@ public class RcCompetency implements Serializable, Comparable<RcCompetency>, Clo
     @Column(name="rccompetencystatustypeid")
     private int rcCompetencyStatusTypeId;
 
+    @Column(name="availableforcopy")
+    private int availableForCopy;
+
+    @Column(name="initialrcscriptid")
+    private int initialRcScriptId;
+    
     @Column(name="displayorder")
     private int displayOrder;
-
     
     /**
      * Comma-delimited list of ONET ElementIds to be used in calculating weights.
@@ -346,6 +351,22 @@ public class RcCompetency implements Serializable, Comparable<RcCompetency>, Clo
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public int getAvailableForCopy() {
+        return availableForCopy;
+    }
+
+    public void setAvailableForCopy(int availableForCopy) {
+        this.availableForCopy = availableForCopy;
+    }
+
+    public int getInitialRcScriptId() {
+        return initialRcScriptId;
+    }
+
+    public void setInitialRcScriptId(int initialRcScriptId) {
+        this.initialRcScriptId = initialRcScriptId;
     }
 
     

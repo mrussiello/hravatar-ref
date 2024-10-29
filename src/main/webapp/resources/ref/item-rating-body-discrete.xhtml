@@ -57,7 +57,7 @@
                     </h:panelGroup>
 
                     <h:panelGroup>   
-                        <h:outputText styleClass="ttformtext" value="#{raterRefBean.rcItem.choice2}"/>
+                        <h:outputText styleClass="ttformtext " value="#{raterRefBean.rcItem.choice2}"/>
                     </h:panelGroup>
 
                     <h:panelGroup>                        
@@ -91,37 +91,37 @@
                     </h:panelGroup>
 
                     <h:panelGroup> 
-                        <div style="background-color:#e0e0e0">
+                        <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
                         <p:radioButton  for="customRadio" itemIndex="0"/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup>                        
-                        <div style="background-color:#e0e0e0">
+                        <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
                         <p:radioButton  for="customRadio" itemIndex="1"/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{not raterRefBean.rcItem.denyMiddleB}">                        
-                        <div style="background-color:#e0e0e0">
+                        <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px}">
                         <p:radioButton  for="customRadio" itemIndex="2"/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItem.denyMiddleB}">                        
-                        <div style="background-color:#ffebeb">
+                        <div style="background-color:#ffebeb;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
                         <p:radioButton  for="customRadio" itemIndex="2"/>
                         </div>
                     </h:panelGroup>
                     
                     <h:panelGroup>                        
-                        <div style="background-color:#e0e0e0">
+                        <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
                         <p:radioButton  for="customRadio" itemIndex="3"/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup>                        
-                        <div style="background-color:#e0e0e0">
+                        <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
                         <p:radioButton  for="customRadio" itemIndex="4"/>
                         </div>
                     </h:panelGroup>

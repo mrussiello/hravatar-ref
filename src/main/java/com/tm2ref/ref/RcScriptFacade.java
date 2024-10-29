@@ -1,6 +1,5 @@
 package com.tm2ref.ref;
 
-import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcCompetency;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcScript;
@@ -110,11 +109,14 @@ public class RcScriptFacade
     //    return l.get(0);
     //}
     
-    public List<RcItem> getRcItemList( int rcCompetencyId ) throws Exception
+    public List<RcItem> getRcItemList( int rcCompetencyId, int rcItemStatusTypeId) throws Exception
     {
         try
         {
-            TypedQuery<RcItem> q = em.createNamedQuery( "RcItem.findByCompetencyId", RcItem.class).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter( "rcCompetencyId", rcCompetencyId );
+            TypedQuery<RcItem> q = em.createNamedQuery( rcItemStatusTypeId>=0 ? "RcItem.findByCompetencyIdAndStatus" : "RcItem.findByCompetencyId", RcItem.class).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter( "rcCompetencyId", rcCompetencyId );
+            
+            if( rcItemStatusTypeId>=0 )
+                q.setParameter("rcItemStatusTypeId", rcItemStatusTypeId );
             return q.getResultList();
         }
         catch( Exception e )
@@ -150,40 +152,60 @@ public class RcScriptFacade
         s.parseScriptJson();        
         List<RcItem> itms;
         RcItemWrapper w; 
-        List<RcItemWrapper> iwl;
-        Date lastItemUpdate = null;
+        // List<RcItemWrapper> iwl;
+        //Date lastItemUpdate = null;
         boolean save = false;
         for( RcCompetencyWrapper rcw : s.getRcCompetencyWrapperList() )
         {
             if( rcw.getRcCompetencyId()>0 && ( !loadIfNeeded || rcw.getRcCompetency()==null) )
                 rcw.setRcCompetency( getRcCompetency( rcw.getRcCompetencyId() ) );
 
-            itms = getRcItemList( rcw.getRcCompetencyId() );
-            iwl = new ArrayList<>();
+            itms = getRcItemList(rcw.getRcCompetencyId(), -1 );
+            // iwl = new ArrayList<>();
             
             for( RcItem itm : itms )
             {
                 itm.setRcCompetency( rcw.getRcCompetency() );
                 
-                if( lastItemUpdate==null || lastItemUpdate.before( itm.getLastUpdate() ) )
-                    lastItemUpdate = itm.getLastUpdate();
+                //if( lastItemUpdate==null || lastItemUpdate.before( itm.getLastUpdate() ) )
+                //    lastItemUpdate = itm.getLastUpdate();
                 
                 w = rcw.getRcItemWrapper( itm.getRcItemId() );
-                if( w ==null )
+
+                // not all items may still be included in the competency. Some may be archived and not used. 
+                // However, if the competency is custom and is available for other scripts competencies, it might have been updated in another script and we should fix this script..
+                if( w==null )    
                 {
+                    // Item is archived, so ignore it.
+                    if( itm.getRcItemStatusTypeId()==RcItemStatusType.ARCHIVED.getRcItemStatusTypeId() )                    
+                        continue;
+                    
+                    // Item is not archived, so it should be here. Add it.
                     w = new RcItemWrapper();
-                    w.setRcItemId( itm.getRcItemId() );                    
-                }    
+                    w.setRcItemId( itm.getRcItemId() );  
+                    rcw.addItemWrapper(w);
+                    LogService.logIt( "RcScriptFacade.loadScriptObjects() ADDING Item rcItemId=" + itm.getRcItemId() + " " + itm.getQuestion() + ", to RcCompetency " + rcw.getRcCompetencyId() + " " + rcw.getRcCompetency().getName() + " because it is not archived and not in Script." );
+                    save = true;                    
+                }
+                
+                else if( itm.getRcItemStatusTypeId()!=RcItemStatusType.ACTIVE.getRcItemStatusTypeId() )
+                {
+                    LogService.logIt( "RcScriptFacade.loadScriptObjects() REMOVING Item rcItemId=" + itm.getRcItemId() + " " + itm.getQuestion() + ", from RcCompetency " + rcw.getRcCompetencyId() + " " + rcw.getRcCompetency().getName() + " because it is archived but still referencd in Script." );                    
+                    rcw.removeRcItemWrapper( w );
+                    save = true;
+                    continue;
+                }
+                
                 w.setRcItem(itm);                    
-                iwl.add(w);
+                // iwl.add(w);
             }
-            if( rcw.getRcItemWrapperList().size()!=iwl.size() )
-                save = true;
-            Collections.sort(iwl);
-            rcw.setRcItemWrapperList(iwl);
+            //if( rcw.getRcItemWrapperList().size()!=iwl.size() )
+            //    save = true;
+            Collections.sort(rcw.getRcItemWrapperList());
+            // rcw.setRcItemWrapperList(iwl);
         }
 
-        if( save || lastItemUpdate==null || lastItemUpdate.after( s.getLastUpdate() ) )
+        if( save ) // || (lastItemUpdate!=null && lastItemUpdate.after( s.getLastUpdate() )) )
         {
             saveRcScript(s);
         }
