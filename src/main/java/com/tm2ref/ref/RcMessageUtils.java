@@ -1339,8 +1339,8 @@ public class RcMessageUtils {
         if( locale==null )
             locale = Locale.US;
         
-        String[] out = new String[28];        
-        out[0] = adminUser.getFullname();
+        String[] out = new String[29];        
+        out[0] = adminUser==null ? "" : adminUser.getFullname();
         out[1] = rc.getOrg().getName();
         out[2] = rc.getUser().getFullname();
         out[3] = rc.getJobTitle();
@@ -1369,7 +1369,8 @@ public class RcMessageUtils {
         
         // out[20] - out[25] are custom slots.
         out[26]=RuntimeConstants.getStringValue("baseadmindomain");
-        out[27]=RuntimeConstants.getStringValue("default-site-name");
+        out[27]=RuntimeConstants.getStringValue("default-site-name");        
+        out[28] = rc.getMaxRaters()>0 ? Integer.toString(rc.getMaxRaters()) : "10";
         
         
         return out;
