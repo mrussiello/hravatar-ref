@@ -253,7 +253,7 @@ public class ReportData {
     {
        try
        {
-           return hasCustLogo() ? new URL( o.getReportLogoUrl() ) : null; // new URL( baseImageUrl + custLogoFilename );
+           return hasCustLogo() ? com.tm2ref.util.HttpUtils.getURLFromString( o.getReportLogoUrl() ) : null; // com.tm2ref.util.HttpUtils.getURLFromString( baseImageUrl + custLogoFilename );
        }
 
        catch( Exception e )
@@ -274,7 +274,7 @@ public class ReportData {
                return (new URI(fn)).toURL();
     
            
-           return new URL( getBaseImageUrl() + "/" + fn );
+           return com.tm2ref.util.HttpUtils.getURLFromString( getBaseImageUrl() + "/" + fn );
        }
 
        catch( MalformedURLException | URISyntaxException e )

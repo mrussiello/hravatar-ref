@@ -2535,7 +2535,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     if( rater.getHasPhotos()  )
                     {
                         RcUploadedUserFile u = rater.getSinglePhotoFauxRcUploadedUserFile();
-                        //Image photoImg = Image.getInstance( new URL( u.getThumbUrl() ) );
+                        //Image photoImg = Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
                         String fn = u.getThumbFilename();
                         if( fn!=null && fn.contains(  ".IDX." ) )
                             fn = StringUtils.replaceStr( fn, ".IDX." , "." + u.getTempInt1() + "." );
@@ -2573,7 +2573,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     if( rater.getHasIdPhotos()  )
                     {
                         RcUploadedUserFile u = rater.getSingleIdPhotoFauxRcUploadedUserFile();
-                        //Image photoImg = Image.getInstance( new URL( u.getThumbUrl() ) );
+                        //Image photoImg = Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
                         String fn = u.getThumbFilename();
                         if( fn!=null && fn.contains(  ".IDX." ) )
                             fn = StringUtils.replaceStr( fn, ".IDX." , "." + u.getTempInt1() + "." );
@@ -2778,8 +2778,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     fn = StringUtils.replaceStr( fn, ".IDX." , "." + u.getTempInt1() + "." );
                 String thumbUrl = ReportUtils.getUploadedUserFileThumbUrl( u, fn );
 
-                Image photoImg = getItextThumbImage(thumbUrl, 100, false ); //  Image.getInstance( new URL( u.getThumbUrl() ) );
-                // Image photoImg = getItextThumbImage( u.getThumbUrl(), 100 ); //  Image.getInstance( new URL( u.getThumbUrl() ) );
+                Image photoImg = getItextThumbImage(thumbUrl, 100, false ); //  Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
+                // Image photoImg = getItextThumbImage( u.getThumbUrl(), 100 ); //  Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
                 if( photoImg!=null )
                 {
                     tog = !tog;
@@ -2797,8 +2797,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 String thumbUrl = ReportUtils.getUploadedUserFileThumbUrl( u, fn );
 
                 // String thumbUrl = ReportUtils.getMediaTempUrlSourceLink( reportData.o.getOrgId(), u, 1, u.getThumbFilename(), MediaTempUrlSourceType.REF_THUMB );
-                Image photoImg = getItextThumbImage(thumbUrl, 100, false ); //  Image.getInstance( new URL( u.getThumbUrl() ) );
-                // Image photoImg = getItextThumbImage( u.getThumbUrl(), 100 ); //  Image.getInstance( new URL( u.getThumbUrl() ) );
+                Image photoImg = getItextThumbImage(thumbUrl, 100, false ); //  Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
+                // Image photoImg = getItextThumbImage( u.getThumbUrl(), 100 ); //  Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( u.getThumbUrl() ) );
                 if( photoImg!=null )
                 {
                     tog = !tog;

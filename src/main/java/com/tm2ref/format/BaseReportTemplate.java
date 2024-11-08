@@ -110,7 +110,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
 
         try
         {
-            custLogo = (logoUrl == null || logoUrl.isBlank()) ? null : Image.getInstance( new URL( logoUrl ) );
+            custLogo = (logoUrl == null || logoUrl.isBlank()) ? null : Image.getInstance( com.tm2ref.util.HttpUtils.getURLFromString( logoUrl ) );
         }
         catch( Exception e )
         {

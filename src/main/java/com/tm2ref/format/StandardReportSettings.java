@@ -490,7 +490,7 @@ public class StandardReportSettings implements ReportSettings
     
     public URL getLocalImageUrl(String fn) {
         try {
-            return new URL( getBaseImageUrl() + "/" + fn);
+            return com.tm2ref.util.HttpUtils.getURLFromString( getBaseImageUrl() + "/" + fn);
         } catch (MalformedURLException e) {
             LogService.logIt(e, "StandardReportSettings.getImageUrl() ");
             return null;

@@ -6,6 +6,8 @@
 package com.tm2ref.util;
 
 import com.tm2ref.service.LogService;
+import java.net.URI;
+import java.net.URL;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -25,6 +27,27 @@ public class HttpUtils {
     private static PoolingHttpClientConnectionManager poolingConnManager;
     private static final int SO_TIMEOUT_SECS = 30;
 
+    
+    public static URL getURLFromString( String urlStr )
+    {
+        if( urlStr==null || urlStr.isBlank() )
+            return null;
+        
+        if( !urlStr.toLowerCase().startsWith("http" ) && !urlStr.toLowerCase().startsWith("file" ))
+            LogService.logIt( "HttpUtils.getURLFromString() UrlStr appears to be invalid. trying anyway. " + urlStr );
+
+        try
+        {
+            return new URI( urlStr ).toURL();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "HttpUtils.getURLFromString() " + urlStr );
+            return null;
+        }
+    }
+    
+    
     public static CloseableHttpClient getHttpClient( int timeoutSecs )
     {
         try
