@@ -5,17 +5,16 @@
  */
 package com.tm2ref.amazoncloud;
 
-import com.amazonaws.services.rekognition.model.Image;
-import com.amazonaws.services.rekognition.model.S3Object;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.file.BucketType;
 import com.tm2ref.file.FileXferUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.service.LogService;
-import com.tm2ref.util.StringUtils;
 
 
-import java.nio.ByteBuffer;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.rekognition.model.Image;
+import software.amazon.awssdk.services.rekognition.model.S3Object;
 
 /**
  *
@@ -30,7 +29,7 @@ public class AmazonRekognitionImageInfo {
     RcUploadedUserFile uuf;
     int thumbIndex;
     byte[] bytes;
-    S3Object s3Object;
+    // S3Object s3Object;
     boolean useThumb = false;
     boolean forRemoteProctoring = true;
     
@@ -67,24 +66,34 @@ public class AmazonRekognitionImageInfo {
     public Image getImage( FileXferUtils fileXfer )
     {
         init();
-        
+            
+        S3Object s30 = null;
         try
         {
             if( usesS3() )
-                return new Image().withS3Object( getS3Object() );
+            {
+                s30 = getS3Object();
+                return Image.builder().s3Object(s30).build();
+                // return new Image().withS3Object( s30 );
+            }
             else
-                return new Image().withBytes( getByteBuffer( fileXfer ));
+            {
+                return Image.builder().bytes( getSdkBytes( fileXfer )).build();
+                //return new Image().withBytes( getByteBuffer( fileXfer ));
+            }
         }
         catch( Exception e )
         {
+            
             LogService.logIt( e, "AmazonRekognitionImageInfo.getImage() " + toString() + ", useS3=" + usesS3() );
             return null;
         }
     }
     
-    private ByteBuffer getByteBuffer( FileXferUtils fileXfer )
+        
+    private SdkBytes getSdkBytes( FileXferUtils fileXfer )
     {
-        return ByteBuffer.wrap( getBytes( fileXfer ) );
+        return SdkBytes.fromByteArray(getBytes( fileXfer ) );
     }
     
     private String getFilename()
@@ -154,7 +163,8 @@ public class AmazonRekognitionImageInfo {
         String bucket = bucketType.getBucket();
         
         // LogService.logIt( "AmazonRekognitionImageInfo.getS3Object() bucket=" + bucket + ", key=" + key );
+        return S3Object.builder().name(key).bucket(bucket).build();
         
-        return new S3Object().withName( key ).withBucket( bucket );
+        // return new S3Object().withName( key ).withBucket( bucket );
     }
 }

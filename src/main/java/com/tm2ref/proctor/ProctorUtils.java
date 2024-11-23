@@ -4,7 +4,6 @@
  */
 package com.tm2ref.proctor;
 
-import com.amazonaws.services.rekognition.model.FaceDetail;
 import com.tm2ref.amazoncloud.AmazonRekognitionUtils;
 import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.file.RcUploadedUserFile;
@@ -40,6 +39,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import software.amazon.awssdk.services.rekognition.model.FaceDetail;
 
 /**
  *
@@ -383,7 +383,7 @@ public class ProctorUtils extends FacesUtils {
             }
             
             FaceDetail faceDetail = (FaceDetail) output[1];            
-            if( !basicSkip && faceDetail.getConfidence()<Constants.PROCTOR_MIN_FACE_CONFIDENCE )
+            if( !basicSkip && faceDetail.confidence()<Constants.PROCTOR_MIN_FACE_CONFIDENCE )
             {
                 addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.NO_FACE.getProctorImageErrorTypeId() );
                 
@@ -472,7 +472,7 @@ public class ProctorUtils extends FacesUtils {
                     // LogService.logIt( "ProctorUtils.doCandidateIdUpload() BBB.1 AmazonRekognitionUtils.getImageFaceDetails() Faces Count is TWO: " + faceCount + " rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + " rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rcRaterId );                
                     for( FaceDetail fd : (List<FaceDetail>) output[4])
                     {
-                        if( fd.getConfidence()<Constants.PROCTOR_MIN_ID_FACE_CONFIDENCE )
+                        if( fd.confidence()<Constants.PROCTOR_MIN_ID_FACE_CONFIDENCE )
                         {
                             addFailedIndexAndSave(uuf, uuf.getMaxThumbIndex(), ProctorImageErrorType.ID_MULTIFACE_MISMATCH.getProctorImageErrorTypeId() );
 

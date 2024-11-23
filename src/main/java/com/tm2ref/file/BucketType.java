@@ -1,7 +1,7 @@
 package com.tm2ref.file;
 
-import com.amazonaws.regions.Regions;
 import com.tm2ref.global.RuntimeConstants;
+import software.amazon.awssdk.regions.Region;
 
 public enum BucketType
 {
@@ -74,13 +74,13 @@ public enum BucketType
         return RuntimeConstants.getStringValue( "awsBucketFileUpload" );
     }
 
-    public Regions getBucketRegion()
+    public Region getBucketRegion()
     {
         if( getBucketRegionId()==1 )
-            return Regions.US_EAST_1;
+            return Region.US_EAST_1;
         if( getBucketRegionId()==12 )
-            return Regions.US_WEST_2;
-        return Regions.US_EAST_1;
+            return Region.US_WEST_2;
+        return Region.US_EAST_1;
     }
     
     public int getBucketRegionId()

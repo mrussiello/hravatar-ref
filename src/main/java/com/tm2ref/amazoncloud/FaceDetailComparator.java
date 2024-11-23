@@ -5,10 +5,9 @@
  */
 package com.tm2ref.amazoncloud;
 
-import com.amazonaws.services.rekognition.model.BoundingBox;
-import com.amazonaws.services.rekognition.model.FaceDetail;
-import com.amazonaws.services.rekognition.model.ImageQuality;
 import java.util.Comparator;
+import software.amazon.awssdk.services.rekognition.model.BoundingBox;
+import software.amazon.awssdk.services.rekognition.model.FaceDetail;
 
 /**
  *
@@ -19,14 +18,14 @@ public class FaceDetailComparator implements Comparator<FaceDetail>{
     @Override
     public int compare(FaceDetail o1, FaceDetail o2) 
     {
-        BoundingBox bb1 = o1.getBoundingBox();
-        BoundingBox bb2 = o1.getBoundingBox();
+        BoundingBox bb1 = o1.boundingBox();
+        BoundingBox bb2 = o2.boundingBox();
 
-        float area1 = bb1==null ? 0 : bb1.getWidth()*bb1.getHeight();
-        float area2 = bb2==null ? 0 : bb2.getWidth()*bb2.getHeight();
+        float area1 = bb1==null ? 0 : bb1.width()*bb1.height();
+        float area2 = bb2==null ? 0 : bb2.width()*bb2.height();
 
-        float conf1 = o1.getConfidence();
-        float conf2 = o1.getConfidence();
+        float conf1 = o1.confidence();
+        float conf2 = o2.confidence();
 
         // much higher conf 1
         if( conf1>=conf2*2 )

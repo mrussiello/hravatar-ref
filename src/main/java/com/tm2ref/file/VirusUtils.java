@@ -5,7 +5,6 @@
 package com.tm2ref.file;
 
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.service.LogService;
 import java.io.InputStream;
@@ -35,18 +34,18 @@ public class VirusUtils
      */
     public static boolean scanforVirusAndDelete( String directory, String filename, int bucketTypeId ) throws Exception
     {
-        S3Object s3o = null;
+        InputStream iss = null;
         try
         {
             if( isVirusScanRequired() )
             {
                 String pathFn = directory + "/" + filename;
 
-                Object[] fileO = (new FileXferUtils()).getFileInputStream(directory, filename, bucketTypeId,true);
+                iss = (InputStream) (new FileXferUtils()).getFileInputStream(directory, filename, bucketTypeId,true);
 
-                InputStream iss = (InputStream) fileO[0];
+                //InputStream iss = (InputStream) fileO[0];
 
-                s3o =  fileO.length>1 ? (S3Object) fileO[1] : null;
+                //s3o =  fileO.length>1 ? (S3Object) fileO[1] : null;
 
                 // FileInputStream fis = new FileInputStream( RuntimeConstants.getStringValue( "localFsRoot" ) + pathFn );
 
@@ -54,8 +53,8 @@ public class VirusUtils
 
                 iss.close();
 
-                if( s3o != null )
-                    s3o.close();
+                //if( s3o != null )
+                //    s3o.close();
 
                 if( !isOk )
                 {
@@ -72,8 +71,8 @@ public class VirusUtils
         }
         finally
         {
-            if( s3o!=null )
-                s3o.close();
+            if( iss!=null )
+                iss.close();
         }
         return true;
 
@@ -109,7 +108,7 @@ public class VirusUtils
         if( virusScanPort == null )
             virusScanPort = RuntimeConstants.getIntValue( "virusScanPort" );
 
-        return virusScanBeforeSaving.booleanValue();
+        return virusScanBeforeSaving;
     }
 
 

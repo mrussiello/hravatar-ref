@@ -15,6 +15,20 @@
         <jakartaee>10.0.0</jakartaee>
     </properties>
     
+    <!-- AWS SDK V2 -->
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>software.amazon.awssdk</groupId>
+          <artifactId>bom</artifactId>
+          <version>2.29.17</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
+    
+    
     <dependencies>
         
         <!-- IMPORTANT - THIS dependency is here to account for Payara BUG FISH 7644 to support file downloads. Once this bug is corrected remove the jakarta.faces dependency! -->
@@ -101,7 +115,7 @@
             <version>4.0.1</version>
         </dependency>   
 
-        
+        <!--
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
@@ -112,7 +126,20 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-rekognition</artifactId>
             <version>1.12.401</version>
-        </dependency>        
+        </dependency>
+        -->        
+                
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>rekognition</artifactId>
+        </dependency>
+
+                
                 
         <dependency>
           <groupId>com.twilio.sdk</groupId>
