@@ -105,7 +105,7 @@
             </h:panelGroup>
             
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
-            <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
+                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}"/>
             </h:panelGroup>
             
             

@@ -192,7 +192,9 @@
         navigator.mediaDevices.getUserMedia( constraints ).then( function (audioStream) 
         {
             // console.log( '/ref/resources/pp/help-camera.xhtml.doSetupMicTest() have stream=' + (audioStream) );
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
             const audioContext = new AudioContext();
+            
             const audioSource = audioContext.createMediaStreamSource(audioStream);
             const analyser = audioContext.createAnalyser();
             analyser.fftSize = 512;

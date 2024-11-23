@@ -103,7 +103,7 @@
           <dependency>
               <groupId>org.primefaces</groupId>
               <artifactId>primefaces</artifactId>
-              <version>14.0.6</version>
+              <version>14.0.7</version>
 
               <type>jar</type>
               <classifier>jakarta</classifier>

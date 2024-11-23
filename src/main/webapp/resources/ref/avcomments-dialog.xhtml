@@ -12,12 +12,12 @@
 <!-- IMPLEMENTATION -->
 <cc:implementation>
     
-    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" modal="true" header="#{stMessages['g.RecordComments']}" style="max-width:700px;padding-left:10px;padding-right:10px;font-size:1.3rem" widgetVar="avcommentsdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" modal="true" positionType="absolute" header="#{stMessages['g.RecordComments']}" style="max-width:700px;padding-left:10px;padding-right:10px;font-size:1.3rem" widgetVar="avcommentsdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             
         <h:panelGrid columns="1" cellpadding="5" style="margin-left:0;margin-right:auto;" columnClasses="reftdcenter">
             
             <h:panelGroup>
-                <div style="text-align: left">
+                <div id="avcommentstopinstdiv" style="text-align: left">
                 <span id="avcommentdialogheader" style="font-weight:bold"></span>
                 &#160;-&#160;
                 <h:outputText value="#{stMessages['g.RecordClickButToRecord']}" />                    
@@ -40,8 +40,8 @@
             <h:panelGrid columns="1" cellpadding="4" style="margin-left:auto;margin-right:auto;margin-top:4px">
 
                 <h:panelGroup>
-                    <div style="text-align:center">
-                    <div id="mediacommentdiv" style="display:inline-block;padding-top:15px">
+                    <div id="avcommentmediacommentdivouter" style="text-align:center">
+                    <div id="mediacommentdiv" style="display:inline-block;">
                     </div>
                     </div>
                 </h:panelGroup>
@@ -67,7 +67,7 @@
 
                 <h:panelGroup>
                 <div style="text-align:center">
-                    <div style="display:inline-block">
+                    <div style="display:inline-block">                        
                         <span id="startrecbut" style="display:none">
                             <p:button value="#{stMessages['g.StartRecording']}"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>                        

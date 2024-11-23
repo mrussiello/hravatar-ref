@@ -93,7 +93,7 @@ public class ProctorEntry
            String nextViewId = "/index.xhtml";
 
            // if( 1==1 || recdevs<0 )
-           // LogService.logIt("ProctorEntry.doBrowserCheckEntry() acidx=" + acidx + ", medrecapi=" + medrecapi + ", recdevs=" + recdevs + ", getusermedia=" + getusermedia ) ;
+           LogService.logIt("ProctorEntry.doBrowserCheckEntry() acidx=" + acidx + ", medrecapi=" + medrecapi + ", recdevs=" + recdevs + ", getusermedia=" + getusermedia ) ;
 
            if( acidx!=null && !acidx.isBlank() )
            {

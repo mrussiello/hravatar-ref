@@ -229,6 +229,7 @@ public class RefBean extends BaseRefBean implements Serializable
         
         if( recDevs>=0 )
             return false;
+        
         if( rcCheck==null || refUserType==null )
             return false;
         
@@ -264,11 +265,20 @@ public class RefBean extends BaseRefBean implements Serializable
     public boolean getAudioVideoCommentsOk()
     {
         // LogService.logIt( "RefBean.getAudioVideoCommentsOk() MedRecApi=" + medRecApi + ", avCommentTypeId=" + rcCheck.getAvCommentsTypeId() );
-        if( rcCheck==null || !medRecApi )
+        if( rcCheck==null || getHasGetUserMedia()<1 ) // || !isMedRecApi() )
             return false;
         
         return rcCheck.getAvCommentsTypeId()>0;
     }
+    
+    public boolean getVideoCommentsOk()
+    {
+        // LogService.logIt( "RefBean.getAudioVideoCommentsOk() MedRecApi=" + medRecApi + ", avCommentTypeId=" + rcCheck.getAvCommentsTypeId() );
+        return getAudioVideoCommentsOk() && !getAudioCommentsOnly() && isMedRecApi();
+    }
+        
+    
+    
     public boolean getAudioCommentsOnly()
     {
         if( rcCheck==null )
@@ -375,6 +385,9 @@ public class RefBean extends BaseRefBean implements Serializable
     }
 
     public boolean isMedRecApi() {
+        
+        //if( 1==1 )
+        //    return false;
         return medRecApi;
     }
 

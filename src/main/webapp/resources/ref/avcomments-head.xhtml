@@ -99,6 +99,7 @@
     var errorDuringUpload = "#{stMessages['g.PPErrorDuringUpload']}"; 
     var errorDuringUploadAbort = "#{stMessages['g.PPErrorDuringUploadAbort']}"; 
     var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
+    var errorDeviceMutedMessage = "#{stMessages['g.PPErrorDeviceMutedMessage']} #{userBean.supportEmail}.";
     var reRecordTextVid = "#{stMessages['g.ReRecordCommentVid']}";
     var reRecordTextAud = "#{stMessages['g.ReRecordCommentAud']}";
     var audioAlreadyRecorded = "#{stMessages['g.RecordAudioPrev']}";
@@ -110,7 +111,7 @@
 
     var selCameraDevice = '#{userBean.selCamera}';
     var selMicrophoneDevice = '#{userBean.selMicrophone}';
-
+    var microphoneMonitorActive = false;
     
     
     var fileSize = 0;
@@ -177,13 +178,44 @@
     var MAX_TOTAL_MED_ERRS=4;
     var MAX_MUTE_WRNGS=3;    
         
-    window.addEventListener( 'load', doMediaCaptureOnload );    
+    window.addEventListener( 'load', doMediaCaptureOnload );   
+    
+    
+    var audRecBuffers = null;
+    var audRecLength = 0;
+    var audSampleRate = 0;
+    var audContext = null;
+
+    //var isSafari = false;
+    var isIos = false;
+    var isIphone = false;
+    
         
     function doMediaCaptureOnload()
     {
+        var ua = navigator.userAgent;
+        if (/iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints>1) )
+            isIos=true;    
+        isIphone = isIos && /iPhone|iPod/.test(ua);    
+        //isSafari = ua.indexOf("Chrome")<0 && ua.indexOf("Safari")>=0;
+        
+        // Testing only
+        // isIos=true;      
+
+        var ele;
+        
+        if( isIphone )
+        {
+            ele = document.getElementById('avcommentstopinstdiv');
+            if( (ele) )
+                ele.style.display='none';
+            desWid = 240;
+            desHgt = 180;
+        }
+        
         if( hasPrevUpload )
         {
-            var ele = document.getElementById( 'avuploadindicatordiv' );
+            ele = document.getElementById( 'avuploadindicatordiv' );
             if( ele )
             {    
                 ele.innerHTML=prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
@@ -197,6 +229,9 @@
                 ele.innerHTML=reRecordTextAud;
         }        
     }
+        
+        
+        
         
     function initForMediaCapture()
     {
@@ -213,7 +248,7 @@
             /// clean the mediacommentdiv
             mediacommentdiv.innerHTML='';
             
-            mediacommentdiv.style.paddingTop= (recordingIsAudioOnly ? 40 : 3) + 'px';
+            mediacommentdiv.style.paddingTop= (recordingIsAudioOnly ? 5 : 3) + 'px';
             
             var desiredTagname = recordingIsAudioOnly ? 'audio' : 'video';
             
@@ -230,9 +265,10 @@
                 recordMedEle = document.createElement( desiredTagname );
                 //autoplay="true" width="300" height="225" style="border: 1px darkgray solid;margin-top:10px;margin-right:40px"
                 var res = recordMedEle.style;
-                res.border='1px darkgray solid';
+                // res.border='1px darkgray solid';
                 res.marginTop='10px';
-                res.marginRight='40px';
+                res.marginRight='auto';
+                res.marginLeft='auto';
             }
             
             if( (recordMedEle) )
@@ -247,8 +283,6 @@
                 recordMedEle.setAttribute( 'muted',''); 
                 mediacommentdiv.appendChild( recordMedEle );
             }
-            
-            
             
             if( !(playbackMedEle) )
             {
@@ -283,10 +317,12 @@
                 logIt( 'avcomments-head.initForMediaCapture() Visualizer hidden. '  ); 
             }
             
-            else if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
+            else if( !isIos && recordingIsAudioOnly && (typeof setupMicrophoneMonitor!=='undefined') )
             {
                 visualizerActive = true;
+                
                 setupMicrophoneMonitor();
+                // setupMicrophoneMonitor();
                 el3 = document.getElementById('visualizertable');
                 if( (el3) )
                     el3.style.display='inline-block';
@@ -300,6 +336,9 @@
             recbut.style.display='inline';
             recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? '' : 'audio' ) );
             recbut.style.display='none';
+
+            if( recordingIsAudioOnly && isIos )
+                initForMediaCaptureLocalAudio();
             
             setMrOptionsAndConstraints();            
         }
@@ -315,11 +354,57 @@
         swapMed=true;        
     }
     
+
+    function initForMediaCaptureLocalAudio()
+    {
+        if( !recordingIsAudioOnly || !isIos )
+            return;
+        logIt( 'avcomments-head.initForMediaCaptureLocalAudio() START ' ); 
+        
+        try
+        {
+            // create recording Ele only if isAudio
+            if( !(recordMedEle) )
+            {    
+                recordMedEle = document.createElement( 'audio' );
+                var res = recordMedEle.style;
+                res.width='1px';
+                res.height='1px';
+            }
+
+            if( (recordMedEle) )
+            {    
+                recordMedEle.srcObject = null;
+                //recordMedEle.setAttribute( 'width', desWid ); 
+                recordMedEle.setAttribute( 'autoplay',''); 
+                recordMedEle.setAttribute( 'id','commentrecordele'); 
+                recordMedEle.setAttribute( 'playsinline','true'); 
+                recordMedEle.setAttribute( 'defaultMuted',''); 
+                recordMedEle.setAttribute( 'muted',''); 
+                mediacommentdiv.appendChild( recordMedEle );
+            }
+        }
+        catch( e )
+        {
+            // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
+            logIt( 'avcomments-head.initForMediaCaptureLocalAudio() Error ' + e.message  ); 
+        }
+
+    }
+    
+    
+    
     function setMrOptionsAndConstraints()
     {
-            if( recordingIsAudioOnly )
+            if( recordingIsAudioOnly && isIos )
+                mrOptions = {mimeType: 'audio/wav' };
+        
+            else if( recordingIsAudioOnly )
                 mrOptions = {mimeType: 'audio/webm' };
             
+            else if( !(MediaRecorder) )
+              mrOptions = {mimeType: 'video/mp4'};
+          
             else if( !(MediaRecorder.isTypeSupported) ) 
                mrOptions = {mimeType: 'video/mp4'};
 
@@ -336,7 +421,17 @@
             else
                mrOptions = {mimeType: 'video/webm; codecs=vp8'};
 
-            if( recordingIsAudioOnly )
+            // Audio on IOS
+            if( recordingIsAudioOnly && isIos )
+            {
+                mrConstraints = { audio:true, video:false };
+                
+                if( (selMicrophoneDevice) )
+                    mrConstraints.audio= {deviceId: {exact:selMicrophoneDevice}};
+            }
+                
+            // Other Audio only
+            else if( recordingIsAudioOnly )
             {    
                 mrConstraints = { audio:true, video:false };
                 
@@ -355,8 +450,6 @@
                 if( (selMicrophoneDevice) )
                     mrConstraints.audio.deviceId={exact:selMicrophoneDevice};    	                   
             }
-            
-        
     }
     
     
@@ -430,7 +523,10 @@
         if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
         {
             visualizerActive = true;
-            setupMicrophoneMonitor();
+            
+            if( !microphoneMonitorActive )
+                setupMicrophoneMonitor();
+            
             el3 = document.getElementById('visualizertable');
             if( (el3) )
             {    
@@ -651,12 +747,17 @@
             theBlob = null;
             recordedBlobs = [];
         
+            if( recordingIsAudioOnly && isIos )
+            {
+                logIt( 'avcomments-head.xhtml.startMediaStream() recordAudioOnly and isIos. Returning. ' );
+                return;
+            }
+            
             if( !(medStrmProm) )
             {
                 // logIt( 'avcomments-head.xhtml.startMediaStream() calling getUserMedia() ' );
                 medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
             }
-            
             
             if( (medStrmProm) )
             {
@@ -692,6 +793,8 @@
                 function(e) 
                 {
                     medStrmProm=null;
+                    logIt( 'avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message );      
+                    showErrorMessage( 'avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message );   
                 } );
             }
         }
@@ -703,6 +806,123 @@
         }
         return true;
     }
+
+
+    function startMediaStreamLocalAudio()
+    {
+        try
+        {
+            theBlob = null;
+            recordedBlobs = [];
+        
+            if( !(medStrmProm) )
+            {
+                logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() calling getUserMedia() ' );
+                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
+            }
+                        
+            if( (medStrmProm) )
+            {
+                logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Have Promise ' );
+                medStrmProm.then( function(stream) 
+                {
+                    medStrm=stream;
+
+                    medStrmProm=null;
+
+                    if( chkMute() )
+                    {
+                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() CkMute Pbm rqd=' + rqd );
+                        recAvInProg = false;
+                        medStrm = null;
+                        mRecorder = null;
+                        playing = false;
+                        audRecLength = 0;
+                        audRecBuffers = [];
+                        showMuteWrng();
+                        return;
+                    }
+
+                    // connect stream to the audio element so user can see self.
+                    if( (recordMedEle) )
+                    {
+                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Assigning stream');
+                        recordMedEle.srcObject = stream;
+                        recordMedEle.setAttribute( 'playsinline','true'); 
+                        recordMedEle.setAttribute( 'defaultMuted',''); 
+                        recordMedEle.setAttribute( 'muted',''); 
+                        recordMedEle.volume=0;
+                        recordMedEle.load();
+                        //recordMedEle.play();                                        
+                    }
+
+                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() CCC ');
+
+                    // OK now start the audio stream.
+                    audRecBuffers = [];
+                    audRecLength = 0;
+
+                    // Note, Mac and IOS cannot handle too many audio context operations.
+                    var audDestNode = null; // bimo.m.audDestNode;
+
+                    if( !(audContext) )
+                    {
+                        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                        audContext = new AudioContext();
+                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Created Audio Context ');
+                    }
+
+                    if( !(audContext.createScriptProcessor) )
+                    {
+                        audContext.createScriptProcessor = audContext.createJavaScriptNode;
+                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() createScriptProcessor');
+                    }
+
+                    if( isIos )
+                        unlockIos(audContext);                                    
+
+                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() DDD ');
+
+                    var audSourceNode = audContext.createMediaStreamSource(stream);
+                    audDestNode = audContext.createScriptProcessor(2048, 1, 1); // audContext.createMediaStreamDestination();
+                    audSampleRate = audContext.sampleRate;  
+                    audSourceNode.connect(audDestNode);
+                    audDestNode.connect(audContext.destination);  // Should not be needed but it is in chrome, and edge. 
+
+                    audDestNode.onaudioprocess = function(e) {
+
+                        if( !recAvInProg )
+                            return;
+
+                        // push the data
+                        var b = new Float32Array( e.inputBuffer.getChannelData(0) );
+                        audRecBuffers.push( b );
+                        audRecLength = audRecBuffers.length;  
+                        // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio().audDestNode.onaudioprocess audRecLength=' + audRecLength );
+                    };
+                    // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() EEE ');
+                    
+                    setupMicrophoneMonitorLocalAudio( stream );
+                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() FFF ');
+
+                },
+                function(e) 
+                {
+                    medStrmProm=null;
+                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() medStrmProm Error. ' + e.message );  
+                    showErrorMessage( 'avcomments-head.xhtml.startMediaStreamLocalAudio() ' + e.message );                    
+                } );
+            }
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.startMediaStream() ' + e.message );      
+            showErrorMessage( 'avcomments-head.xhtml.startMediaStream() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+
 
 
     
@@ -717,10 +937,31 @@
             {
                 recordMedEle.volume=0;
                 // recordMedEle.load();
-                recordMedEle.play();                                        
+                // recordMedEle.play();                                        
             }        
         
-            if( !(mRecorder) )
+            if( recordingIsAudioOnly && isIos )
+            {
+                logIt( 'avcomments-head.xhtml.startRec2() Recording Audio local. ' );
+                
+                if( audRecLength>0 )
+                {
+                    logIt( 'avcomments-head.xhtml.startRec2() audRecLength=' + audRecLength + ', so clearing and returning.' );
+                    //stopRec2();
+                    audRecLength = 0;
+                    audRecBuffers = [];
+                    recAvInProg = true;
+                    return true;                        
+                }
+               
+                startMediaStreamLocalAudio();
+
+                recAvInProg = true;
+               
+                return true;
+            }
+        
+            else if( !(mRecorder) )
             {
                 logIt( 'avcomments-head.xhtml.startRec2() ERROR no MedRecorder ' );
                 return false;
@@ -765,6 +1006,13 @@
                 recordMedEle.pause();
             // recordMedEle.volume=1.0;
             
+            if( recordingIsAudioOnly && isIos )
+            {
+                logIt( 'avcomments-head.xhtml.stopRec2() Recording Audio local. ' );
+                stopRec2LocalAudio();
+                return true;                
+            }
+                        
             if( (mRecorder) )
             {
                 logIt( 'avcomments-head.xhtml.stopRec2() mRecorder=true, state=' + mRecorder.state );
@@ -806,6 +1054,66 @@
         }
         return true;
     }
+
+    function stopRec2LocalAudio()
+    {
+        try
+        {
+            if( (recordMedEle) )
+                recordMedEle.pause();
+
+            if( !(audRecBuffers) || audRecBuffers.length<=0 )
+                return;
+
+           logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() START ');
+
+            var audResultBuffer = new Float32Array(audRecLength*2048);
+            var offset = 0;
+            for (var i=0; i<audRecBuffers.length; i++) 
+            {
+                // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() BBB i=' + i + ', audRecBuffers[i]=' + audRecBuffers[i].byteLength );
+                audResultBuffer.set( audRecBuffers[i], offset);
+                offset += audRecBuffers[i].length;
+            }
+
+            var vw = encodeWAV( audResultBuffer );
+            recordedBlobs = [vw]; 
+            // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() isAudio=' + isAudio + ', audResultBuffer=' + audResultBuffer.length );
+
+            // don't need these any more.
+            audRecBuffers = [];
+
+            if( (recordMedEle) )
+                recordMedEle.pause();
+
+            recAvInProg = false;
+
+            if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
+            {
+                theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
+
+                fileSize = theBlob.size;
+                playbackMedEle.srcObject=null;
+                playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
+                // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
+                playbackMedEle.load();
+                playbackMedEle.pause(); 
+                playbackMedEle.currentTime=0;
+                sent=false;
+                var upldbut = document.getElementById('uploadbuttondiv');
+                upldbut.style.display='inline';
+            }                       
+            
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message );  
+            showErrorMessage( 'avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message );
+            return false;
+        }
+        return true;
+    }
+
 
     function dataAvail(e)
     {
@@ -939,6 +1247,14 @@
     
     function setupMicrophoneMonitor()
     {
+        if( isIos )
+            return;
+        
+        if( microphoneMonitorActive )
+            return;
+        
+        microphoneMonitorActive = true;
+        
         if( !(navigator.mediaDevices) )
         {
            console.log( 'avcomments-head.xhtml.setupMicrophoneMonitor() No video devices detected.' );
@@ -964,10 +1280,17 @@
         {
             try
             {
-                // console.log( '/alt/test/help-camera.xhtml.doSetupMicTest() have stream=' + (audioStream) );
-                const audioContext = new AudioContext();
-                const audioSource = audioContext.createMediaStreamSource(audioStream);
-                const analyser = audioContext.createAnalyser();
+        
+                console.log( '/alt/test/help-camera.xhtml.setupMicrophoneMonitor() have stream=' + (audioStream) );
+
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                // const audioContext = new AudioContext();
+                //const audioSource = audioContext.createMediaStreamSource(audioStream);
+                //const analyser = audioContext.createAnalyser();
+                if( !(audContext) )
+                    audContext =  new AudioContext();
+                const audioSource = audContext.createMediaStreamSource(audioStream);
+                const analyser = audContext.createAnalyser();
                 analyser.fftSize = 512;
                 analyser.minDecibels = -127;
                 analyser.maxDecibels = 0;
@@ -1008,6 +1331,245 @@
         });        
 
     }
+    
+    
+    function setupMicrophoneMonitorLocalAudio( audioStream )
+    {
+        if( !isIos )
+            return;
+        
+        if( microphoneMonitorActive )
+            return;
+        
+        microphoneMonitorActive = true;
+        
+        var volumeVisualizer = document.getElementById('volume-visualizer');
+
+        console.log( 'avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() START volumeVisualizer=' + (volumeVisualizer) );
+
+        if( !(volumeVisualizer) )
+            return;
+
+        try
+        {
+
+            console.log( '/alt/test/help-camera.xhtml.setupMicrophoneMonitorLocalAudio() have stream=' + (audioStream) );
+
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            // const audioContext = new AudioContext();
+            //const audioSource = audioContext.createMediaStreamSource(audioStream);
+            //const analyser = audioContext.createAnalyser();
+            if( !(audContext) )
+                audContext =  new AudioContext();
+            const audioSource = audContext.createMediaStreamSource(audioStream);
+            const analyser = audContext.createAnalyser();
+            analyser.fftSize = 512;
+            analyser.minDecibels = -127;
+            analyser.maxDecibels = 0;
+            analyser.smoothingTimeConstant = 0.4;
+            audioSource.connect(analyser);
+            const volumes = new Uint8Array(analyser.frequencyBinCount);
+            // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
+            volumeCallback = () => 
+            {
+                //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
+                analyser.getByteFrequencyData(volumes);
+                let volumeSum = 0;
+                for (const volume of volumes)
+                    volumeSum += volume;
+                const averageVolume = volumeSum / volumes.length;
+
+                var vistable = document.getElementById('visualizertable');
+                if( (vistable) )
+                    vistable.style.display=visualizerActive ? 'inline-block' : 'none';
+
+                volumeVisualizer.style.setProperty('--volume', (averageVolume * 100/100) + '%');
+
+                //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
+            };
+            // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
+            volumeInterval = setInterval(volumeCallback, 100);
+        }
+        catch( e )
+        {
+            logIt( 'avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() XXX Error setting up Microphone in window: ' + e.message );                
+        }
+    }
+    
+    
+    
+
+
+
+
+
+    function chkMute()
+    {
+        if( !recordingIsAudioOnly )
+            return false;
+
+        return chk4Mute();
+    }
+
+    function chk4Mute()
+    {
+        try
+        {
+            if( !recordingIsAudioOnly || !(medStrm) )
+                return false;
+
+             // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() AAA ' + aud + ', medStrm.id=' + medStrm.id + ', active=' + medStrm.active );
+
+            if( !(medStrm.getAudioTracks) )
+                return false;
+
+            var tks = medStrm.getAudioTracks();
+
+            if( !(tks) )
+            {
+                // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() no tracks returned. ' );
+                return false;
+            }
+
+            var tk=tks[0];
+
+            // for some reason, video mediaStreamTracks are sometimes muted.
+            if( (tk) && ( !tk.enabled || tk.muted ) )
+            {
+                // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() FOUND muted track: id=' + tk.id + ', enbld=' + tk.enabled + ', mutd=' + tk.muted +', knd=' + tk.kind + ', aud=' + aud );
+                return true;
+            }
+        }
+        catch( e )
+        {
+            logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() error ' + e.message  );
+        }
+        return false;
+    }
+
+    function unlockIos(audCtxt)
+    {
+        with( this )
+        {
+            if( !isIos )
+                return;
+
+            tchUnlock(audCtxt).then( function(succs)
+            {
+                // alert( 'webAudioTouchUnlock unlocked=' + unlocked);
+                if(succs)
+                {
+                    // AudioContext was unlocked from an explicit user action,
+                    // sound should start playing now
+                    logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is true '  );
+                }
+                else
+                {
+                    // There was no need for unlocking, devices other than iOS
+                    logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is false '  );
+                }
+            },
+            function( str )
+            {
+                logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() Error unlocking IOS: ' + str  );
+            }); 
+        }
+    };
+
+
+    function tchUnlock(audCtxt)
+    {
+        return new Promise( function (succs, err)
+        {
+            if( (audCtxt) && audCtxt.state==='suspended' )
+            {
+                var unlock=function()
+                {
+                    audCtxt.resume().then( function()
+                    {
+                        document.body.removeEventListener('touchstart', unlock);
+                        document.body.removeEventListener('touchend', unlock);
+                        succs(true);
+                    }, 
+                    function(r)
+                    {
+                        err(r);
+                    });
+                };
+
+                document.body.addEventListener('touchstart', unlock, false);
+                document.body.addEventListener('touchend', unlock, false);
+            }
+            else
+                succs(false);
+        });
+    }   
+
+    function showMuteWrng()
+    {
+        logIt( 'ref/resources/ref/avcomments-head.xhtml.showMuteWrng() ' );   
+        showErrorMessage( null, errorDeviceMutedMessage, false, true, null, doReload );
+    }
+
+
+    function encodeWAV( samples ) 
+    {
+        var buffer = new ArrayBuffer( 44 + samples.length * 2);
+        var vw = new DataView(buffer);
+
+        /* RIFF identifier */
+        writeString(vw, 0, 'RIFF');
+        /* RIFF chunk length */
+        vw.setUint32(4, 36 + samples.length * 2, true);
+        /* RIFF type */
+        writeString(vw, 8, 'WAVE');
+        /* format chunk identifier */
+        writeString(vw, 12, 'fmt ');
+        /* format chunk length */
+        vw.setUint32(16, 16, true);
+        /* sample format (raw) */
+        vw.setUint16(20, 1, true);
+        /* channel count */
+        vw.setUint16(22, 1, true);
+        /* sample rate */
+        vw.setUint32(24, audSampleRate, true);
+        /* byte rate (sample rate * block align) */
+        vw.setUint32(28, audSampleRate * 4, true);
+        /* block align (channel count * bytes per sample) */
+        vw.setUint16(32, 1 * 2, true);
+        /* bits per sample */
+        vw.setUint16(34, 16, true);
+        /* data chunk identifier */
+        writeString(vw, 36, 'data');
+        /* data chunk length */
+        vw.setUint32(40, samples.length * 2, true);
+
+        floatTo16BitPCM(vw, 44, samples);
+
+        return vw;
+    }
+
+    function floatTo16BitPCM(out, offset, input) 
+    {
+        for (var i = 0; i < input.length; i++, offset += 2) 
+        {
+            var s = Math.max(-1, Math.min(1, input[i]));
+            out.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            // logIt( s );
+        }
+    }
+
+
+    function writeString(vw, offset, str) 
+    {
+        for (var i=0; i < str.length; i++) 
+        {
+            vw.setUint8(offset + i, str.charCodeAt(i));
+        }
+    }
+    
+    
+    
     
     
     

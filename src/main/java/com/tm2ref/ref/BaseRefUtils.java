@@ -753,7 +753,7 @@ public class BaseRefUtils  extends FacesUtils
                 // In case somehow the session is not null
                 String acidx = refBean.getActiveAccessCodeX();
                 String refpagex = refBean.getActiveRefPageTypeIdX();
-                int refPageTypeX = 0;
+                int refPageTypeX;
 
                 //if( tkid> 0 )
                 LogService.logIt( "RefUtils.repairRefBeanForCurrentAction() AAA.1 Recovered acidx from RefBean.activeAccessCodeX=" + acidx);
