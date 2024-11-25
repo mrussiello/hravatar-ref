@@ -102,6 +102,8 @@
     var errorDeviceMutedMessage = "#{stMessages['g.PPErrorDeviceMutedMessage']} #{userBean.supportEmail}.";
     var reRecordTextVid = "#{stMessages['g.ReRecordCommentVid']}";
     var reRecordTextAud = "#{stMessages['g.ReRecordCommentAud']}";
+    var reRecordTextAsVid = "#{stMessages['g.ReRecordCommentAsVid']}";
+    var reRecordTextAsAud = "#{stMessages['g.ReRecordCommentAsAud']}";
     var audioAlreadyRecorded = "#{stMessages['g.RecordAudioPrev']}";
     var videoAlreadyRecorded = "#{stMessages['g.RecordVideoPrev']}";
     var recordVideoHeader = "#{stMessages['g.RecordVideoComment']}";
@@ -225,10 +227,10 @@
             }
             ele = document.getElementById( 'rerecordtxtvid' );
             if( ele )
-                ele.innerHTML=reRecordTextVid;
+                ele.innerHTML= hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid :  reRecordTextVid;
             ele = document.getElementById( 'rerecordtxtaud' );
             if( ele )
-                ele.innerHTML=reRecordTextAud;
+                ele.innerHTML=hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
         }        
     }
         
@@ -1202,17 +1204,19 @@
         logIt( 'avcomments-head.xhtml.doUploadOnload()' );
         PF('avcommentsuploadingdialog').hide();
         uploadStatus = 2;
+        hasPrevUpload = true;        
+        prevUploadIsAudio = recordingIsAudioOnly;
+
         var ele = document.getElementById( 'avuploadindicatordiv' );
         if( ele )
             ele.style.display='inline';
         ele = document.getElementById( 'rerecordtxtvid' );
         if( ele )
-            ele.innerHTML=reRecordTextVid;
+            ele.innerHTML= hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
         ele = document.getElementById( 'rerecordtxtaud' );
         if( ele )
-            ele.innerHTML=reRecordTextAud;
+            ele.innerHTML=hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
 
-        hasPrevUpload = true;
     }
 
     function doUploadError( e )
