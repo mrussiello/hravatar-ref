@@ -21,6 +21,7 @@
         {
             user-select: none;
         }
+        
         .anchordivouter
         {
             width:740px;margin-top:5px;margin-bottom:5px;vertical-align:bottom;display:table-cell
@@ -115,10 +116,15 @@
             isMouse = true; // (!isTouch && !isPointer) || isPointer;
             // window.addEventListener( 'mousemove', function(){isMouse=true;} );
             
-            // logIt( 'doLocalPageOnload() isPointer=' + isPointer + ', isTouch=' + isTouch + ', isMouse=' + isMouse + ', needsSlider=' + needsSlider );
-            
             // adjust sizes based on media queries
             var twid = window.innerWidth;
+
+            var cwid = document.body.clientWidth;
+            
+            // logIt( 'item-rating-head.xhtml.doLocalPageOnload() cwid=' + cwid + ', twid=' + twid + ', isPointer=' + isPointer + ', isTouch=' + isTouch + ', isMouse=' + isMouse + ', needsSlider=' + needsSlider );
+            
+            if( cwid>0 && cwid<twid )
+                twid=cwid;
 
             if( twid<739 )
             {
@@ -154,11 +160,18 @@
                 tes.marginTop=thumbMarg + 'px';
                 tes.width=thumbWid + 'px';
                 tes.height=thumbWid + 'px';
+                
+                tes = document.getElementById('thumbsdownimg2').style;
+                tes.maxWidth=thumbWid + 'px';
 
                 tes = document.getElementById('thumbsupimg').style;
                 tes.marginTop=thumbMarg + 'px';
                 tes.width=thumbWid + 'px';
                 tes.height=thumbWid + 'px';
+                
+                tes = document.getElementById('thumbsupimg2').style;
+                tes.maxWidth=thumbWid + 'px';
+                
 
                 var topMarg = parseInt( (2*thumbMarg + thumbWid - trackHgt)/2 );
 
@@ -174,13 +187,15 @@
                 //lowerThumbsDiv.style.width=aboxwid + 'px';
                 //lowerThumbsDiv.style.display = 'table-cell';
 
-                logIt( 'item-rating-head.xhtml.doLocalPageOnload() twid=' + twid + ', adjusting values. aboxwid=' + aboxwid + ', sliderWid=' + sliderWid + ', trackimgwid=' + trackWid + ', trackimghgt=' + trackHgt );            
+                // logIt( 'item-rating-head.xhtml.doLocalPageOnload() twid=' + twid + ', adjusting values. aboxwid=' + aboxwid + ', leftMrg=' + leftMrg + ', sliderWid=' + sliderWid + ', trackimgwid=' + trackWid + ', trackimghgt=' + trackHgt );            
             }
             
             
             
             if( needsSlider )
-                setupSlider();
+            {
+                setTimeout( setupSlider, 200);
+            }
             
             window.addEventListener( 'resize', function(){ doOnResize();} );
             
@@ -330,12 +345,14 @@
                     var ses = sliderEle.style;
                     ses.position='absolute';
 
-                    var sldrTop = parseInt( (trackHgt - sliderHgt)/2);                
+
+                    var sldrTop = parseInt((trackHgt - sliderHgt)/2);                
                     ses.top= (trackPos.y + sldrTop + window.pageYOffset) + 'px';
                     ses.width=sliderWid + 'px';
                     ses.height=sliderWid + 'px';
                     ses.cursor='move';
         
+                    // logIt( 'setupSlider() trackPos.y=' + trackPos.y + ', trackHgt=' + trackHgt + ', sliderHgt=' + sliderHgt + ', ses.top=' + ses.top );
         
                     
                     //ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
@@ -452,7 +469,7 @@
             {
                 var valueEle = document.getElementById( 'ratingvalue' );
 
-                // logIt( 'calcValue() Start. current value=' + valueEle.value );
+                logIt( 'item-rating-head.xhtml.calcValue() Start. current value=' + valueEle.value );
 
                 if( !(trackEle) ) // == null )
                 {
@@ -477,21 +494,21 @@
 
                 if( pos <= trackLeftB+1 )
                 {
-                    logIt( 'calcValue() AA.1 setting to valueLeft. pos=' + pos + ', trackLeft=' + trackLeftB );
+                    logIt( 'item-rating-head.calcValue() AA.1 setting to valueLeft. pos=' + pos + ', trackLeft=' + trackLeftB );
                     valueEle.value = valueLeft;
                     return;
                 }
 
                 if( pos >= trackRightB-1 )
                 {
-                    logIt( 'calcValue() AA.2 setting to valueRight. pos=' + pos + ', trackRight=' + trackRightB );
+                    logIt( 'item-rating-head.calcValue() AA.2 setting to valueRight. pos=' + pos + ', trackRight=' + trackRightB );
                     valueEle.value = valueRight;
                     return;
                 }
 
                 if( trackRightB <= trackLeftB )
                 {
-                    logIt( 'calcValue() BB.1 setting to valueLeft. pos=' + pos);
+                    logIt( 'item-rating-head.calcValue() BB.1 setting to valueLeft. pos=' + pos);
                     valueEle.value = valueLeft;
                     return;
                 }
@@ -506,11 +523,11 @@
                 var val = valueLeft + frac*(valueRight - valueLeft);
 
                 valueEle.value = val;
-                logIt( 'calcValue() value=' + val + ', frac=' + frac );
+                logIt( 'item-rating-head.calcValue() DDD.1 value=' + val + ', frac=' + frac );
             }
             catch( e )
             {
-                logErr( e,  'calcValue() ' + e.message );
+                logErr( e,  'item-rating-head.calcValue() XXX.1 ' + e.message );
             }
         };
 

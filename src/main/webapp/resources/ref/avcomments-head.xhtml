@@ -187,6 +187,7 @@
     var audContext = null;
 
     //var isSafari = false;
+    var useLocalAudioRecording = false;
     var isIos = false;
     var isIphone = false;
     
@@ -198,6 +199,7 @@
             isIos=true;    
         isIphone = isIos && /iPhone|iPod/.test(ua);    
         //isSafari = ua.indexOf("Chrome")<0 && ua.indexOf("Safari")>=0;
+        setUseLocalAudioRecording();
         
         // Testing only
         // isIos=true;      
@@ -317,7 +319,7 @@
                 logIt( 'avcomments-head.initForMediaCapture() Visualizer hidden. '  ); 
             }
             
-            else if( !isIos && recordingIsAudioOnly && (typeof setupMicrophoneMonitor!=='undefined') )
+            else if( !useLocalAudioRecording && recordingIsAudioOnly && (typeof setupMicrophoneMonitor!=='undefined') )
             {
                 visualizerActive = true;
                 
@@ -337,7 +339,7 @@
             recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? '' : 'audio' ) );
             recbut.style.display='none';
 
-            if( recordingIsAudioOnly && isIos )
+            if( recordingIsAudioOnly && useLocalAudioRecording )
                 initForMediaCaptureLocalAudio();
             
             setMrOptionsAndConstraints();            
@@ -357,8 +359,9 @@
 
     function initForMediaCaptureLocalAudio()
     {
-        if( !recordingIsAudioOnly || !isIos )
+        if( !recordingIsAudioOnly || !useLocalAudioRecording )
             return;
+        
         logIt( 'avcomments-head.initForMediaCaptureLocalAudio() START ' ); 
         
         try
@@ -396,11 +399,16 @@
     
     function setMrOptionsAndConstraints()
     {
-            if( recordingIsAudioOnly && isIos )
+            if( recordingIsAudioOnly && useLocalAudioRecording )
                 mrOptions = {mimeType: 'audio/wav' };
         
             else if( recordingIsAudioOnly )
-                mrOptions = {mimeType: 'audio/webm' };
+            {    
+                if( MediaRecorder.isTypeSupported('audio/webm'))
+                    mrOptions = {mimeType: 'audio/webm' };
+                else
+                    mrOptions = {mimeType: 'audio/mp4' };
+            }
             
             else if( !(MediaRecorder) )
               mrOptions = {mimeType: 'video/mp4'};
@@ -421,8 +429,8 @@
             else
                mrOptions = {mimeType: 'video/webm; codecs=vp8'};
 
-            // Audio on IOS
-            if( recordingIsAudioOnly && isIos )
+            // Audio on IOS or Mac Safari
+            if( recordingIsAudioOnly && useLocalAudioRecording )
             {
                 mrConstraints = { audio:true, video:false };
                 
@@ -747,9 +755,9 @@
             theBlob = null;
             recordedBlobs = [];
         
-            if( recordingIsAudioOnly && isIos )
+            if( recordingIsAudioOnly && useLocalAudioRecording )
             {
-                logIt( 'avcomments-head.xhtml.startMediaStream() recordAudioOnly and isIos. Returning. ' );
+                logIt( 'avcomments-head.xhtml.startMediaStream() recordAudioOnly and useLocalAudioRecording=true. Returning. ' );
                 return;
             }
             
@@ -940,7 +948,7 @@
                 // recordMedEle.play();                                        
             }        
         
-            if( recordingIsAudioOnly && isIos )
+            if( recordingIsAudioOnly && useLocalAudioRecording )
             {
                 logIt( 'avcomments-head.xhtml.startRec2() Recording Audio local. ' );
                 
@@ -1006,7 +1014,7 @@
                 recordMedEle.pause();
             // recordMedEle.volume=1.0;
             
-            if( recordingIsAudioOnly && isIos )
+            if( recordingIsAudioOnly && useLocalAudioRecording )
             {
                 logIt( 'avcomments-head.xhtml.stopRec2() Recording Audio local. ' );
                 stopRec2LocalAudio();
@@ -1247,7 +1255,7 @@
     
     function setupMicrophoneMonitor()
     {
-        if( isIos )
+        if( useLocalAudioRecording )
             return;
         
         if( microphoneMonitorActive )
@@ -1335,7 +1343,7 @@
     
     function setupMicrophoneMonitorLocalAudio( audioStream )
     {
-        if( !isIos )
+        if( !useLocalAudioRecording )
             return;
         
         if( microphoneMonitorActive )
@@ -1568,6 +1576,16 @@
         }
     }
     
+    function setUseLocalAudioRecording() 
+    {
+      if( isIos || !window.MediaRecorder || (!MediaRecorder.isTypeSupported('audio/webm') && !MediaRecorder.isTypeSupported('audio/mp4')))
+      {
+          useLocalAudioRecording=true;
+          return;
+      }
+      
+      useLocalAudioRecording=false;
+    }
     
     
     

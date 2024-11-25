@@ -50,12 +50,12 @@
     <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRadio}">
     <ref:item-radio-body />    
     </ui:fragment>
-
+        
     <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRating}">
-        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive}">
+        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and (facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive)}">
             <ref:item-rating-body-msie />    
         </ui:fragment>
-        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
+        <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">            
             <ref:item-rating-body />    
         </ui:fragment>
         <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
