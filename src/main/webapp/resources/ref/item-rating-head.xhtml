@@ -401,16 +401,27 @@
                 if( !(sliderDiv) ) 
                     sliderDiv = document.getElementById( 'sliderelediv' );
                 
+                if( !(sliderEle) )
+                    sliderEle = document.getElementById( 'sliderthumb' );
+
+                if( (sliderEle) )
+                {
                 
-                var sldrTop = parseInt((trackHgt - sliderHgt)/2);
-                var ses = sliderEle.style;
-                ses.top= (trackPos.y + sldrTop + window.pageYOffset) + 'px';
+                    var sldrTop = parseInt((trackHgt - sliderHgt)/2);
+                    var ses = sliderEle.style;
+                    ses.top= (trackPos.y + sldrTop + window.pageYOffset) + 'px';
+
+                    //var ses = sliderEle.style;
+                    //ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
+
+                    dragRect=null;
+                    setDragRect();
+                }
+                else
+                {
+                    logIt( 'tm2ref/resources/ref/item-rating-head.xhtml.setupSliderResize() Could not find sliderEle so ignoring. sldrVal=' + sldrVal);
+                }
                 
-                //var ses = sliderEle.style;
-                //ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
-                
-                dragRect=null;
-                setDragRect();
             }
             catch( e )
             {
