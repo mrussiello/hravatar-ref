@@ -401,8 +401,13 @@
                 if( !(sliderDiv) ) 
                     sliderDiv = document.getElementById( 'sliderelediv' );
                 
+                
+                var sldrTop = parseInt((trackHgt - sliderHgt)/2);
                 var ses = sliderEle.style;
-                ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
+                ses.top= (trackPos.y + sldrTop + window.pageYOffset) + 'px';
+                
+                //var ses = sliderEle.style;
+                //ses.top= (trackPos.y + 23 + window.pageYOffset) + 'px';
                 
                 dragRect=null;
                 setDragRect();
