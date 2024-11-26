@@ -33,8 +33,10 @@ public class AdminEmailUtils {
 
          try
          {
+            if(!subject.toLowerCase().contains("tm2ref") )
+                subject = "Tm2Ref " + subject;
+            
             EmailerFacade emailerFacade = EmailerFacade.getInstance();
-
 
             emailMap.put( EmailConstants.SUBJECT,  subject );
 
