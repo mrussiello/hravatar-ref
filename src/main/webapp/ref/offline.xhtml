@@ -1,31 +1,30 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Offline']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Offline']}"/></title>
-</ui:define>      
-    
-    
-<ui:define name="coreinnersection">
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Offline']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Offline']}"/></title>
+            </ui:define>      
 
-        <ref:messages-embedded />
 
-        <ref:offline />
+            <ui:define name="coreinnersection">
 
-        <br />&#160;
+                <ref:messages-embedded />
 
-</ui:define>
+                <ref:offline />
 
-</ui:composition>
+                <br />&#160;
 
-</body>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:ui="jakarta.faces.facelets">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -35,6 +36,8 @@
             </h:outputFormat>            
         </div>
 
+        <ref:item-accessible />
+        
     <h:panelGrid columns="1" cellpadding="6" columnClasses="pincolclass,pincolclass,pincolclass" style="padding-top:5px;padding-bottom:0px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
 
             <ref:item-infoquestion />
@@ -49,7 +52,7 @@
                 
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                    <h:panelGrid columns="7" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown,rpnlcol1,rpnlcol2,rpnlcol3,rpnlcol4,rpnlcol5,rpnlcolthumbup">
+                    <h:panelGrid columns="7" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown,rplleftside rpnlcol1,rpnlcol2,rpnlcol3,rpnlcol4,rplrightside rpnlcol5,rpnlcolthumbup">
                     
                     <!-- First Row Anchors -->
                     <h:panelGroup>  
@@ -155,14 +158,14 @@
             <h:panelGroup>
                 <div style="text-align: center">
                     <div style="display:inline-block;">
-                        <p:commandButton ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
+                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
                         </p:commandButton>
                         &#160;
-                        <p:commandButton rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.itemDisplayOrder gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                        <p:commandButton style="margin-bottom:3px" rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.itemDisplayOrder gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
                         </p:commandButton>
-                        <p:commandButton rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee and candidateRefUtils.raterQuestionNumberForCandidate gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                        <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee and candidateRefUtils.raterQuestionNumberForCandidate gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
                         </p:commandButton>
                     </div>
@@ -173,7 +176,7 @@
             
         </h:panelGrid>
     
-        <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+        <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="max-width:550px;font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             <div role="error">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />

@@ -1,27 +1,27 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
-</ui:define>      
-    
-    
-<ui:define name="coreinnersection">
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
+            </ui:define>      
 
-    <ref:initerror />
 
-    <br /><br />&#160;
+            <ui:define name="coreinnersection">
 
-</ui:define>
+                <ref:initerror />
 
-</ui:composition>
+                <br /><br />&#160;
 
-</body>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

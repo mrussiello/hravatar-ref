@@ -1,230 +1,229 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
-</ui:define>    
-    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-        .whitecontentshadowdiv
-        {
-            background-color:white;
-            /* box-shadow: 0 0 15px 4px #a0c2de; */
-            border: 1px solid #dddddd;
-        }    
-    </style>    
-</ui:define>
-
-<ui:define name="coreinnersection">
-
-    <br style="clear:both"/>
-
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
-
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
-
-        <ref:messages-embedded />
-
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputFormat value="#{stMessages['g.WelcomeX']}">
-                <f:param value="#{refBean.refUser.fullname}" />
-            </h:outputFormat>
-        </div>
-
-        <ui:fragment rendered="#{refUtils.hasCustomIntro}">
-        <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
-        
-            <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
-            
-        </h:panelGrid>                
-        </div>
-        </ui:fragment>
-                
-        <h:panelGrid rendered="#{not refUtils.hasCustomIntro}" columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
-
-            <h:outputText rendered="#{refUtils.hasCustomIntro}" styleClass="ttformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
-                                   
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P1']}" escape="false">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
+            </ui:define>    
 
 
-            <h:outputFormat rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P2']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P2.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            
-            
-            <h:outputText rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showCompanyNameB and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3']}"/>
-            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0 and not refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showCompanyNameB and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.companytitle']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                <f:param value="#{refBean.rcCheck.org.name}"/>
-                <f:param value="#{refBean.rcCheck.jobTitle}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showCompanyNameB and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.company']}" escape="false">
-                <f:param value="#{refBean.rcCheck.org.name}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0 and not refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showCompanyNameB and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.title']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                <f:param value="#{refBean.rcCheck.jobTitle}"/>
-            </h:outputFormat>
-            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.employee']}" escape="false"/>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.employeetitle']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                <f:param value="#{refBean.rcCheck.jobTitle}"/>
-            </h:outputFormat>
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                    .whitecontentshadowdiv
+                    {
+                        background-color:white;
+                        /* box-shadow: 0 0 15px 4px #a0c2de; */
+                        border: 1px solid #dddddd;
+                    }
+                </style>    
+            </ui:define>
 
-            <h:outputText rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P4']}" escape="false"/>
-            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P4.employee']}" escape="false"/>
+            <ui:define name="coreinnersection">
 
-        </h:panelGrid>
-            
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:15px;padding-bottom:20px;margin:0 auto">
+                <br style="clear:both"/>
 
-            <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                    <h:form prependId="false">
 
-            <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('dontknowconfirm').show(); return false">
-                <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRDontKnowX']}">
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                </h:outputFormat>
-            </p:commandLink>
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
 
-            <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notfamiliarconfirm').show(); return false">
-                <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotFamiliarX']}">
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                </h:outputFormat>
-            </p:commandLink>
-            
-            <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notwishcontinueconfirm').show(); return false">
-                <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotWishToContinueX']}">
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                </h:outputFormat>
-            </p:commandLink>
-            
-            <!--
-            <h:panelGroup>
-                 &#160;
-                 
-                 &#160;
-                 <p:commandLink ajax="true" styleClass="textmedium ttformlink" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
-                     <h:outputText styleClass="textmedium  ttformlink" value="#{stMessages['g.Exit']}"/>
-                 </p:commandLink>
-            </h:panelGroup>
-            -->
+                        <ref:messages-embedded />
 
-        </h:panelGrid>
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputFormat value="#{stMessages['g.WelcomeX']}">
+                                <f:param value="#{refBean.refUser.fullname}" />
+                            </h:outputFormat>
+                        </div>
 
-        
-        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1']}" >
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
+                        <ui:fragment rendered="#{refUtils.hasCustomIntro}">
+                            <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
+                                <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-                <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
-                
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}" onclick="return clearChanges()">
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
-        
-        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="font-size:1.3rem" widgetVar="dontknowconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.XRDontKnowX.P1']}" >
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
+                                    <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
 
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRDontKnowXConfirmYes']}" title="#{stMessages['g.XRDontKnowXConfirmYes']}" onclick="return clearChanges()">
-                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                            <f:setPropertyActionListener target="#{refBean.intParam1}" value="1"/>
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'dontknowconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
+                                </h:panelGrid>                
+                            </div>
+                        </ui:fragment>
 
-        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="font-size:1.3rem" widgetVar="notfamiliarconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.XRNotFamiliarX.P1']}" >
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
+                        <h:panelGrid rendered="#{not refUtils.hasCustomIntro}" columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:5px;margin:0 auto">
 
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotFamiliarXConfirmYes']}" title="#{stMessages['g.XRNotFamiliarXConfirmYes']}" onclick="return clearChanges()">
-                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                            <f:setPropertyActionListener target="#{refBean.intParam1}" value="2"/>
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'notfamiliarconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
+                            <h:outputText rendered="#{refUtils.hasCustomIntro}" styleClass="ttformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
 
-        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="font-size:1.3rem" widgetVar="notwishcontinueconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.XRNotWishToContinueX.P1']}" >
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
+                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P1']}" escape="false">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                            </h:outputFormat>
 
-                <h:outputFormat value="#{stMessages['g.XRNotWishToContinueX.P2']}" >
-                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
 
-                <h:outputText value="#{stMessages['g.XRNotWishToContinueX.P3']}" />
-                
-                
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" title="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" onclick="return clearChanges()">
-                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                            <f:setPropertyActionListener target="#{refBean.intParam1}" value="3"/>
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'notwishcontinueconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
-        
-        
-    </h:form>
-    </div>
+                            <h:outputFormat rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P2']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                            </h:outputFormat>
+                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P2.employee']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                            </h:outputFormat>
 
-    <br /><br /><br />&#160;
 
-</ui:define>
+                            <h:outputText rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showCompanyNameB and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3']}"/>
+                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0 and not refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showCompanyNameB and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.companytitle']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                <f:param value="#{refBean.rcCheck.org.name}"/>
+                                <f:param value="#{refBean.rcCheck.jobTitle}"/>
+                            </h:outputFormat>
+                            <h:outputFormat rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showCompanyNameB and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.company']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.org.name}"/>
+                            </h:outputFormat>
+                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0 and not refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showCompanyNameB and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.title']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                <f:param value="#{refBean.rcCheck.jobTitle}"/>
+                            </h:outputFormat>
+                            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and not refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.employee']}" escape="false"/>
+                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.rcCheck.rcOrgPrefs.showJobTitleB}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P3.employeetitle']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                <f:param value="#{refBean.rcCheck.jobTitle}"/>
+                            </h:outputFormat>
 
-</ui:composition>
+                            <h:outputText rendered="#{not refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P4']}" escape="false"/>
+                            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P4.employee']}" escape="false"/>
 
-</body>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:0px;padding-bottom:20px;margin:0 auto">
+
+                                    <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
+
+                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('dontknowconfirm').show(); return false">
+                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRDontKnowX']}">
+                                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                        </h:outputFormat>
+                                    </p:commandLink>
+
+                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notfamiliarconfirm').show(); return false">
+                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotFamiliarX']}">
+                                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                        </h:outputFormat>
+                                    </p:commandLink>
+
+                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notwishcontinueconfirm').show(); return false">
+                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotWishToContinueX']}">
+                                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                        </h:outputFormat>
+                                    </p:commandLink>
+
+                                    <!--
+                                    <h:panelGroup>
+                                         &#160;
+                                         
+                                         &#160;
+                                         <p:commandLink ajax="true" styleClass="textmedium ttformlink" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
+                                             <h:outputText styleClass="textmedium  ttformlink" value="#{stMessages['g.Exit']}"/>
+                                         </p:commandLink>
+                                    </h:panelGroup>
+                                    -->
+
+                        </h:panelGrid>
+
+
+                        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1']}" >
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}" onclick="return clearChanges()">
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="dontknowconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.XRDontKnowX.P1']}" >
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRDontKnowXConfirmYes']}" title="#{stMessages['g.XRDontKnowXConfirmYes']}" onclick="return clearChanges()">
+                                        <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                        <f:setPropertyActionListener target="#{refBean.intParam1}" value="1"/>
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('dontknowconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="notfamiliarconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.XRNotFamiliarX.P1']}" >
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotFamiliarXConfirmYes']}" title="#{stMessages['g.XRNotFamiliarXConfirmYes']}" onclick="return clearChanges()">
+                                        <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                        <f:setPropertyActionListener target="#{refBean.intParam1}" value="2"/>
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('notfamiliarconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+                        <p:dialog modal="true" header="#{stMessages['g.XRDontKnowXConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="notwishcontinueconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.XRNotWishToContinueX.P1']}" >
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:outputFormat value="#{stMessages['g.XRNotWishToContinueX.P2']}" >
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:outputText value="#{stMessages['g.XRNotWishToContinueX.P3']}" />
+
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" title="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" onclick="return clearChanges()">
+                                        <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                        <f:setPropertyActionListener target="#{refBean.intParam1}" value="3"/>
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('notwishcontinueconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

@@ -1,156 +1,162 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.RaterRelease']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.EvaluatorRelease']}"/></title>
-</ui:define>      
-    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-        .whitecontentshadowdiv
-        {
-            background-color:white;
-            /* box-shadow: 0 0 15px 4px #a0c2de; */
-            border: 1px solid #dddddd;
-        }
-        .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
-        {
-            border:0;
-            background:red;
-            color:white;
-            font-weight:normal;
-        }
-        
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.RaterRelease']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.EvaluatorRelease']}"/></title>
+            </ui:define>      
 
-<ui:define name="coreinnersection">
 
-    <br style="clear:both"/>
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                    .whitecontentshadowdiv
+                    {
+                        background-color:white;
+                        /* box-shadow: 0 0 15px 4px #a0c2de; */
+                        border: 1px solid #dddddd;
+                    }
+                    .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
+                    {
+                        border:0;
+                        background:red;
+                        color:white;
+                        font-weight:normal;
+                    }
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
+                </style>    
+            </ui:define>
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
+            <ui:define name="coreinnersection">
 
-        <ref:messages-embedded />
+                <br style="clear:both"/>
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputText value="#{stMessages['g.XCRelease']}"/>
-        </div>
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:800px;max-height:2000px;overflow-y: scroll;padding:5px;margin:15px auto">
-        <h:panelGrid rendered="#{refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
-        
-            <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customReleaseXhtml}" escape="false"/>
-            
-        </h:panelGrid>
-        
-        
-        <h:panelGrid rendered="#{not refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
 
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P1']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P1.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
+                        <ref:messages-embedded />
 
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P2.v2']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P2.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P3']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P3.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            
-            <!--
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4']}" escape="false">
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            -->
-            <h:outputText styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.P6']}" escape="false"/>
-                                    
-            <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
-                <f:param value="#{userBean.baseAdminDomain}"/>
-            </h:outputFormat>
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputText value="#{stMessages['g.XCRelease']}"/>
+                        </div>
 
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P5']}" escape="false">
-                <f:param value="#{refBean.rcCheck.org.name}"/>
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
+                        <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:800px;max-height:2000px;overflow-y: scroll;padding:5px;margin:15px auto">
+                            <h:panelGrid rendered="#{refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.org.name}"/>
-                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-            </h:outputFormat>
-            
-        </h:panelGrid>
-        </div>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
-            
-            <h:panelGroup>
-                <p:commandButton ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.Accept']}" title="#{stMessages['g.AcceptInfo']}">
-                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
-                </p:commandButton>
-                &#160;
-                <p:commandButton ajax="true" styleClass="notmebut" value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
-                </p:commandButton>                
-                &#160;
-                <p:commandButton ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
-            </h:panelGroup>
+                                <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customReleaseXhtml}" escape="false"/>
 
-        </h:panelGrid>
+                            </h:panelGrid>
 
-        <p:dialog modal="true" header="#{stMessages['g.DenyReleaseConfirm']}" style="font-size:1.3rem" widgetVar="denyreleaseconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.DenyReleaseConfirm.P1']}" >
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
 
-                <h:outputText value="#{stMessages['g.DenyReleaseConfirm.P2']}" />
-                
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.DenyReleaseConfirmYes']}" title="#{stMessages['g.DenyReleaseConfirmInfo']}"    onclick="return clearChanges()">
-                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'denyreleaseconfirm' ).hide()" title="#{stMessages['g.Cancel']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
-        
-        
-    </h:form>
-    </div>
+                            <h:panelGrid rendered="#{not refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-    <br /><br /><br />&#160;
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P1']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P1.employee']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
 
-</ui:define>
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P2.v2']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P2.employee']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
 
-</ui:composition>
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P3']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P3.employee']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
 
-</body>
+                                <!--
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+                                -->
+                                <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.P6']}" escape="false">
+                                    <f:param value="#{userBean.baseAdminDomain}"/>
+                                </h:outputFormat>
+
+                                <h:outputFormat styleClass="ttwindowformtext" value="#{stMessages['g.XCRelease.AI']}" escape="false">
+                                    <f:param value="#{userBean.baseAdminDomain}"/>
+                                </h:outputFormat>
+
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P5']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.org.name}"/>
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+
+                                <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttwindowformtext" value="#{stMessages['g.XRRelease.P4.employee']}" escape="false">
+                                    <f:param value="#{refBean.rcCheck.org.name}"/>
+                                    <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                </h:outputFormat>
+
+                            </h:panelGrid>
+                        </div>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
+
+                            <h:panelGroup>
+                                <div style="text-align: center">
+                                    <div style="display:inline-block">
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.Accept']}" title="#{stMessages['g.AcceptInfo']}">
+                                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
+                                        </p:commandButton>
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" ajax="true" styleClass="notmebut" value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
+                                        </p:commandButton>                
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                        <p:dialog modal="true" header="#{stMessages['g.DenyReleaseConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="denyreleaseconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.DenyReleaseConfirm.P1']}" >
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:outputText value="#{stMessages['g.DenyReleaseConfirm.P2']}" />
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.DenyReleaseConfirmYes']}" title="#{stMessages['g.DenyReleaseConfirmInfo']}"    onclick="return clearChanges()">
+                                        <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('denyreleaseconfirm').hide()" title="#{stMessages['g.Cancel']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

@@ -1,30 +1,30 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Photo']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Photo']}"/></title>
-</ui:define>      
-    
-<ui:define name="headspec">
-          
-    <pp:photo-upload-head />
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Photo']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Photo']}"/></title>
+            </ui:define>      
 
-</ui:define>
-    
-<ui:define name="coreinnersection">
+            <ui:define name="headspec">
 
-    <pp:photo-upload-body />
+                <pp:photo-upload-head />
 
-</ui:define>
+            </ui:define>
 
-</ui:composition>
+            <ui:define name="coreinnersection">
 
-</body>
+                <pp:photo-upload-body />
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

@@ -1,136 +1,139 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
-</ui:define>    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-        .whitecontentshadowdiv
-        {
-            background-color:white;
-            /* box-shadow: 0 0 15px 4px #a0c2de; */
-            border: 1px solid #dddddd;
-        }    
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
+            </ui:define>    
 
-<ui:define name="coreinnersection">
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                    .whitecontentshadowdiv
+                    {
+                        background-color:white;
+                        /* box-shadow: 0 0 15px 4px #a0c2de; */
+                        border: 1px solid #dddddd;
+                    }
+                </style>    
+            </ui:define>
 
-    <br style="clear:both"/>
+            <ui:define name="coreinnersection">
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
-    <h:form prependId="false">
+                <br style="clear:both"/>
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <ref:messages-embedded />
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputFormat value="#{stMessages['g.WelcomeX']}">
-                <f:param value="#{refBean.refUser.fullname}" />
-            </h:outputFormat>
-        </div>
-        
-        <ui:fragment rendered="#{refUtils.hasCustomIntro}">
-        <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
-        
-            <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
-            
-        </h:panelGrid>                
-        </div>
-        </ui:fragment>
-        
-        
-        <h:panelGrid rendered="#{not refUtils.hasCustomIntro}" columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:20px;margin:0 auto">
+                        <ref:messages-embedded />
 
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P1']}" escape="false">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputFormat value="#{stMessages['g.WelcomeX']}">
+                                <f:param value="#{refBean.refUser.fullname}" />
+                            </h:outputFormat>
+                        </div>
 
-            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.minSupervisorsCandidate gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2']}" escape="false">
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
-                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
-            </h:outputFormat>            
-            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2.nosup']}" escape="false">
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
-                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
-            </h:outputFormat>            
-            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2.employee']}" escape="false">
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
-            </h:outputFormat>
+                        <ui:fragment rendered="#{refUtils.hasCustomIntro}">
+                            <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
+                                <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-            <h:outputFormat rendered="#{refBean.rcCheck.requiresAnyCandidateInputOrSelfRating and refBean.rcCheck.candidateQuestionsAndSelfRatingCount gt 0 and refBean.rcCheck.minRatersCandidate ge 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.candinputalso']}" escape="false">
-                <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
-            </h:outputFormat>            
-            
-            <h:outputFormat rendered="#{refBean.rcCheck.requiresAnyCandidateInputOrSelfRating and refBean.rcCheck.minRatersCandidate lt 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.candinputonly']}" escape="false">
-                <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
-            </h:outputFormat>            
-            
-            <h:outputFormat rendered="#{not refBean.rcCheck.requiresAnyCandidateInputOrSelfRating}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3']}">
-                <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
-            </h:outputFormat>
-            
-        </h:panelGrid>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:10px;margin:0 auto">
-            <h:panelGroup>
-                <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
-                 &#160;
-                 <p:commandLink styleClass="textmedium ttformlink" ajax="true" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
-                     <h:outputText style="text-decoration:underline" value="#{stMessages['g.Exit']}"/>
-                 </p:commandLink>
-            </h:panelGroup>
+                                    <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
 
-        </h:panelGrid>
+                                </h:panelGrid>                
+                            </div>
+                        </ui:fragment>
 
-        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1']}" >
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
 
-                <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
-                
-                <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"    onclick="return clearChanges()">
-                        </p:commandButton>
-                        &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
-        
-        
-    </h:form>
-    </div>
+                        <h:panelGrid rendered="#{not refUtils.hasCustomIntro}" columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-    <br /><br /><br />&#160;
+                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P1']}" escape="false">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                            </h:outputFormat>
 
-</ui:define>
+                            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.minSupervisorsCandidate gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
+                                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
+                            </h:outputFormat>            
+                            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2.nosup']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
+                                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
+                            </h:outputFormat>            
+                            <h:outputFormat rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate ge 0 and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P2.employee']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>
+                            </h:outputFormat>
 
-</ui:composition>
+                            <h:outputFormat rendered="#{refBean.rcCheck.requiresAnyCandidateInputOrSelfRating and refBean.rcCheck.candidateQuestionsAndSelfRatingCount gt 0 and refBean.rcCheck.minRatersCandidate ge 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.candinputalso']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
+                            </h:outputFormat>            
 
-</body>
+                            <h:outputFormat rendered="#{refBean.rcCheck.requiresAnyCandidateInputOrSelfRating and refBean.rcCheck.minRatersCandidate lt 0}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.candinputonly']}" escape="false">
+                                <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
+                            </h:outputFormat>            
+
+                            <h:outputFormat rendered="#{not refBean.rcCheck.requiresAnyCandidateInputOrSelfRating}" styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3']}">
+                                <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
+                            </h:outputFormat>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:10px;margin:0 auto">
+                            <h:panelGroup>
+                                <div style="text-align: center">
+                                    <div style="display:inline-block">
+                                        <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
+                                        &#160;
+                                        <p:commandLink styleClass="textmedium ttformlink" ajax="true" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
+                                            <h:outputText style="text-decoration:underline" value="#{stMessages['g.Exit']}"/>
+                                        </p:commandLink>                        
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1']}" >
+                                    <f:param value="#{refUtils.rcCheckTypeName}" />
+                                </h:outputFormat>
+
+                                <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"    onclick="return clearChanges()">
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

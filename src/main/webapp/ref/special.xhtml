@@ -1,81 +1,84 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.SpecialInstructions']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.SpecialInstructions']}"/></title>
-</ui:define>      
-    
-    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-        .whitecontentshadowdiv
-        {
-            background-color:white;
-            /* box-shadow: 0 0 15px 4px #a0c2de; */
-            border: 1px solid #dddddd;
-        }
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.SpecialInstructions']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.SpecialInstructions']}"/></title>
+            </ui:define>      
 
-<ui:define name="coreinnersection">
 
-    <br style="clear:both"/>
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                    .whitecontentshadowdiv
+                    {
+                        background-color:white;
+                        /* box-shadow: 0 0 15px 4px #a0c2de; */
+                        border: 1px solid #dddddd;
+                    }
+                </style>    
+            </ui:define>
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
+            <ui:define name="coreinnersection">
 
-        <ref:messages-embedded />
+                <br style="clear:both"/>
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputText value="#{stMessages['g.XCSpecialInst']}"/>
-        </div>
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:800px;overflow-y: scroll;padding:5px;margin:15px auto">
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
-        
-            <h:outputText styleClass="ttwindowformtext" value="#{refUtils.specialInstructionsXhtml}" escape="false"/>
-            
-        </h:panelGrid>                
-        </div>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
-            
-            <h:panelGroup>
-                <p:commandButton ajax="false" action="#{refUtils.processSubmitSpecialInst}" value="#{stMessages['g.Continue']}" title="#{stMessages['g.Continue']}">
-                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
-                </p:commandButton>
-                &#160;
-                <p:commandButton ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
-            </h:panelGroup>
-        </h:panelGrid>
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
 
-        
-    </h:form>
-    </div>
+                        <ref:messages-embedded />
 
-    <br /><br /><br />&#160;
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputText value="#{stMessages['g.XCSpecialInst']}"/>
+                        </div>
 
-</ui:define>
+                        <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:800px;overflow-y: scroll;padding:5px;margin:15px auto">
+                            <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-</ui:composition>
+                                <h:outputText styleClass="ttwindowformtext" value="#{refUtils.specialInstructionsXhtml}" escape="false"/>
 
-</body>
+                            </h:panelGrid>                
+                        </div>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
+
+                            <h:panelGroup>
+                                <div style="text-align: center">
+                                    <div style="display:inline-block">
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processSubmitSpecialInst}" value="#{stMessages['g.Continue']}" title="#{stMessages['g.Continue']}">
+                                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
+                                        </p:commandButton>
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

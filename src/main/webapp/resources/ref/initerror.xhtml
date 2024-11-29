@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -43,11 +43,11 @@
             </ui:fragment>
 
             <h:outputLink tabindex="11" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) gt 0}" value="#{refBean.errorReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+                <h:outputText styleClass="pflinktext" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
             </h:outputLink>
 
             <h:outputLink tabindex="12" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) le 0 and fn:length(corpBean.corp.defaultReturnUrl) gt 0}" value="#{corpBean.corp.defaultReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+                <h:outputText styleClass="pflinktext" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
             </h:outputLink>
 
             <ui:fragment rendered="#{refBean.errorAutoForward}">

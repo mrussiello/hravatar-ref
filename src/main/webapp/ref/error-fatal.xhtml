@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
@@ -7,74 +6,74 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
-</ui:define>      
-    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
+            </ui:define>      
 
-<ui:define name="coreinnersection">
 
-    <br style="clear:both"/>
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                </style>    
+            </ui:define>
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
-    <h:form prependId="false">
+            <ui:define name="coreinnersection">
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
-        <ref:candidateforminputs />
+                <br style="clear:both"/>
 
-        <ref:messages-embedded />
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputText  value="#{stMessages['g.ErrorFatal']}"/>
-        </div>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
+                        <ref:candidateforminputs />
 
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P1']}">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
-            
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P2']}">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
+                        <ref:messages-embedded />
 
-            <h:outputFormat rendered="#{fn:length(refBean.strParam1) gt 0}" styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P3']}">
-                <f:param value="#{refBean.strParam1}"/>
-            </h:outputFormat>
-            
-            
-        </h:panelGrid>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
-            <h:panelGroup>
-                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>                              
-            </h:panelGroup>
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputText  value="#{stMessages['g.ErrorFatal']}"/>
+                        </div>
 
-        </h:panelGrid>
-        
-    </h:form>
-    </div>
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-    <br /><br /><br />&#160;
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P1']}">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                            </h:outputFormat>
 
-</ui:define>
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P2']}">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                            </h:outputFormat>
 
-</ui:composition>
+                            <h:outputFormat rendered="#{fn:length(refBean.strParam1) gt 0}" styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P3']}">
+                                <f:param value="#{refBean.strParam1}"/>
+                            </h:outputFormat>
 
-</body>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
+                            <h:panelGroup>
+                                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>                              
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

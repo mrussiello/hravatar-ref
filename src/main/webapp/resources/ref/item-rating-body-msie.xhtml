@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -37,6 +37,10 @@
             </h:outputFormat>            
         </div>
 
+        <ui:fragment rendered="#{raterRefBean.rcItem.includeNumRatingB and refBean.accessibleActive and not facesUtils.isMsieOrSamsungAndroid}">
+            <ref:item-accessible />
+        </ui:fragment>
+        
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:0px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
 
             <ref:item-infoquestion />
@@ -54,7 +58,7 @@
                         </p:selectOneRadio>
                         
                         
-                        <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown rpnlthumbtd,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolthumbup rpnlthumbtd">
+                        <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown rpnlthumbtd,rplleftside rpnlcolx5,rpnlcolx5,rpnlcolx5,rpnlcolx5,rplrightside rpnlcolx5,rpnlcolthumbup rpnlthumbtd">
 
                         <!-- First Row Anchors -->
                         <h:panelGroup>
@@ -103,7 +107,7 @@
                     </h:panelGrid>
                         
                        
-                    <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;margin-top:6px" columnClasses="rpnlcolthumbdown rpnlthumbtd,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolthumbup rpnlthumbtd">
+                    <h:panelGrid columns="7" styleClass="rbtntable" style="border-spacing:0px;margin-top:6px" columnClasses="rpnlcolthumbdown rpnlthumbtd,rplleftside rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rpnlcolx5 rpnlcolbuts,rplrightside rpnlcolx5 rpnlcolbuts,rpnlcolthumbup rpnlthumbtd">
                         
 
                         <!-- Second Row -->
@@ -200,25 +204,25 @@
             <h:panelGroup>
                 <div style="text-align: center">
                     <div style="display:inline-block;">
-                        <p:commandButton ajax="false" action="#{raterRefUtils.processSaveItemResp}" onclick="if( doValidateRating() ) { PF('ratingrequireddialog').show(); return false; }" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
+                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" onclick="if( doValidateRating() ) { PF('ratingrequireddialog').show(); return false; }" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
                         </p:commandButton>
                         &#160;
-                        <p:commandButton rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.itemDisplayOrder gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                        <p:commandButton style="margin-bottom:3px" rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.itemDisplayOrder gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
                         </p:commandButton>
-                        <p:commandButton rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee and candidateRefUtils.raterQuestionNumberForCandidate gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                        <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee and candidateRefUtils.raterQuestionNumberForCandidate gt 1}" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
                             <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
                         </p:commandButton>
                     </div>
                 </div>
             </h:panelGroup>
 
-            <ref:item-skipbutton showToggleAccessible="#{raterRefBean.rcItem.includeNumRatingB and refBean.accessibleActive and not facesUtils.isMsieOrSamsungAndroid}" />
+            <ref:item-skipbutton />
             
         </h:panelGrid>
     
-        <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+        <p:dialog modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="max-width:550px;font-size:1.3rem" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             <div role="error">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />

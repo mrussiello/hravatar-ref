@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -9,1604 +8,1642 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 
-<!-- INTERFACE -->
-<cc:interface>
-<!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-<!-- cc.attrs.value -->
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
 
-<ui:fragment rendered="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}">
+        <ui:fragment rendered="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}">
 
-    <style>
-        .reftdcenter
-        {
-            text-align:center;
-        }
-        .valignmid
-        {
-            vertical-align:middle;
-        }
-        .recordtablea
-        {
-            padding-left:20px;
-            padding-right:20px;
-        }
-        .recordtableb
-        {
-            width:250px;
-        }
-        .visualizertable
-        {
-            display:inline-block;
-            margin-bottom: 10px;            
-        }
-        
-        .visualizerouter {
-            display:inline-block;
-            max-width:220px;
-            min-width:130px;
-            border:1px solid green;
-            padding:1px;
-        }
-        
-        .audiobar {
-            --volume: 0%;
-            position: relative;
-            width: 100%;
-            height: 15px;
-            border-radius: 3px;
-            margin-bottom: 0px;
-        }
-
-        .audiobar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            border-radius: 3px;
-            width: var(--volume);
-            background-color: green;
-            transition: width 100ms linear;
-        }
-        
-        
-    </style>
-    
-    <script type="text/javascript">
-        //<![CDATA[
-        
-    var visualizerActive = true;
-        
-    var rcCheckId='#{refBean.rcCheck.rcCheckIdEncrypted}';
-    var rcRaterId='#{refBean.rcRaterIdEncrypted}';
-    var rcItemId='#{raterRefBean.rcItem.rcItemIdEncrypted}';
-    var userId='#{refBean.userIdEncrypted}';
-    var isAudioOnly = #{refBean.audioCommentsOnly};
-    var recordingIsAudioOnly = false;
-    var hasPrevUpload = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null};
-    var prevUploadIsAudio = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile.isAudio};
-    var mRecErrorStr = "#{stMessages['g.RecordingError.Title']}";
-    var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']} #{userBean.supportEmail}.";
-    var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']} #{userBean.supportEmail}.";
-    var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
-    var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
-    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}."; 
-    var errorNoBlobToUpload = "#{stMessages['g.PPErrorNoUploadBlobMessage']}"; 
-    var errorDuringUpload = "#{stMessages['g.PPErrorDuringUpload']}"; 
-    var errorDuringUploadAbort = "#{stMessages['g.PPErrorDuringUploadAbort']}"; 
-    var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
-    var errorDeviceMutedMessage = "#{stMessages['g.PPErrorDeviceMutedMessage']} #{userBean.supportEmail}.";
-    var reRecordTextVid = "#{stMessages['g.ReRecordCommentVid']}";
-    var reRecordTextAud = "#{stMessages['g.ReRecordCommentAud']}";
-    var reRecordTextAsVid = "#{stMessages['g.ReRecordCommentAsVid']}";
-    var reRecordTextAsAud = "#{stMessages['g.ReRecordCommentAsAud']}";
-    var audioAlreadyRecorded = "#{stMessages['g.RecordAudioPrev']}";
-    var videoAlreadyRecorded = "#{stMessages['g.RecordVideoPrev']}";
-    var recordVideoHeader = "#{stMessages['g.RecordVideoComment']}";
-    var recordAudioHeader = "#{stMessages['g.RecordAudioComment']}";
-    var recordingInProgress = "#{stMessages['g.RecordingInProgress']}";
-    var recordingStopped = "#{stMessages['g.RecordingStopped']}";
-
-    var selCameraDevice = '#{userBean.selCamera}';
-    var selMicrophoneDevice = '#{userBean.selMicrophone}';
-    var microphoneMonitorActive = false;
-    
-    
-    var fileSize = 0;
-    var uploadedUserFileTypeId = 220;
-                
-    // used for playback.
-    var playbackMedEle = null; 
-
-    // Used for recording audio or video. 
-    var recordMedEle = null;
-
-    // Indicates that medEle and medEle2 are different and should be swapped when playing/recording.
-    var swapMed = false;
-    
-    var rcdDiv = null;
-    
-    var mRecorder = null;
-    
-    var recordedBlobs = [];
-      
-    var mrOptions = null;
-    
-    var mrConstraints = null;
-    
-    var theBlob = null;
-    
-    var maxTm = 120;
-        
-    var sliceTm = 0.20;
-    var sliceCt = 0;
-    
-    var playing = false;
-    
-    var recAvInProg = false;
-    var sent = false;
-    
-    var medStrm = null;
-    var medStrmProm = null;
-    // z.muteWrngCt=0;
-    var medStrmErrCt = 0;
-    
-    /*
-     * status
-     *     0 = not started
-     *     1 = started
-     *     2 = completed
-     *     3 = failed
-     */
-    var uploadStatus = 0;
-    var uploadUrl = "/tr/ppfupload?acodx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}";
-    var uploadPercent = 0;
-    
-    var desWid = 360;
-    var desHgt = 270;
-    
-     // var RECBUTSRC = '/tr/images/startrecbut1.png';
-     // var STOPRECBUTSRC = '/tr/images/stoprecbut1.png';
-    //var PLAYBUTSRC = '/tr/images/playbut1.png';
-    //var PAUSEBUTSRC = '/tr/images/pausebut1.png';
-    
-    
-    var MIN_FILSZ=4500;
-    var MAX_MED_ERRS=2;
-    var MAX_TOTAL_MED_ERRS=4;
-    var MAX_MUTE_WRNGS=3;    
-        
-    window.addEventListener( 'load', doMediaCaptureOnload );   
-    
-    
-    var audRecBuffers = null;
-    var audRecLength = 0;
-    var audSampleRate = 0;
-    var audContext = null;
-
-    //var isSafari = false;
-    var useLocalAudioRecording = false;
-    var isIos = false;
-    var isIphone = false;
-    
-        
-    function doMediaCaptureOnload()
-    {
-        var ua = navigator.userAgent;
-        if (/iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints>1) )
-            isIos=true;    
-        isIphone = isIos && /iPhone|iPod/.test(ua);    
-        //isSafari = ua.indexOf("Chrome")<0 && ua.indexOf("Safari")>=0;
-        setUseLocalAudioRecording();
-        
-        // Testing only
-        // isIos=true;      
-
-        var ele;
-        
-        if( isIphone )
-        {
-            ele = document.getElementById('avcommentstopinstdiv');
-            if( (ele) )
-                ele.style.display='none';
-            desWid = 240;
-            desHgt = 180;
-        }
-        
-        if( hasPrevUpload )
-        {
-            ele = document.getElementById( 'avuploadindicatordiv' );
-            if( ele )
-            {    
-                ele.innerHTML=prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
-                ele.style.display='block';                
-            }
-            ele = document.getElementById( 'rerecordtxtvid' );
-            if( ele )
-                ele.innerHTML= hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid :  reRecordTextVid;
-            ele = document.getElementById( 'rerecordtxtaud' );
-            if( ele )
-                ele.innerHTML=hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
-        }        
-    }
-        
-        
-        
-        
-    function initForMediaCapture()
-    {
-        try
-        {
-            // Dialog Header - set to audio or video
-            var ele = document.getElementById( 'avcommentdialogheader' );
-            if( ele )
-                ele.innerHTML=recordingIsAudioOnly ? recordAudioHeader : recordVideoHeader;
-               
-            // Clear media div of elements.
-            var mediacommentdiv = document.getElementById('mediacommentdiv');
-            
-            /// clean the mediacommentdiv
-            mediacommentdiv.innerHTML='';
-            
-            mediacommentdiv.style.paddingTop= (recordingIsAudioOnly ? 5 : 3) + 'px';
-            
-            var desiredTagname = recordingIsAudioOnly ? 'audio' : 'video';
-            
-            // Make sure existing elements are the correct type. 
-            if( (recordMedEle) && recordMedEle.tagName!==desiredTagname )
-                recordMedEle = null;
-            
-            if( (playbackMedEle) && playbackMedEle.tagName!==desiredTagname )
-                playbackMedEle = null;
-            
-            // create recording Ele
-            if( !(recordMedEle) && !recordingIsAudioOnly )
-            {    
-                recordMedEle = document.createElement( desiredTagname );
-                //autoplay="true" width="300" height="225" style="border: 1px darkgray solid;margin-top:10px;margin-right:40px"
-                var res = recordMedEle.style;
-                // res.border='1px darkgray solid';
-                res.marginTop='10px';
-                res.marginRight='auto';
-                res.marginLeft='auto';
-                res.borderRadius='10px';
-            }
-            
-            if( (recordMedEle) )
-            {    
-                recordMedEle.srcObject = null;
-                recordMedEle.setAttribute( 'width', desWid ); 
-                recordMedEle.setAttribute( 'height', desHgt ); 
-                recordMedEle.setAttribute( 'autoplay',''); 
-                recordMedEle.setAttribute( 'id','commentrecordele'); 
-                recordMedEle.setAttribute( 'playsinline','true'); 
-                recordMedEle.setAttribute( 'defaultMuted',''); 
-                recordMedEle.setAttribute( 'muted',''); 
-                mediacommentdiv.appendChild( recordMedEle );
-            }
-            
-            if( !(playbackMedEle) )
-            {
-                playbackMedEle = document.createElement( desiredTagname );
-                playbackMedEle.addEventListener( 'play', function(e) {playbackList();} );
-                playbackMedEle.addEventListener( 'pause', function(e) {playbackPauseList();} );
-                playbackMedEle.addEventListener( 'ended', function(e) {playbackPauseList();} );
-            }
-            else
-                playbackMedEle.srcObject = null;
-            
-            playbackMedEle.id = 'commentplaybackele';
-            playbackMedEle.controls = true;
-            playbackMedEle.autoplay = false;
-            playbackMedEle.setAttribute( 'playsinline','true'); 
-                        
-            var pes = playbackMedEle.style;
-            var el3; 
-            // video playback
-            if( !recordingIsAudioOnly )
-            {
-                playbackMedEle.disablePictureInPicture=true;
-                pes.width=desWid + 'px';
-                pes.height=desHgt + 'px';
-                pes.borderRadius='10px';
-
-                el3=document.getElementById('visualizerouterdiv');
-                if( (el3) )
-                    el3.style.display='none';
-                
-                visualizerActive = false;
-                
-                logIt( 'avcomments-head.initForMediaCapture() Visualizer hidden. '  ); 
-            }
-            
-            else if( !useLocalAudioRecording && recordingIsAudioOnly && (typeof setupMicrophoneMonitor!=='undefined') )
-            {
-                visualizerActive = true;
-                
-                setupMicrophoneMonitor();
-                // setupMicrophoneMonitor();
-                el3 = document.getElementById('visualizertable');
-                if( (el3) )
-                    el3.style.display='inline-block';
-                el3=document.getElementById('visualizerouterdiv');
-                if( (el3) )
-                    el3.style.display='block';
-                logIt( 'avcomments-head.initForMediaCapture() Set up visualizer. '  ); 
-            }
-            
-            var recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
-            recbut.style.display='inline';
-            recbut = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? '' : 'audio' ) );
-            recbut.style.display='none';
-
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-                initForMediaCaptureLocalAudio();
-            
-            setMrOptionsAndConstraints();            
-        }
-        catch( e )
-        {
-            // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
-            logIt( 'avcomments-head.initForMediaCapture() Error ' + e.message  ); 
-        }
-
-        if( !(mrOptions) )
-            mrOptions = {mimeType: 'video/webm' };
-
-        swapMed=true;        
-    }
-    
-
-    function initForMediaCaptureLocalAudio()
-    {
-        if( !recordingIsAudioOnly || !useLocalAudioRecording )
-            return;
-        
-        logIt( 'avcomments-head.initForMediaCaptureLocalAudio() START ' ); 
-        
-        try
-        {
-            // create recording Ele only if isAudio
-            if( !(recordMedEle) )
-            {    
-                recordMedEle = document.createElement( 'audio' );
-                var res = recordMedEle.style;
-                res.width='1px';
-                res.height='1px';
-            }
-
-            if( (recordMedEle) )
-            {    
-                recordMedEle.srcObject = null;
-                //recordMedEle.setAttribute( 'width', desWid ); 
-                recordMedEle.setAttribute( 'autoplay',''); 
-                recordMedEle.setAttribute( 'id','commentrecordele'); 
-                recordMedEle.setAttribute( 'playsinline','true'); 
-                recordMedEle.setAttribute( 'defaultMuted',''); 
-                recordMedEle.setAttribute( 'muted',''); 
-                mediacommentdiv.appendChild( recordMedEle );
-            }
-        }
-        catch( e )
-        {
-            // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
-            logIt( 'avcomments-head.initForMediaCaptureLocalAudio() Error ' + e.message  ); 
-        }
-
-    }
-    
-    
-    
-    function setMrOptionsAndConstraints()
-    {
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-                mrOptions = {mimeType: 'audio/wav' };
-        
-            else if( recordingIsAudioOnly )
-            {    
-                if( MediaRecorder.isTypeSupported('audio/webm'))
-                    mrOptions = {mimeType: 'audio/webm' };
-                else
-                    mrOptions = {mimeType: 'audio/mp4' };
-            }
-            
-            else if( !(MediaRecorder) )
-              mrOptions = {mimeType: 'video/mp4'};
-          
-            else if( !(MediaRecorder.isTypeSupported) ) 
-               mrOptions = {mimeType: 'video/mp4'};
-
-            else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) 
-               mrOptions = {mimeType: 'video/webm'};
-               // mrOptions = {mimeType: 'video/webm; codecs=vp9'};
-
-            else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) 
-               mrOptions = {mimeType: 'video/webm'};
-
-            else if(MediaRecorder.isTypeSupported('video/mp4')) 
-               mrOptions = {mimeType: 'video/mp4'};
-
-            else
-               mrOptions = {mimeType: 'video/webm; codecs=vp8'};
-
-            // Audio on IOS or Mac Safari
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-            {
-                mrConstraints = { audio:true, video:false };
-                
-                if( (selMicrophoneDevice) )
-                    mrConstraints.audio= {deviceId: {exact:selMicrophoneDevice}};
-            }
-                
-            // Other Audio only
-            else if( recordingIsAudioOnly )
-            {    
-                mrConstraints = { audio:true, video:false };
-                
-                if( (selMicrophoneDevice) )
-                    mrConstraints.audio.deviceId={exact:selMicrophoneDevice};    	   
-            }
-
-            // Video
-            else
-            {    
-                mrConstraints = { audio: true, video: { width:{min:desWid, ideal:desWid }, height:{min:desWid}, facingMode: "user" } };
-                
-                if( (selCameraDevice) )
-                    mrConstraints.video.deviceId={exact:selCameraDevice};
-
-                if( (selMicrophoneDevice) )
-                    mrConstraints.audio.deviceId={exact:selMicrophoneDevice};    	                   
-            }
-    }
-    
-    
-    function setForUploadStart( isAudio )
-    {        
-        uploadStatus = 0;
-        uploadPercent = 0;
-        
-        isAudio = (isAudio) ? isAudio : false;
-        
-        recordingIsAudioOnly = isAudio;
-        
-        setMrOptionsAndConstraints();
-
-        theBlob = null;
-        recordedBlobs = [];
-
-        medStrm = null;    
-        medStrmProm = null;
-        mRecorder = null;
-        playing = false;
-    
-        recAvInProg = false;
-        sent = false;
-    
-        
-        initForMediaCapture();
-        
-        swapMediaPlayers( false );
-        
-        startMediaStream();
-        
-        logIt( 'avcomments-head.xhtml setForUploadStart() isAudio=' + isAudio );
-        
-        // switch to start.
-        //var recbut = document.getElementById( 'startstoprecbut' );
-        //recbut.src=RECBUTSRC;
-
-        var but = document.getElementById( 'playbut' );
-        but.style.display='none';    
-        // playbut.src = PLAYBUTSRC;
-
-        but = document.getElementById( 'pausebut' );
-        but.style.display='none';    
-        
-        var upldbut = document.getElementById('uploadbuttondiv');
-        upldbut.style.display='none';        
-
-    }
-    
-    function doStartStopRecClick()
-    {
-        if( !recAvInProg )
-            doStartMediaRecording();
-        else
-            doStopMediaRecording();
-    }
-    
-    
-    function doStartMediaRecording()
-    {
-        logIt( 'avcomments-head.xhtml.doStartMediaRecording() START recordingIsAudioOnly=' + recordingIsAudioOnly);
-        if( !(mrOptions) )
-            initForMediaCapture();
-        
-            
-        // swap media players - show recording player.
-        swapMediaPlayers( false );
-        var el3;
-
-        if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
-        {
-            visualizerActive = true;
-            
-            if( !microphoneMonitorActive )
-                setupMicrophoneMonitor();
-            
-            el3 = document.getElementById('visualizertable');
-            if( (el3) )
-            {    
-                el3.style.display='inline-block';
-                logIt( 'avcomments-head.xhtml.doStartMediaRecording() SET viz table');
-            }
-            
-            el3=document.getElementById('visualizerouterdiv');
-            if( (el3) )
-                el3.style.display='block';            
-        }
-        
-        else
-        {
-            el3=document.getElementById('visualizerouterdiv');
-            if( (el3) )
-                el3.style.display='none';            
-        }
-
-        // hide play but
-        // var playbut = document.getElementById( 'playpausebut' );
-        if( startRec2() )
-        {
-            var but = document.getElementById( 'playbut' );
-            but.style.display='none';
-            but = document.getElementById( 'pausebut' );
-            but.style.display='none';
-            but = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
-            but.style.display='none';
-            but = document.getElementById( 'stoprecbut' );
-            but.style.display='inline';
-
-
-
-            // switch to stop.
-            //var recbut = document.getElementById( 'startstoprecbut' );
-            //if( startRec2() )
-            //{  
-            //    recbut.src=STOPRECBUTSRC;
-            //}
-            //else
-            //    recbut.src=RECBUTSRC;
-
-            var ele = document.getElementById('recordinginprogressdiv');
-            if( ele )
-                ele.innerHTML = recordingInProgress;
-        }
-    }
-
-    function doStopMediaRecording()
-    {
-        logIt( 'avcomments-head.xhtml.doStopMediaRecording() START ');
-
-        if( !(mrOptions) )
-            initForMediaCapture();
-
-        visualizerActive = false;
-
-        var el3;
-        if( recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined') )
-        {
-            setupMicrophoneMonitor();
-            el3 = document.getElementById('visualizertable');
-            if( (el3) )
-                el3.style.display='none';
-        }
-        el3=document.getElementById('visualizerouterdiv');
-        if( (el3) )
-            el3.style.display='none';                        
-
-        // switch to start.
-        if( stopRec2() )
-        {
-            var but = document.getElementById( 'playbut' );
-            but.style.display='none';
-            but = document.getElementById( 'pausebut' );
-            but.style.display='none';
-            but = document.getElementById( 'startrecbut' + (recordingIsAudioOnly ? 'audio' : '' ) );
-            but.style.display='inline';
-            but = document.getElementById( 'stoprecbut' );
-            but.style.display='none';
-            //var recbut = document.getElementById( 'startstoprecbut' );
-           // recbut.src=RECBUTSRC;
-        
-            // show play but
-            but = document.getElementById( 'playbut' );
-            but.style.display='inline';
-            //var playbut = document.getElementById( 'playpausebut' );
-            //playbut.src = PLAYBUTSRC;
-            //playbut.style.display='block';        
-        }
-
-        var ele = document.getElementById('recordinginprogressdiv');
-        if( ele )
-            ele.innerHTML = recordingStopped;
-
-    }
-    
-    function doPlayPauseClick()
-    {
-        logIt( 'avcomments-head.xhtml.doPlayPauseClick() START playing=' + playing );
-        
-        if( playing )
-            doStopPlayback();
-        else
-            doStartPlayback()        
-    }
-    
-    function playbackList()
-    {
-        logIt( 'avcomments-head.xhtml.playbackList() START playing=' + playing );
-        //if( playing )
-        //    return;
-        
-        var but = document.getElementById( 'playbut' );
-        but.style.display='none';
-        but = document.getElementById( 'pausebut' );
-        but.style.display='inline';
-               
-        //var playbut = document.getElementById( 'playpausebut' );
-        //playbut.src = PAUSEBUTSRC;
-        //playing = true;
-        
-    }
-
-    function playbackPauseList()
-    {
-        logIt( 'avcomments-head.xhtml.playbackPauseList() START playing=' + playing );
-        //if( !playing )
-         //   return;
-        
-        var but = document.getElementById( 'playbut' );
-        but.style.display='inline';
-        but = document.getElementById( 'pausebut' );
-        but.style.display='none';
-        //var playbut = document.getElementById( 'playpausebut' );
-        //playbut.src = PLAYBUTSRC;
-        //playing = false;
-        
-    }
-    
-    
-    function doStartPlayback()
-    {
-        logIt( 'avcomments-head.xhtml.doStartPlayback() START playing=' + playing );
-        if( playing || !(playbackMedEle) )
-            return;
-        
-         visualizerActive = false;
-        
-        // swap media players
-        swapMediaPlayers( true );
-        
-        playbackMedEle.play();
-        
-        playbackList();
-    }
-    
-    function doStopPlayback()
-    {
-        logIt( 'avcomments-head.xhtml.doStopPlayback() START playing=' + playing );
-        if( !(playbackMedEle) )
-            return;
-
-        visualizerActive = true;
-
-        playbackMedEle.pause();
-        
-        playbackPauseList();
-        
-    }
-    
-    function swapMediaPlayers( forPlayback )
-    {
-        if( !(playbackMedEle) )
-            return;
-        
-        var mediacommentdiv = document.getElementById('mediacommentdiv');
-
-        if( forPlayback && (!(playbackMedEle.parentNode) || ((recordMedEle) && recordMedEle.parentNode)) )
-        {
-            mediacommentdiv.innerHTML='';
-            mediacommentdiv.appendChild(playbackMedEle);
-        }
-        
-        if( !forPlayback && ((playbackMedEle.parentNode) || !((recordMedEle) && (recordMedEle.parentNode))) ) 
-        {
-            mediacommentdiv.innerHTML='';
-            
-            if( (recordMedEle) )
-                mediacommentdiv.appendChild(recordMedEle);
-        }
-        
-        
-    }
-    
-    function mrecError(evt)
-    {
-        var er = (evt) && (evt.error) ? evt.error.name : 'mrec error';
-
-        medStrmErrCt++;
-        logIt( 'avcomments-head.xhtml.mrecError() msg=' + er );         
-        var msg= mRecErrorStr + ' (' + er + ')';
-        showErrorMessage( msg );
-    }
-    
-    
-    function showErrorMessage( msg )
-    {
-        alert( msg );
-    }
-
-    
-    function startMediaStream()
-    {
-        try
-        {
-            theBlob = null;
-            recordedBlobs = [];
-        
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-            {
-                logIt( 'avcomments-head.xhtml.startMediaStream() recordAudioOnly and useLocalAudioRecording=true. Returning. ' );
-                return;
-            }
-            
-            if( !(medStrmProm) )
-            {
-                // logIt( 'avcomments-head.xhtml.startMediaStream() calling getUserMedia() ' );
-                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
-            }
-            
-            if( (medStrmProm) )
-            {
-                medStrmProm.then( function(stream) 
+            <style>
+                .reftdcenter
                 {
-                    medStrm = stream;
-                    
-                    // connect streeam to the video element so user can see self.
-                    if( (recordMedEle) )
+                    text-align:center;
+                }
+                .valignmid
+                {
+                    vertical-align:middle;
+                }
+                .recordtablea
+                {
+                    padding-left:20px;
+                    padding-right:20px;
+                }
+                .recordtableb
+                {
+                    width:250px;
+                }
+                .visualizertable
+                {
+                    display:inline-block;
+                    margin-bottom: 10px;
+                }
+
+                .visualizerouter {
+                    display:inline-block;
+                    max-width:220px;
+                    min-width:130px;
+                    border:1px solid green;
+                    padding:1px;
+                }
+
+                .audiobar {
+                    --volume: 0%;
+                    position: relative;
+                    width: 100%;
+                    height: 15px;
+                    border-radius: 3px;
+                    margin-bottom: 0px;
+                }
+
+                .audiobar::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    border-radius: 3px;
+                    width: var(--volume);
+                    background-color: green;
+                    transition: width 100ms linear;
+                }
+
+
+            </style>
+
+            <script type="text/javascript">
+                //<![CDATA[
+
+                var visualizerActive = true;
+                var rcCheckId = '#{refBean.rcCheck.rcCheckIdEncrypted}';
+                var rcRaterId = '#{refBean.rcRaterIdEncrypted}';
+                var rcItemId = '#{raterRefBean.rcItem.rcItemIdEncrypted}';
+                var userId = '#{refBean.userIdEncrypted}';
+                var isAudioOnly = #{refBean.audioCommentsOnly};
+                var recordingIsAudioOnly = false;
+                var hasPrevUpload = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null};
+                var prevUploadIsAudio = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile.isAudio};
+                var mRecErrorStr = "#{stMessages['g.RecordingError.Title']}";
+                var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']} #{userBean.supportEmail}.";
+                var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']} #{userBean.supportEmail}.";
+                var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
+                var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}";
+                var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}.";
+                var errorNoBlobToUpload = "#{stMessages['g.PPErrorNoUploadBlobMessage']}";
+                var errorDuringUpload = "#{stMessages['g.PPErrorDuringUpload']}";
+                var errorDuringUploadAbort = "#{stMessages['g.PPErrorDuringUploadAbort']}";
+                var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
+                var errorDeviceMutedMessage = "#{stMessages['g.PPErrorDeviceMutedMessage']} #{userBean.supportEmail}.";
+                var reRecordTextVid = "#{stMessages['g.ReRecordCommentVid']}";
+                var reRecordTextAud = "#{stMessages['g.ReRecordCommentAud']}";
+                var reRecordTextAsVid = "#{stMessages['g.ReRecordCommentAsVid']}";
+                var reRecordTextAsAud = "#{stMessages['g.ReRecordCommentAsAud']}";
+                var audioAlreadyRecorded = "#{stMessages['g.RecordAudioPrev']}";
+                var videoAlreadyRecorded = "#{stMessages['g.RecordVideoPrev']}";
+                var recordVideoHeader = "#{stMessages['g.RecordVideoComment']}";
+                var recordAudioHeader = "#{stMessages['g.RecordAudioComment']}";
+                var recordingInProgress = "#{stMessages['g.RecordingInProgress']}";
+                var recordingStopped = "#{stMessages['g.RecordingStopped']}";
+
+                var selCameraDevice = '#{userBean.selCamera}';
+                var selMicrophoneDevice = '#{userBean.selMicrophone}';
+                var microphoneMonitorActive = false;
+
+
+                var fileSize = 0;
+                var uploadedUserFileTypeId = 220;
+
+                // used for playback.
+                var playbackMedEle = null;
+
+                // Used for recording audio or video. 
+                var recordMedEle = null;
+
+                // Indicates that medEle and medEle2 are different and should be swapped when playing/recording.
+                var swapMed = false;
+
+                var rcdDiv = null;
+
+                var mRecorder = null;
+
+                var recordedBlobs = [];
+
+                var mrOptions = null;
+
+                var mrConstraints = null;
+
+                var theBlob = null;
+
+                var maxTm = 120;
+
+                var sliceTm = 0.20;
+                var sliceCt = 0;
+
+                var playing = false;
+
+                var recAvInProg = false;
+                var sent = false;
+
+                var medStrm = null;
+                var medStrmProm = null;
+                // z.muteWrngCt=0;
+                var medStrmErrCt = 0;
+
+                /*
+                 * status
+                 *     0 = not started
+                 *     1 = started
+                 *     2 = completed
+                 *     3 = failed
+                 */
+                var uploadStatus = 0;
+                var uploadUrl = "/tr/ppfupload?acodx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}";
+                var uploadPercent = 0;
+
+                var desWid = 300;
+                var desHgt = 270;
+
+                // var RECBUTSRC = '/tr/images/startrecbut1.png';
+                // var STOPRECBUTSRC = '/tr/images/stoprecbut1.png';
+                //var PLAYBUTSRC = '/tr/images/playbut1.png';
+                //var PAUSEBUTSRC = '/tr/images/pausebut1.png';
+
+
+                var MIN_FILSZ = 4500;
+                var MAX_MED_ERRS = 2;
+                var MAX_TOTAL_MED_ERRS = 4;
+                var MAX_MUTE_WRNGS = 3;
+
+                window.addEventListener('load', doMediaCaptureOnload);
+
+
+                var audRecBuffers = null;
+                var audRecLength = 0;
+                var audSampleRate = 0;
+                var audContext = null;
+
+                //var isSafari = false;
+                var useLocalAudioRecording = false;
+                var isIos = false;
+                var isIphone = false;
+
+
+                function doMediaCaptureOnload()
+                {
+                    var ua = navigator.userAgent;
+                    if (/iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+                        isIos = true;
+                    isIphone = isIos && /iPhone|iPod/.test(ua);
+                    //isSafari = ua.indexOf("Chrome")<0 && ua.indexOf("Safari")>=0;
+                    setUseLocalAudioRecording();
+
+                    // Testing only
+                    // isIos=true;      
+
+                    var ele;
+
+                    if (isIphone)
                     {
-                        recordMedEle.srcObject = stream;
-                        recordMedEle.setAttribute( 'playsinline','true'); 
-                        recordMedEle.setAttribute( 'defaultMuted',''); 
-                        recordMedEle.setAttribute( 'muted',''); 
-                        recordMedEle.volume=0;
-                        recordMedEle.load();
-                        recordMedEle.play();                                        
+                        ele = document.getElementById('avcommentstopinstdiv');
+                        if ((ele))
+                            ele.style.display = 'none';
+                        desWid = 240;
+                        desHgt = 180;
                     }
-                    
-                    if( !(mRecorder) )
+
+                    if (hasPrevUpload)
                     {
-                        mRecorder = new MediaRecorder( stream, mrOptions );
-                        mRecorder.ondataavailable = function(e) {dataAvail(e);};
+                        ele = document.getElementById('avuploadindicatordiv');
+                        if (ele)
+                        {
+                            ele.innerHTML = prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
+                            ele.style.display = 'block';
+                        }
+                        ele = document.getElementById('rerecordtxtvid');
+                        if (ele)
+                            ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
+                        ele = document.getElementById('rerecordtxtaud');
+                        if (ele)
+                            ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
+                    }
+                }
 
-                               // show the image if there is one and hide the recording div.
-                        // mRecorder.onstop = function(e) {mrecStop(e);};
 
-                                // this will hide the image if there is one and show the recording div if there is one.
-                        // mRecorder.onstart = function(e) {mrecStart(e);};
-                        mRecorder.onerror = function(e) {mrecError(e);};
-                    }                    
-                },
-                function(e) 
+
+
+                function initForMediaCapture()
                 {
-                    medStrmProm=null;
-                    logIt( 'avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message );      
-                    showErrorMessage( 'avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message );   
-                } );
-            }
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.startMediaStream() ' + e.message );      
-            showErrorMessage( 'avcomments-head.xhtml.startMediaStream() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-
-
-    function startMediaStreamLocalAudio()
-    {
-        try
-        {
-            theBlob = null;
-            recordedBlobs = [];
-        
-            if( !(medStrmProm) )
-            {
-                logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() calling getUserMedia() ' );
-                medStrmProm = navigator.mediaDevices.getUserMedia( mrConstraints );
-            }
-                        
-            if( (medStrmProm) )
-            {
-                logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Have Promise ' );
-                medStrmProm.then( function(stream) 
-                {
-                    medStrm=stream;
-
-                    medStrmProm=null;
-
-                    if( chkMute() )
+                    try
                     {
-                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() CkMute Pbm rqd=' + rqd );
-                        recAvInProg = false;
-                        medStrm = null;
-                        mRecorder = null;
-                        playing = false;
-                        audRecLength = 0;
-                        audRecBuffers = [];
-                        showMuteWrng();
+                        // Dialog Header - set to audio or video
+                        var ele = document.getElementById('avcommentdialogheader');
+                        if (ele)
+                            ele.innerHTML = recordingIsAudioOnly ? recordAudioHeader : recordVideoHeader;
+
+                        // Clear media div of elements.
+                        var mediacommentdiv = document.getElementById('mediacommentdiv');
+
+                        /// clean the mediacommentdiv
+                        mediacommentdiv.innerHTML = '';
+
+                        mediacommentdiv.style.paddingTop = (recordingIsAudioOnly ? 5 : 3) + 'px';
+
+                        var desiredTagname = recordingIsAudioOnly ? 'audio' : 'video';
+
+                        // Make sure existing elements are the correct type. 
+                        if ((recordMedEle) && recordMedEle.tagName !== desiredTagname)
+                            recordMedEle = null;
+
+                        if ((playbackMedEle) && playbackMedEle.tagName !== desiredTagname)
+                            playbackMedEle = null;
+
+                        // create recording Ele
+                        if (!(recordMedEle) && !recordingIsAudioOnly)
+                        {
+                            recordMedEle = document.createElement(desiredTagname);
+                            //autoplay="true" width="300" height="225" style="border: 1px darkgray solid;margin-top:10px;margin-right:40px"
+                            var res = recordMedEle.style;
+                            // res.border='1px darkgray solid';
+                            res.marginTop = '10px';
+                            res.marginRight = 'auto';
+                            res.marginLeft = 'auto';
+                            res.borderRadius = '10px';
+                            res.maxWidth = desWid + 'px';
+                            res.maxHeight = desHgt + 'px';
+                        }
+
+                        if ((recordMedEle))
+                        {
+                            recordMedEle.srcObject = null;
+                            //recordMedEle.setAttribute( 'width', desWid ); 
+                            //recordMedEle.setAttribute( 'height', desHgt ); 
+                            recordMedEle.setAttribute('autoplay', '');
+                            recordMedEle.setAttribute('id', 'commentrecordele');
+                            recordMedEle.setAttribute('playsinline', 'true');
+                            recordMedEle.setAttribute('defaultMuted', '');
+                            recordMedEle.setAttribute('muted', '');
+                            mediacommentdiv.appendChild(recordMedEle);
+                        }
+
+                        if (!(playbackMedEle))
+                        {
+                            playbackMedEle = document.createElement(desiredTagname);
+                            playbackMedEle.addEventListener('play', function (e) {
+                                playbackList();
+                            });
+                            playbackMedEle.addEventListener('pause', function (e) {
+                                playbackPauseList();
+                            });
+                            playbackMedEle.addEventListener('ended', function (e) {
+                                playbackPauseList();
+                            });
+                        } else
+                            playbackMedEle.srcObject = null;
+
+                        playbackMedEle.id = 'commentplaybackele';
+                        playbackMedEle.controls = true;
+                        playbackMedEle.autoplay = false;
+                        playbackMedEle.setAttribute('playsinline', 'true');
+
+                        var pes = playbackMedEle.style;
+                        var el3;
+                        // video playback
+                        if (!recordingIsAudioOnly)
+                        {
+                            playbackMedEle.disablePictureInPicture = true;
+                            pes.width = desWid + 'px';
+                            pes.height = desHgt + 'px';
+                            pes.borderRadius = '10px';
+
+                            el3 = document.getElementById('visualizerouterdiv');
+                            if ((el3))
+                                el3.style.display = 'none';
+
+                            visualizerActive = false;
+
+                            logIt('avcomments-head.initForMediaCapture() Visualizer hidden. ');
+                        } else if (!useLocalAudioRecording && recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined'))
+                        {
+                            visualizerActive = true;
+
+                            setupMicrophoneMonitor();
+                            // setupMicrophoneMonitor();
+                            el3 = document.getElementById('visualizertable');
+                            if ((el3))
+                                el3.style.display = 'inline-block';
+                            el3 = document.getElementById('visualizerouterdiv');
+                            if ((el3))
+                                el3.style.display = 'block';
+                            logIt('avcomments-head.initForMediaCapture() Set up visualizer. ');
+                        }
+
+                        var recbut = document.getElementById('startrecbut' + (recordingIsAudioOnly ? 'audio' : ''));
+                        recbut.style.display = 'inline';
+                        recbut = document.getElementById('startrecbut' + (recordingIsAudioOnly ? '' : 'audio'));
+                        recbut.style.display = 'none';
+
+                        if (recordingIsAudioOnly && useLocalAudioRecording)
+                            initForMediaCaptureLocalAudio();
+
+                        setMrOptionsAndConstraints();
+                    } catch (e)
+                    {
+                        // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
+                        logIt('avcomments-head.initForMediaCapture() Error ' + e.message);
+                    }
+
+                    if (!(mrOptions))
+                        mrOptions = {mimeType: 'video/webm'};
+
+                    swapMed = true;
+                }
+
+
+                function initForMediaCaptureLocalAudio()
+                {
+                    if (!recordingIsAudioOnly || !useLocalAudioRecording)
+                        return;
+
+                    logIt('avcomments-head.initForMediaCaptureLocalAudio() START ');
+
+                    try
+                    {
+                        // create recording Ele only if isAudio
+                        if (!(recordMedEle))
+                        {
+                            recordMedEle = document.createElement('audio');
+                            var res = recordMedEle.style;
+                            res.width = '1px';
+                            res.height = '1px';
+                        }
+
+                        if ((recordMedEle))
+                        {
+                            recordMedEle.srcObject = null;
+                            //recordMedEle.setAttribute( 'width', desWid ); 
+                            recordMedEle.setAttribute('autoplay', '');
+                            recordMedEle.setAttribute('id', 'commentrecordele');
+                            recordMedEle.setAttribute('playsinline', 'true');
+                            recordMedEle.setAttribute('defaultMuted', '');
+                            recordMedEle.setAttribute('muted', '');
+                            mediacommentdiv.appendChild(recordMedEle);
+                        }
+                    } catch (e)
+                    {
+                        // logIt( 'CMedCapItm.draw() ERROR ' + ee.message );
+                        logIt('avcomments-head.initForMediaCaptureLocalAudio() Error ' + e.message);
+                    }
+
+                }
+
+
+
+                function setMrOptionsAndConstraints()
+                {
+                    if (recordingIsAudioOnly && useLocalAudioRecording)
+                        mrOptions = {mimeType: 'audio/wav'};
+
+                    else if (recordingIsAudioOnly)
+                    {
+                        if (MediaRecorder.isTypeSupported('audio/webm'))
+                            mrOptions = {mimeType: 'audio/webm'};
+                        else
+                            mrOptions = {mimeType: 'audio/mp4'};
+                    } else if (!(MediaRecorder))
+                        mrOptions = {mimeType: 'video/mp4'};
+
+                    else if (!(MediaRecorder.isTypeSupported))
+                        mrOptions = {mimeType: 'video/mp4'};
+
+                    else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9'))
+                        mrOptions = {mimeType: 'video/webm'};
+                    // mrOptions = {mimeType: 'video/webm; codecs=vp9'};
+
+                    else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8'))
+                        mrOptions = {mimeType: 'video/webm'};
+
+                    else if (MediaRecorder.isTypeSupported('video/mp4'))
+                        mrOptions = {mimeType: 'video/mp4'};
+
+                    else
+                        mrOptions = {mimeType: 'video/webm; codecs=vp8'};
+
+                    // Audio on IOS or Mac Safari
+                    if (recordingIsAudioOnly && useLocalAudioRecording)
+                    {
+                        mrConstraints = {audio: true, video: false};
+
+                        if ((selMicrophoneDevice))
+                            mrConstraints.audio = {deviceId: {exact: selMicrophoneDevice}};
+                    }
+
+                    // Other Audio only
+                    else if (recordingIsAudioOnly)
+                    {
+                        mrConstraints = {audio: true, video: false};
+
+                        if ((selMicrophoneDevice))
+                            mrConstraints.audio.deviceId = {exact: selMicrophoneDevice};
+                    }
+
+                    // Video
+                    else
+                    {
+                        mrConstraints = {audio: true, video: {width: {min: desWid, ideal: desWid}, height: {min: desWid}, facingMode: "user"}};
+
+                        if ((selCameraDevice))
+                            mrConstraints.video.deviceId = {exact: selCameraDevice};
+
+                        if ((selMicrophoneDevice))
+                            mrConstraints.audio.deviceId = {exact: selMicrophoneDevice};
+                    }
+                }
+
+
+                function setForUploadStart(isAudio)
+                {
+                    uploadStatus = 0;
+                    uploadPercent = 0;
+
+                    isAudio = (isAudio) ? isAudio : false;
+
+                    recordingIsAudioOnly = isAudio;
+
+                    setMrOptionsAndConstraints();
+
+                    theBlob = null;
+                    recordedBlobs = [];
+
+                    medStrm = null;
+                    medStrmProm = null;
+                    mRecorder = null;
+                    playing = false;
+
+                    recAvInProg = false;
+                    sent = false;
+
+
+                    initForMediaCapture();
+
+                    swapMediaPlayers(false);
+
+                    startMediaStream();
+
+                    logIt('avcomments-head.xhtml setForUploadStart() isAudio=' + isAudio);
+
+                    // switch to start.
+                    //var recbut = document.getElementById( 'startstoprecbut' );
+                    //recbut.src=RECBUTSRC;
+
+                    var but = document.getElementById('playbut');
+                    but.style.display = 'none';
+                    // playbut.src = PLAYBUTSRC;
+
+                    but = document.getElementById('pausebut');
+                    but.style.display = 'none';
+
+                    var upldbut = document.getElementById('uploadbuttondiv');
+                    upldbut.style.display = 'none';
+
+                }
+
+                function doStartStopRecClick()
+                {
+                    if (!recAvInProg)
+                        doStartMediaRecording();
+                    else
+                        doStopMediaRecording();
+                }
+
+
+                function doStartMediaRecording()
+                {
+                    logIt('avcomments-head.xhtml.doStartMediaRecording() START recordingIsAudioOnly=' + recordingIsAudioOnly);
+                    if (!(mrOptions))
+                        initForMediaCapture();
+
+
+                    // swap media players - show recording player.
+                    swapMediaPlayers(false);
+                    var el3;
+
+                    if (recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined'))
+                    {
+                        visualizerActive = true;
+
+                        if (!microphoneMonitorActive)
+                            setupMicrophoneMonitor();
+
+                        el3 = document.getElementById('visualizertable');
+                        if ((el3))
+                        {
+                            el3.style.display = 'inline-block';
+                            logIt('avcomments-head.xhtml.doStartMediaRecording() SET viz table');
+                        }
+
+                        el3 = document.getElementById('visualizerouterdiv');
+                        if ((el3))
+                            el3.style.display = 'block';
+                    } else
+                    {
+                        el3 = document.getElementById('visualizerouterdiv');
+                        if ((el3))
+                            el3.style.display = 'none';
+                    }
+
+                    // hide play but
+                    // var playbut = document.getElementById( 'playpausebut' );
+                    if (startRec2())
+                    {
+                        var but = document.getElementById('playbut');
+                        but.style.display = 'none';
+                        but = document.getElementById('pausebut');
+                        but.style.display = 'none';
+                        but = document.getElementById('startrecbut' + (recordingIsAudioOnly ? 'audio' : ''));
+                        but.style.display = 'none';
+                        but = document.getElementById('stoprecbut');
+                        but.style.display = 'inline';
+
+
+
+                        // switch to stop.
+                        //var recbut = document.getElementById( 'startstoprecbut' );
+                        //if( startRec2() )
+                        //{  
+                        //    recbut.src=STOPRECBUTSRC;
+                        //}
+                        //else
+                        //    recbut.src=RECBUTSRC;
+
+                        var ele = document.getElementById('recordinginprogressdiv');
+                        if (ele)
+                            ele.innerHTML = recordingInProgress;
+                    }
+                }
+
+                function doStopMediaRecording()
+                {
+                    logIt('avcomments-head.xhtml.doStopMediaRecording() START ');
+
+                    if (!(mrOptions))
+                        initForMediaCapture();
+
+                    visualizerActive = false;
+
+                    var el3;
+                    if (recordingIsAudioOnly && (typeof setupMicrophoneMonitor !== 'undefined'))
+                    {
+                        setupMicrophoneMonitor();
+                        el3 = document.getElementById('visualizertable');
+                        if ((el3))
+                            el3.style.display = 'none';
+                    }
+                    el3 = document.getElementById('visualizerouterdiv');
+                    if ((el3))
+                        el3.style.display = 'none';
+
+                    // switch to start.
+                    if (stopRec2())
+                    {
+                        var but = document.getElementById('playbut');
+                        but.style.display = 'none';
+                        but = document.getElementById('pausebut');
+                        but.style.display = 'none';
+                        but = document.getElementById('startrecbut' + (recordingIsAudioOnly ? 'audio' : ''));
+                        but.style.display = 'inline';
+                        but = document.getElementById('stoprecbut');
+                        but.style.display = 'none';
+                        //var recbut = document.getElementById( 'startstoprecbut' );
+                        // recbut.src=RECBUTSRC;
+
+                        // show play but
+                        but = document.getElementById('playbut');
+                        but.style.display = 'inline';
+                        //var playbut = document.getElementById( 'playpausebut' );
+                        //playbut.src = PLAYBUTSRC;
+                        //playbut.style.display='block';        
+                    }
+
+                    var ele = document.getElementById('recordinginprogressdiv');
+                    if (ele)
+                        ele.innerHTML = recordingStopped;
+
+                }
+
+                function doPlayPauseClick()
+                {
+                    logIt('avcomments-head.xhtml.doPlayPauseClick() START playing=' + playing);
+
+                    if (playing)
+                        doStopPlayback();
+                    else
+                        doStartPlayback()
+                }
+
+                function playbackList()
+                {
+                    logIt('avcomments-head.xhtml.playbackList() START playing=' + playing);
+                    //if( playing )
+                    //    return;
+
+                    var but = document.getElementById('playbut');
+                    but.style.display = 'none';
+                    but = document.getElementById('pausebut');
+                    but.style.display = 'inline';
+
+                    //var playbut = document.getElementById( 'playpausebut' );
+                    //playbut.src = PAUSEBUTSRC;
+                    //playing = true;
+
+                }
+
+                function playbackPauseList()
+                {
+                    logIt('avcomments-head.xhtml.playbackPauseList() START playing=' + playing);
+                    //if( !playing )
+                    //   return;
+
+                    var but = document.getElementById('playbut');
+                    but.style.display = 'inline';
+                    but = document.getElementById('pausebut');
+                    but.style.display = 'none';
+                    //var playbut = document.getElementById( 'playpausebut' );
+                    //playbut.src = PLAYBUTSRC;
+                    //playing = false;
+
+                }
+
+
+                function doStartPlayback()
+                {
+                    logIt('avcomments-head.xhtml.doStartPlayback() START playing=' + playing);
+                    if (playing || !(playbackMedEle))
+                        return;
+
+                    visualizerActive = false;
+
+                    // swap media players
+                    swapMediaPlayers(true);
+
+                    playbackMedEle.play();
+
+                    playbackList();
+                }
+
+                function doStopPlayback()
+                {
+                    logIt('avcomments-head.xhtml.doStopPlayback() START playing=' + playing);
+                    if (!(playbackMedEle))
+                        return;
+
+                    visualizerActive = true;
+
+                    playbackMedEle.pause();
+
+                    playbackPauseList();
+
+                }
+
+                function swapMediaPlayers(forPlayback)
+                {
+                    logIt('avcomments-head.xhtml.swapMediaPlayers() AAA forPlayback=' + forPlayback);
+
+                    //if( !(playbackMedEle) )
+                    //    return;
+
+                    //logIt( 'avcomments-head.xhtml.swapMediaPlayers() BBB forPlayback=' + forPlayback );         
+
+                    var mediacommentdiv = document.getElementById('mediacommentdiv');
+
+                    if (!(mediacommentdiv))
+                    {
+                        logIt('avcomments-head.xhtml.swapMediaPlayers() BBB NO mediacommentdiv found! forPlayback=' + forPlayback);
+
+                        if (!forPlayback && (recordMedEle))
+                            recordMedEle.play();
+
                         return;
                     }
 
-                    // connect stream to the audio element so user can see self.
-                    if( (recordMedEle) )
+                    if (forPlayback) // && (!(playbackMedEle.parentNode) || ((recordMedEle) && recordMedEle.parentNode)) )
                     {
-                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Assigning stream');
-                        recordMedEle.srcObject = stream;
-                        recordMedEle.setAttribute( 'playsinline','true'); 
-                        recordMedEle.setAttribute( 'defaultMuted',''); 
-                        recordMedEle.setAttribute( 'muted',''); 
-                        recordMedEle.volume=0;
-                        recordMedEle.load();
-                        //recordMedEle.play();                                        
+                        mediacommentdiv.innerHTML = '';
+                        if ((playbackMedEle))
+                            mediacommentdiv.appendChild(playbackMedEle);
                     }
 
-                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() CCC ');
-
-                    // OK now start the audio stream.
-                    audRecBuffers = [];
-                    audRecLength = 0;
-
-                    // Note, Mac and IOS cannot handle too many audio context operations.
-                    var audDestNode = null; // bimo.m.audDestNode;
-
-                    if( !(audContext) )
+                    if (!forPlayback) // && ((playbackMedEle.parentNode) || !((recordMedEle) && (recordMedEle.parentNode))) ) 
                     {
-                        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-                        audContext = new AudioContext();
-                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() Created Audio Context ');
+                        mediacommentdiv.innerHTML = '';
+
+                        if ((recordMedEle))
+                        {
+                            mediacommentdiv.appendChild(recordMedEle);
+                            recordMedEle.play();
+                        }
                     }
 
-                    if( !(audContext.createScriptProcessor) )
+
+                }
+
+                function mrecError(evt)
+                {
+                    var er = (evt) && (evt.error) ? evt.error.name : 'mrec error';
+
+                    medStrmErrCt++;
+                    logIt('avcomments-head.xhtml.mrecError() msg=' + er);
+                    var msg = mRecErrorStr + ' (' + er + ')';
+                    showErrorMessage(msg);
+                }
+
+
+                function showErrorMessage(msg)
+                {
+                    alert(msg);
+                }
+
+
+                function startMediaStream()
+                {
+                    try
                     {
-                        audContext.createScriptProcessor = audContext.createJavaScriptNode;
-                        logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() createScriptProcessor');
+                        theBlob = null;
+                        recordedBlobs = [];
+
+                        if (recordingIsAudioOnly && useLocalAudioRecording)
+                        {
+                            logIt('avcomments-head.xhtml.startMediaStream() recordAudioOnly and useLocalAudioRecording=true. Returning. ');
+                            return;
+                        }
+
+                        if (!(medStrmProm))
+                        {
+                            // logIt( 'avcomments-head.xhtml.startMediaStream() calling getUserMedia() ' );
+                            medStrmProm = navigator.mediaDevices.getUserMedia(mrConstraints);
+                        }
+
+                        if ((medStrmProm))
+                        {
+                            medStrmProm.then(function (stream)
+                            {
+                                medStrm = stream;
+
+                                // connect streeam to the video element so user can see self.
+                                if ((recordMedEle))
+                                {
+                                    recordMedEle.srcObject = stream;
+                                    recordMedEle.setAttribute('playsinline', 'true');
+                                    recordMedEle.setAttribute('defaultMuted', '');
+                                    recordMedEle.setAttribute('muted', '');
+                                    recordMedEle.volume = 0;
+                                    recordMedEle.load();
+                                    recordMedEle.play();
+                                }
+
+                                if (!(mRecorder))
+                                {
+                                    mRecorder = new MediaRecorder(stream, mrOptions);
+                                    mRecorder.ondataavailable = function (e) {
+                                        dataAvail(e);
+                                    };
+
+                                    // show the image if there is one and hide the recording div.
+                                    // mRecorder.onstop = function(e) {mrecStop(e);};
+
+                                    // this will hide the image if there is one and show the recording div if there is one.
+                                    // mRecorder.onstart = function(e) {mrecStart(e);};
+                                    mRecorder.onerror = function (e) {
+                                        mrecError(e);
+                                    };
+                                }
+                            },
+                                    function (e)
+                                    {
+                                        medStrmProm = null;
+                                        logIt('avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message);
+                                        showErrorMessage('avcomments-head.xhtml.startMediaStream() Error attaching stream to MediaRecorder. ' + e.message);
+                                    });
+                        }
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.startMediaStream() ' + e.message);
+                        showErrorMessage('avcomments-head.xhtml.startMediaStream() ' + e.message);
+                        return false;
                     }
+                    return true;
+                }
 
-                    if( isIos )
-                        unlockIos(audContext);                                    
 
-                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() DDD ');
+                function startMediaStreamLocalAudio()
+                {
+                    try
+                    {
+                        theBlob = null;
+                        recordedBlobs = [];
 
-                    var audSourceNode = audContext.createMediaStreamSource(stream);
-                    audDestNode = audContext.createScriptProcessor(2048, 1, 1); // audContext.createMediaStreamDestination();
-                    audSampleRate = audContext.sampleRate;  
-                    audSourceNode.connect(audDestNode);
-                    audDestNode.connect(audContext.destination);  // Should not be needed but it is in chrome, and edge. 
+                        if (!(medStrmProm))
+                        {
+                            logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() calling getUserMedia() ');
+                            medStrmProm = navigator.mediaDevices.getUserMedia(mrConstraints);
+                        }
 
-                    audDestNode.onaudioprocess = function(e) {
+                        if ((medStrmProm))
+                        {
+                            logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() Have Promise ');
+                            medStrmProm.then(function (stream)
+                            {
+                                medStrm = stream;
 
-                        if( !recAvInProg )
+                                medStrmProm = null;
+
+                                if (chkMute())
+                                {
+                                    logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() CkMute Pbm rqd=' + rqd);
+                                    recAvInProg = false;
+                                    medStrm = null;
+                                    mRecorder = null;
+                                    playing = false;
+                                    audRecLength = 0;
+                                    audRecBuffers = [];
+                                    showMuteWrng();
+                                    return;
+                                }
+
+                                // connect stream to the audio element so user can see self.
+                                if ((recordMedEle))
+                                {
+                                    logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() Assigning stream');
+                                    recordMedEle.srcObject = stream;
+                                    recordMedEle.setAttribute('playsinline', 'true');
+                                    recordMedEle.setAttribute('defaultMuted', '');
+                                    recordMedEle.setAttribute('muted', '');
+                                    recordMedEle.volume = 0;
+                                    recordMedEle.load();
+                                    //recordMedEle.play();                                        
+                                }
+
+                                logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() CCC ');
+
+                                // OK now start the audio stream.
+                                audRecBuffers = [];
+                                audRecLength = 0;
+
+                                // Note, Mac and IOS cannot handle too many audio context operations.
+                                var audDestNode = null; // bimo.m.audDestNode;
+
+                                if (!(audContext))
+                                {
+                                    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                                    audContext = new AudioContext();
+                                    logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() Created Audio Context ');
+                                }
+
+                                if (!(audContext.createScriptProcessor))
+                                {
+                                    audContext.createScriptProcessor = audContext.createJavaScriptNode;
+                                    logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() createScriptProcessor');
+                                }
+
+                                if (isIos)
+                                    unlockIos(audContext);
+
+                                logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() DDD ');
+
+                                var audSourceNode = audContext.createMediaStreamSource(stream);
+                                audDestNode = audContext.createScriptProcessor(2048, 1, 1); // audContext.createMediaStreamDestination();
+                                audSampleRate = audContext.sampleRate;
+                                audSourceNode.connect(audDestNode);
+                                audDestNode.connect(audContext.destination);  // Should not be needed but it is in chrome, and edge. 
+
+                                audDestNode.onaudioprocess = function (e) {
+
+                                    if (!recAvInProg)
+                                        return;
+
+                                    // push the data
+                                    var b = new Float32Array(e.inputBuffer.getChannelData(0));
+                                    audRecBuffers.push(b);
+                                    audRecLength = audRecBuffers.length;
+                                    // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio().audDestNode.onaudioprocess audRecLength=' + audRecLength );
+                                };
+                                // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() EEE ');
+
+                                setupMicrophoneMonitorLocalAudio(stream);
+                                logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() FFF ');
+
+                            },
+                                    function (e)
+                                    {
+                                        medStrmProm = null;
+                                        logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() medStrmProm Error. ' + e.message);
+                                        showErrorMessage('avcomments-head.xhtml.startMediaStreamLocalAudio() ' + e.message);
+                                    });
+                        }
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.startMediaStream() ' + e.message);
+                        showErrorMessage('avcomments-head.xhtml.startMediaStream() ' + e.message);
+                        return false;
+                    }
+                    return true;
+                }
+
+
+
+
+                function startRec2()
+                {
+                    try
+                    {
+                        theBlob = null;
+                        recordedBlobs = [];
+
+                        if ((recordMedEle))
+                        {
+                            recordMedEle.volume = 0;
+                            // recordMedEle.load();
+                            // recordMedEle.play();                                        
+                        }
+
+                        if (recordingIsAudioOnly && useLocalAudioRecording)
+                        {
+                            logIt('avcomments-head.xhtml.startRec2() Recording Audio local. ');
+
+                            if (audRecLength > 0)
+                            {
+                                logIt('avcomments-head.xhtml.startRec2() audRecLength=' + audRecLength + ', so clearing and returning.');
+                                //stopRec2();
+                                audRecLength = 0;
+                                audRecBuffers = [];
+                                recAvInProg = true;
+                                return true;
+                            }
+
+                            startMediaStreamLocalAudio();
+
+                            recAvInProg = true;
+
+                            return true;
+                        } else if (!(mRecorder))
+                        {
+                            logIt('avcomments-head.xhtml.startRec2() ERROR no MedRecorder ');
+                            return false;
+                        }
+
+                        // create a new Media Recorder
+                        if (!(mRecorder))
+                        {
+                            mRecorder = new MediaRecorder(stream, mrOptions);
+                            mRecorder.ondataavailable = function (e) {
+                                dataAvail(e);
+                            };
+
+                            // show the image if there is one and hide the recording div.
+                            // mRecorder.onstop = function(e) {mrecStop(e);};
+
+                            // this will hide the image if there is one and show the recording div if there is one.
+                            // mRecorder.onstart = function(e) {mrecStart(e);};
+                            mRecorder.onerror = function (e) {
+                                mrecError(e);
+                            };
+                        }
+
+                        // start the media recorder.
+                        if ((mRecorder.state) && mRecorder.state !== 'recording')
+                        {
+                            // mrecStart();
+                            mRecorder.start(1000 * sliceTm);
+                            recAvInProg = true;
+                        }
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.startRec2() ' + e.message);
+                        showErrorMessage('avcomments-head.xhtml.startRec2() ' + e.message);
+                        return false;
+                    }
+                    return true;
+                }
+
+                function stopRec2()
+                {
+                    try
+                    {
+                        if ((recordMedEle))
+                            recordMedEle.pause();
+                        // recordMedEle.volume=1.0;
+
+                        if (recordingIsAudioOnly && useLocalAudioRecording)
+                        {
+                            logIt('avcomments-head.xhtml.stopRec2() Recording Audio local. ');
+                            stopRec2LocalAudio();
+                            return true;
+                        }
+
+                        if ((mRecorder))
+                        {
+                            logIt('avcomments-head.xhtml.stopRec2() mRecorder=true, state=' + mRecorder.state);
+
+                            if ((mRecorder.state) && mRecorder.state !== 'inactive')
+                            {
+                                mRecorder.stop();
+                                recAvInProg = false;
+                            }
+
+                            // mRecorder = null;
+
+                            if (!(theBlob) && (recordedBlobs) && recordedBlobs.length > 0)
+                            {
+                                theBlob = new Blob(recordedBlobs, {'type': (mrOptions) ? mrOptions.mimeType : "video/webm"});
+
+                                fileSize = theBlob.size;
+                                // medEle.type=(mrOptions)  ? mrOptions.mimeType : "video/webm";
+                                playbackMedEle.srcObject = null;
+                                playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
+                                // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
+                                playbackMedEle.load();
+                                playbackMedEle.pause();
+                                playbackMedEle.currentTime = 0;
+                                //medEle.play();
+                                sent = false;
+                                // chcPnl.updateSubmtShw();
+                                var upldbut = document.getElementById('uploadbuttondiv');
+                                upldbut.style.display = 'inline';
+                            }
+
+                        }
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.stopRec2() ' + e.message);
+                        showErrorMessage('avcomments-head.xhtml.stopRec2() ' + e.message);
+                        return false;
+                    }
+                    return true;
+                }
+
+                function stopRec2LocalAudio()
+                {
+                    try
+                    {
+                        if ((recordMedEle))
+                            recordMedEle.pause();
+
+                        if (!(audRecBuffers) || audRecBuffers.length <= 0)
                             return;
 
-                        // push the data
-                        var b = new Float32Array( e.inputBuffer.getChannelData(0) );
-                        audRecBuffers.push( b );
-                        audRecLength = audRecBuffers.length;  
-                        // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio().audDestNode.onaudioprocess audRecLength=' + audRecLength );
+                        logIt('avcomments-head.xhtml.stopRec2LocalAudio() START ');
+
+                        var audResultBuffer = new Float32Array(audRecLength * 2048);
+                        var offset = 0;
+                        for (var i = 0; i < audRecBuffers.length; i++)
+                        {
+                            // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() BBB i=' + i + ', audRecBuffers[i]=' + audRecBuffers[i].byteLength );
+                            audResultBuffer.set(audRecBuffers[i], offset);
+                            offset += audRecBuffers[i].length;
+                        }
+
+                        var vw = encodeWAV(audResultBuffer);
+                        recordedBlobs = [vw];
+                        // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() isAudio=' + isAudio + ', audResultBuffer=' + audResultBuffer.length );
+
+                        // don't need these any more.
+                        audRecBuffers = [];
+
+                        if ((recordMedEle))
+                            recordMedEle.pause();
+
+                        recAvInProg = false;
+
+                        if (!(theBlob) && (recordedBlobs) && recordedBlobs.length > 0)
+                        {
+                            theBlob = new Blob(recordedBlobs, {'type': (mrOptions) ? mrOptions.mimeType : "video/webm"});
+
+                            fileSize = theBlob.size;
+                            playbackMedEle.srcObject = null;
+                            playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
+                            // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
+                            playbackMedEle.load();
+                            playbackMedEle.pause();
+                            playbackMedEle.currentTime = 0;
+                            sent = false;
+                            var upldbut = document.getElementById('uploadbuttondiv');
+                            upldbut.style.display = 'inline';
+                        }
+
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message);
+                        showErrorMessage('avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message);
+                        return false;
+                    }
+                    return true;
+                }
+
+
+                function dataAvail(e)
+                {
+                    // logIt( 'avcomments-head.xhtml.dataAvail() slices=' + sliceCt + ', size=' + e.data.size );
+                    sliceCt++;
+                    if ((e.data) && e.data.size > 0)
+                    {
+                        // if( recordedBlobs.length<=0 )
+                        //     logIt( 'CMedCapItm.dataAvail() ' + e.data.size );
+                        recordedBlobs.push(e.data);
+                        sent = false;
+                    }
+
+                    if (sliceCt * sliceTm >= maxTm)
+                    {
+                        logIt('avcomments-head.xhtml.dataAvail() Max Time Reached.');
+                        stopRec2();
+                    }
+                }
+
+
+                function doUploadAvRecording()
+                {
+                    logIt('avcomments-head.xhtml.doUploadAvRecording() START');
+
+                    try
+                    {
+                        uploadPercent = 0;
+                        uploadStatus = 0;
+                        if (!(theBlob))
+                        {
+                            logIt('avcomments-head.xhtml.doUploadAvRecording() No Blob to upload.');
+                            showErrorMessage(errorNoBlobToUpload);
+                            return;
+                        }
+
+                        uploadStatus = 1;
+                        PF('avcommentsdialog').hide();
+                        PF('avcommentsuploadingdialog').show();
+                        //
+                        var fd = new FormData();
+                        fd.append('blobfile', theBlob);
+                        fd.append('blobtype', theBlob.type);
+                        fd.append('blobsize', theBlob.size);
+
+                        fd.append('rcid', rcCheckId);
+                        fd.append('rtrid', rcRaterId);
+                        fd.append('ritmid', rcItemId);
+                        fd.append('uft', uploadedUserFileTypeId);
+                        fd.append('rcavt', recordingIsAudioOnly ? 3 : 4);
+
+
+                        var o = this;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("POST", uploadUrl, true);
+                        xhr.addEventListener('load', function (e) {
+                            doUploadOnload(e);
+                        });
+
+                        xhr.addEventListener('error', function (e) {
+                            doUploadError(e);
+                        });
+                        xhr.upload.addEventListener('error', function (e) {
+                            doUploadError(e);
+                        });
+                        xhr.upload.addEventListener('abort', function (e) {
+                            doUploadAbort(e);
+                        });
+                        // xhr.onprogress = function(e) { o.doProgress.call( o, e ); };
+
+                        xhr.upload.addEventListener('progress', function (e) {
+                            doUploadProgress(e);
+                        });
+
+                        xhr.send(fd);
+                    } catch (e)
+                    {
+                        showErrorMessage(errorDuringUpload + " (" + e.message + ") ");
+                        uploadStatus = 3;
+                        uploadPercent = Math.min(uploadPercent, 89);
+                    }
+                }
+
+                function doUploadOnload(e)
+                {
+                    logIt('avcomments-head.xhtml.doUploadOnload()');
+                    PF('avcommentsuploadingdialog').hide();
+                    uploadStatus = 2;
+                    hasPrevUpload = true;
+                    prevUploadIsAudio = recordingIsAudioOnly;
+
+                    var ele = document.getElementById('avuploadindicatordiv');
+                    if (ele)
+                        ele.style.display = 'inline';
+                    ele = document.getElementById('rerecordtxtvid');
+                    if (ele)
+                        ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
+                    ele = document.getElementById('rerecordtxtaud');
+                    if (ele)
+                        ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
+
+                }
+
+                function doUploadError(e)
+                {
+                    var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown');
+                    logIt('tm2ref/resources/ref/avcomments-head.xhtml.doUploadError() ' + info);
+
+                    PF('avcommentsuploadingdialog').hide();
+                    showErrorMessage(errorDuringUpload + " (" + info + ") ");
+                    uploadStatus = 3;
+                }
+
+                function doUploadAbort(e)
+                {
+                    var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown');
+                    logIt('tm2ref/resources/ref/avcomments-head.xhtml.doUploadAbort() ' + info);
+                    PF('avcommentsuploadingdialog').hide();
+                    showErrorMessage(errorDuringUploadAbort + " (" + info + ") ");
+                    uploadStatus = 3;
+
+                }
+
+                function doUploadProgress(evt)
+                {
+                    try
+                    {
+                        if (uploadStatus === 2 || uploadStatus === 3 || !(evt.lengthComputable))
+                            return;
+
+                        uploadPercent = Math.round((evt.loaded * 100) / evt.total);
+                        logIt('avcomments-head.xhtml.doUploadProgress() uploadPercent=' + uploadPercent);
+                        // TO DO
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.doUploadProgress() Error: ' + e.message);
+
+                    }
+                }
+
+                function setupMicrophoneMonitor()
+                {
+                    if (useLocalAudioRecording)
+                        return;
+
+                    if (microphoneMonitorActive)
+                        return;
+
+                    microphoneMonitorActive = true;
+
+                    if (!(navigator.mediaDevices))
+                    {
+                        console.log('avcomments-head.xhtml.setupMicrophoneMonitor() No video devices detected.');
+                        return;
+                    }
+
+                    var volumeVisualizer = document.getElementById('volume-visualizer');
+
+                    console.log('avcomments-head.xhtml.setupMicrophoneMonitor() START volumeVisualizer=' + (volumeVisualizer));
+
+                    if (!(volumeVisualizer))
+                        return;
+
+                    var constraints = {audio: {
+                            echoCancellation: true
+                        }
                     };
-                    // logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() EEE ');
-                    
-                    setupMicrophoneMonitorLocalAudio( stream );
-                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() FFF ');
 
-                },
-                function(e) 
-                {
-                    medStrmProm=null;
-                    logIt( 'avcomments-head.xhtml.startMediaStreamLocalAudio() medStrmProm Error. ' + e.message );  
-                    showErrorMessage( 'avcomments-head.xhtml.startMediaStreamLocalAudio() ' + e.message );                    
-                } );
-            }
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.startMediaStream() ' + e.message );      
-            showErrorMessage( 'avcomments-head.xhtml.startMediaStream() ' + e.message );
-            return false;
-        }
-        return true;
-    }
+                    if ((selMicrophoneDevice))
+                        constraints.audio.deviceId = {exact: selMicrophoneDevice};
 
-
-
-    
-    function startRec2()
-    {
-        try
-        {
-            theBlob = null;
-            recordedBlobs = [];
-        
-            if( (recordMedEle) )
-            {
-                recordMedEle.volume=0;
-                // recordMedEle.load();
-                // recordMedEle.play();                                        
-            }        
-        
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-            {
-                logIt( 'avcomments-head.xhtml.startRec2() Recording Audio local. ' );
-                
-                if( audRecLength>0 )
-                {
-                    logIt( 'avcomments-head.xhtml.startRec2() audRecLength=' + audRecLength + ', so clearing and returning.' );
-                    //stopRec2();
-                    audRecLength = 0;
-                    audRecBuffers = [];
-                    recAvInProg = true;
-                    return true;                        
-                }
-               
-                startMediaStreamLocalAudio();
-
-                recAvInProg = true;
-               
-                return true;
-            }
-        
-            else if( !(mRecorder) )
-            {
-                logIt( 'avcomments-head.xhtml.startRec2() ERROR no MedRecorder ' );
-                return false;
-            }
-                     
-            // create a new Media Recorder
-            if( !(mRecorder) )
-            {
-                mRecorder = new MediaRecorder( stream, mrOptions );
-                mRecorder.ondataavailable = function(e) {dataAvail(e);};
-
-                       // show the image if there is one and hide the recording div.
-                // mRecorder.onstop = function(e) {mrecStop(e);};
-
-                        // this will hide the image if there is one and show the recording div if there is one.
-                // mRecorder.onstart = function(e) {mrecStart(e);};
-                mRecorder.onerror = function(e) {mrecError(e);};
-            }
-            
-            // start the media recorder.
-            if( (mRecorder.state) && mRecorder.state!=='recording' )
-            {
-                // mrecStart();
-                mRecorder.start(1000*sliceTm);
-                recAvInProg = true;
-            }                                      
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.startRec2() ' + e.message );      
-            showErrorMessage( 'avcomments-head.xhtml.startRec2() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-    
-    function stopRec2()
-    {
-        try
-        {
-            if( (recordMedEle) )
-                recordMedEle.pause();
-            // recordMedEle.volume=1.0;
-            
-            if( recordingIsAudioOnly && useLocalAudioRecording )
-            {
-                logIt( 'avcomments-head.xhtml.stopRec2() Recording Audio local. ' );
-                stopRec2LocalAudio();
-                return true;                
-            }
-                        
-            if( (mRecorder) )
-            {
-                logIt( 'avcomments-head.xhtml.stopRec2() mRecorder=true, state=' + mRecorder.state );
-                
-                if( (mRecorder.state) && mRecorder.state!=='inactive' )                
-                {
-                    mRecorder.stop();
-                    recAvInProg = false;
-                }
-
-                // mRecorder = null;
-
-                if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
-                {
-                    theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
-
-                    fileSize = theBlob.size;
-                    // medEle.type=(mrOptions)  ? mrOptions.mimeType : "video/webm";
-                    playbackMedEle.srcObject=null;
-                    playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
-                    // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
-                    playbackMedEle.load();
-                    playbackMedEle.pause(); 
-                    playbackMedEle.currentTime=0;
-                    //medEle.play();
-                    sent=false;
-                    // chcPnl.updateSubmtShw();
-                    var upldbut = document.getElementById('uploadbuttondiv');
-                    upldbut.style.display='inline';
-                }                       
-                
-            }                                    
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.stopRec2() ' + e.message );  
-            showErrorMessage( 'avcomments-head.xhtml.stopRec2() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-
-    function stopRec2LocalAudio()
-    {
-        try
-        {
-            if( (recordMedEle) )
-                recordMedEle.pause();
-
-            if( !(audRecBuffers) || audRecBuffers.length<=0 )
-                return;
-
-           logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() START ');
-
-            var audResultBuffer = new Float32Array(audRecLength*2048);
-            var offset = 0;
-            for (var i=0; i<audRecBuffers.length; i++) 
-            {
-                // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() BBB i=' + i + ', audRecBuffers[i]=' + audRecBuffers[i].byteLength );
-                audResultBuffer.set( audRecBuffers[i], offset);
-                offset += audRecBuffers[i].length;
-            }
-
-            var vw = encodeWAV( audResultBuffer );
-            recordedBlobs = [vw]; 
-            // logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() isAudio=' + isAudio + ', audResultBuffer=' + audResultBuffer.length );
-
-            // don't need these any more.
-            audRecBuffers = [];
-
-            if( (recordMedEle) )
-                recordMedEle.pause();
-
-            recAvInProg = false;
-
-            if( !(theBlob) && (recordedBlobs) && recordedBlobs.length>0 )
-            {
-                theBlob = new Blob( recordedBlobs, { 'type': (mrOptions) ? mrOptions.mimeType : "video/webm" } );
-
-                fileSize = theBlob.size;
-                playbackMedEle.srcObject=null;
-                playbackMedEle.src = (window.URL || window.webkitURL).createObjectURL(theBlob);
-                // logIt( 'CMedCapItm.stopRec2() setting object url=' + medEle.src +', fileSize=' + fileSize + ', type=' + ((mrOptions)  ? mrOptions.mimeType : "video/webm") + ', window.URL=' + ( window.URL ? "true" : "false" ) + ", window.webkitURL=" + ( window.webkitURL ? "true" : "false" ) );
-                playbackMedEle.load();
-                playbackMedEle.pause(); 
-                playbackMedEle.currentTime=0;
-                sent=false;
-                var upldbut = document.getElementById('uploadbuttondiv');
-                upldbut.style.display='inline';
-            }                       
-            
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message );  
-            showErrorMessage( 'avcomments-head.xhtml.stopRec2LocalAudio() ' + e.message );
-            return false;
-        }
-        return true;
-    }
-
-
-    function dataAvail(e)
-    {
-        // logIt( 'avcomments-head.xhtml.dataAvail() slices=' + sliceCt + ', size=' + e.data.size );
-        sliceCt++;
-        if( (e.data) && e.data.size>0 )
-        {
-            // if( recordedBlobs.length<=0 )
-            //     logIt( 'CMedCapItm.dataAvail() ' + e.data.size );
-            recordedBlobs.push(e.data); 
-            sent=false;
-        } 
-
-        if( sliceCt*sliceTm>=maxTm )
-        {
-            logIt( 'avcomments-head.xhtml.dataAvail() Max Time Reached.' );            
-            stopRec2();            
-        }
-    }    
-    
-    
-    function doUploadAvRecording()
-    {
-        logIt( 'avcomments-head.xhtml.doUploadAvRecording() START' );     
-                
-        try
-        {
-            uploadPercent = 0;
-            uploadStatus = 0;
-            if( !(theBlob) )
-            {
-                logIt( 'avcomments-head.xhtml.doUploadAvRecording() No Blob to upload.' );
-                showErrorMessage( errorNoBlobToUpload );                
-                return;
-            }
-                
-            uploadStatus = 1;
-            PF('avcommentsdialog').hide();
-            PF('avcommentsuploadingdialog').show();
-            //
-            var fd = new FormData();
-            fd.append( 'blobfile', theBlob );
-            fd.append( 'blobtype', theBlob.type );
-            fd.append( 'blobsize', theBlob.size );
-
-            fd.append( 'rcid', rcCheckId );
-            fd.append( 'rtrid', rcRaterId );
-            fd.append( 'ritmid', rcItemId );
-            fd.append( 'uft', uploadedUserFileTypeId );
-            fd.append( 'rcavt', recordingIsAudioOnly ? 3 : 4 );
-
-
-            var o=this;
-            xhr = new XMLHttpRequest();
-            xhr.open( "POST", uploadUrl , true );
-            xhr.addEventListener( 'load', function(e) { doUploadOnload(e);} );
-            
-            xhr.addEventListener( 'error', function(e) { doUploadError(e); } );
-            xhr.upload.addEventListener( 'error', function(e) { doUploadError(e); } );
-            xhr.upload.addEventListener( 'abort', function(e) { doUploadAbort(e); } );
-            // xhr.onprogress = function(e) { o.doProgress.call( o, e ); };
-            
-            xhr.upload.addEventListener( 'progress', function(e) { doUploadProgress(e); } );
-                        
-            xhr.send( fd );
-        }
-
-        catch( e )
-        {
-            showErrorMessage( errorDuringUpload + " (" + e.message + ") ");
-            uploadStatus = 3;
-            uploadPercent=Math.min(uploadPercent,89);
-        }        
-    }
-    
-    function doUploadOnload( e )
-    {
-        logIt( 'avcomments-head.xhtml.doUploadOnload()' );
-        PF('avcommentsuploadingdialog').hide();
-        uploadStatus = 2;
-        hasPrevUpload = true;        
-        prevUploadIsAudio = recordingIsAudioOnly;
-
-        var ele = document.getElementById( 'avuploadindicatordiv' );
-        if( ele )
-            ele.style.display='inline';
-        ele = document.getElementById( 'rerecordtxtvid' );
-        if( ele )
-            ele.innerHTML= hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
-        ele = document.getElementById( 'rerecordtxtaud' );
-        if( ele )
-            ele.innerHTML=hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
-
-    }
-
-    function doUploadError( e )
-    {
-        var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown' );
-        logIt( 'tm2ref/resources/ref/avcomments-head.xhtml.doUploadError() ' + info );
-        
-        PF('avcommentsuploadingdialog').hide();
-        showErrorMessage( errorDuringUpload + " (" + info + ") ");
-        uploadStatus = 3;        
-    }
-
-    function doUploadAbort( e )
-    {
-        var info = ' error event type=' + ((e) ? e.type : 'Unavailable') + ', loaded=' + ((e) ? e.loaded : 'Unknown') + ', total=' + ((e) ? e.total : 'Unknown' );
-        logIt( 'tm2ref/resources/ref/avcomments-head.xhtml.doUploadAbort() ' + info );
-        PF('avcommentsuploadingdialog').hide();
-        showErrorMessage( errorDuringUploadAbort + " (" + info + ") " );
-        uploadStatus = 3;
-        
-    }
-
-    function doUploadProgress( evt )
-    {
-        try
-        {
-            if( uploadStatus===2 || uploadStatus===3 || !(evt.lengthComputable) )
-                return;
-            
-            uploadPercent = Math.round((evt.loaded * 100) / evt.total);
-            logIt( 'avcomments-head.xhtml.doUploadProgress() uploadPercent=' + uploadPercent );
-            // TO DO
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.doUploadProgress() Error: ' + e.message );
-            
-        }
-    }
-    
-    function setupMicrophoneMonitor()
-    {
-        if( useLocalAudioRecording )
-            return;
-        
-        if( microphoneMonitorActive )
-            return;
-        
-        microphoneMonitorActive = true;
-        
-        if( !(navigator.mediaDevices) )
-        {
-           console.log( 'avcomments-head.xhtml.setupMicrophoneMonitor() No video devices detected.' );
-           return;
-        }
-      
-        var volumeVisualizer = document.getElementById('volume-visualizer');
-
-        console.log( 'avcomments-head.xhtml.setupMicrophoneMonitor() START volumeVisualizer=' + (volumeVisualizer) );
-
-        if( !(volumeVisualizer) )
-            return;
-
-        var constraints = { audio: {
-                echoCancellation: true
-            } 
-        };
-
-        if( (selMicrophoneDevice) )
-            constraints.audio.deviceId={exact:selMicrophoneDevice};        
-
-        navigator.mediaDevices.getUserMedia( constraints ).then( function (audioStream) 
-        {
-            try
-            {
-        
-                console.log( '/alt/test/help-camera.xhtml.setupMicrophoneMonitor() have stream=' + (audioStream) );
-
-                window.AudioContext = window.AudioContext || window.webkitAudioContext;
-                // const audioContext = new AudioContext();
-                //const audioSource = audioContext.createMediaStreamSource(audioStream);
-                //const analyser = audioContext.createAnalyser();
-                if( !(audContext) )
-                    audContext =  new AudioContext();
-                const audioSource = audContext.createMediaStreamSource(audioStream);
-                const analyser = audContext.createAnalyser();
-                analyser.fftSize = 512;
-                analyser.minDecibels = -127;
-                analyser.maxDecibels = 0;
-                analyser.smoothingTimeConstant = 0.4;
-                audioSource.connect(analyser);
-                const volumes = new Uint8Array(analyser.frequencyBinCount);
-                // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
-                volumeCallback = () => 
-                {
-                    //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
-                    analyser.getByteFrequencyData(volumes);
-                    let volumeSum = 0;
-                    for (const volume of volumes)
-                        volumeSum += volume;
-                    const averageVolume = volumeSum / volumes.length;
-                    
-                    var vistable = document.getElementById('visualizertable');
-                    if( (vistable) )
-                        vistable.style.display=visualizerActive ? 'inline-block' : 'none';
-                    
-                    volumeVisualizer.style.setProperty('--volume', (averageVolume * 100/100) + '%');
-                    
-                    //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
-                };
-                // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
-                volumeInterval = setInterval(volumeCallback, 100);
-            }
-            catch( e )
-            {
-                logIt( 'avcomments-head.xhtml.setupMicrophoneMonitor() XXX Error setting up Microphone in window: ' + e.message );                
-            }
-        }).catch( function (err) {
-            logIt( 'avcomments-head.xhtml.setupMicrophoneMonitor() YYY Error setting up Microphone in window: ' + err.message );
-            var taxi;
-            taxi = document.getElementById("audioerrordiv");
-            if( (taxi) )
-                taxi.innerHTML = microphoneNotWorkingStr + ' ' + err.message;
-        });        
-
-    }
-    
-    
-    function setupMicrophoneMonitorLocalAudio( audioStream )
-    {
-        if( !useLocalAudioRecording )
-            return;
-        
-        if( microphoneMonitorActive )
-            return;
-        
-        microphoneMonitorActive = true;
-        
-        var volumeVisualizer = document.getElementById('volume-visualizer');
-
-        console.log( 'avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() START volumeVisualizer=' + (volumeVisualizer) );
-
-        if( !(volumeVisualizer) )
-            return;
-
-        try
-        {
-
-            console.log( '/alt/test/help-camera.xhtml.setupMicrophoneMonitorLocalAudio() have stream=' + (audioStream) );
-
-            window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            // const audioContext = new AudioContext();
-            //const audioSource = audioContext.createMediaStreamSource(audioStream);
-            //const analyser = audioContext.createAnalyser();
-            if( !(audContext) )
-                audContext =  new AudioContext();
-            const audioSource = audContext.createMediaStreamSource(audioStream);
-            const analyser = audContext.createAnalyser();
-            analyser.fftSize = 512;
-            analyser.minDecibels = -127;
-            analyser.maxDecibels = 0;
-            analyser.smoothingTimeConstant = 0.4;
-            audioSource.connect(analyser);
-            const volumes = new Uint8Array(analyser.frequencyBinCount);
-            // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
-            volumeCallback = () => 
-            {
-                //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
-                analyser.getByteFrequencyData(volumes);
-                let volumeSum = 0;
-                for (const volume of volumes)
-                    volumeSum += volume;
-                const averageVolume = volumeSum / volumes.length;
-
-                var vistable = document.getElementById('visualizertable');
-                if( (vistable) )
-                    vistable.style.display=visualizerActive ? 'inline-block' : 'none';
-
-                volumeVisualizer.style.setProperty('--volume', (averageVolume * 100/100) + '%');
-
-                //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
-            };
-            // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
-            volumeInterval = setInterval(volumeCallback, 100);
-        }
-        catch( e )
-        {
-            logIt( 'avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() XXX Error setting up Microphone in window: ' + e.message );                
-        }
-    }
-    
-    
-    
-
-
-
-
-
-    function chkMute()
-    {
-        if( !recordingIsAudioOnly )
-            return false;
-
-        return chk4Mute();
-    }
-
-    function chk4Mute()
-    {
-        try
-        {
-            if( !recordingIsAudioOnly || !(medStrm) )
-                return false;
-
-             // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() AAA ' + aud + ', medStrm.id=' + medStrm.id + ', active=' + medStrm.active );
-
-            if( !(medStrm.getAudioTracks) )
-                return false;
-
-            var tks = medStrm.getAudioTracks();
-
-            if( !(tks) )
-            {
-                // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() no tracks returned. ' );
-                return false;
-            }
-
-            var tk=tks[0];
-
-            // for some reason, video mediaStreamTracks are sometimes muted.
-            if( (tk) && ( !tk.enabled || tk.muted ) )
-            {
-                // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() FOUND muted track: id=' + tk.id + ', enbld=' + tk.enabled + ', mutd=' + tk.muted +', knd=' + tk.kind + ', aud=' + aud );
-                return true;
-            }
-        }
-        catch( e )
-        {
-            logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() error ' + e.message  );
-        }
-        return false;
-    }
-
-    function unlockIos(audCtxt)
-    {
-        with( this )
-        {
-            if( !isIos )
-                return;
-
-            tchUnlock(audCtxt).then( function(succs)
-            {
-                // alert( 'webAudioTouchUnlock unlocked=' + unlocked);
-                if(succs)
-                {
-                    // AudioContext was unlocked from an explicit user action,
-                    // sound should start playing now
-                    logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is true '  );
-                }
-                else
-                {
-                    // There was no need for unlocking, devices other than iOS
-                    logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is false '  );
-                }
-            },
-            function( str )
-            {
-                logIt( 'ref/resources/ref/avcomments-head.xhtml.unlockIos() Error unlocking IOS: ' + str  );
-            }); 
-        }
-    };
-
-
-    function tchUnlock(audCtxt)
-    {
-        return new Promise( function (succs, err)
-        {
-            if( (audCtxt) && audCtxt.state==='suspended' )
-            {
-                var unlock=function()
-                {
-                    audCtxt.resume().then( function()
+                    navigator.mediaDevices.getUserMedia(constraints).then(function (audioStream)
                     {
-                        document.body.removeEventListener('touchstart', unlock);
-                        document.body.removeEventListener('touchend', unlock);
-                        succs(true);
-                    }, 
-                    function(r)
-                    {
-                        err(r);
+                        try
+                        {
+
+                            console.log('/alt/test/help-camera.xhtml.setupMicrophoneMonitor() have stream=' + (audioStream));
+
+                            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                            // const audioContext = new AudioContext();
+                            //const audioSource = audioContext.createMediaStreamSource(audioStream);
+                            //const analyser = audioContext.createAnalyser();
+                            if (!(audContext))
+                                audContext = new AudioContext();
+                            const audioSource = audContext.createMediaStreamSource(audioStream);
+                            const analyser = audContext.createAnalyser();
+                            analyser.fftSize = 512;
+                            analyser.minDecibels = -127;
+                            analyser.maxDecibels = 0;
+                            analyser.smoothingTimeConstant = 0.4;
+                            audioSource.connect(analyser);
+                            const volumes = new Uint8Array(analyser.frequencyBinCount);
+                            // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
+                            volumeCallback = () =>
+                            {
+                                //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
+                                analyser.getByteFrequencyData(volumes);
+                                let volumeSum = 0;
+                                for (const volume of volumes)
+                                    volumeSum += volume;
+                                // const averageVolume = volumeSum / volumes.length;
+
+                                var avol = volumeSum / volumes.length;
+
+                                avol = parseFloat(avol);
+                                if (avol > 100)
+                                    avol = 100;
+                                if (avol < 0)
+                                    avol = 0;
+
+                                const averageVolume = avol;
+
+                                var vistable = document.getElementById('visualizertable');
+                                if ((vistable))
+                                    vistable.style.display = visualizerActive ? 'inline-block' : 'none';
+
+                                volumeVisualizer.style.setProperty('--volume', (averageVolume * 100 / 100) + '%');
+
+                                //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
+                            };
+                            // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
+                            volumeInterval = setInterval(volumeCallback, 100);
+                        } catch (e)
+                        {
+                            logIt('avcomments-head.xhtml.setupMicrophoneMonitor() XXX Error setting up Microphone in window: ' + e.message);
+                        }
+                    }).catch(function (err) {
+                        logIt('avcomments-head.xhtml.setupMicrophoneMonitor() YYY Error setting up Microphone in window: ' + err.message);
+                        var taxi;
+                        taxi = document.getElementById("audioerrordiv");
+                        if ((taxi))
+                            taxi.innerHTML = microphoneNotWorkingStr + ' ' + err.message;
                     });
-                };
 
-                document.body.addEventListener('touchstart', unlock, false);
-                document.body.addEventListener('touchend', unlock, false);
-            }
-            else
-                succs(false);
-        });
-    }   
-
-    function showMuteWrng()
-    {
-        logIt( 'ref/resources/ref/avcomments-head.xhtml.showMuteWrng() ' );   
-        showErrorMessage( null, errorDeviceMutedMessage, false, true, null, doReload );
-    }
+                }
 
 
-    function encodeWAV( samples ) 
-    {
-        var buffer = new ArrayBuffer( 44 + samples.length * 2);
-        var vw = new DataView(buffer);
+                function setupMicrophoneMonitorLocalAudio(audioStream)
+                {
+                    if (!useLocalAudioRecording)
+                        return;
 
-        /* RIFF identifier */
-        writeString(vw, 0, 'RIFF');
-        /* RIFF chunk length */
-        vw.setUint32(4, 36 + samples.length * 2, true);
-        /* RIFF type */
-        writeString(vw, 8, 'WAVE');
-        /* format chunk identifier */
-        writeString(vw, 12, 'fmt ');
-        /* format chunk length */
-        vw.setUint32(16, 16, true);
-        /* sample format (raw) */
-        vw.setUint16(20, 1, true);
-        /* channel count */
-        vw.setUint16(22, 1, true);
-        /* sample rate */
-        vw.setUint32(24, audSampleRate, true);
-        /* byte rate (sample rate * block align) */
-        vw.setUint32(28, audSampleRate * 4, true);
-        /* block align (channel count * bytes per sample) */
-        vw.setUint16(32, 1 * 2, true);
-        /* bits per sample */
-        vw.setUint16(34, 16, true);
-        /* data chunk identifier */
-        writeString(vw, 36, 'data');
-        /* data chunk length */
-        vw.setUint32(40, samples.length * 2, true);
+                    if (microphoneMonitorActive)
+                        return;
 
-        floatTo16BitPCM(vw, 44, samples);
+                    microphoneMonitorActive = true;
 
-        return vw;
-    }
+                    var volumeVisualizer = document.getElementById('volume-visualizer');
 
-    function floatTo16BitPCM(out, offset, input) 
-    {
-        for (var i = 0; i < input.length; i++, offset += 2) 
-        {
-            var s = Math.max(-1, Math.min(1, input[i]));
-            out.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-            // logIt( s );
-        }
-    }
+                    console.log('avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() START volumeVisualizer=' + (volumeVisualizer));
 
+                    if (!(volumeVisualizer))
+                        return;
 
-    function writeString(vw, offset, str) 
-    {
-        for (var i=0; i < str.length; i++) 
-        {
-            vw.setUint8(offset + i, str.charCodeAt(i));
-        }
-    }
-    
-    function setUseLocalAudioRecording() 
-    {
-      if( isIos || !window.MediaRecorder || (!MediaRecorder.isTypeSupported('audio/webm') && !MediaRecorder.isTypeSupported('audio/mp4')))
-      {
-          useLocalAudioRecording=true;
-          return;
-      }
-      
-      useLocalAudioRecording=false;
-    }
-    
-    
-    
-    
-    
-    // ]]>        
-    </script>
-    
+                    try
+                    {
 
-</ui:fragment>
-       
+                        console.log('/alt/test/help-camera.xhtml.setupMicrophoneMonitorLocalAudio() have stream=' + (audioStream));
+
+                        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                        // const audioContext = new AudioContext();
+                        //const audioSource = audioContext.createMediaStreamSource(audioStream);
+                        //const analyser = audioContext.createAnalyser();
+                        if (!(audContext))
+                            audContext = new AudioContext();
+                        const audioSource = audContext.createMediaStreamSource(audioStream);
+                        const analyser = audContext.createAnalyser();
+                        analyser.fftSize = 512;
+                        analyser.minDecibels = -127;
+                        analyser.maxDecibels = 0;
+                        analyser.smoothingTimeConstant = 0.4;
+                        audioSource.connect(analyser);
+                        const volumes = new Uint8Array(analyser.frequencyBinCount);
+                        // console.log( '/alt/test/help-camera.xhtml..doSetupMicTest() BBB' );
+                        volumeCallback = () =>
+                        {
+                            //console.log( '/alt/test/help-camera.xhtml. volumeCallback!' );
+                            analyser.getByteFrequencyData(volumes);
+                            let volumeSum = 0;
+                            for (const volume of volumes)
+                                volumeSum += volume;
+                            var avol = volumeSum / volumes.length;
+
+                            avol = parseFloat(avol);
+                            if (avol > 100)
+                                avol = 100;
+                            if (avol < 0)
+                                avol = 0;
+
+                            const averageVolume = avol;
+
+                            var vistable = document.getElementById('visualizertable');
+                            if ((vistable))
+                                vistable.style.display = visualizerActive ? 'inline-block' : 'none';
+
+                            volumeVisualizer.style.setProperty('--volume', (averageVolume * 100 / 100) + '%');
+
+                            //console.log( '/alt/test/help-camera.xhtml. volumeCallback! averageVolume=' + averageVolume );
+                        };
+                        // console.log( '/alt/test/help-camera.xhtml. volumeCallback is set up!' );
+                        volumeInterval = setInterval(volumeCallback, 100);
+                    } catch (e)
+                    {
+                        logIt('avcomments-head.xhtml.setupMicrophoneMonitorLocalAudio() XXX Error setting up Microphone in window: ' + e.message);
+                    }
+                }
 
 
 
-</cc:implementation>
+
+
+
+
+
+                function chkMute()
+                {
+                    if (!recordingIsAudioOnly)
+                        return false;
+
+                    return chk4Mute();
+                }
+
+                function chk4Mute()
+                {
+                    try
+                    {
+                        if (!recordingIsAudioOnly || !(medStrm))
+                            return false;
+
+                        // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() AAA ' + aud + ', medStrm.id=' + medStrm.id + ', active=' + medStrm.active );
+
+                        if (!(medStrm.getAudioTracks))
+                            return false;
+
+                        var tks = medStrm.getAudioTracks();
+
+                        if (!(tks))
+                        {
+                            // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() no tracks returned. ' );
+                            return false;
+                        }
+
+                        var tk = tks[0];
+
+                        // for some reason, video mediaStreamTracks are sometimes muted.
+                        if ((tk) && (!tk.enabled || tk.muted))
+                        {
+                            // logIt( 'ref/resources/ref/avcomments-head.xhtml.chk4Mute() FOUND muted track: id=' + tk.id + ', enbld=' + tk.enabled + ', mutd=' + tk.muted +', knd=' + tk.kind + ', aud=' + aud );
+                            return true;
+                        }
+                    } catch (e)
+                    {
+                        logIt('ref/resources/ref/avcomments-head.xhtml.chk4Mute() error ' + e.message);
+                    }
+                    return false;
+                }
+
+                function unlockIos(audCtxt)
+                {
+                    with (this)
+                    {
+                        if (!isIos)
+                            return;
+
+                        tchUnlock(audCtxt).then(function (succs)
+                        {
+                            // alert( 'webAudioTouchUnlock unlocked=' + unlocked);
+                            if (succs)
+                            {
+                                // AudioContext was unlocked from an explicit user action,
+                                // sound should start playing now
+                                logIt('ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is true ');
+                            } else
+                            {
+                                // There was no need for unlocking, devices other than iOS
+                                logIt('ref/resources/ref/avcomments-head.xhtml.unlockIos() succs is false ');
+                            }
+                        },
+                                function (str)
+                                {
+                                    logIt('ref/resources/ref/avcomments-head.xhtml.unlockIos() Error unlocking IOS: ' + str);
+                                });
+                    }
+                }
+                ;
+
+
+                function tchUnlock(audCtxt)
+                {
+                    return new Promise(function (succs, err)
+                    {
+                        if ((audCtxt) && audCtxt.state === 'suspended')
+                        {
+                            var unlock = function ()
+                            {
+                                audCtxt.resume().then(function ()
+                                {
+                                    document.body.removeEventListener('touchstart', unlock);
+                                    document.body.removeEventListener('touchend', unlock);
+                                    succs(true);
+                                },
+                                        function (r)
+                                        {
+                                            err(r);
+                                        });
+                            };
+
+                            document.body.addEventListener('touchstart', unlock, false);
+                            document.body.addEventListener('touchend', unlock, false);
+                        } else
+                            succs(false);
+                    });
+                }
+
+                function showMuteWrng()
+                {
+                    logIt('ref/resources/ref/avcomments-head.xhtml.showMuteWrng() ');
+                    showErrorMessage(null, errorDeviceMutedMessage, false, true, null, doReload);
+                }
+
+
+                function encodeWAV(samples)
+                {
+                    var buffer = new ArrayBuffer(44 + samples.length * 2);
+                    var vw = new DataView(buffer);
+
+                    /* RIFF identifier */
+                    writeString(vw, 0, 'RIFF');
+                    /* RIFF chunk length */
+                    vw.setUint32(4, 36 + samples.length * 2, true);
+                    /* RIFF type */
+                    writeString(vw, 8, 'WAVE');
+                    /* format chunk identifier */
+                    writeString(vw, 12, 'fmt ');
+                    /* format chunk length */
+                    vw.setUint32(16, 16, true);
+                    /* sample format (raw) */
+                    vw.setUint16(20, 1, true);
+                    /* channel count */
+                    vw.setUint16(22, 1, true);
+                    /* sample rate */
+                    vw.setUint32(24, audSampleRate, true);
+                    /* byte rate (sample rate * block align) */
+                    vw.setUint32(28, audSampleRate * 4, true);
+                    /* block align (channel count * bytes per sample) */
+                    vw.setUint16(32, 1 * 2, true);
+                    /* bits per sample */
+                    vw.setUint16(34, 16, true);
+                    /* data chunk identifier */
+                    writeString(vw, 36, 'data');
+                    /* data chunk length */
+                    vw.setUint32(40, samples.length * 2, true);
+
+                    floatTo16BitPCM(vw, 44, samples);
+
+                    return vw;
+                }
+
+                function floatTo16BitPCM(out, offset, input)
+                {
+                    for (var i = 0; i < input.length; i++, offset += 2)
+                    {
+                        var s = Math.max(-1, Math.min(1, input[i]));
+                        out.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                        // logIt( s );
+                    }
+                }
+
+
+                function writeString(vw, offset, str)
+                {
+                    for (var i = 0; i < str.length; i++)
+                    {
+                        vw.setUint8(offset + i, str.charCodeAt(i));
+                    }
+                }
+
+                function setUseLocalAudioRecording()
+                {
+                    if (isIos || !window.MediaRecorder || (!MediaRecorder.isTypeSupported('audio/webm') && !MediaRecorder.isTypeSupported('audio/mp4')))
+                    {
+                        useLocalAudioRecording = true;
+                        return;
+                    }
+
+                    useLocalAudioRecording = false;
+                }
+
+
+
+
+
+                // ]]>        
+            </script>
+
+
+        </ui:fragment>
+
+
+
+
+    </cc:implementation>
 
 
 </html>

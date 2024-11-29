@@ -576,6 +576,8 @@ public class RaterRefUtils extends BaseRefUtils
     
     public int getDiscreteRadioDivMinWidth()
     {
+        if( 1==1 )
+        return 30;
         return 62;
         /*
         RcItemWrapper rciw = raterRefBean.getRcItemWrapper();

@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
@@ -123,7 +122,7 @@
             <h:panelGroup>
                 <div style="text-align:center;padding-top:10px">
                     <h:commandLink action="#{proctorUtils.processCheckForCameraAgain}" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
-                        <h:outputText styleClass="ttwindowformtext" style="text-decoration: underline" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
+                        <h:outputText styleClass="pflinktext ttwindowformtext" style="text-decoration: underline" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
                     </h:commandLink>
                 </div>                
             </h:panelGroup>
@@ -133,7 +132,7 @@
 
     <div id="thetextspan"></div>
     
-    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
+    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;">
     
         <div role="status">
         <p><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">

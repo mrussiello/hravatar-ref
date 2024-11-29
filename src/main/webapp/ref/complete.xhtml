@@ -1,83 +1,86 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Complete']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Complete']}"/></title>
-</ui:define>      
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Complete']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Complete']}"/></title>
+            </ui:define>      
 
-<ui:define name="coreinnersection">
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                </style>    
+            </ui:define>
 
-    <br style="clear:both"/>
+            <ui:define name="coreinnersection">
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
-    <h:form prependId="false">
+                <br style="clear:both"/>
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
-        <ref:candidateforminputs />
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <ref:messages-embedded />
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
+                        <ref:candidateforminputs />
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputText value="#{stMessages['g.XCComplete']}"/>
-        </div>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+                        <ref:messages-embedded />
 
-            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1.TK']}" escape="false">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
-            
-            <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate gt 0}">
-                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCComplete.P2']}" escape="false">
-                    <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                    <f:param value="#{refUtils.rcCheckTypeName}"/>
-                    <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
-                </h:outputFormat>&#160;
-                <h:outputText rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext"  value="#{stMessages['g.XCComplete.P2.TK']}"/>
-            </h:panelGroup>
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputText value="#{stMessages['g.XCComplete']}"/>
+                        </div>
 
-        </h:panelGrid>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
-            <h:panelGroup>
-                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
-                &#160;
-                <p:commandButton rendered="#{refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}"/>                
-            </h:panelGroup>
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-        </h:panelGrid>
-        
-    </h:form>
-    </div>
+                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1.TK']}" escape="false">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                            </h:outputFormat>
+                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                            </h:outputFormat>
 
-    <br /><br /><br />&#160;
+                            <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate gt 0}">
+                                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCComplete.P2']}" escape="false">
+                                    <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
+                                </h:outputFormat>&#160;
+                                <h:outputText rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext"  value="#{stMessages['g.XCComplete.P2.TK']}"/>
+                            </h:panelGroup>
 
-</ui:define>
+                        </h:panelGrid>
 
-</ui:composition>
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
+                            <h:panelGroup>
+                                <div style="text-align: center">
+                                    <div style="display:inline-block">
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}"/>                
+                                    </div>
+                                </div>
+                            </h:panelGroup>
 
-</body>
+                        </h:panelGrid>
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

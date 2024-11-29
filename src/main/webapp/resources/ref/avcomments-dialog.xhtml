@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
@@ -69,21 +69,21 @@
                 <div style="text-align:center">
                     <div style="display:inline-block">                        
                         <span id="startrecbut" style="display:none">
-                            <p:button value="#{stMessages['g.StartRecording']}" style="margin-bottom: 2px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            <p:button value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>                        
                         <span id="startrecbutaudio" style="display:none">
-                            <p:button value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 2px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            <p:button value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>                        
                         <span  id="stoprecbut" style="display:none">
-                            <p:button value="#{stMessages['g.StopRecording']}" style="margin-bottom: 2px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            <p:button value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>
                         
                         <span id="playbut" style="display:none;margin-left:15px">
-                            <p:button value="#{stMessages['g.Play']}" style="margin-bottom: 2px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
+                            <p:button value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
                         </span>
                         
                         <span id="pausebut" style="display:none;margin-left:15px">
-                            <p:button value="#{stMessages['g.Pause']}" style="margin-bottom: 2px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
+                            <p:button value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
                         </span>
                         <!-- Need stop/start button here. -->
                         <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->                            
@@ -95,11 +95,11 @@
                     <div style="text-align:center">
                         <div style="display:inline-block">
                             <span id="uploadbuttondiv" style="display:none">
-                                <p:button value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 2px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
+                                <p:button value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
                             </span>
                             &#160;
                             <span id="dialogclosebut">
-                            <p:button value="#{stMessages['g.Cancel']}" style="margin-bottom: 2px" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
+                            <p:button value="#{stMessages['g.Cancel']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
                             </span>
                         </div>
                     </div>
@@ -113,7 +113,7 @@
 
         </p:dialog>
     
-    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="font-size:1.3rem" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+    <p:dialog rendered="#{refBean.audioVideoCommentsOk}" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="max-width:550px;font-size:1.3rem" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             <div role="status">
             <h:panelGrid columns="1" cellpadding="4">
                 

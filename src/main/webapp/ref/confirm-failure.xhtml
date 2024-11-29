@@ -1,110 +1,109 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.ConfirmFailure']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.ConfirmFailure']}"/></title>
-</ui:define>      
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-    </style>    
-</ui:define>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.ConfirmFailure']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.ConfirmFailure']}"/></title>
+            </ui:define>      
 
-<ui:define name="coreinnersection">
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                </style>    
+            </ui:define>
 
-    <br style="clear:both"/>
+            <ui:define name="coreinnersection">
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
-    <h:form prependId="false">
+                <br style="clear:both"/>
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:30px auto;text-align:center">
+                    <h:form prependId="false">
 
-        <ref:messages-embedded />
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputText value="#{stMessages['g.ConfFail']}"/>
-        </div>
+                        <ref:messages-embedded />
 
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:10px;margin:0 auto">
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputText value="#{stMessages['g.ConfFail']}"/>
+                        </div>
 
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.P1']}"/>
-            
-        </h:panelGrid>
-            
-        <h:panelGrid columns="2" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:15px;padding-bottom:10px;margin:0 auto">
-            
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.Reason']}:"/>
-            <h:outputText styleClass="ttformtext" value="#{refUtils.rcCheckTypeName}"/>
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:10px;margin:0 auto">
 
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.YouAre']}:"/>
-            <h:outputText styleClass="ttformtext" value="#{refBean.refUser.fullname}"/>
+                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.P1']}"/>
 
-            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.refUserType.isRater}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Candidate']}:"/>
-            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.refUserType.isRater}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Employee']}:"/>
-            <h:outputText rendered="#{refBean.refUserType.isRater}" styleClass="ttformtext" value="#{refBean.rcCheck.user.fullname}"/>
-            
-            <h:outputText rendered="#{(refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.rcOrgPrefs.showCompanyNameB) or refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Company']}:"/>
-            <h:outputText rendered="#{(refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.rcOrgPrefs.showCompanyNameB) or refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{refBean.rcCheck.org.name}"/>
-            
-        </h:panelGrid>
-            
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
-                        
-            <!-- <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.InfoCorrect']}:"/> -->
-            
-            <h:panelGroup>
-                <div style="text-align:center">
-                <div style="display:inline-block;margin-left:auto;margin-right:auto;margin-bottom:18px">
-                    <p:commandButton ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoCorrect']}" title="#{stMessages['g.ConfFail.InfoCorrect.info']}">
-                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
-                </p:commandButton>  
-                 &#160;
-                 <p:commandButton ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
-                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                 </p:commandButton>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:15px;padding-bottom:10px;margin:0 auto">
+
+                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.Reason']}:"/>
+                            <h:outputText styleClass="ttformtext" value="#{refUtils.rcCheckTypeName}"/>
+
+                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.YouAre']}:"/>
+                            <h:outputText styleClass="ttformtext" value="#{refBean.refUser.fullname}"/>
+
+                            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.refUserType.isRater}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Candidate']}:"/>
+                            <h:outputText rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback and refBean.refUserType.isRater}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Employee']}:"/>
+                            <h:outputText rendered="#{refBean.refUserType.isRater}" styleClass="ttformtext" value="#{refBean.rcCheck.user.fullname}"/>
+
+                            <h:outputText rendered="#{(refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.rcOrgPrefs.showCompanyNameB) or refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.ConfFail.Company']}:"/>
+                            <h:outputText rendered="#{(refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.rcOrgPrefs.showCompanyNameB) or refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{refBean.rcCheck.org.name}"/>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
+
+<!-- <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.InfoCorrect']}:"/> -->
+
+                            <h:panelGroup>
+                                <div style="text-align:center">
+                                    <div style="display:inline-block;margin-left:auto;margin-right:auto;margin-bottom:18px">
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoCorrect']}" title="#{stMessages['g.ConfFail.InfoCorrect.info']}">
+                                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
+                                        </p:commandButton>  
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
+                                            <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <!--
+                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.InfoNotCorrect']}:"/>
+                            
+                            <h:panelGroup>
+                                <div style="text-align:center">
+                                <div style="display:inline-block;margin-left:auto;margin-right:auto">
+                                 <p:commandButton ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
+                                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
+                                 </p:commandButton>
+                                </div>
+                                </div>
+                            </h:panelGroup>
+                            -->
+
+                        </h:panelGrid>
+
+                    </h:form>
                 </div>
-                </div>
-            </h:panelGroup>
 
-            <!--
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFail.InfoNotCorrect']}:"/>
-            
-            <h:panelGroup>
-                <div style="text-align:center">
-                <div style="display:inline-block;margin-left:auto;margin-right:auto">
-                 <p:commandButton ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
-                    <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
-                 </p:commandButton>
-                </div>
-                </div>
-            </h:panelGroup>
-            -->
 
-        </h:panelGrid>
 
-    </h:form>
-    </div>
+            </ui:define>
 
-    <br /><br /><br />&#160;
+        </ui:composition>
 
-</ui:define>
-
-</ui:composition>
-
-</body>
+    </body>
 </html>

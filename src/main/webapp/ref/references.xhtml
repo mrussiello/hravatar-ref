@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
@@ -7,279 +6,280 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="titletag">
-    <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.References']}"/>
-        <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Evaluators']}"/></title>
-</ui:define>      
-    
-    
-    
-<ui:define name="headspec">
-    <style>
-        .pincolclass
-        {
-            vertical-align: middle;
-        }
-    </style> 
-    <script type="text/javascript">
-        //<![CDATA[
-        
-        var beaconOn = true;
-        
-        var exitBeaconUrl = '/tr/coreexit.xhtml?rc=#{refBean.rcCheck.rcCheckIdEncrypted}&amp;ac=#{refBean.activeAccessCodeX}&amp;rut=#{refBean.refUserType.refUserTypeId}';
-        
-        function setRcRaterIdVal( rcRaterId )
-        {
-            document.getElementById( 'rcraterid' ).value=rcRaterId;
-        }
-        
-        function doLocalPageOnload()
-        {
-            
-        }
-        
-        function doLocalPageOnUnload()
-        {
-            if( !beaconOn )
-                return;
-            
-            if( ( navigator.sendBeacon ) ) 
-            {
-                var out = navigator.sendBeacon(exitBeaconUrl, null );
-                console.log( 'references.xhtml.doLocalPageOnUnload() using beacon url=' + exitBeaconUrl + ', ret=' + out );
-            }
-
-            else
-            {
-                console.log( 'references.xhtml.doLocalPageOnUnload() using GET exitBeaconUrl=' + exitBeaconUrl );
-                var http = new XMLHttpRequest();
-                http.open('GET', exitBeaconUrl, false );
-                try
-                {
-                    http.send();
-                }
-                catch( e )
-                {
-                    console.log( 'references.xhtml.doLocalPageOnUnload() AA2 ' + e.message );
-                }                
-            }
-        }
-        
-        window.addEventListener( 'load', function(){ doLocalPageOnload(); } );
-        window.addEventListener( 'beforeunload', function(){ doLocalPageOnUnload(); } );        
-        
-        
-        // ]]>        
-    </script>
-</ui:define>
-
-<ui:define name="coreinnersection">
-
-    <br style="clear:both"/>
-
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
-    
-        <ref:stdforminputs />
-        <ref:candidateforminputs />
-
-        <ref:messages-embedded />
-
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputFormat value="#{stMessages['g.XCAddReferences']}">
-                <f:param value="#{refUtils.rcCheckRatersName}"/>
-            </h:outputFormat>
-        </div>
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.References']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Evaluators']}"/></title>
+            </ui:define>      
 
 
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
 
-            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.mins']}">
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refUtils.rcCheckTypeName}"/>                
-                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
-            </h:outputFormat>
-            
-            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.minsnosups']}">
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refUtils.rcCheckTypeName}"/>                
-                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
-            </h:outputFormat>
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                </style> 
+                <script type="text/javascript">
+                    //<![CDATA[
 
-            
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages[candidateRefUtils.referencesKeyToShow]}">
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
-                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
-                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
-                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>                
-                <f:param value="#{refBean.rcCheck.minRatersOptimum}"/>
-                <f:param value="#{refUtils.rcCheckTypeName}"/>                
-                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidateSupers)}"/>
-                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
-            </h:outputFormat>
+                    var beaconOn = true;
 
-            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount le 0}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
-            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount ge 1}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesUsed']}"/>
-            
-            <!--
-            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.needsSupervisors}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.lowsupers']}">
-                <f:param value="#{refBean.rcCheck.raterRoleTypeCountsCandidate[1]}"/>
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                <f:param value="#{refBean.rcCheck.minSupervisorsNeeded}"/>
-            </h:outputFormat>
-            -->
-            
-            <!--
-            <h:outputFormat rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.maxRatersDefault}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.atmax']}">
-                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>            
-            </h:outputFormat>
-            -->
-            
-            <h:outputText rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.minRatersCandidate and fn:length(refBean.rcCheck.rcRaterListCandidateSupers) ge refBean.rcCheck.minSupervisorsCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalize']}"/>                
-            
-        </h:panelGrid>
-        
-        
-        <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) gt 0}" value="#{refBean.rcCheck.rcRaterListCandidate}" var="rater" resizableColumns="true" resizeMode="expand" 
-                     style="background-color:white;width:100%;margin:10px auto">
-        
-            <!--
-            <f:facet name="header">
-                <h:outputFormat value="#{stMessages['g.XCCurrentReferences']}">
-                    <f:param value="#{refUtils.rcCheckRatersName}"/>
-                    <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
-                </h:outputFormat>
-            </f:facet>
-            -->
-            
-            <p:column sortBy="#{rater.user.lastName}" styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
-                <f:facet name="header">
-                    <h:outputText value="#{stMessages['g.Name']}"/>
-                </f:facet>
-                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.fullname}"/>
-            </p:column>
+                    var exitBeaconUrl = '/tr/coreexit.xhtml?rc=#{refBean.rcCheck.rcCheckIdEncrypted}&amp;ac=#{refBean.activeAccessCodeX}&amp;rut=#{refBean.refUserType.refUserTypeId}';
 
-            <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
-                <f:facet name="header">
-                    <h:outputText value="#{stMessages['g.Status']}"/>
-                </f:facet>
-                <h:outputText styleClass="ttwindowformtext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/>
-                
-                <ui:fragment rendered="#{rater.percentComplete gt 0 and rater.percentComplete lt 100}">
-                    <br /><h:outputFormat value="#{stMessages['g.RCXPercentComplete']}">
-                        <f:param value="#{rater.percentCompleteRounded}"/>
-                    </h:outputFormat>
-                </ui:fragment>
-            </p:column>
+                    function setRcRaterIdVal(rcRaterId)
+                    {
+                        document.getElementById('rcraterid').value = rcRaterId;
+                    }
 
-            <p:column sortBy="#{rater.user.email}" styleClass="textsmall" style="vertical-align:middle;width:25%;white-space:normal">
-                <f:facet name="header">
-                    <h:outputText value="#{stMessages['g.ContactInfo']}"/>
-                </f:facet>
-                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.email}"/>
-                <ui:fragment rendered="#{fn:length(rater.user.mobilePhone) gt 0}">
-                <br />
-                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.mobilePhone}"/>
-                </ui:fragment>
-            </p:column>
-            
-            <p:column sortBy="#{rater.rcRaterRoleTypeName}" styleClass="textsmall" style="vertical-align:middle;width:14%;white-space:normal">
-                <f:facet name="header">
-                    <h:outputText value="#{stMessages['g.Role']}"/>
-                </f:facet>
-                <h:outputText styleClass="ttwindowformtext" value="#{rater.rcRaterRoleTypeName}"/>
-            </p:column>
-            
-            <p:column styleClass="textsmall" style="vertical-align:middle;width:14%;white-space: normal;text-align:center">
-                <f:facet name="header">
-                    <h:outputText value="#{stMessages['g.Actions']}"/>
-                </f:facet>
-                
-                <p:commandLink rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn=false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
-                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
-                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
-                </p:commandLink>
-                &#160;
-                <p:commandLink rendered="#{rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn=false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
-                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
-                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
-                </p:commandLink>
-                &#160;                
-                <p:commandLink rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
-                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCCancel']}"/>
-                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
-                </p:commandLink>
-                
-                <h:outputText rendered="#{rater.isAccountUserSource}" styleClass="ttwindowformtext texttiny" value="#{stMessages['g.XCRaterIsAdminSrc']}"/>
-                                
-            </p:column>
-                        
-        </p:dataTable>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:2px;padding-bottom:10px;margin:0 auto">
-            
-            <h:panelGroup>
-                <div style="text-align:center;margin-top:10px;margin-bottom:10px">
-                    <div style="display:inline-block">
-                        <p:commandButton rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isPrehire}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater']}"/>
-                        <p:commandButton rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater.employee']}"/>
-                        &#160;
-                        <p:commandButton rendered="#{candidateRefUtils.canExitReferences}" ajax="false" action="#{candidateRefUtils.processExitAllCore}" value="#{stMessages['g.XCExitAndSave']}"/>                
-                        &#160;
-                        <p:commandButton rendered="#{candidateRefUtils.showReferencesGoBack}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back']}" onclick="beaconOn=false;"/>                
-                    </div>
+                    function doLocalPageOnload()
+                    {
+
+                    }
+
+                    function doLocalPageOnUnload()
+                    {
+                        if (!beaconOn)
+                            return;
+
+                        if ((navigator.sendBeacon))
+                        {
+                            var out = navigator.sendBeacon(exitBeaconUrl, null);
+                            console.log('references.xhtml.doLocalPageOnUnload() using beacon url=' + exitBeaconUrl + ', ret=' + out);
+                        } else
+                        {
+                            console.log('references.xhtml.doLocalPageOnUnload() using GET exitBeaconUrl=' + exitBeaconUrl);
+                            var http = new XMLHttpRequest();
+                            http.open('GET', exitBeaconUrl, false);
+                            try
+                            {
+                                http.send();
+                            } catch (e)
+                            {
+                                console.log('references.xhtml.doLocalPageOnUnload() AA2 ' + e.message);
+                            }
+                        }
+                    }
+
+                    window.addEventListener('load', function () {
+                        doLocalPageOnload();
+                    });
+                    window.addEventListener('beforeunload', function () {
+                        doLocalPageOnUnload();
+                    });
+
+
+                    // ]]>        
+                </script>
+            </ui:define>
+
+            <ui:define name="coreinnersection">
+
+                <br style="clear:both"/>
+
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                    <h:form prependId="false">
+
+                        <ref:stdforminputs />
+                        <ref:candidateforminputs />
+
+                        <ref:messages-embedded />
+
+                        <div class="textverylarge textbold ttboldtitle">
+                            <h:outputFormat value="#{stMessages['g.XCAddReferences']}">
+                                <f:param value="#{refUtils.rcCheckRatersName}"/>
+                            </h:outputFormat>
+                        </div>
+
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+
+                            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.mins']}">
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>                
+                                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
+                            </h:outputFormat>
+
+                            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.minsnosups']}">
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>                
+                                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
+                            </h:outputFormat>
+
+
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages[candidateRefUtils.referencesKeyToShow]}">
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
+                                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
+                                <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
+                                <f:param value="#{refBean.rcCheck.maxRatersDefault}"/>                
+                                <f:param value="#{refBean.rcCheck.minRatersOptimum}"/>
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>                
+                                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidateSupers)}"/>
+                                <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
+                            </h:outputFormat>
+
+                            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount le 0}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
+                            <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount ge 1}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesUsed']}"/>
+
+                            <!--
+                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.needsSupervisors}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.lowsupers']}">
+                                <f:param value="#{refBean.rcCheck.raterRoleTypeCountsCandidate[1]}"/>
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                <f:param value="#{refBean.rcCheck.minSupervisorsNeeded}"/>
+                            </h:outputFormat>
+                            -->
+
+                            <!--
+                            <h:outputFormat rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.maxRatersDefault}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.atmax']}">
+                                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>            
+                            </h:outputFormat>
+                            -->
+
+                            <h:outputText rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.minRatersCandidate and fn:length(refBean.rcCheck.rcRaterListCandidateSupers) ge refBean.rcCheck.minSupervisorsCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalize']}"/>                
+
+                        </h:panelGrid>
+
+
+                        <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) gt 0}" value="#{refBean.rcCheck.rcRaterListCandidate}" var="rater" resizableColumns="true" resizeMode="expand" 
+                                     style="background-color:white;width:100%;margin:10px auto">
+
+                            <!--
+                            <f:facet name="header">
+                                <h:outputFormat value="#{stMessages['g.XCCurrentReferences']}">
+                                    <f:param value="#{refUtils.rcCheckRatersName}"/>
+                                    <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
+                                </h:outputFormat>
+                            </f:facet>
+                            -->
+
+                            <p:column sortBy="#{rater.user.lastName}" styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
+                                <f:facet name="header">
+                                    <h:outputText value="#{stMessages['g.Name']}"/>
+                                </f:facet>
+                                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.fullname}"/>
+                            </p:column>
+
+                            <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
+                                <f:facet name="header">
+                                    <h:outputText value="#{stMessages['g.Status']}"/>
+                                </f:facet>
+                                <h:outputText styleClass="ttwindowformtext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/>
+
+                                <ui:fragment rendered="#{rater.percentComplete gt 0 and rater.percentComplete lt 100}">
+                                    <br /><h:outputFormat value="#{stMessages['g.RCXPercentComplete']}">
+                                        <f:param value="#{rater.percentCompleteRounded}"/>
+                                    </h:outputFormat>
+                                </ui:fragment>
+                            </p:column>
+
+                            <p:column sortBy="#{rater.user.email}" styleClass="textsmall" style="vertical-align:middle;width:25%;white-space:normal">
+                                <f:facet name="header">
+                                    <h:outputText value="#{stMessages['g.ContactInfo']}"/>
+                                </f:facet>
+                                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.email}"/>
+                                <ui:fragment rendered="#{fn:length(rater.user.mobilePhone) gt 0}">
+                                    <br />
+                                    <h:outputText styleClass="ttwindowformtext" value="#{rater.user.mobilePhone}"/>
+                                </ui:fragment>
+                            </p:column>
+
+                            <p:column sortBy="#{rater.rcRaterRoleTypeName}" styleClass="textsmall" style="vertical-align:middle;width:14%;white-space:normal">
+                                <f:facet name="header">
+                                    <h:outputText value="#{stMessages['g.Role']}"/>
+                                </f:facet>
+                                <h:outputText styleClass="ttwindowformtext" value="#{rater.rcRaterRoleTypeName}"/>
+                            </p:column>
+
+                            <p:column styleClass="textsmall" style="vertical-align:middle;width:14%;white-space: normal;text-align:center">
+                                <f:facet name="header">
+                                    <h:outputText value="#{stMessages['g.Actions']}"/>
+                                </f:facet>
+
+                                <p:commandLink rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
+                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
+                                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
+                                </p:commandLink>
+                                &#160;
+                                <p:commandLink rendered="#{rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
+                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
+                                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
+                                </p:commandLink>
+                                &#160;                
+                                <p:commandLink rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
+                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCCancel']}"/>
+                                    <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
+                                </p:commandLink>
+
+                                <h:outputText rendered="#{rater.isAccountUserSource}" styleClass="ttwindowformtext texttiny" value="#{stMessages['g.XCRaterIsAdminSrc']}"/>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:2px;padding-bottom:10px;margin:0 auto">
+
+                            <h:panelGroup>
+                                <div style="text-align:center;margin-top:10px;margin-bottom:10px">
+                                    <div style="display:inline-block">
+                                        <p:commandButton style="margin-bottom:3px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isPrehire}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater']}"/>
+                                        <p:commandButton style="margin-bottom:3px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater.employee']}"/>
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" rendered="#{candidateRefUtils.canExitReferences}" ajax="false" action="#{candidateRefUtils.processExitAllCore}" value="#{stMessages['g.XCExitAndSave']}"/>                
+                                        &#160;
+                                        <p:commandButton style="margin-bottom:3px" rendered="#{candidateRefUtils.showReferencesGoBack}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>                
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
+
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalizereturn']}">
+                                <f:param value="#{refUtils.rcCheckTypeName}"/>                
+                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
+                            </h:outputFormat>               
+
+                        </h:panelGrid>
+
+
+
+                        <p:dialog modal="true" header="#{stMessages['g.XCCancelConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="cancelraterconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                            <h:panelGrid columns="1" cellpadding="4">
+                                <h:outputFormat value="#{stMessages['g.XCCancelConfirm.P1']}" >
+                                    <f:param value="#{refUtils.rcCheckRaterName}" />
+                                </h:outputFormat>
+
+                                <h:panelGroup>
+                                    <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes']}" title="#{stMessages['g.XCCancelConfirmYesInfo']}" onclick="beaconOn = false; return clearChanges()">
+                                    </p:commandButton>
+                                    <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes.employee']}" title="#{stMessages['g.XCCancelConfirmYesInfo.employee']}" onclick="beaconOn = false; return clearChanges()">
+                                    </p:commandButton>
+                                    &#160;
+                                    <p:button value="#{stMessages['g.Cancel']}" onclick="return PF('cancelraterconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </p:dialog>
+
+
+                    </h:form>
                 </div>
-            </h:panelGroup>
-                
-        </h:panelGrid>
-        
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
-            
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalizereturn']}">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>                
-                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
-            </h:outputFormat>               
-                        
-        </h:panelGrid>
-        
-        
-        
-        <p:dialog width="550" modal="true" header="#{stMessages['g.XCCancelConfirm']}" style="font-size:1.3rem" widgetVar="cancelraterconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.XCCancelConfirm.P1']}" >
-                    <f:param value="#{refUtils.rcCheckRaterName}" />
-                </h:outputFormat>
-                
-                <h:panelGroup>
-                    <p:commandButton rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes']}" title="#{stMessages['g.XCCancelConfirmYesInfo']}" onclick="beaconOn=false; return clearChanges()">
-                    </p:commandButton>
-                    <p:commandButton rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes.employee']}" title="#{stMessages['g.XCCancelConfirmYesInfo.employee']}" onclick="beaconOn=false; return clearChanges()">
-                    </p:commandButton>
-                    &#160;
-                    <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'cancelraterconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
 
-        
-    </h:form>
-    </div>
 
-    <br /><br /><br />&#160;
 
-</ui:define>
+            </ui:define>
 
-</ui:composition>
+        </ui:composition>
 
-</body>
+    </body>
 </html>

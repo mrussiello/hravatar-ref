@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
@@ -85,7 +84,7 @@
              <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P3']}"/>
              &#160;
              <h:outputLink value="https://www.hravatar.com/ta/help/check-camera.xhtml" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
-                 <h:outputText  styleClass="ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
+                 <h:outputText  styleClass="pflinktext ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
              </h:outputLink>
              </h:panelGroup>
              
@@ -146,7 +145,7 @@
             <h:panelGroup>
                 <div style="text-align:center;padding-top:10px">
                     <h:commandLink action="#{proctorUtils.processCheckForCameraAgain}" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
-                        <h:outputText styleClass="ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
+                        <h:outputText styleClass="pflinktext ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
                     </h:commandLink>
                 </div>                
             </h:panelGroup>
@@ -155,7 +154,7 @@
 
     <div id="thetextspan"></div>
     
-    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" width="600">
+    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;">
     
         <div role="status">
         <p style="text-align: left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
@@ -166,7 +165,7 @@
         </div>
     </p:dialog>
     
-        <p:dialog width="550" modal="true" header="#{stMessages['g.ExitConfirm']}" style="font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputFormat value="#{stMessages['g.ExitConfirm.P1.camerachange']}" >
                     <f:param value="#{refUtils.rcCheckTypeName}" />
@@ -176,9 +175,9 @@
                 
 
                 <h:panelGroup>
-                        <p:commandButton immediate="true" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
+                        <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
                         &#160;
-                        <p:button value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
+                        <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
                     </h:panelGroup>
                 </h:panelGrid>
         </p:dialog>
