@@ -160,7 +160,7 @@
 
     <div id="thetextspan"></div>
     
-    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;">
+    <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;margin-left:2px;margin-right:2px">
         <div role="status">
         <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                 <f:param value="#{refUtils.rcCheckTypeName}"/>
@@ -171,7 +171,7 @@
         </div>
     </p:dialog>
     
-        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
             <h:panelGrid columns="1" cellpadding="4">
                 <h:outputFormat value="#{stMessages['g.ExitConfirm.P1.camerachange']}" >
                     <f:param value="#{refUtils.rcCheckTypeName}" />
