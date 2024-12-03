@@ -1235,7 +1235,11 @@
 
                     var ele = document.getElementById('avuploadindicatordiv');
                     if (ele)
+                    {
+                        ele.innerHTML = prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
                         ele.style.display = 'inline';
+                    }
+                    
                     ele = document.getElementById('rerecordtxtvid');
                     if (ele)
                         ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
