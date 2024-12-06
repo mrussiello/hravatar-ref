@@ -7,6 +7,7 @@ package com.tm2ref.ref;
 
 import com.tm2ref.corp.CorpBean;
 import com.tm2ref.corp.CorpUtils;
+import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcRater;
@@ -14,9 +15,16 @@ import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcReferral;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.file.BucketType;
+import com.tm2ref.file.ConversionStatusType;
+import com.tm2ref.file.FileContentType;
 import com.tm2ref.file.FileUploadFacade;
+import com.tm2ref.file.FileXferUtils;
+import com.tm2ref.file.UploadedFileProcessingType;
 import com.tm2ref.file.UploadedUserFileType;
+import com.tm2ref.global.Constants;
 import com.tm2ref.global.NumberUtils;
+import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
@@ -35,6 +43,8 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.io.InputStream;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *
@@ -45,6 +55,7 @@ import jakarta.inject.Named;
 @RequestScoped
 public class RaterRefUtils extends BaseRefUtils
 {
+    UploadedFile uploadedFile;
 
     @Inject
     private RaterRefBean raterRefBean;
@@ -75,6 +86,27 @@ public class RaterRefUtils extends BaseRefUtils
         return refBean.getRcCheck().getRcRater().getRcRaterIdEncrypted();
     }
 
+    public String getFormEncType()
+    {
+        getRefBean();
+
+        if( refBean.getRefUserType().getIsCandidate() && raterRefBean.getRcItem()!=null && raterRefBean.getRcItem().getHasCandidateFileUpload())
+            return "multipart/form-data";
+
+        return "application/x-www-form-urlencoded";
+    }
+
+    
+    public String getCandidateResponseValueXhtml()
+    {        
+        if( raterRefBean.getRcItemWrapper()==null )
+            return "";
+        
+        return raterRefBean.getRcItemWrapper().getCandidateResponseValueXhtml(getLocale());
+    }
+
+
+
     public String getCommentsPlaceholderStr()
     {
         getRefBean();
@@ -99,35 +131,35 @@ public class RaterRefUtils extends BaseRefUtils
         return MessageFactory.getStringMessage( getLocale(), "g.XRSkipButn" );
     }
 
-    
+
     public boolean getIsCurrentItemCommentRequiredAnyScore()
     {
         getRefBean();
-        
+
         if( refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript().getAllCommentsRequiredB() )
             return true;
-                
+
         if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null || !raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getCanHaveComments() || raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments()<=1 )
             return false;
 
         if( refBean.getRcCheck().getRcScript().getNoCommentsRatingItemsB() && raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getIsRating() )
             return false;
-        
+
         if( raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments()==RcItemCommentsRequiredType.REQUIRED.getRcItemCommentsRequiredTypeId() )
             return true;
 
         RcItemCommentsRequiredType rt = RcItemCommentsRequiredType.getValue( raterRefBean.getRcItemWrapper().getRcItem().getIncludeComments() );
-        
+
         if( rt.getAreCommentsRequired( refBean.getRefUserType() ) )
             return true;
-        
+
         /*
         // Has Thresholds
-        if( refBean.getRcCheck().getRcScript()!=null && 
-            raterRefBean.getRcItemWrapper().getRcRating()!=null && 
-            raterRefBean.getRcItemWrapper().getRcRating().getIsCompleteOrHigher() && 
-            raterRefBean.getRcItemWrapper().getRcRating().getHasNumericScore() && 
-            (raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() || raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() ) 
+        if( refBean.getRcCheck().getRcScript()!=null &&
+            raterRefBean.getRcItemWrapper().getRcRating()!=null &&
+            raterRefBean.getRcItemWrapper().getRcRating().getIsCompleteOrHigher() &&
+            raterRefBean.getRcItemWrapper().getRcRating().getHasNumericScore() &&
+            (raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() || raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() )
             )
         {
             // has low threshold and the score is below or equal to threshold
@@ -139,7 +171,7 @@ public class RaterRefUtils extends BaseRefUtils
                 return true;
         }
         */
-        
+
         return false;
     }
 
@@ -152,23 +184,23 @@ public class RaterRefUtils extends BaseRefUtils
     {
         return getIsCurrentItemCommentRequiredForScore( true, score );
     }
-    
-    
+
+
     public boolean getIsCurrentItemCommentRequiredForScore( boolean high, float score )
     {
         if( getIsCurrentItemCommentRequiredAnyScore() )
             return true;
-        
+
         getRefBean();
-        
+
         if( refBean.getRcCheck().getRcScript().getNoCommentsRatingItemsB() && raterRefBean.getRcItemWrapper().getRcItem().getRcItemFormatType().getIsRating() )
             return false;
-                        
+
         // Has Thresholds
         if( raterRefBean.getRcItem()!=null && refBean.getRcCheck()!=null && refBean.getRcCheck().getRcScript()!=null )
         {
             // LogService.logIt( "RaterRefUtils.getIsCurrentItemCommentRequiredForScore() high=" + high + ", score=" + score + ", raterRefBean.getRcItem().getCommentThresholdLow()=" + raterRefBean.getRcItem().getCommentThresholdLow() +", raterRefBean.getRcItem().getCommentThresholdHigh()=" + raterRefBean.getRcItem().getCommentThresholdHigh() );
-            
+
             // has low threshold and the score is below or equal to threshold
             if( !high && raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() && score<=raterRefBean.getRcItem().getCommentThresholdLow() )
                 return true;
@@ -177,12 +209,12 @@ public class RaterRefUtils extends BaseRefUtils
             if( high && raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() && score>=raterRefBean.getRcItem().getCommentThresholdHigh() )
                 return true;
         }
-                
+
         return false;
     }
-    
-    
-    
+
+
+
     public void doEnterCore2() throws Exception
     {
         getRefBean();
@@ -196,7 +228,7 @@ public class RaterRefUtils extends BaseRefUtils
                 throw new Exception( "RcScript is null in RcBean.rcCheck" );
             if( rc.getRcRater()==null )
                 throw new Exception( "RcRater is null in RcBean.rcCheck" );
-            
+
             if( !getNeedsCore2() )
                 return;
 
@@ -206,7 +238,7 @@ public class RaterRefUtils extends BaseRefUtils
                     rcFacade=RcFacade.getInstance();
                 rc.getRcRater().setRcReferralList( rcFacade.getRcReferralList(rc.getRcCheckId(), rc.getRcRater().getRcRaterId()));
             }
-            
+
             for( RcReferral r : rc.getRcRater().getRcReferralList() )
             {
                 if( r.getUser()==null )
@@ -216,7 +248,7 @@ public class RaterRefUtils extends BaseRefUtils
                     r.setUser( userFacade.getUser( r.getUserId()));
                 }
             }
-            
+
         }
         catch( Exception e )
         {
@@ -224,8 +256,8 @@ public class RaterRefUtils extends BaseRefUtils
             throw e;
         }
     }
-    
-    
+
+
     public void doEnterCore(boolean goToFirstUnanswered) throws Exception
     {
         getRefBean();
@@ -382,7 +414,6 @@ public class RaterRefUtils extends BaseRefUtils
             rcCheckUtils=new RcCheckUtils();
         rcCheckUtils.performPreliminarySubstitutions( rciw.getRcItem(), refBean.getRcCheck(), getLocale() );
 
-
         RcRating rating = rciw.getRcRating();
 
         // check if rating missing.
@@ -420,6 +451,99 @@ public class RaterRefUtils extends BaseRefUtils
             }
         }
 
+        FileUploadFacade fuf = null;
+        
+        if( !refBean.getRefUserType().getIsCandidate() &&
+            rciw.getRcItem().getShowCandRespToRater()>0 &&
+            refBean.getRcCheck().getCandidateRcRaterId()>0 )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            RcRating crtg = rcFacade.getRcRatingForRcRaterAndRcItem(refBean.getRcCheck().getCandidateRcRaterId(), rciw.getRcItemId() );
+
+            if( crtg==null )
+                LogService.logIt( "RaterRefUtils.prepareForItem() Cannot find Candidate Rating for this item. rcCheckId=" + refBean.getRcCheck().getRcCheckId() + ", candidateRcRaterId=" + refBean.getRcCheck().getCandidateRcRaterId() + ( rciw.getRcItem()==null ? " item is null, itemId=" + rciw.getRcItemId() : rciw.getRcItem().toString()) );
+
+            rating.setCandidateRcRating(crtg);
+            
+            if( fuf == null )
+                fuf = FileUploadFacade.getInstance();
+
+            if( crtg!=null  )
+            {
+                if( crtg.getCandidateRcUploadedUserFile()==null )
+                    crtg.setCandidateRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(crtg.getRcCheckId(), crtg.getRcRaterId(), crtg.getRcItemId(), UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId()));
+            
+                if( crtg.getCandidateRcUploadedUserFile()!=null && crtg.getCandidateUploadedUserFileId()!=crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId())
+                {
+                    crtg.setCandidateUploadedUserFileId( crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                    rcFacade.saveRcRating(crtg);
+                }                    
+
+                if( crtg.getCandidateRcUploadedUserFile()==null && crtg.getCandidateUploadedUserFileId()>0 )
+                    crtg.setCandidateRcUploadedUserFile( fuf.getRcUploadedUserFile( crtg.getCandidateUploadedUserFileId()));
+                
+                if( crtg.getCandidateRcUploadedUserFile()!=null )
+                {
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileUrl( RcCheckUtils.getUploadedFileUrl(crtg.getCandidateRcUploadedUserFile()));
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileIconFilename( RcCheckUtils.getUploadedFileIconFilename( crtg.getCandidateRcUploadedUserFile()));
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileTypeName( RcCheckUtils.getUploadedFileTypeName( getLocale(), crtg.getCandidateRcUploadedUserFile()));
+                }
+            }
+
+            if( crtg!=null &&
+                rciw.getRcItem().getHasAvCandidateFileUpload() && 
+                rciw.getRcItem().getShowCandRespToRater()>0 )
+            {            
+                if( fuf == null )
+                    fuf = FileUploadFacade.getInstance();
+
+                if( crtg.getRcUploadedUserFile()==null )
+                    crtg.setRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(crtg.getRcCheckId(), crtg.getRcRaterId(), crtg.getRcItemId(), UploadedUserFileType.REF_CHECK_RATER_COMMENT.getUploadedUserFileTypeId()));
+
+                if( crtg.getUploadedUserFileId()>0 && crtg.getRcUploadedUserFile()==null )
+                    crtg.setRcUploadedUserFile(fuf.getRcUploadedUserFile( crtg.getUploadedUserFileId() ));
+
+                if( crtg.getRcUploadedUserFile()!=null && crtg.getUploadedUserFileId()!=crtg.getRcUploadedUserFile().getRcUploadedUserFileId() )
+                {
+                    crtg.setUploadedUserFileId( crtg.getRcUploadedUserFile().getRcUploadedUserFileId() );
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcRating(crtg);
+                }                                     
+                
+                if( crtg.getRcUploadedUserFile()!=null && crtg.getRcUploadedUserFile().getHasRecordingReadyForPlayback() )
+                    crtg.getRcUploadedUserFile().setUploadedFileUrl( RcCheckUtils.getUploadedFileUrl(crtg.getRcUploadedUserFile()));                    
+            }
+
+
+        }
+
+        if( refBean.getRefUserType().getIsCandidate() &&
+            rciw.getRcItem().getHasCandidateFileUpload() &&
+            !rciw.getRcItem().getHasAvCandidateFileUpload() )
+        {            
+            if( fuf == null )
+                fuf = FileUploadFacade.getInstance();
+
+            if( rating.getCandidateUploadedUserFileId()>0 && rating.getCandidateRcUploadedUserFile()==null )
+                rating.setCandidateRcUploadedUserFile(fuf.getRcUploadedUserFile( rating.getCandidateUploadedUserFileId() ));
+            
+            if( rating.getCandidateRcUploadedUserFile()==null )
+                rating.setCandidateRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(rating.getRcCheckId(), rating.getRcRaterId(), rating.getRcItemId(), UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId()));
+
+            if( rating.getCandidateRcUploadedUserFile()!=null && rating.getCandidateUploadedUserFileId()!=rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
+            {
+                rating.setCandidateUploadedUserFileId( rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rating);
+            }                                            
+        }
+
+
+        
+        
         // at this point we always have a rating though it may not have been saved.
         try
         {
@@ -535,7 +659,7 @@ public class RaterRefUtils extends BaseRefUtils
             }
 
         }
-        
+
         // LogService.logIt( "RaterRefUtils.getRcItemRadioSelectItemListForRating() selectItemList.size=" + out.size() );
         return out;
     }
@@ -548,7 +672,7 @@ public class RaterRefUtils extends BaseRefUtils
             return out;
 
         String[] data = null;
-        
+
         RcItem itm = rciw.getRcItem();
         if( rciw.getRcItem().getHasChoice1() )
             out.add(  new Object[] {(int)1, itm.getChoice1()} );
@@ -572,8 +696,8 @@ public class RaterRefUtils extends BaseRefUtils
             out.add(  new Object[] {(int)10, itm.getChoice10()} );
         return out;
     }
-    
-    
+
+
     public int getDiscreteRadioDivMinWidth()
     {
         if( 1==1 )
@@ -627,9 +751,9 @@ public class RaterRefUtils extends BaseRefUtils
         return wid;
         */
     }
-    
-    
-    
+
+
+
     public List<SelectItem> getRcItemRadioSelectItemList()
     {
         List<SelectItem> out = new ArrayList<>();
@@ -681,12 +805,12 @@ public class RaterRefUtils extends BaseRefUtils
 
             refBean.setRefPageType(RefPageType.CORE );
             RefPageType pt = getNextPageTypeForRefProcess();
-            
+
             if( pt.getIsCore2()  )
             {
-                
+
             }
-            
+
             refBean.setRefPageType(pt);
             return getViewFromPageType(pt);
         }
@@ -714,18 +838,18 @@ public class RaterRefUtils extends BaseRefUtils
     {
         return raterRefBean.getRcItemWrapper()!=null;
     }
-    
+
     public boolean getNeedsCore2() throws Exception
     {
         getRefBean();
-        
+
         if( refBean.getRcCheck()==null )
             return false;
-        
-        return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();        
+
+        return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
     }
 
-    
+
     public String processGoBackToCore2()
     {
         getCorpBean();
@@ -735,7 +859,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( !getNeedsCore2() )
                 return processGoBackToLastItem();
-            
+
             if( rc == null )
             {
                 rc = repairRefBeanForCurrentAction(refBean, true );
@@ -751,8 +875,8 @@ public class RaterRefUtils extends BaseRefUtils
             if( rc.getRcRater()==null )
                 throw new Exception( "RcCheck.RcRater is null" );
 
-            
-            
+
+
             refBean.setRefPageType( RefPageType.CORE2 );
             doEnterCore2();
             return conditionUrlForSessionLossGet(getViewFromPageType(refBean.getRefPageType()), true);
@@ -768,7 +892,7 @@ public class RaterRefUtils extends BaseRefUtils
             setMessage( e );
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
         }
-        
+
     }
 
     public String processToggleAccessible()
@@ -794,7 +918,7 @@ public class RaterRefUtils extends BaseRefUtils
                 throw new Exception( "RcCheck.RcRater is null" );
 
             refBean.setAccessibleActive( !refBean.getAccessibleActive() );
-            
+
             RcItemWrapper rciw = raterRefBean.getRcItemWrapper();
 
             // LogService.logIt( "RaterRefUtils.processToggleAccessible()" );
@@ -827,9 +951,9 @@ public class RaterRefUtils extends BaseRefUtils
             LogService.logIt( e, "RaterRefUtils.processToggleAccessible() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
             setMessage( e );
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
-        }        
+        }
     }
-    
+
     public String processGoBackToLastItem()
     {
         getCorpBean();
@@ -924,7 +1048,7 @@ public class RaterRefUtils extends BaseRefUtils
 
                 // complete the RcRater
                 boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride()  );
-                
+
                 if( !isComplete )
                     LogService.logIt( "RaterRefUtils.processMarkCompleteAndExit()  NONFATAL ERROR. rciwNew is null, but Rater is not complete after checking ratings. Will return to nextViewFromRatings. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + rc.getRcRater().getRcRaterId());
 
@@ -957,7 +1081,7 @@ public class RaterRefUtils extends BaseRefUtils
 
         RcItemWrapper rciwx = getRcItemWrapper( itemDO );
 
-        LogService.logIt( "RaterRefUtils.resetItemDOForBackFwdButton() rciwx=" + (rciwx==null ? "null" : rciwx.getRcItemId() ) + ", rcCheckId="  + rc.getRcCheckId() );
+        LogService.logIt( "RaterRefUtils.resetItemDOForBackFwdButton() itemDO=" + itemDO + ", current rciw.displayOrder=" + rciw.getDisplayOrder() + ", current rciw.rcItemId=" + rciw.getRcItemId() + ", rciwx=" + (rciwx==null ? "null" : rciwx.getRcItemId() ) + ", rcCheckId="  + rc.getRcCheckId() );
 
         raterRefBean.setRcItemWrapper(rciwx, isCandidate );
 
@@ -999,13 +1123,107 @@ public class RaterRefUtils extends BaseRefUtils
             rating = new RcRating();
             rating.setRcCheckId(refBean.getRcCheck().getRcCheckId());
             rating.setRcRaterId(refBean.getRcCheck().getRcRater().getRcRaterId());
-            rating.setRcItemId(rciw.getRcItemId() );
+            rating.setRcItemId(rciwx.getRcItemId() );
             rating.setRcItemFormatTypeId( rciwx.getRcItem().getItemFormatTypeId() );
             rating.setRcRatingStatusTypeId( RcRatingStatusType.INCOMPLETE.getRcRatingStatusTypeId() );
-            rciw.setRcRating(rating);
+            rciwx.setRcRating(rating);
         }
+
+        FileUploadFacade fuf = null;
+        
+        if( !refBean.getRefUserType().getIsCandidate() &&
+            rciwx.getRcItem().getShowCandRespToRater()>0 &&
+            refBean.getRcCheck().getCandidateRcRaterId()>0 )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            RcRating crtg = rcFacade.getRcRatingForRcRaterAndRcItem(refBean.getRcCheck().getCandidateRcRaterId(), rciwx.getRcItemId() );
+
+            if( crtg==null )
+                LogService.logIt( "RaterRefUtils.resetItemDOForBackFwdButton() Cannot find Candidate Rating for this item. rcCheckId=" + refBean.getRcCheck().getRcCheckId() + ", candidateRcRaterId=" + refBean.getRcCheck().getCandidateRcRaterId() + ( rciwx.getRcItem()==null ? " item is null, itemId=" + rciwx.getRcItemId() : rciwx.getRcItem().toString()) );
+
+            rating.setCandidateRcRating(crtg);
+
+            if( fuf==null )
+                fuf = FileUploadFacade.getInstance();
+
+            if( crtg!=null )
+            {
+                if( crtg.getCandidateRcUploadedUserFile()==null )
+                    crtg.setCandidateRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(crtg.getRcCheckId(), crtg.getRcRaterId(), crtg.getRcItemId(), UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId()));
+            
+                if( crtg.getCandidateRcUploadedUserFile()!=null && crtg.getCandidateUploadedUserFileId()!=crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
+                {
+                    crtg.setCandidateUploadedUserFileId( crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                    rcFacade.saveRcRating(crtg);
+                }                    
+
+                if( crtg.getCandidateRcUploadedUserFile()==null && crtg.getCandidateUploadedUserFileId()>0 )
+                    crtg.setCandidateRcUploadedUserFile( fuf.getRcUploadedUserFile( crtg.getCandidateUploadedUserFileId()));
+                
+                if( crtg.getCandidateRcUploadedUserFile()!=null )
+                {
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileUrl( RcCheckUtils.getUploadedFileUrl(crtg.getCandidateRcUploadedUserFile()));
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileIconFilename( RcCheckUtils.getUploadedFileIconFilename( crtg.getCandidateRcUploadedUserFile()));
+                    crtg.getCandidateRcUploadedUserFile().setUploadedFileTypeName( RcCheckUtils.getUploadedFileTypeName( getLocale(), crtg.getCandidateRcUploadedUserFile()));
+                }
+            }
+            
+            if( crtg!=null &&
+                rciw.getRcItem().getHasAvCandidateFileUpload() && 
+                rciw.getRcItem().getShowCandRespToRater()>0 )
+            {            
+                if( fuf == null )
+                    fuf = FileUploadFacade.getInstance();
+
+                if( crtg.getUploadedUserFileId()>0 && crtg.getRcUploadedUserFile()==null )
+                    crtg.setRcUploadedUserFile(fuf.getRcUploadedUserFile( crtg.getUploadedUserFileId() ));
+
+                if( crtg.getRcUploadedUserFile()==null )
+                    crtg.setRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(crtg.getRcCheckId(), crtg.getRcRaterId(), crtg.getRcItemId(), UploadedUserFileType.REF_CHECK_RATER_COMMENT.getUploadedUserFileTypeId()));
+
+                if( crtg.getRcUploadedUserFile()!=null && crtg.getUploadedUserFileId()!=crtg.getRcUploadedUserFile().getRcUploadedUserFileId() )
+                {
+                    crtg.setUploadedUserFileId( crtg.getRcUploadedUserFile().getRcUploadedUserFileId() );
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcRating(crtg);
+                }                                     
+                
+                if( crtg.getRcUploadedUserFile()!=null && crtg.getRcUploadedUserFile().getHasRecordingReadyForPlayback() )
+                {
+                    crtg.getRcUploadedUserFile().setUploadedFileUrl( RcCheckUtils.getUploadedFileUrl(crtg.getRcUploadedUserFile()));                    
+                }
+            }
+            
+        }
+        
+        if( refBean.getRefUserType().getIsCandidate() &&
+            rciw.getRcItem().getHasCandidateFileUpload() &&
+            !rciw.getRcItem().getHasAvCandidateFileUpload() )
+        {
+            
+            if( fuf==null )
+                fuf = FileUploadFacade.getInstance();
+
+            if( rating.getCandidateUploadedUserFileId()>0 && rating.getCandidateRcUploadedUserFile()==null )
+                rating.setCandidateRcUploadedUserFile(fuf.getRcUploadedUserFile( rating.getCandidateUploadedUserFileId() ));
+            
+            if( rating.getCandidateRcUploadedUserFile()==null )
+                rating.setCandidateRcUploadedUserFile( fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(rating.getRcCheckId(), rating.getRcRaterId(), rating.getRcItemId(), UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId()));
+
+            if( rating.getCandidateRcUploadedUserFile()!=null && rating.getCandidateUploadedUserFileId()!=rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
+            {
+                rating.setCandidateUploadedUserFileId( rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rating);
+            }                                            
+        }
+        
+
     }
-    
+
     public String processExitCore2()
     {
         getCorpBean();
@@ -1016,9 +1234,9 @@ public class RaterRefUtils extends BaseRefUtils
             if( rc==null )
             {
                 LogService.logIt( "RaterRefUtils.processExitCore2() Fatal Error refBean.rcCheck is null." );
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RefBean.rcCheck is null" , null, null, rc, rc==null ? null : rc.getRcRater(), true );            
+                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RefBean.rcCheck is null" , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
-            
+
             // use the completed survey as a reason to check for candidate completion if this is not the candidate.
             if( !rc.getRcRater().getRcRaterStatusType().getCompleteOrHigher() )
             {
@@ -1026,34 +1244,34 @@ public class RaterRefUtils extends BaseRefUtils
                     rcCheckUtils = new RcCheckUtils();
 
                 boolean isRaterComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride() );
-                
+
                 if( !isRaterComplete )
                 {
                     LogService.logIt( "RaterRefUtils.processExitCore2()  NONFATAL ERROR. Rater ratings not completed (or skipped). rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + " Rater is not completed sending to next view from ratings. rcRaterId=" + rc.getRcRater().getRcRaterId());
                     return getNextViewFromRatings();
                 }
             }
-            
+
             refBean.setRefPageType(RefPageType.CORE2 );
             RefPageType pt = getNextPageTypeForRefProcess();
             refBean.setRefPageType(pt);
             return conditionUrlForSessionLossGet(getViewFromPageType(pt), true);
-        }        
+        }
         catch( STException e )
         {
             setMessage(e);
             return "StayInSamePlace";
-        }        
+        }
         catch( Exception e )
         {
             LogService.logIt( e, "RaterRefUtils.processExitCore2() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
             setMessage( e );
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
         }
-        
+
     }
-    
-    
+
+
     public String processCreateReferral()
     {
         getCorpBean();
@@ -1079,40 +1297,40 @@ public class RaterRefUtils extends BaseRefUtils
                 LogService.logIt( "RaterRefUtils.processCreateReferral() Error  RcCheck.RcRater is null. Likely session error or user backtracked. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
                 return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.processCreateReferral() Error  RcCheck.RcRater is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
-            
-            User refUser = raterRefBean.getReferralUser();
-            
-            if( !refUser.getHasNameEmailOrPhone() )
-                throw new STException( "g.XRErrFullNameEmailOrPhoneReqd" );            
 
-            String mobile = refUser.getMobilePhone();            
-            boolean mobileValid = mobile==null || mobile.isBlank() ? false : GooglePhoneUtils.isNumberValid( mobile, rc.getRcRater().getUser().getCountryCode() );            
+            User refUser = raterRefBean.getReferralUser();
+
+            if( !refUser.getHasNameEmailOrPhone() )
+                throw new STException( "g.XRErrFullNameEmailOrPhoneReqd" );
+
+            String mobile = refUser.getMobilePhone();
+            boolean mobileValid = mobile==null || mobile.isBlank() ? false : GooglePhoneUtils.isNumberValid( mobile, rc.getRcRater().getUser().getCountryCode() );
             if( mobile!=null && !mobile.isBlank() && !mobileValid )
                 throw new STException( "g.XCErrPhoneNumberInvalidIgnored", new String[] {mobile} );
-            
+
             boolean emailValid = EmailUtils.validateEmailNoErrors( refUser.getEmail() );
-            
+
             if( !emailValid && !mobileValid )
                 throw new STException( "g.XCErrValidEmailOrPhoneRequired" );
-                        
+
             if( mobile!=null && !mobile.isBlank() && mobileValid )
                 mobile = GooglePhoneUtils.getFormattedPhoneNumberIntl(mobile, rc.getRcRater().getUser().getCountryCode() );
-            
+
             String referralNotes = raterRefBean.getReferralNotes();
             if( referralNotes!=null && referralNotes.isBlank() )
                 referralNotes=null;
-            
+
             boolean created = createReferral(rc, rc.getRcRater(), refUser.getFirstName(), refUser.getLastName(), refUser.getEmail(), mobile, referralNotes);
-           
+
             if( created )
             {
                 setInfoMessage("g.XRReferralCreatedForX", new String[]{refUser.getFullname()} );
                 raterRefBean.setReferralNotes(null);
-                raterRefBean.setReferralUser(new User() );        
+                raterRefBean.setReferralUser(new User() );
             }
             else
                 setErrorMessage("g.XRReferralExistsForX", new String[]{refUser.getFullname()} );
-            
+
             return conditionUrlForSessionLossGet("/ref/referrals.xhtml", true);
             // return "StayInSamePlace";
         }
@@ -1127,10 +1345,10 @@ public class RaterRefUtils extends BaseRefUtils
             setMessage( e );
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
         }
-        
+
     }
-    
-    
+
+
     public String processSaveItemResp()
     {
         return conditionUrlForSessionLossGet(doSaveItemResp( false ), true);
@@ -1164,14 +1382,14 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 // throw new Exception( "RcCheck.RcRater is null" );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error  RcCheck.RcRater is null. Likely session error or user backtracked. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcCheck.RcRater is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcCheck.RcRater is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             if( rciw==null )
             {
                 // throw new Exception( "RcItemWrapper is null in RaterRefBean." );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper is null in RaterRefBean. Likely session error or user backtracked. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper is null in RaterRefBean. Likely session error or user backtracked. " , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper is null in RaterRefBean. Likely session error or user backtracked. " , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             RcItem itm = rciw.getRcItem();
@@ -1179,7 +1397,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 // throw new Exception( "RcItemWrapper.RcItem is null" );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             RcRating rating = rciw.getRcRating();
@@ -1187,7 +1405,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 // throw new Exception( "RcItemWrapper.RcRating is null" );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error  RcItemWrapper.RcItem is null. Likely session error or user backtracked." , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             long rcCheckId = getEncryptedIdFmRequest( "rcid" );
@@ -1195,7 +1413,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 // throw new Exception( "Request.rcCheckId=" + rcCheckId + " does not match session.rcCheckId=" + rc.getRcCheckId() );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error Request.rcCheckId=" + rcCheckId + " does not match session.rcCheckId=" + rc.getRcCheckId() + " rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error Request.rcCheckId=" + rcCheckId + " does not match session.rcCheckId=" + rc.getRcCheckId() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "RaterRefUtils.doSaveItemResp() Error Request.rcCheckId=" + rcCheckId + " does not match session.rcCheckId=" + rc.getRcCheckId() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             long rcRaterId = getEncryptedIdFmRequest( "rcrid" );
@@ -1203,7 +1421,7 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 // throw new Exception( "Request.rcRaterId=" + rcRaterId + " does not match session.rcRaterId=" + rc.getRcRater().getRcRaterId() );
                 LogService.logIt( "RaterRefUtils.doSaveItemResp() Error  Request.rcRaterId=" + rcRaterId + " does not match session.rcRaterId=" + rc.getRcRater().getRcRaterId() + " rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
-                return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), "Request.rcRaterId=" + rcRaterId + " does not match session.rcRaterId=" + rc.getRcRater().getRcRaterId() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), "Request.rcRaterId=" + rcRaterId + " does not match session.rcRaterId=" + rc.getRcRater().getRcRaterId() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
             }
 
             // get values from request
@@ -1272,11 +1490,123 @@ public class RaterRefUtils extends BaseRefUtils
 
             RcRatingScaleType ratingScale = rc.getRcScript().getRcRatingScaleType();
 
-            if( !refBean.getAdminOverride() && refBean.getAudioVideoCommentsOk() && !getIsMsie() )
+            FileUploadFacade fileUploadFacade = null;
+
+            if( !refBean.getAdminOverride() && (refBean.getAudioVideoCommentsOk() || refBean.getAudioVideoCandidateUpload()) && !getIsMsie() )
             {
-                FileUploadFacade fileUploadFacade = FileUploadFacade.getInstance();
+                if( fileUploadFacade==null )
+                    fileUploadFacade = FileUploadFacade.getInstance();
                 rating.setRcUploadedUserFile( fileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId, rcRaterId, itemId, UploadedUserFileType.REF_CHECK_RATER_COMMENT.getUploadedUserFileTypeId() ) );
             }
+
+            // candidate uploaded file
+            if( refBean.getRefUserType().getIsCandidate() && itm.getHasCandidateFileUpload() )
+            {
+                if( fileUploadFacade==null )
+                    fileUploadFacade = FileUploadFacade.getInstance();
+
+                if( rating.getCandidateUploadedUserFileId()>0 && rating.getCandidateRcUploadedUserFile()==null )
+                    rating.setCandidateRcUploadedUserFile(fileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId, rcRaterId, itemId, UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId() ) );
+
+                if( rating.getCandidateUploadedUserFileId()>0 && rating.getCandidateRcUploadedUserFile()==null )
+                    throw new Exception( "Cannot find CandidateUploadedUserFileId=" + rating.getCandidateUploadedUserFileId() + ", for rcRatingId=" + rating.getRcRatingId() + ", rcItemId=" + itm.getRcItemId() + ", rcCheckId=" + rating.getRcCheckId() + ", rcRaterId=" + rating.getRcRaterId());
+
+                getProctorBean();
+                
+                if( !skip )
+                {
+                    if( !itm.getRcCandidateUploadType().getAnyAudioVideo() )
+                    {
+                        FileContentType fct = uploadedFile==null ? null : FileContentType.getFileContentTypeFromContentType( uploadedFile.getContentType(), uploadedFile.getFileName() );
+                        if( uploadedFile==null )
+                        {
+                            // no existing file. 
+                            if( rating.getCandidateRcUploadedUserFile()==null )
+                            {
+                                validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileRqd" );
+                                complete = false;
+                            }
+                            // otherwise OK!
+                            else
+                            {}
+                        }
+                        else if( uploadedFile.getSize()<=1 )
+                        {
+                            // no existing file. 
+                            if( rating.getCandidateRcUploadedUserFile()==null )
+                            {
+                                validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileTooSmall", new String[]{ Long.toString( uploadedFile.getSize())} );
+                                complete = false;
+                                uploadedFile = null;
+                            }
+                            // otherwise OK!
+                            else
+                            {}
+                        }
+                        else if( uploadedFile.getSize()>Constants.MAX_FILE_UPLOAD_SIZE )
+                        {
+                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileTooBig", new String[]{ Long.toString( uploadedFile.getSize()), Long.toString(Constants.MAX_FILE_UPLOAD_SIZE)} );
+                            complete = false;
+                            uploadedFile = null;
+                        }
+                        else if( fct==null )
+                        {
+                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileUnrecFileType", new String[]{ Long.toString( uploadedFile.getSize())} );
+                            complete = false;
+                            uploadedFile = null;
+                        }
+                        else if( !itm.getRcCandidateUploadType().getIsUploadedFileContentTypeValid( fct ))
+                        {
+                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileInvalidXY", new String[]{ fct.getBaseExtension().toLowerCase(), itm.getRcCandidateUploadType().getName(getLocale())} );
+                            complete = false;
+                            uploadedFile = null;
+                        }
+                        //else if( !fct.isValidForCandidateUploadedFile())
+                        //{
+                        //    validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), "g.UploadedCandFileInvalidFileType", new String[]{ Long.toString( uploadedFile.getSize())} );
+                        //    complete = false;
+                        //    uploadedFile = null;
+                        //}
+
+                        // OK to save.
+                        if( uploadedFile!=null )
+                        {
+                            RcUploadedUserFile uuf = saveUploadedUserFile( rc, rc.getRcRater(), rating, fct, fileUploadFacade );
+                            if( uuf!=null )
+                                setInfoMessage("g.UploadedCandFileSaved", new String[]{uploadedFile.getFileName(), Long.toString(uploadedFile.getSize())});
+                        }
+                    }
+                    
+                    // Required response and not no set to opt out of audio / video
+                    else if( itm.getHideSkip()==1 && !proctorBean.getCameraOptOut() )
+                    {
+                        if( rating.getRcUploadedUserFile()==null && rating.getUploadedUserFileId()>0 )
+                            rating.setRcUploadedUserFile(fileUploadFacade.getRcUploadedUserFile( rating.getUploadedUserFileId() ) );
+                                                
+                        if( rating.getRcUploadedUserFile()==null )
+                            rating.setRcUploadedUserFile(fileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId, rcRaterId, itemId, UploadedUserFileType.REF_CHECK_RATER_COMMENT.getUploadedUserFileTypeId() ) );
+
+                        RcUploadedUserFile uuf = rating.getRcUploadedUserFile();
+                        
+                        LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.1 uuf=" + (uuf==null ? "null" : "Not Null. rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + ", filename=" + uuf.getFilename() + ", conv status=" + uuf.getConversionStatusTypeId() ) );
+                        
+                        if( uuf==null )
+                        {
+                            String errKey = itm.getRcCandidateUploadType().getAudio() ? "g.UploadedCandAudioFileMissing" : "g.UploadedCandVideoFileMissing";
+                            
+                            if(itm.getRcCandidateUploadType().getAudioVideo() )
+                                errKey = "g.UploadedCandAudioVideoFileMissing";
+                            
+                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), errKey );
+                            complete = false;
+                        }
+                    }
+                    else
+                        LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.2 itm.getHideSkip()=" + itm.getHideSkip() + ", proctorBean.getCameraOptOut()=" + proctorBean.getCameraOptOut() );
+                    
+                }
+            }
+
 
             if( skip )
             {
@@ -1287,18 +1617,17 @@ public class RaterRefUtils extends BaseRefUtils
                     setStringInfoMessage( MessageFactory.getStringMessage(getLocale(), "g.XRQuestionSkipped" ) );
                 }
             }
-            
+
             else if( itmFmt.getIsRating() )
             {
-                if( itm.getIncludeNumRatingB() )
+                if( itm.getIncludeNumRatingB() && (!refBean.getRefUserType().getIsCandidate() || itm.getIntParam2()<=0) )
                 {
-
                     score = getIsMsieOrSamsungAndroid() || refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB() || refBean.getAccessibleActive() ? rating.getScore() : getUnencryptedFloatFmRequest( "ratingvalue");
                     // LogService.logIt( "RaterRefUtils.doSaveItemResp() rating item. rating value selected=" + score + " comments=" + rating.getText() );
                     if( score<ratingScale.getMinScore() )
                     {
                         score=0;
-                        validMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".rqdmsg" );
+                        validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".rqdmsg" );
                         complete = false;
                     }
 
@@ -1312,67 +1641,61 @@ public class RaterRefUtils extends BaseRefUtils
                     }
 
                     rating.setSelectedResponse( Float.toString( score ) );
-                    rating.setScore(score);
                 }
+
+                // score=-3 indicates primary scoring system skipped because it's a candidate and primary is hidden for candidates
+                else if( itm.getIncludeNumRatingB() && refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0)
+                {
+                    score = -3;
+                    rating.setSelectedResponse( "" );                    
+                }
+                
+                else
+                    score = -1;
+
+                rating.setScore(score);
 
                 if( itm.getIncludeComments()>0 )
                 {
-                    if( !itm.getIncludeNumRatingB() )
+                    if( !itm.getIncludeNumRatingB() || (refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0) )
                     {
-                        rating.setScore(-1);
+                        rating.setScore(refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0 ? -3 : -1);
                         rating.setSelectedResponse( "" );
                     }
-                    
+
                     // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.1 Rater.rating item.  score=" + rating.getScore() );
                     // No comments in submission
-                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
+                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) && (!refBean.getRefUserType().getIsCandidate() || itm.getIntParam2()<=0) )
                     {
                         // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.2 Rater.rating item.  ");
                         rating.setText( null );
+
                         if( getIsCurrentItemCommentRequiredAnyScore() ) //   !rc.getRcScript().getNoCommentsRatingItemsB() && (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
                         {
                             // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.3 Rater.rating item.  ");
                             validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;
                         }
-                                                
-                        else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
+
+                        else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
                         {
                             // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.4 Rater.rating item. score=" + rating.getScore() + ", raterRefBean.getRcItem().getCommentThresholdLow()=" + raterRefBean.getRcItem().getCommentThresholdLow());
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
-                            complete = false;                            
+                            complete = false;
                         }
                         else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForHighScore( rating.getScore() ) )
                         {
                             // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.5 Rater.rating item. score=" + rating.getScore()  + ", raterRefBean.getRcItem().getCommentThresholdHigh()=" + raterRefBean.getRcItem().getCommentThresholdHigh());
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
-                            complete = false;                            
+                            complete = false;
                         }
-                        
-                        /*
-                        else if( !rc.getRcScript().getNoCommentsRatingItemsB() &&  itm.getIncludeComments()==1 && itm.getIncludeNumRatingB() && (validMessage==null || validMessage.isBlank()) )
-                        {
-                            if( itm.getCommentThresholdLow()>ratingScale.getCommentThresholdLow() && rating.getScore()>=1f && itm.getCommentThresholdLow()>=rating.getScore() )
-                            {
-                                infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
-                                complete = false;
-                            }
-
-                            else if( itm.getCommentThresholdHigh()<ratingScale.getCommentThresholdHigh() && rating.getScore()>=1f && itm.getCommentThresholdHigh()<=rating.getScore() )
-                            {
-                                infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
-                                complete = false;
-                            }
-                        }
-                        */
-
                     }
                 }
             }
-            
+
             else if( itmFmt.getIsCommentsOnly())
             {
-                rating.setScore(-1);
+                rating.setScore(refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0 ? -3 : -1);
                 rating.setSelectedResponse( "" );
 
                 if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
@@ -1389,18 +1712,30 @@ public class RaterRefUtils extends BaseRefUtils
 
             else if( itmFmt.getIsRadio() )
             {
-                int selIdx = raterRefBean.getSelectedRadioIndex();
-                if( selIdx<1 )
+                int selIdx = 0;
+                // if file upload and we need to hide the radio.
+                if( refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0 )
                 {
-                    validMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+ ".rqdmsg" );
-                    score = itm.getIsItemScored() ? 0 : -1;
-                    complete = false;
+                    score = -3;
+                    rating.setSelectedResponse( "" );
                 }
-                else
-                    score = itm.getIsItemScored() ? itm.getScoreForIndex(selIdx) : -1;
 
-                // LogService.logIt( "RaterRefUtils.doSaveItemResp() radio item. selected radio index=" + selIdx );
-                rating.setSelectedResponse( Integer.toString( selIdx ) );
+                else
+                {
+                    selIdx = raterRefBean.getSelectedRadioIndex();
+                    if( selIdx<1 )
+                    {
+                        validMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+ ".rqdmsg" );
+                        score = itm.getIsItemScored() ? 0 : -1;
+                        complete = false;
+                    }
+                    else
+                        score = itm.getIsItemScored() ? itm.getScoreForIndex(selIdx) : -1;
+
+                    // LogService.logIt( "RaterRefUtils.doSaveItemResp() radio item. selected radio index=" + selIdx );
+                    rating.setSelectedResponse( selIdx>0 ? Integer.toString( selIdx ) : "" );
+                }
+
                 rating.setScore(score);
 
                 if( RcCheckUtils.isContactPermissionItem(itm.getRcItemId()) )
@@ -1423,7 +1758,7 @@ public class RaterRefUtils extends BaseRefUtils
                         if( rcFacade==null )
                             rcFacade=RcFacade.getInstance();
                         rcFacade.saveRcRater(rc.getRcRater(), true);
-                        
+
                         // OK to contact as a referral
                         if( selIdx==1 )
                             createReferralForRater(rc, rc.getRcRater(), rc.getRcRater().getUser(), rating.getText() );
@@ -1432,7 +1767,7 @@ public class RaterRefUtils extends BaseRefUtils
 
                 if( itm.getIncludeComments()>0 )
                 {
-                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
+                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) && (!refBean.getRefUserType().getIsCandidate() || itm.getIntParam2()<=0) )
                     {
                         rating.setText( null );
 
@@ -1444,42 +1779,19 @@ public class RaterRefUtils extends BaseRefUtils
                         else if(  (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForLowScore( rating.getScore() ) )
                         {
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
-                            complete = false;                            
+                            complete = false;
                         }
                         else if( (validMessage==null || validMessage.isBlank()) && getIsCurrentItemCommentRequiredForHighScore( rating.getScore() ) )
                         {
                             infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
-                            complete = false;                            
-                        }
-                        
-                        
-                        /*
-                        if( (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
-                        {
-                            validMessage = (validMessage==null || validMessage.isBlank() ? "" : validMessage + " ") +  MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdmsg" );
                             complete = false;
                         }
 
-                        else if( itm.getIncludeComments()==1 && (validMessage==null || validMessage.isBlank()) )
-                        {
-                            if( itm.getCommentThresholdLow()>ratingScale.getCommentThresholdLow() && rating.getScore()>=1f && itm.getCommentThresholdLow()>=rating.getScore() )
-                            {
-                                infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforlowscoremsg" );
-                                complete = false;
-                            }
-
-                            else if( itm.getCommentThresholdHigh()<ratingScale.getCommentThresholdHigh() && rating.getScore()>=1f && itm.getCommentThresholdHigh()<=rating.getScore() )
-                            {
-                                infoMessage = MessageFactory.getStringMessage(getLocale(), itmFmt.getKey()+".commentsrqdforhighscoremsg" );
-                                complete = false;
-                            }
-                        }
-                        */
                     }
                 }
 
             }
-            
+
             else if( itmFmt.getIsButton())
             {
                 int selIdx = raterRefBean.getSelectedRadioIndex();
@@ -1489,23 +1801,34 @@ public class RaterRefUtils extends BaseRefUtils
                 rating.setScore(score);
 
                 // always complete
-                complete = true;
+                // complete = true;
             }
-            
+
             else if( itmFmt.getIsCheckbox())
             {
-                String[] slvs = raterRefBean.getSelectedCheckboxesStr();
-                // LogService.logIt( "RaterRefUtils.doSaveItemResp() multicheckbox found " + (slvs==null ? "null" : slvs.length ) + " selected values." );
-                int[] selVals = new int[slvs.length];
+                int[] selVals = null;
+                
                 String s;
-                score = itm.getIsItemScored() ? 0 : -1;
 
-                for( int i=0; i<slvs.length;i++ )
+                if( refBean.getRefUserType().getIsCandidate() && itm.getIntParam2()>0 )
                 {
-                    s = slvs[i];
-                    if( s==null || s.isBlank() )
-                        continue;
-                    selVals[i] = Integer.parseInt(s);
+                    score = -3;
+                }
+
+                else
+                {
+                    String[] slvs = raterRefBean.getSelectedCheckboxesStr();
+                    // LogService.logIt( "RaterRefUtils.doSaveItemResp() multicheckbox found " + (slvs==null ? "null" : slvs.length ) + " selected values." );
+                    selVals = new int[slvs.length];
+                    score = itm.getIsItemScored() ? 0 : -1;
+
+                    for( int i=0; i<slvs.length;i++ )
+                    {
+                        s = slvs[i];
+                        if( s==null || s.isBlank() )
+                            continue;
+                        selVals[i] = Integer.parseInt(s);
+                    }
                 }
 
                 if( selVals==null || selVals.length<=0 )
@@ -1532,14 +1855,14 @@ public class RaterRefUtils extends BaseRefUtils
                 }
 
                 // always complete unless comments required below
-                complete = true;
+                // complete = true;
 
                 if( itm.getIncludeComments()>0 )
                 {
-                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) )
+                    if( rating.getRcUploadedUserFile()==null && (rating.getText()==null || rating.getText().isBlank()) && (!refBean.getRefUserType().getIsCandidate() || itm.getIntParam2()<=0) )
                     {
                         rating.setText( null );
-                        
+
                         // if( (itm.getIncludeComments()==2 || rc.getRcScript().getAllCommentsRequiredB()) )
                         if( getIsCurrentItemCommentRequiredAnyScore() )
                         {
@@ -1663,10 +1986,10 @@ public class RaterRefUtils extends BaseRefUtils
                         rcCheckUtils = new RcCheckUtils();
                     // complete the RcRater
                     boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride() );
-                    
+
                     if( !isComplete )
                         LogService.logIt( "RaterRefUtils.doSaveItemResp() NONFATAL ERROR. next RcItemWrapper is null, but Candidate/Employee RcRater is not complete. Will send to next view from ratings.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + (rc.getRcRater()==null ? "null" : rc.getRcRater().getRcRaterId()) );
-                        
+
                     if( !refBean.getAdminOverride() && !rc.getRcRater().getIsCandidateOrEmployee() && (rc.getRcRater().getRcRaterStatusType().getIsComplete() ) )
                     {
                         rcCheckUtils.loadRcCheckForScoringOrResults(rc);
@@ -1695,12 +2018,114 @@ public class RaterRefUtils extends BaseRefUtils
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
         }
     }
-    
+
+    private RcUploadedUserFile saveUploadedUserFile( RcCheck rc, RcRater rater, RcRating rating, FileContentType fct, FileUploadFacade fuf ) throws Exception
+    {
+        try
+        {
+            if( rc==null )
+                throw new Exception( "RcCheck is null" );
+
+            if( rating==null )
+                throw new Exception( "RcRating is null" );
+
+            if( rating==null )
+                throw new Exception( "RcRating is null" );
+
+            if( uploadedFile==null )
+                throw new Exception( "UploadedFile is null" );
+
+            if( uploadedFile.getSize()<=1 )
+                throw new Exception( "UploadedFile.fileSize too small: " + uploadedFile.getSize() );
+
+            if( uploadedFile.getSize()>Constants.MAX_FILE_UPLOAD_SIZE  )
+                throw new Exception( "UploadedFile.fileSize too big: " + uploadedFile.getSize() );
+
+            if( fct==null )
+                throw new Exception( "FileContentType is null" );
+
+            InputStream strm = uploadedFile.getInputStream();
+            if( strm==null )
+                throw new Exception( "UploadedFile.inputStream is null. File size=" + uploadedFile.getSize() );
+
+            if( fuf==null )
+                fuf = FileUploadFacade.getInstance();
+
+            FileXferUtils xfer = new FileXferUtils(); //  FileXferUtils.getInstance();
+
+            RcUploadedUserFile uuf = rating.getCandidateRcUploadedUserFile();
+            if( uuf==null && rating.getCandidateUploadedUserFileId()>0 )
+            {
+                rating.setCandidateRcUploadedUserFile( fuf.getRcUploadedUserFile(rating.getCandidateUploadedUserFileId()));
+                uuf = rating.getCandidateRcUploadedUserFile();
+            }
+
+            if( uuf==null )
+            {
+                uuf = new RcUploadedUserFile();
+                uuf.setRcCheckId( rating.getRcCheckId() );
+                uuf.setRcItemId( rating.getRcItemId() );
+                uuf.setRcRaterId( rating.getRcRaterId() );
+                uuf.setRcRatingId( rating.getRcRatingId());
+                uuf.setUserId( rater.getUserId() );
+                uuf.setUploadedUserFileTypeId( UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId());
+                uuf.setCreateDate(new Date());
+                uuf.setConversionStatusTypeId( ConversionStatusType.NA.getConversionStatusTypeId() );
+                uuf.setInitialFileStatusTypeId( 0 );
+                uuf.setFileProcessingTypeId(UploadedFileProcessingType.NONE.getUploadedFileProcessingTypeId() );
+            }
+
+            String ext = fct.getBaseExtension();
+            String filename = "candidate-upload-" + rating.getRcCheckId() + "-" + rating.getRcRaterId() + "-" + rating.getRcItemId() + "." + ext;
+            uuf.setInitialFilename( uploadedFile.getFileName());
+            uuf.setInitialMime(uploadedFile.getContentType());
+            uuf.setInitialFileContentTypeId( fct.getFileContentTypeId());
+            uuf.setInitialFileSize( (int) uploadedFile.getSize() );
+            uuf.setFilename(filename);
+            uuf.setFileSize((int) uploadedFile.getSize());
+            uuf.setFileContentTypeId(fct.getFileContentTypeId());
+            uuf.setR1( rc.getOrgId() );
+            uuf.setR2(rating.getRcCheckId());
+            uuf.setLastUpload( new Date() );
+
+            String directory = uuf.getDirectory();
+            BucketType bt = RuntimeConstants.getBooleanValue( "useAwsTestFoldersForProctoring" ) ? BucketType.REFRECORDING_TEST : BucketType.REFRECORDING;
+            // BucketType bt = BucketType.PROCTORRECORDING;
+
+            if( !refBean.getAdminOverride() )
+            {
+                FileXferUtils.init();
+                xfer.saveFile( directory, filename, strm, fct.getBaseContentType(), (int)uploadedFile.getSize(), bt.getBucketTypeId(), true );
+
+                fuf.saveRcUploadedUserFile(uuf);
+            }
+
+            rating.setCandidateUploadedUserFileId( uuf.getRcUploadedUserFileId() );
+            rating.setCandidateRcUploadedUserFile(uuf);
+            
+            if( rating.getRcRatingId()>0 )
+            {
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rating);
+            }
+
+            LogService.logIt("RaterRefUtils.saveUploadedUserFile() Successfully saved Candidate Uploaded File initial filename=" + uploadedFile.getFileName() + ", mime=" + fct.getBaseContentType() +", size=" + uuf.getFileSize() + ", saved filename=" + uuf.getFilename() +", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId() );
+
+            return uuf;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RaterRefUtils.saveUploadedUserFile() " + (rating==null ? "RcRating is null" : "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId()) );
+            throw e;
+        }
+    }
+
     public RcRating saveRcRatingWithCheck( RcRating r ) throws Exception
     {
         if( rcFacade==null )
             rcFacade=RcFacade.getInstance();
-        
+
         // neeed to move this outside of the transaction.
         if( r.getRcRatingId()<=0 )
         {
@@ -1711,7 +2136,7 @@ public class RaterRefUtils extends BaseRefUtils
                 r.setRcRatingId(r2.getRcRatingId() );
             }
         }
-        
+
         return rcFacade.saveRcRating(r);
     }
 
@@ -1799,17 +2224,17 @@ public class RaterRefUtils extends BaseRefUtils
         return getUserTextXhtml( raterRefBean.getRcItemWrapper().getRcItem().getChoice10());
     }
 
-    
+
     private boolean createReferralForRater( RcCheck rc, RcRater rater, User u, String textNotes) throws Exception
     {
         try
         {
-            
+
             //if( rater.getRcReferralList()==null )
            // {
-            
+
             // always reload referrals for rater.
-            
+
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
 
@@ -1828,7 +2253,7 @@ public class RaterRefUtils extends BaseRefUtils
                 if(r.getUserId()==u.getUserId())
                     return false;
             }
-            
+
             RcReferral rfrl = new RcReferral();
             rfrl.setRcCheckId(rater.getRcCheckId());
             rfrl.setRcRaterId(rater.getRcRaterId());
@@ -1838,30 +2263,30 @@ public class RaterRefUtils extends BaseRefUtils
             rfrl.setOrgId(rater.getOrgId());
             rfrl.setCreateDate( new Date() );
             rfrl.setLastUpdate( rfrl.getCreateDate() );
-            rfrl.setRcScriptId( rc.getRcScriptId());    
+            rfrl.setRcScriptId( rc.getRcScriptId());
             if( rc.getRcScript()!=null )
                 rfrl.setTargetRole(rc.getRcScript().getName() );
             if( textNotes!=null && !textNotes.isBlank() )
                 rfrl.setReferrerNotes(textNotes);
             else
                 rfrl.setReferrerNotes(null);
-            
-            
+
+
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
-            
-            rcFacade.saveRcReferral( rfrl );  
-            
+
+            rcFacade.saveRcReferral( rfrl );
+
             rfrl.setUser(u);
-            
+
             rater.getRcReferralList().add(rfrl );
-            
+
             if( u.getUserId()==rater.getUserId() )
                 Tracker.addSelfReferral();
-            
+
             else
                 Tracker.addExtraReferral();
-            
+
             return true;
         }
         catch( Exception e )
@@ -1878,35 +2303,35 @@ public class RaterRefUtils extends BaseRefUtils
             if( (lastName==null || lastName.isBlank()) || (firstName==null || firstName.isBlank()) )
             {
                 LogService.logIt( "RaterRefUtils.createReferral() Referral has no name info. Ignoring." );
-                return false; 
+                return false;
             }
-            
+
             if( phone!=null && !phone.isBlank() && !GooglePhoneUtils.isNumberValid(phone, rater.getUser().getCountryCode() ) )
             {
                 LogService.logIt("RaterRefUtils.createReferral() Phone number (" + phone + ") not valid for country code=" + rater.getUser().getCountryCode() + ".  Ignoring phone." );
                 phone=null;
             }
-            
+
 
             if( (email==null || email.isBlank()) && (phone==null || phone.isBlank()) )
             {
                 LogService.logIt( "RaterRefUtils.createReferral() Referral has no email or phone. Ignoring." );
                 return false;
             }
-            
+
             if( userFacade==null )
                 userFacade = UserFacade.getInstance();
-            
+
             if( email==null || email.isBlank() )
             {
                 email = "{" + StringUtils.generateRandomString(28) + "}";
-                
+
                 while( userFacade.getUserByEmailAndOrgId(email, rc.getOrgId() )!=null  )
                 {
                     email = "{" + StringUtils.generateRandomString(28) + "}";
-                }                
+                }
             }
-            
+
             User u = userFacade.getUserByEmailAndOrgId(email, rc.getOrgId() );
             if( u!=null )
             {
@@ -1916,15 +2341,15 @@ public class RaterRefUtils extends BaseRefUtils
                       u.setEmail(email);
                       save=true;
                 }
-                
+
                 if( phone!=null && !phone.isBlank() && (u.getMobilePhone()==null || u.getMobilePhone().isBlank()) )
                 {
                       u.setMobilePhone(phone);
                       save=true;
                 }
-                
+
                 if( save )
-                     userFacade.saveUser(u,false );               
+                     userFacade.saveUser(u,false );
             }
             else
             {
@@ -1936,16 +2361,16 @@ public class RaterRefUtils extends BaseRefUtils
                 u.setCountryCode( rater.getUser().getCountryCode() );
                 u.setCreateDate( new Date() );
                 u.setLocaleStr( rc.getLangCode());
-                u.setTimeZoneId( rater.getUser().getTimeZoneId() );            
+                u.setTimeZoneId( rater.getUser().getTimeZoneId() );
                 u.setPassword(StringUtils.generateRandomString(12 ));
                 u.setUsername(StringUtils.generateRandomString(30 ));
                 u.setFirstName( firstName );
                 u.setLastName( lastName );
                 u.setEmail(email);
-                
+
                 if( phone!=null && !phone.isBlank() )
                     u.setMobilePhone(GooglePhoneUtils.getFormattedPhoneNumberIntl(phone, u.getCountryCode() ));
-                
+
                 int count = 0;
                 while( count<100 && userFacade.getUserByUsername( u.getUsername())!=null )
                 {
@@ -1955,7 +2380,7 @@ public class RaterRefUtils extends BaseRefUtils
 
                 u = userFacade.saveUser(u, true );
             }
-            
+
             return createReferralForRater(rc, rater, u, textNotes );
         }
         catch( Exception e )
@@ -1964,8 +2389,16 @@ public class RaterRefUtils extends BaseRefUtils
             throw e;
         }
     }
-    
-    
+
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+
 
 
 }

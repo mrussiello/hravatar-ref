@@ -88,8 +88,7 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
             return null;
         return rcItemWrapper.getRcItem();
         
-    }
-    
+    }    
     
     
     public RcItemFormatType getRcItemFormatType()

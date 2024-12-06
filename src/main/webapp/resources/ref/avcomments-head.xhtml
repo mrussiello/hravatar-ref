@@ -17,7 +17,7 @@
     <cc:implementation>
         <!-- cc.attrs.value -->
 
-        <ui:fragment rendered="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}">
+        <ui:fragment rendered="#{not facesUtils.isMsie and (refBean.audioVideoCommentsOk or refBean.audioVideoCandidateUpload)}">
 
             <style>
                 .reftdcenter
@@ -83,7 +83,7 @@
                 var rcRaterId = '#{refBean.rcRaterIdEncrypted}';
                 var rcItemId = '#{raterRefBean.rcItem.rcItemIdEncrypted}';
                 var userId = '#{refBean.userIdEncrypted}';
-                var isAudioOnly = #{refBean.audioCommentsOnly};
+                var isAudioOnly = #{(refBean.refUserType.isCandidate and raterRefBean.rcItemWrapper.rcItem.rcCandidateUploadType.audio) or refBean.audioCommentsOnly};
                 var recordingIsAudioOnly = false;
                 var hasPrevUpload = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null};
                 var prevUploadIsAudio = #{raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.rcUploadedUserFile.isAudio};
@@ -120,7 +120,7 @@
                 // used for playback.
                 var playbackMedEle = null;
 
-                // Used for recording audio or video. 
+                // Used for recording audio or video.
                 var recordMedEle = null;
 
                 // Indicates that medEle and medEle2 are different and should be swapped when playing/recording.
@@ -202,7 +202,7 @@
                     setUseLocalAudioRecording();
 
                     // Testing only
-                    // isIos=true;      
+                    // isIos=true;
 
                     var ele;
 
@@ -254,7 +254,7 @@
 
                         var desiredTagname = recordingIsAudioOnly ? 'audio' : 'video';
 
-                        // Make sure existing elements are the correct type. 
+                        // Make sure existing elements are the correct type.
                         if ((recordMedEle) && recordMedEle.tagName !== desiredTagname)
                             recordMedEle = null;
 
@@ -279,8 +279,8 @@
                         if ((recordMedEle))
                         {
                             recordMedEle.srcObject = null;
-                            //recordMedEle.setAttribute( 'width', desWid ); 
-                            //recordMedEle.setAttribute( 'height', desHgt ); 
+                            //recordMedEle.setAttribute( 'width', desWid );
+                            //recordMedEle.setAttribute( 'height', desHgt );
                             recordMedEle.setAttribute('autoplay', '');
                             recordMedEle.setAttribute('id', 'commentrecordele');
                             recordMedEle.setAttribute('playsinline', 'true');
@@ -384,7 +384,7 @@
                         if ((recordMedEle))
                         {
                             recordMedEle.srcObject = null;
-                            //recordMedEle.setAttribute( 'width', desWid ); 
+                            //recordMedEle.setAttribute( 'width', desWid );
                             recordMedEle.setAttribute('autoplay', '');
                             recordMedEle.setAttribute('id', 'commentrecordele');
                             recordMedEle.setAttribute('playsinline', 'true');
@@ -573,7 +573,7 @@
                         // switch to stop.
                         //var recbut = document.getElementById( 'startstoprecbut' );
                         //if( startRec2() )
-                        //{  
+                        //{
                         //    recbut.src=STOPRECBUTSRC;
                         //}
                         //else
@@ -625,7 +625,7 @@
                         but.style.display = 'inline';
                         //var playbut = document.getElementById( 'playpausebut' );
                         //playbut.src = PLAYBUTSRC;
-                        //playbut.style.display='block';        
+                        //playbut.style.display='block';
                     }
 
                     var ele = document.getElementById('recordinginprogressdiv');
@@ -715,7 +715,7 @@
                     //if( !(playbackMedEle) )
                     //    return;
 
-                    //logIt( 'avcomments-head.xhtml.swapMediaPlayers() BBB forPlayback=' + forPlayback );         
+                    //logIt( 'avcomments-head.xhtml.swapMediaPlayers() BBB forPlayback=' + forPlayback );
 
                     var mediacommentdiv = document.getElementById('mediacommentdiv');
 
@@ -736,7 +736,7 @@
                             mediacommentdiv.appendChild(playbackMedEle);
                     }
 
-                    if (!forPlayback) // && ((playbackMedEle.parentNode) || !((recordMedEle) && (recordMedEle.parentNode))) ) 
+                    if (!forPlayback) // && ((playbackMedEle.parentNode) || !((recordMedEle) && (recordMedEle.parentNode))) )
                     {
                         mediacommentdiv.innerHTML = '';
 
@@ -883,7 +883,7 @@
                                     recordMedEle.setAttribute('muted', '');
                                     recordMedEle.volume = 0;
                                     recordMedEle.load();
-                                    //recordMedEle.play();                                        
+                                    //recordMedEle.play();
                                 }
 
                                 logIt('avcomments-head.xhtml.startMediaStreamLocalAudio() CCC ');
@@ -917,7 +917,7 @@
                                 audDestNode = audContext.createScriptProcessor(2048, 1, 1); // audContext.createMediaStreamDestination();
                                 audSampleRate = audContext.sampleRate;
                                 audSourceNode.connect(audDestNode);
-                                audDestNode.connect(audContext.destination);  // Should not be needed but it is in chrome, and edge. 
+                                audDestNode.connect(audContext.destination);  // Should not be needed but it is in chrome, and edge.
 
                                 audDestNode.onaudioprocess = function (e) {
 
@@ -966,7 +966,7 @@
                         {
                             recordMedEle.volume = 0;
                             // recordMedEle.load();
-                            // recordMedEle.play();                                        
+                            // recordMedEle.play();
                         }
 
                         if (recordingIsAudioOnly && useLocalAudioRecording)
@@ -1239,13 +1239,18 @@
                         ele.innerHTML = prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
                         ele.style.display = 'inline';
                     }
-                    
+
                     ele = document.getElementById('rerecordtxtvid');
                     if (ele)
                         ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAsVid : reRecordTextVid;
                     ele = document.getElementById('rerecordtxtaud');
                     if (ele)
                         ele.innerHTML = hasPrevUpload && prevUploadIsAudio ? reRecordTextAud : reRecordTextAsAud;
+
+                    ele = document.getElementById('candidatefileuploadstatusdiv');
+                    if( ele )
+                        ele.innerHTML = prevUploadIsAudio ? audioAlreadyRecorded : videoAlreadyRecorded;
+
 
                 }
 
@@ -1638,7 +1643,7 @@
 
 
 
-                // ]]>        
+                // ]]>
             </script>
 
 

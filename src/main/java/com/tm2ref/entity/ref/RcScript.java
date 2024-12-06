@@ -333,6 +333,43 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
         return out;
     }
     
+    
+    public boolean getHasCandidateAudioVideoFileUploads( boolean required )
+    {
+        for( RcItemWrapper rciw : getAllItemWrapperList() )
+        {
+            if( rciw.getRcItem().getHasCandidateFileUpload() && rciw.getRcItem().getRcCandidateUploadType().getAnyAudioVideo() )
+            {
+                if( !required || rciw.getRcItem().getHideSkip()==1 )
+                    return true;
+            }
+        }
+        return false;
+        
+    }
+    
+    public boolean getHasCandidateFileUploads()
+    {
+        for( RcItemWrapper rciw : getAllItemWrapperList() )
+        {
+            if( rciw.getRcItem().getHasCandidateFileUpload() )
+                return true;
+        }
+        return false;
+    }
+
+    public boolean getHasShowCandRespToRater()
+    {
+        for( RcItemWrapper rciw : getAllItemWrapperList() )
+        {
+            if( rciw.getRcItem()!=null && rciw.getRcItem().getShowCandRespToRater()==1 )
+                return true;
+        }
+        return false;
+    }
+    
+    
+    
     public List<RcCompetency> getRcCompetencyList()
     {
         List<RcCompetency> o = new ArrayList<>();        

@@ -134,6 +134,7 @@ public class RuntimeConstants
         cache.put( "awsRekognitionRegionId", (Integer)1 );
         
         cache.put( "useAwsTestFoldersForProctoring", false );
+        cache.put( "useAwsTestFoldersForRefUploads", false );
 
         cache.put( "awsS3BaseUrl", "https://s3.amazonaws.com/" );
 

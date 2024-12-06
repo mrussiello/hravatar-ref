@@ -83,7 +83,7 @@ public class RcScriptFacade
             else
                 r = (RcItem) em.find(RcItem.class, rcItemId );
             
-            if( r!=null && r.getRcCompetencyId()>0 )
+            if( load && r!=null && r.getRcCompetencyId()>0 )
                 r.setRcCompetency( getRcCompetency( r.getRcCompetencyId() ));
             
             return r;

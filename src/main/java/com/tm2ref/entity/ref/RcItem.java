@@ -1,6 +1,7 @@
 package com.tm2ref.entity.ref;
 
 
+import com.tm2ref.ref.RcCandidateUploadType;
 import com.tm2ref.ref.RcImportanceType;
 import com.tm2ref.ref.RcItemFormatType;
 import com.tm2ref.service.EncryptUtils;
@@ -179,7 +180,24 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     @Column(name="intparam1")
     private int intParam1;
     
+    /*
+     For rating items with Candidate File Upload, indicates that the primary item panel should NOT be shown to Candidate (treat as File upload only or comments only).
+    */
+    @Column(name="intparam2")
+    private int intParam2;
+        
     
+    
+    @Column(name="showcandresptorater")
+    private int showCandRespToRater;
+    
+    /*
+      0=none
+      1=excel, ppt, word, txt, pdf only.
+    */
+    @Column(name="candidateuploadtypeid")
+    private int candidateUploadTypeId;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
@@ -196,8 +214,7 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     
     @Transient
     private RcCompetency rcCompetency;
-    
-    
+        
     @Override
     public Object clone() throws CloneNotSupportedException
     {
@@ -209,6 +226,26 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
         return ((Integer)displayOrder).compareTo( o.getDisplayOrder());
     }
     
+    public boolean getHasNonAvCandidateFileUpload()
+    {
+        return candidateUploadTypeId>=1 && candidateUploadTypeId<=19;        
+    }
+
+    public boolean getHasAvCandidateFileUpload()
+    {
+        return candidateUploadTypeId>=20 && candidateUploadTypeId<=22;        
+    }
+
+    
+    public boolean getHasCandidateFileUpload()
+    {
+        return candidateUploadTypeId>=1;
+    }
+
+    public RcCandidateUploadType getRcCandidateUploadType()
+    {
+        return RcCandidateUploadType.getValue( candidateUploadTypeId );
+    }
     
     
     public RcItemFormatType getRcItemFormatType()
@@ -471,6 +508,44 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
         this.question = question;
     }
 
+    public String getChoiceX( int index )
+    {
+        switch( index )
+        {
+            case 0 -> {
+                return "";
+            }
+            case 1 -> {
+                return choice1;
+            }
+            case 2 -> {
+                return choice2;
+            }
+            case 3 -> {
+                return choice3;
+            }
+            case 4 -> {
+                return choice4;
+            }
+            case 5 -> {
+                return choice5;
+            }
+            case 6 -> {
+                return choice6;
+            }
+            case 7 -> {
+                return choice7;
+            }
+            case 8 -> {
+                return choice8;
+            }
+            case 9 -> {
+                return choice9;
+            }
+        }
+        return null;
+    }
+    
     public String getChoice1() {
         return choice1;
     }
@@ -803,6 +878,31 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     public void setRcItemStatusTypeId(int rcItemStatusTypeId) {
         this.rcItemStatusTypeId = rcItemStatusTypeId;
     }
+
+    public int getShowCandRespToRater() {
+        return showCandRespToRater;
+    }
+
+    public void setShowCandRespToRater(int showCandRespToRater) {
+        this.showCandRespToRater = showCandRespToRater;
+    }
+
+    public int getCandidateUploadTypeId() {
+        return candidateUploadTypeId;
+    }
+
+    public void setCandidateUploadTypeId(int candidateUploadTypeId) {
+        this.candidateUploadTypeId = candidateUploadTypeId;
+    }
+
+    public int getIntParam2() {
+        return intParam2;
+    }
+
+    public void setIntParam2(int intParam2) {
+        this.intParam2 = intParam2;
+    }
+
 
 
     

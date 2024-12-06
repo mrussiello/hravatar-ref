@@ -8,9 +8,12 @@ package com.tm2ref.ref;
 import com.tm2ref.corp.CorpBean;
 import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.ref.RcCheck;
+import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcRater;
+import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.file.FileUploadFacade;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.EmailUtils;
@@ -303,17 +306,45 @@ public class CandidateRefUtils extends BaseRefUtils
         RcCheck rc = refBean.getRcCheck();
         try
         {
+            if( rcFacade==null )
+                rcFacade = RcFacade.getInstance();
+            refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview( rc, rcFacade ) );
             //if( rcCheckUtils==null )
             //    rcCheckUtils = new RcCheckUtils();
             //rcCheckUtils.performRcCandidateCompletionIfReady(rc);
             if( !refBean.getAdminOverride() )
+            {
+                // update the Rc Check
+                if( rc.getCandidateRatingsCompleteDate()==null )
+                {
+                    rc.setCandidateRatingsCompleteDate(new Date() );
+                    if( rcFacade==null )
+                        rcFacade = RcFacade.getInstance();
+                    rcFacade.saveRcCheck( rc, true );
+
+                    if( rc.getRaterSendDelayTypeId()==1 && rc.getCandidateRcRaterId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
+                    {
+                        // indicates must wait and check media.
+                        rc.setRaterSendDelayTypeId(10);
+                        rcFacade.saveRcCheck( rc, true );                                                    
+                    }                    
+                    
+                    // initial ratings completed, so send Rater Invitations
+                    if( rc.getRaterSendDelayTypeId()==1 ) //  || rc.getRaterSendDelayTypeId()==10 )
+                    {
+                        sendDelayedRaterInvitations( rc );
+                    }
+                }
+                                
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
+            }
+            
 
             // needs references.
             if( getNeedsCore3() )
             {
                 refBean.setRefPageType(RefPageType.CORE3 );
-                if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
+                if( !rc.getRcRaterListCandidate().isEmpty() && rc.getNeedsSupervisors() )
                     setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
                 return getViewFromPageType( refBean.getRefPageType() );
             }
@@ -330,6 +361,36 @@ public class CandidateRefUtils extends BaseRefUtils
         }
     }
 
+    
+    public void sendDelayedRaterInvitations( RcCheck rc )
+    {
+        getRefBean();
+        
+        try
+        {
+            if( rc.getCandidateRatingsCompleteDate()==null )
+            {
+                LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() candidateRatingsCompleteDate is null. Cannot send delayed invitations. " + rc.toString() );
+                return;
+            }
+
+            if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+                        
+            if( refBean.getHasUnconvertedAvMediaForReview() )
+            {
+                LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() Candidate Ratings has uncoverted av media for rater review. Cannot send delayed invitations. " + rc.toString() );
+                return;
+            }
+            
+            sendUnsentRcRaters( rc, false );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "CandidateRefUtils.sendDelayedRaterInvitations() " + (rc==null ? "rcCheck is null" : rc.toString() ) );
+        }
+    }
+    
     public String getCandidateInputQuestion()
     {
         getRefBean();
@@ -782,9 +843,13 @@ public class CandidateRefUtils extends BaseRefUtils
             // We can sometimes get multiple simultaneous beacons, so reload and check that not complete.
             Thread.sleep((int) (6000*Math.random()));
 
-
-            if( !refBean.getAdminOverride() )
-                sendUnsentRcRaters( rc );
+            if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+            
+            if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
+            {
+                sendUnsentRcRaters(rc, true );
+            }
 
             if( !refBean.getAdminOverride() )
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
@@ -824,39 +889,18 @@ public class CandidateRefUtils extends BaseRefUtils
             rcCheckUtils.loadRcCheckForScoringOrResults(rc);
             rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete(rc, null, false );
         }
-
-        // rcCheckUtils.performRcCheckCompletionIfReady(rc);
-
-
-        //if( rc.getRcRaterListCandidate().size()>=rc.getMinRaters() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
-        //{
-        //    rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
-        //    rc.setCandidateCompleteDate( new Date() );
-        //    chg=true;
-        //}
-
-        //if( rc.getRcRaterListCandidate().size()>=rc.getMinRaters() && rc.getCandidateCompleteDate()==null )
-        //{
-        //    rc.setCandidateCompleteDate( new Date() );
-        //    chg=true;
-        //}
-
-        //if( !chg )
-        //    return;
-
-        //if( chg )
     }
 
 
-    protected void sendUnsentRcRaters( RcCheck rc ) throws Exception
+    protected void sendUnsentRcRaters( RcCheck rc, boolean candidateRatersOnly) throws Exception
     {
         getRefBean();
 
-        if( rc.getCandidateCannotAddRaters()==1 )
+        if( candidateRatersOnly && rc.getCandidateCannotAddRaters()==1 )
             return;
 
-        List<RcRater> rcrl = rc.getRcRaterListCandidate();
-        int[]  sendstats = null;
+        List<RcRater> rcrl = candidateRatersOnly ? rc.getRcRaterListCandidate() : rc.getRcRaterList();
+        int[]  sendstats;
 
         for( RcRater rcr : rcrl )
         {
@@ -865,7 +909,7 @@ public class CandidateRefUtils extends BaseRefUtils
 
             if( !rcr.getRcRaterStatusType().getSentOrHigher() )
             {
-                sendstats = sendRcCheckToRater(rc, rcr, false, false, false );
+                sendstats = refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(rc, rcr, false, false, false );
                 if( sendstats[0]>0 || sendstats[1]>0 )
                 {
                     rcr.setRcRaterStatusTypeId( RcRaterStatusType.SENT.getRcRaterStatusTypeId() );
@@ -915,8 +959,14 @@ public class CandidateRefUtils extends BaseRefUtils
                     throw new STException( "g.XCErrMinSupervisors", new String[] {Integer.toString( rc.getMinSupervisorsCandidate()), getRcCheckRatersNameLc(), Integer.toString(rc.getMinSupervisorsNeeded())});
 
 
-                if( !refBean.getAdminOverride() )
-                    sendUnsentRcRaters( rc );
+                if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                    refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+            
+                
+                if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
+                {
+                    sendUnsentRcRaters(rc, true );
+                }
             }
 
             if( !refBean.getAdminOverride() )
@@ -1105,9 +1155,28 @@ public class CandidateRefUtils extends BaseRefUtils
             }
 
             boolean reminder = rcRater.getSendDate()!=null && rcRater.getRcRaterStatusType().getSentOrHigher();
-            int[] out = this.refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(  rc, rcRater, false, reminder, true); //    sendToRater( rc, rcRater, true, true );
-            LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
+            
+            if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+                                    
+            if( !reminder && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
+            {
+                LogService.logIt( "CandidateRefUtils.processSendToRater() CCC.1 Did not send invitation because RcCheck is set to not send to raters until Candidate Ratings are completed." );
+                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );                
+            }
 
+            else if( !reminder && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
+            {
+                LogService.logIt( "CandidateRefUtils.processSendToRater() CCC.2 Did not send invitation because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
+                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );                
+            }
+                
+            else
+            {
+                int[] out = refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(  rc, rcRater, false, reminder, true); //    sendToRater( rc, rcRater, true, true );
+                LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
+            }
+            
             // OK we can edit.
             return "StayInSamePlace";
         }
@@ -1414,7 +1483,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     else if( rcRater.getRcRaterId()>0  )
                         LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.0 created new Rater rcRaterId=" + rcRater.getRcRaterId() + " but found an existing Rater rcRaterId=" + r2.getRcRaterId() + " for the same email. However, the other one has been sent so cannot delete it.");
 
-                    candidateRefBean.setRcRater(this.partlyCloneRcRaterForNewReference(rcRater));
+                    candidateRefBean.setRcRater(partlyCloneRcRaterForNewReference(rcRater));
 
                     if( r2.getRcRaterSourceType().getIsCandidateOrEmployee() )
                         setErrorMessage("g.XCFoundUserAndExistingRaterX", new String[] { getRcCheckRaterName(), getRcCheckTypeName(), u2.getFullname(), u2.getEmail()} );
@@ -1507,12 +1576,24 @@ public class CandidateRefUtils extends BaseRefUtils
                     rcRater.setNeedsResendMobile(true);
                 else if( rcRater.getTempMobile()==null  && user.getHasMobilePhone() && GooglePhoneUtils.isNumberValid(user.getMobilePhone(), user.getCountryCode()) )
                     rcRater.setNeedsResendMobile(true);
-                if( !refBean.getAdminOverride() && exit )
+                
+                
+                if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                    refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+                
+                if( exit && rcRater.getSendDate()==null && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
+                    LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.1 Did not send invitation because RcCheck is set to not send to raters until Candidate Ratings are completed." );
+
+                else if( exit && rcRater.getSendDate()==null && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
+                    LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.2 Did not send invitation because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
+                                
+                else if( !refBean.getAdminOverride() && exit )
                 {
                     // if exiting, send if need to only.
                     int[] out = sendRcCheckToRater(rc, rcRater, true, false, true);
                     LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.1 sending because not create and exit is true emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
                 }
+                
                 else if( refBean.getAdminOverride() && exit )
                     this.setStringInfoMessage( "Did not send to Rater because of AdminOverride." );
             }
@@ -1556,14 +1637,29 @@ public class CandidateRefUtils extends BaseRefUtils
 
             // LogService.logIt( "CandidateRefUtils.processSaveRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));
 
-            if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
+            if( refBean.getHasUnconvertedAvMediaForReview()==null )
+                refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
+            
+            if( send && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
+            {
+                LogService.logIt( "CandidateRefUtils.processSaveRater() Did not send because RcCheck is set to not send to raters until Candidate Ratings are completed." );
+                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );                
+            }
+
+            else if( send && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
+            {
+                LogService.logIt( "CandidateRefUtils.processSaveRater() Did not send because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
+                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );                
+            }
+            
+            else if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
             {
                 int[] out = sendRcCheckToRater(rc, rcRater, false, false, true);
                 // LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
             }
 
             else if( refBean.getAdminOverride() && send && rcRater.getRaterNoSend()==1 )
-                this.setStringInfoMessage( "Did not send to Rater because of AdminOverride and/or designated No Send." );
+                this.setStringInfoMessage( "Did not send to Rater because of Rater.NoSend." );
 
             else if( refBean.getAdminOverride() && send )
                 this.setStringInfoMessage( "Did not send to Rater because of AdminOverride." );
@@ -1760,5 +1856,4 @@ public class CandidateRefUtils extends BaseRefUtils
 
         return sent;
     }
-
 }

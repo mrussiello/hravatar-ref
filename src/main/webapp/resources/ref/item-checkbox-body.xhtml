@@ -3,8 +3,9 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="jakarta.faces.composite/ref">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -17,7 +18,7 @@
     <br style="clear:both"/>
 
     <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
+    <h:form prependId="false" enctype="#{raterRefUtils.formEncType}">
     <ref:stdforminputs />
     <ref:raterforminputs />
     <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
@@ -37,19 +38,17 @@
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:20px;padding-bottom:20px;margin:0 auto">
 
+            <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
+                <ref:item-candidate-response-body />    
+            </ui:fragment>
+            
             <ref:item-infoquestion />
             
-            <!--
-            <p:selectManyCheckbox value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="grid" columns="2" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
-                <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemList}"/>
-            </p:selectManyCheckbox>
-            -->
-
-            <p:selectManyCheckbox id="itemradio1" value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+            <p:selectManyCheckbox rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" id="itemradio1" value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                     <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
             </p:selectManyCheckbox>
 
-            <h:panelGrid columns="2" style="margin-left:10px;margin-right:auto" columnClasses="chtablecola,chtablecolb">
+            <h:panelGrid rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" columns="2" style="margin-left:10px;margin-right:auto" columnClasses="chtablecola,chtablecolb">
 
                 <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>                    
                 <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>
@@ -82,10 +81,11 @@
                 <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
 
             </h:panelGrid>
-            
-            
+                        
+            <ref:item-fileupload-body />    
+                                    
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
-            <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
+                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
             </h:panelGroup>
             
             <h:panelGroup>
@@ -110,7 +110,7 @@
         <ref:avcomments-dialog />
     
     </h:form>
-        <ref:avcomments-uploadform />
+        
     </div>
 
     

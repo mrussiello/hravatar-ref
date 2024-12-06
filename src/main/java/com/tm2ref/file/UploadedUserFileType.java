@@ -12,6 +12,7 @@ public enum UploadedUserFileType
     REF_CHECK_RATER(211,"Reference Check Rater Images (Only)"),
     REF_CHECK_RATER_ID(212,"Reference Check Rater IDs (Only)"),
     REF_CHECK_RATER_COMMENT(220,"Reference Check Rater Comment" ),
+    REF_CHECK_CANDIDATE_FILE_UPLOAD(221,"Reference Check Candidate File Upload" ),
     CT5(230,"CT5 media" ),
     CT5_GENERAL(231,"CT5 General Uploaded File (for download inside item)" );
 

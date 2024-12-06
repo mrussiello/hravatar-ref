@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import jakarta.ejb.Stateless;
 import javax.naming.InitialContext;
-import jakarta.persistence.CacheRetrieveMode;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -120,9 +119,32 @@ public class FileUploadFacade
         }        
     }
     
+    public RcUploadedUserFile getRcUploadedUserFile( long rcUploadedUserFileId) throws Exception
+    {        
+        try
+        {
+            Query q = em.createNamedQuery( "RcUploadedUserFile.findById",  RcUploadedUserFile.class );
+            q.setParameter( "rcUploadedUserFileId", rcUploadedUserFileId );
+            q.setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+            return (RcUploadedUserFile) q.getSingleResult();
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "FileUploadFacade.getRcUploadedUserFile( rcUploadedUserFileId=" + rcUploadedUserFileId + " ) " );
+            throw new STException( e );
+        }        
+        
+    }
+    
+    
     
     public RcUploadedUserFile getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( long rcCheckId, long rcRaterId, int rcItemId, int uploadedUserFileTypeId) throws Exception
     {
+        // LogService.logIt("FileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType() START rcCheckId=" + rcCheckId + ", rcItemId=" + rcItemId + ", rcRaterId=" + rcRaterId + ", uploadedUserFileTypeId=" + uploadedUserFileTypeId + " ) " );
         
         try
         {
@@ -143,8 +165,7 @@ public class FileUploadFacade
         {
             LogService.logIt(e, "FileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", uploadedUserFileTypeId=" + uploadedUserFileTypeId + " ) " );
             throw new STException( e );
-        }        
-        
+        }                
     }
 
 }

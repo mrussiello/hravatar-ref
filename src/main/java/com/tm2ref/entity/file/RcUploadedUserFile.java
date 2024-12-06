@@ -36,7 +36,8 @@ import jakarta.persistence.Transient;
  */
 @Entity
 @Table( name = "rcuploadeduserfile" )
-@NamedQueries( {        
+@NamedQueries( {          
+    @NamedQuery( name = "RcUploadedUserFile.findById", query = "SELECT o FROM RcUploadedUserFile AS o WHERE o.rcUploadedUserFileId=:rcUploadedUserFileId" ),
     @NamedQuery( name = "RcUploadedUserFile.findRcCheckIdAndRcRaterIdRcItemIdAndTypeId", query = "SELECT o FROM RcUploadedUserFile AS o WHERE o.rcCheckId=:rcCheckId AND o.rcRaterId=:rcRaterId AND o.rcItemId=:rcItemId AND o.uploadedUserFileTypeId=:uploadedUserFileTypeId" ),
     @NamedQuery( name = "RcUploadedUserFile.findPhotoRcCheckIdAndRcRaterId", query = "SELECT o FROM RcUploadedUserFile AS o WHERE o.rcCheckId=:rcCheckId AND o.rcRaterId=:rcRaterId AND o.uploadedUserFileTypeId IN (201,202,211)" ),
     @NamedQuery( name = "RcUploadedUserFile.findRcCheckIdAndRcRaterId", query = "SELECT o FROM RcUploadedUserFile AS o WHERE o.rcCheckId=:rcCheckId AND o.rcRaterId=:rcRaterId" )
@@ -221,6 +222,19 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
 
     @Transient
     private Map<Integer,Integer> failedIndexMap;
+    
+    @Transient
+    private String uploadedFileUrl;
+    
+    @Transient
+    private String uploadedFileIconFilename;
+    
+    @Transient
+    private String uploadedFileTypeName;
+    
+    
+    
+    
 
     @Override
     public int hashCode() {
@@ -909,7 +923,28 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
         this.tempInt1 = tempInt1;
     }
 
+    public String getUploadedFileUrl() {
+        return uploadedFileUrl;
+    }
 
+    public void setUploadedFileUrl(String uploadedFileUrl) {
+        this.uploadedFileUrl = uploadedFileUrl;
+    }
 
+    public String getUploadedFileIconFilename() {
+        return uploadedFileIconFilename;
+    }
+
+    public void setUploadedFileIconFilename(String uploadedFileIconFilename) {
+        this.uploadedFileIconFilename = uploadedFileIconFilename;
+    }
+
+    public String getUploadedFileTypeName() {
+        return uploadedFileTypeName;
+    }
+
+    public void setUploadedFileTypeName(String uploadedFileTypeName) {
+        this.uploadedFileTypeName = uploadedFileTypeName;
+    }
 
 }

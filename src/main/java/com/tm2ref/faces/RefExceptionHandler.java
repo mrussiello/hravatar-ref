@@ -4,7 +4,6 @@
  */
 package com.tm2ref.faces;
 
-import com.tm2ref.corp.CorpBean;
 import com.tm2ref.ref.RefBean;
 import com.tm2ref.ref.RefUtils;
 import com.tm2ref.service.LogService;
@@ -56,14 +55,14 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 FacesContext fc = FacesContext.getCurrentInstance();
 
                 if( fc==null )
-                    LogService.logIt("RefExceptionHandler.handle() FacesContext is null. AAA.1 Exception: " + t.toString() + ", " + t.getMessage() );
+                    LogService.logIt( "RefExceptionHandler.handle() FacesContext is null. AAA.1 Exception: " + t.toString() + ", " + t.getMessage() );
                 
                 if( fc==null  )
                     throw new Exception( "FacesContext was null" );
 
                 String viewId = fc.getViewRoot()!=null ? fc.getViewRoot().getViewId() : "ViewRoot unavailable (FacesContext or FacesContext.viewRoot is null) fc=" + (fc==null ? "null" : "not null");
                 
-                // LogService.logIt("RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", " + t.getMessage() );
+                LogService.logIt(t, "RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", message=" + t.getMessage() );
                 
                 Throwable rootCause = t;
                 Throwable cause=null;
@@ -72,7 +71,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 }                
                 
                 if( !rootCause.equals(t))
-                    LogService.logIt( "RefExceptionHandler.handle() AAA.2 Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
+                    LogService.logIt( rootCause, "RefExceptionHandler.handle() AAA.2 Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
                 
                 
                 RefBean rb = (RefBean) fc.getApplication().getELResolver().getValue( fc.getELContext(), null, "refBean" );

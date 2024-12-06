@@ -3,8 +3,9 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="jakarta.faces.composite/ref">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -17,7 +18,7 @@
     <br style="clear:both"/>
 
     <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false">
+    <h:form prependId="false" enctype="#{raterRefUtils.formEncType}">
     <ref:stdforminputs />
     <ref:raterforminputs />
     <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
@@ -37,8 +38,14 @@
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:5px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
 
+            <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
+                <ref:item-candidate-response-body />    
+            </ui:fragment>
+            
             <ref:item-infoquestion />
-              
+                         
+            <ref:item-fileupload-body  />    
+             
             <h:panelGroup>
             <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
             </h:panelGroup>
@@ -80,7 +87,7 @@
     
     </h:form>
         
-        <ref:avcomments-uploadform />
+        
     </div>
     
     

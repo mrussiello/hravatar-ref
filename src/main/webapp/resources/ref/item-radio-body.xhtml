@@ -3,8 +3,9 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="jakarta.faces.composite/ref">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -26,7 +27,7 @@
     <br style="clear:both"/>
 
     <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form>
+    <h:form prependId="true" enctype="#{raterRefUtils.formEncType}">
     <ref:stdforminputs />
     <ref:raterforminputs />
     <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
@@ -46,15 +47,13 @@
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
+            <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
+                <ref:item-candidate-response-body />    
+            </ui:fragment>
+                        
             <ref:item-infoquestion />
             
-            <!--
-            <p:selectOneRadio value="#{raterRefBean.selectedRadioIndex}" styleClass="textmedium ttformtext" layout="pageDirection" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
-                <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemList}"/>
-            </p:selectOneRadio>
-            -->            
-
-            <h:panelGroup>
+            <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}">
                 <p:selectOneRadio id="itemradio1" value="#{raterRefBean.selectedRadioIndex}" styleClass="textmedium ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
                     <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
                 </p:selectOneRadio>
@@ -104,8 +103,10 @@
                 -->
             </h:panelGroup>
             
+            <ref:item-fileupload-body />    
+                                    
             <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
-                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie and refBean.audioVideoCommentsOk}"/>
+                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
             </h:panelGroup>
             
             
@@ -130,7 +131,7 @@
         <ref:avcomments-dialog />
     
     </h:form>
-        <ref:avcomments-uploadform />
+        
     </div>
 
     

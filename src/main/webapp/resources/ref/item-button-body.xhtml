@@ -3,8 +3,9 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="jakarta.faces.composite/ref">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -37,7 +38,13 @@
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
             
+            <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
+                <ref:item-candidate-response-body />    
+            </ui:fragment>
+            
             <ref:item-infoquestion />
+            
+            <ref:item-fileupload-body />    
             
             <p:commandButton styleClass="buttonstyleclass" ajax="false" rendered="#{raterRefBean.rcItem.hasChoice1}" action="#{raterRefUtils.processSaveItemResp}" value="#{raterRefBean.rcItem.choice1}">
                 <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="1"/>

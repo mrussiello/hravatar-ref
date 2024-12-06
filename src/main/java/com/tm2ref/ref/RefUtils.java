@@ -224,18 +224,38 @@ public class RefUtils extends BaseRefUtils
             }
             //if( !getNewTestStartsOk() && corpBean.getHasCorp() )
             //    return corpBean.getCorp().getOfflinePage();
-            if( refBean.getRecDevs()<2 && !proctorBean.getCameraOptOut() )
+            
+            // No microphone
+            if( refBean.getRecDevs()<1 && !proctorBean.getCameraOptOut() )
             {
-                LogService.logIt( "RefUtils.processMediaRecEntry() User device does not have a detectable camera. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()));
+                LogService.logIt( "RefUtils.processMediaRecEntry() User device does not have a detectable microphone. rcCheckId=" + rc.getRcCheckId());
                 RefUserType refUserType = refBean.getRefUserType();
                 proctorBean.init( rc, refUserType );
-                if( refUserType.getIsCandidate() && rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture())
+                
+                if( refUserType.getIsCandidate() && refBean.getAudioVideoCandidateUpload())
                 {
-                    if( rc.getRcCandidatePhotoCaptureType().getIsRequired() )
+                    if( refBean.getRequiresAudioVideoCandidateUpload() )
+                        return conditionUrlForSessionLossGet("/pp/microphone-required.xhtml", true);
+                    else
+                        return conditionUrlForSessionLossGet("/pp/microphone-optional.xhtml", true);
+                }                
+            }
+
+            // No Camera
+            if( refBean.getRecDevs()<2 && !proctorBean.getCameraOptOut() )
+            {
+                LogService.logIt( "RefUtils.processMediaRecEntry() User device does not have a detectable camera. rcCheckId=" + rc.getRcCheckId());
+                RefUserType refUserType = refBean.getRefUserType();
+                proctorBean.init( rc, refUserType );
+                
+                if( refUserType.getIsCandidate() && (rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() || refBean.getAudioVideoCandidateUpload()) )
+                {
+                    if( rc.getRcCandidatePhotoCaptureType().getIsRequired() || refBean.getRequiresAudioVideoCandidateUpload() )
                         return conditionUrlForSessionLossGet("/pp/camera-required.xhtml", true);
                     else
                         return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml", true);
                 }
+                
                 else if( refUserType.getIsRater() && rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture())
                 {
                     if( rc.getRcRaterPhotoCaptureType().getIsRequired() )
@@ -244,6 +264,8 @@ public class RefUtils extends BaseRefUtils
                         return conditionUrlForSessionLossGet("/pp/camera-optional.xhtml", true);
                 }
             }
+            
+            
 
             return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             // return getNextViewForCorp(); // getNextViewForTestingProcess( tk );

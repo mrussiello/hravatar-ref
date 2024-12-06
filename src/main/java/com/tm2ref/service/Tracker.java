@@ -2,7 +2,6 @@ package com.tm2ref.service;
 
 import com.tm2ref.global.RuntimeConstants;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,6 +39,10 @@ public class Tracker
     private static int reminderRaters = 0;
     private static int reminderEmailsSent = 0;
     private static int reminderTextMessages = 0;
+    
+    private static int delayedRaterInvitations=0;
+    private static int delayedRaterInvitationEmails=0;
+    private static int delayedRaterInvitationTextMessages=0;
     
     private static int rcLogErrorMessages = 0;
     private static int rcLogWarningMessages = 0;
@@ -112,6 +115,22 @@ public class Tracker
     {
         reminderTextMessages++;
     }
+    
+    public static void addDelayedInvitationRater()
+    {
+        delayedRaterInvitations++;
+    }
+    public static void addDelayedInvitationEmailRater()
+    {
+        delayedRaterInvitationEmails++;
+    }
+    public static void addDelayedInvitationTextRater()
+    {
+        delayedRaterInvitationTextMessages++;
+    }
+
+
+    
     public static void addTestKeyEntry()
     {
         testKeyEntries++;
@@ -245,6 +264,10 @@ public class Tracker
         outMap.put( "REMINDER: Rater Sends", ((int) reminderRaters ) );
         outMap.put( "REMINDER: Emails Sent", ((int) reminderEmailsSent ) );
         outMap.put( "REMINDER: Text Messages Sent", ((int) reminderTextMessages ) );
+        
+        outMap.put( "INVITATION: Delayed Rater Invitations", ((int)delayedRaterInvitations));
+        outMap.put( "INVITATION: Delayed Rater Invitation Emails", ((int)delayedRaterInvitationEmails));
+        outMap.put( "INVITATION: Delayed Rater Invitations Texts", ((int)delayedRaterInvitationTextMessages));
         
         outMap.put( "USER: Admin Logons", ((int) logonCount ) );
         outMap.put( "USER: Admin Logouts", ((int) logoutCount ) );

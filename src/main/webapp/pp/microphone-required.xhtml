@@ -63,31 +63,29 @@
     <ref:messages-embedded />
 
     <h:form prependId="false" >
-
+        
         <ref:stdforminputs />
         <ref:noncoreforminputs />
 
-        <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-top:2px;padding-bottom:8px">
+        <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
             
-            <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPCameraOptional']}" escape="false"/>
+            <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPMicrophoneRequired']}" escape="false"/>
                         
             <h:panelGroup>
                 <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" alt=""/>
-                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P1']}">
-                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneRequired.P1']}">
+                     <f:param value="#{refUtils.rcCheckTypeName}"/>
                 </h:outputFormat>
             </h:panelGroup>
 
-            
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P2']}" />
-            
+             
 
              <h:panelGroup>
-                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPCameraOptional.P3']}"/>
-                &#160;
-                <h:outputLink value="https://www.hravatar.com/ta/help/check-camera.xhtml" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
-                    <h:outputText styleClass="pflinktext ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
-                </h:outputLink>
+             <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneRequired.P3']}"/>
+             &#160;
+             <h:outputLink value="https://www.hravatar.com/ta/help/check-camera.xhtml" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
+                 <h:outputText  styleClass="pflinktext ttformtext" style="text-decoration: underline" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
+             </h:outputLink>
              </h:panelGroup>
              
              
@@ -99,16 +97,15 @@
             
             <h:panelGroup>
                 <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard( '#{proctorUtils.fullRestartUrl}' ); ">
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer;word-wrap:break-word" value="#{proctorUtils.fullRestartUrl}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:normal;text-decoration: underline;cursor:pointer;word-wrap:break-word" value="#{proctorUtils.fullRestartUrl}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
                     &#160;&#160;
                     <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
                 </div>
             </h:panelGroup>
 
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P2']}">
+            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneRequired.P2']}">
                 <f:param value="#{refUtils.rcCheckTypeName}"/>
             </h:outputFormat>           
-            
             <h:panelGroup>
                 <table style="margin-left:auto;margin-left:auto;padding:4px;padding-top:15px">
                     <tr>
@@ -132,13 +129,10 @@
             <h:panelGroup>
                 <div style="text-align:center;padding-top:40px">
                     <div style="display:inline-block">
-                        <p:commandButton tabindex="16" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" value="#{stMessages['g.PPT.ContinueNoCamera']}" title="#{stMessages['g.PPT.ContinueNoCameraAlt']}"/>
-                        &#160;
                         <p:button tabindex="16" value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}" onclick="PF('exitcheckconfirm').show(); return false"/>
                     </div>                    
                 </div>
             </h:panelGroup>
-            
             <h:panelGroup>
                 <div style="text-align:center;padding-top:10px">
                     <h:commandLink action="#{proctorUtils.processCheckForCameraAgain}" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
@@ -146,18 +140,17 @@
                     </h:commandLink>
                 </div>                
             </h:panelGroup>
-            
 
         </h:panelGrid>
 
     <div id="thetextspan"></div>
     
     <p:dialog closable="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;margin-left:2px;margin-right:2px">
+    
         <div role="status">
-        <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
+        <p style="text-align: left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                 <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
-        </p>
+            </h:outputFormat></p>
         
         <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
         </div>
@@ -170,9 +163,10 @@
                 </h:outputFormat>
                 
                 <h:outputText value="#{stMessages['g.ExitConfirm.P2.camerachange']}" />
+                
 
                 <h:panelGroup>
-                    <p:commandButton style="margin-bottom:3px" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
+                        <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
                         &#160;
                         <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
                     </h:panelGroup>

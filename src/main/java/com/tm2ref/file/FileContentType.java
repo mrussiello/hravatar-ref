@@ -43,6 +43,7 @@ public enum FileContentType
     TEXT_HTML( 403 ,"filetype.html" , "htm,html" , "text/html" , false  , "text/html" , "html", false),
     TEXT_XHTML( 401 ,"filetype.xhtml" , "xhtml" , "text/xhtml" , false , "text/xhtml" , "html", false),
     TEXT_XML( 400 ,"filetype.xml" , "xml" , "text/xml" , false , "text/xml" , "xml", false ),
+    TEXT_CSV( 404 ,"filetype.csv" , "csv" , "text/csv" , false  , "text/csv" , "csv", false),
     DOCUMENT_DOC( 600 ,"filetype.msword" , "doc" , "application/msword" , false , "application/msword" , "doc", false ),
     DOCUMENT_DOCX( 601 ,"filetype.mswordx" , "docx" , "application/vnd.openxmlformats-officedocument.wordprocessingml.document" , false , "application/vnd.openxmlformats-officedocument.wordprocessingml.document" , "docx", false ),
     DOCUMENT_XLS( 602 ,"filetype.xls" , "xls" , "   application/vnd.ms-excel" , false , "   application/vnd.ms-excel" , "xls", false ),
@@ -101,7 +102,43 @@ public enum FileContentType
         this.supportsDirectDl = drctDl;
     }
 
+    
+    public boolean isValidForCandidateUploadedFile()
+    {
+        return equals(DOCUMENT_PDF) || equals(TEXT_PLAIN) || equals(TEXT_CSV) || 
+                equals(ARCHIVE_ZIP) || equals(DOCUMENT_DOCX) || equals(DOCUMENT_DOC) || 
+                equals(DOCUMENT_XLSX) || equals(DOCUMENT_XLS) || 
+                equals(DOCUMENT_PPTX) || equals(DOCUMENT_PPT); 
+    }
 
+    public boolean isExcel()
+    {
+        return equals(DOCUMENT_XLSX) || equals(DOCUMENT_XLS)  || equals(TEXT_CSV);
+    }
+    
+    public boolean isPowerPoint()
+    {
+        return equals(DOCUMENT_PPTX) || equals(DOCUMENT_PPT); 
+    }
+    
+    public boolean isWord()
+    {
+        return equals(DOCUMENT_PDF) || equals(TEXT_PLAIN) || equals(DOCUMENT_DOCX) || equals(DOCUMENT_DOC); 
+    }
+
+    public boolean isPdf()
+    {
+        return equals(DOCUMENT_PDF); 
+    }
+
+    public boolean isZip()
+    {
+        return equals(ARCHIVE_ZIP); 
+    }
+
+    
+
+    
     public String getBaseContentType()
     {
         if( contentTypes == null || contentTypes.length == 0 )
@@ -253,12 +290,6 @@ public enum FileContentType
         return false;
     }
 
-    public boolean isFlashSwf()
-    {
-        return fileContentTypeId == 202;
-    }
-
-
     public boolean isImage()
     {
         if( fileContentTypeId >= 300 && fileContentTypeId < 400 )
@@ -270,22 +301,6 @@ public enum FileContentType
     public boolean isText()
     {
         if( fileContentTypeId >= 400 && fileContentTypeId < 500 )
-            return true;
-
-        return false;
-    }
-
-    public boolean isPdf()
-    {
-        if( fileContentTypeId == 500 )
-            return true;
-
-        return false;
-    }
-
-    public boolean isPpt()
-    {
-        if( fileContentTypeId == 501 )
             return true;
 
         return false;

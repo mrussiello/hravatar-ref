@@ -643,7 +643,7 @@ public class ProctorUtils extends FacesUtils {
                 throw new STException( "g.RCPPPhotoRequired", new String[]{rc.getRcCheckName()} );
             
             // proctorBean.setRecDevs(0);
-            proctorBean.setCameraOptOut(true);
+            // proctorBean.setCameraOptOut(true);
             
             RefUtils refUtils = RefUtils.getInstance();
             RefPageType rpt = refUtils.getNextPageTypeForRefProcess();            
@@ -789,6 +789,49 @@ public class ProctorUtils extends FacesUtils {
         
     }
     
+
+    public String processContinueWithoutMicrophone()
+    {
+        RcCheck rc = refBean.getRcCheck();        
+        try
+        {            
+            if( rc==null )
+            {
+                LogService.logIt( "ProctorUtils.processContinueWithoutMicrophone() RcCheck is null" );
+                return conditionUrlForSessionLossGet("/index.xhtml" );
+            }
+        
+            if( refBean.getRefUserType()==null )
+            {
+                LogService.logIt( "ProctorUtils.processContinueWithoutMicrophone() RcCheck is null" );
+                return conditionUrlForSessionLossGet("/index.xhtml" );
+            }
+                        
+            if( refBean.getRefUserType().getIsCandidate() && refBean.getRequiresAudioVideoCandidateUpload() )
+                throw new STException( "g.RCPPPMicrophoneRequired", new String[]{rc.getRcCheckName()} );
+            
+            refBean.setRecDevs(0);
+            proctorBean.setCameraOptOut(true);
+            
+            RefUtils refUtils = RefUtils.getInstance();
+            
+            RefPageType rpt = refBean.getRefPageType();
+            //RefPageType rpt = refUtils.getNextPageTypeForRefProcess();            
+            //refBean.setRefPageType(rpt);      
+            return conditionUrlForSessionLossGet( refUtils.getViewFromPageType( refBean.getRefPageType() ) );
+        }        
+        catch( STException e )
+        {
+            setMessage( e );
+            return "StayInSamePlace";
+        }        
+        catch( Exception e )
+        {
+            LogService.logIt( e, "ProctorUtils.processContinueWithoutMicrophone() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
+            setMessage( e );
+            return "StayInSamePlace";
+        }        
+    }
     
     public String processContinueWithoutCamera()
     {

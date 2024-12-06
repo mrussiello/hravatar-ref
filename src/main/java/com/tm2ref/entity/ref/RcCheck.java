@@ -123,6 +123,12 @@ public class RcCheck implements Serializable, Cloneable
     @Column(name="askforreferrals")
     private int askForReferrals;
     
+    /*
+     0 = no delay
+     1 = Delay until candidate completion.
+    */
+    @Column(name="ratersenddelaytypeid")
+    private int raterSendDelayTypeId;
     
     //@Column(name="disablecandidatedirectinput")
     //private int disableCandidateDirectInput;
@@ -258,6 +264,10 @@ public class RcCheck implements Serializable, Cloneable
     @Column(name="candidatecompletedate")
     private Date candidateCompleteDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="candidateratingscompletedate")
+    private Date candidateRatingsCompleteDate;
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="candidatelastupdate")
     private Date candidateLastUpdate;
@@ -1692,6 +1702,22 @@ public class RcCheck implements Serializable, Cloneable
 
     public void setCandidateOneRaterNoSendB(boolean b) {
         this.candidateOneRaterNoSend = b ? 1 : 0;
+    }
+
+    public int getRaterSendDelayTypeId() {
+        return raterSendDelayTypeId;
+    }
+
+    public void setRaterSendDelayTypeId(int raterSendDelayTypeId) {
+        this.raterSendDelayTypeId = raterSendDelayTypeId;
+    }
+
+    public Date getCandidateRatingsCompleteDate() {
+        return candidateRatingsCompleteDate;
+    }
+
+    public void setCandidateRatingsCompleteDate(Date candidateRatingsCompleteDate) {
+        this.candidateRatingsCompleteDate = candidateRatingsCompleteDate;
     }
 
     

@@ -1,6 +1,5 @@
 package com.tm2ref.reminder;
 
-import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.global.STException;
 import com.tm2ref.ref.RcReminderType;
 import com.tm2ref.service.LogService;
@@ -110,6 +109,36 @@ public class RcReminderFacade
             throw new STException(e);
         }
         return out;
+    }
+    
+    
+    public List<Long> getRcRaterIdsNeedingDelayedInvitationSends() throws Exception
+    {
+        String sqlStr = "SELECT r.rcraterid FROM rccheck AS rc INNER JOIN rcrater AS r ON r.rccheckid=rc.rccheckid WHERE rc.rccheckstatustypeid=20 AND rc.ratersenddelaytypeid=10 AND rc.candidatecompletedate IS NOT NULL AND r.senddate IS NULL AND r.rcraterstatustypeid=0";
+        
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
+
+        if( pool == null )
+            throw new Exception( "Can not find Datasource" );
+        
+        List<Long> out = new ArrayList<>();
+                        
+        try (Connection con = pool.getConnection();
+             Statement stmt = con.createStatement() )
+        {
+            ResultSet rs = stmt.executeQuery( sqlStr );            
+            while( rs.next() )
+            {
+                out.add( rs.getLong(1) );
+            }            
+            rs.close();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RcReminderFacade.getRcRaterIdsNeedingDelayedInvitationSends() " + sqlStr );
+            throw new STException(e);
+        }
+        return out;        
     }
     
     public List<Long> getRcRaterIdsNeedingReminder() throws Exception

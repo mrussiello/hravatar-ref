@@ -8,6 +8,7 @@ package com.tm2ref.ref;
 import com.tm2ref.api.ResultPoster;
 import com.tm2ref.api.ResultPosterFactory;
 import com.tm2ref.entity.event.TestKey;
+import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcOrgPrefs;
@@ -15,9 +16,14 @@ import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
+import com.tm2ref.entity.user.User;
 import com.tm2ref.event.EventFacade;
 import com.tm2ref.event.TestKeyStatusType;
+import com.tm2ref.file.BucketType;
+import com.tm2ref.file.FileContentType;
 import com.tm2ref.file.FileUploadFacade;
+import com.tm2ref.file.FileXferUtils;
+import com.tm2ref.file.UploadedUserFileType;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.NumberUtils;
 import com.tm2ref.global.RuntimeConstants;
@@ -56,7 +62,7 @@ public class RcCheckUtils {
     RcFacade rcFacade;
     RcScriptFacade rcScriptFacade;
     EventFacade eventFacade;
-    
+        
     private static String[] ALPHABET = new String[]{"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
     
     private static synchronized void init()
@@ -68,13 +74,133 @@ public class RcCheckUtils {
             rcItemIdsForContactPermission = RuntimeConstants.getIntList("RefCheckContactPermissionRcItemIds", ",");
             rcItemIdsForRecruiting = RuntimeConstants.getIntList("RefCheckContactRecruitingRcItemIds", ","); 
             rcItemIdsForPriorRole = RuntimeConstants.getIntList("RefCheckPriorRoleRcItemIds", ","); 
-            rcItemIdsForReferralsRequest = RuntimeConstants.getIntList("RefCheckReferralsRequestRcItemIds", ",");             
+            rcItemIdsForReferralsRequest = RuntimeConstants.getIntList("RefCheckReferralsRequestRcItemIds", ","); 
         }
         catch( Exception e )
         {
             LogService.logIt( e, "RcCheckUtils.init()" );            
         }
     }
+    
+    
+    
+    
+    
+    
+    public static boolean hasUnconvertedCandidateMediaForRaterReview( RcCheck rc, RcFacade rcFacade ) throws Exception
+    {
+        try
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            
+            if( rc.getRcRaterList()==null )
+                rc.setRcRaterList( rcFacade.getRcRaterList(rc.getRcCheckId()));
+                        
+            List<RcRating> rcrl = rcFacade.getRcRatingList(rc.getRcCheckId(), rc.getCandidateRcRaterId() );
+
+            if( rcrl==null || rcrl.isEmpty() )
+                return false;
+            
+            RcScriptFacade rcScriptFacade=RcScriptFacade.getInstance();
+            RcItem rci;
+            FileUploadFacade fuf = null;
+            for( RcRating rcRating : rcrl )
+            {
+                rci = rcScriptFacade.getRcItem( rcRating.getRcItemId(), false, false);
+                if( rci.getShowCandRespToRater()<=0 || !rci.getHasAvCandidateFileUpload() )
+                    continue;
+                if( rcRating.getUploadedUserFileId()>0 )
+                {
+                    if( fuf==null )
+                        fuf=FileUploadFacade.getInstance();
+                    rcRating.setRcUploadedUserFile( fuf.getRcUploadedUserFile( rcRating.getUploadedUserFileId()));
+                    if( rcRating.getRcUploadedUserFile()!=null && rcRating.getRcUploadedUserFile().getHasRecordingInConversion() )
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) );
+            throw e;
+        }
+    }
+    
+    public static String getUploadedFileUrl( RcUploadedUserFile uploadedUserFile )
+    {
+        // String thumbUrl = null;
+        UploadedUserFileType uft = uploadedUserFile.getUploadedUserFileType();
+        BucketType bt = RuntimeConstants.getBooleanValue("useAwsTestFoldersForRefUploads") ? BucketType.REFRECORDING_TEST : BucketType.REFRECORDING;;
+        boolean aws = RuntimeConstants.getBooleanValue("useAwsForUploadedRefMedia");
+
+        String dir = uploadedUserFile.getDirectory();
+        if( dir.startsWith("/") )
+            dir = dir.substring(1, dir.length() );
+        
+        if( aws )
+        {
+            if( RuntimeConstants.getBooleanValue("useAwsTempUrlsForMedia") )
+            {
+                try
+                {
+                    return FileXferUtils.getPresignedUrlAws( dir, uploadedUserFile.getFilename(), bt.getBucketTypeId(), null, RuntimeConstants.getIntValue( "awsTempUrlMinutes") );
+                }
+                catch( Exception e )
+                {
+                    LogService.logIt( e, "RcCheckUtils.getUploadedFileUrl() dir=" + dir + ", filename=" + uploadedUserFile.getFilename()  );
+                    return "";
+                }
+            }
+
+            // Normal Method.
+            return RuntimeConstants.getStringValue( "awsS3BaseUrl") + bt.getBucket() + "/" + bt.getBaseKey() + dir + "/" + uploadedUserFile.getFilename();
+        }
+        
+        // Not AWS
+        return RuntimeConstants.getStringValue( "uploadedUserFileBaseUrlHttps") + "/" + dir + "/" + uploadedUserFile.getFilename();           
+    }
+    
+    public static String getUploadedFileIconFilename( RcUploadedUserFile uploadedUserFile)
+    {
+        if( uploadedUserFile==null )
+            return null;
+        
+        FileContentType fct = uploadedUserFile.getFileContentType();
+        
+        if( fct.equals( FileContentType.DOCUMENT_DOC) || fct.equals( FileContentType.DOCUMENT_DOCX ) )
+            return "word_icon_ta_70.png";
+        
+        if( fct.equals( FileContentType.DOCUMENT_XLS) || fct.equals( FileContentType.DOCUMENT_XLSX ) || fct.equals( FileContentType.TEXT_CSV ) )
+            return "excel_Icon_ta_70.png";
+        
+        if( fct.equals( FileContentType.DOCUMENT_PPT) || fct.equals( FileContentType.DOCUMENT_PPTX ) )
+            return "ppt-icon_ta_70.png";
+        
+        if( fct.equals( FileContentType.DOCUMENT_PDF)  )
+            return "pdf_icon_ta_70.png";
+
+        if( fct.equals( FileContentType.ARCHIVE_ZIP)  )
+            return "zip_icon_ta_70.png";
+               
+        return "document_icon_ta_70.png";
+    }
+    
+    public static String getUploadedFileTypeName( Locale locale, RcUploadedUserFile uploadedUserFile )
+    {
+        if( uploadedUserFile==null )
+            return null;
+        
+        FileContentType fct = uploadedUserFile.getFileContentType();
+        
+        return fct==null ? "" : fct.getBaseExtension().toUpperCase();        
+    }
+
+        
     
     
     public static boolean isObsDateValid( Date d )
@@ -519,13 +645,13 @@ public class RcCheckUtils {
                 }                
             }
             
-            if( !adminOverride && (rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() || (rc.getRcAvType().getAnyMedia() && rc.getCollectRatingsFmCandidate())) )
+            if( !adminOverride && (rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() || ( (rc.getRcAvType().getAnyMedia() || rc.getRcScript().getHasCandidateFileUploads()) && rc.getCollectRatingsFmCandidate())) )
             {
                 FileUploadFacade fuf = FileUploadFacade.getInstance();
                 rc.setRcUploadedUserFileList( fuf.getRcUploadedUserFilesForRcCheckAndRater(rc.getRcCheckId(), cRtr==null ? 0 : cRtr.getRcRaterId() ) );
                 // rc.setPhotoRcUploadedUserFileList( fuf.getRcUploadedUserFilesForRcCheckAndRater(rc.getRcCheckId(), cRtr==null ? 0 : cRtr.getRcRaterId() ) );
                 
-                if( cRtr!=null && rc.getRcAvType().getAnyMedia() )
+                if( cRtr!=null && (rc.getRcAvType().getAnyMedia() || rc.getRcScript().getHasCandidateFileUploads()) )
                 {
                     rc.setRcUploadedUserFilesInCandidateRatings( cRtr.getRcRatingList(), cRtr.getRcRaterId());
                 }
@@ -581,8 +707,23 @@ public class RcCheckUtils {
                 rc.setRcRatingsInScript(rcrl, false );
                 
                 if( !adminOverride && rc.getRcAvType().getAnyMedia() )
-                    rc.getRcRater().setRcUploadedUserFilesInRatings();                
-                // if( rc.getRcRater().getRcUploadedUserFile())
+                {
+                    rc.getRcRater().setRcUploadedUserFilesInRatings();
+                } 
+                
+                if( rc.getRcScript().getHasShowCandRespToRater() && rc.getRcRaterList()==null )
+                {
+                    rc.setRcRaterList( rcFacade.getRcRaterList( rc.getRcCheckId() ));
+                    if( adminOverride )
+                    {
+                        List<RcRater> rl = new ArrayList<>();
+                        for( RcRater rtr : rc.getRcRaterList() )
+                        {
+                            rl.add( (RcRater)rtr.clone() );
+                        }
+                        rc.setRcRaterList(rl);
+                    }
+                }
             }
             
             if( rc.getRcCheckStatusType().getIsComplete() || rc.getRcCheckStatusType().getIsExpired() )

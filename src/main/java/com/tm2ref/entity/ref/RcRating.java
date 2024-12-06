@@ -70,6 +70,8 @@ public class RcRating implements Serializable, Cloneable
     @Column(name="uploadeduserfileid")
     private long uploadedUserFileId;
     
+    @Column(name="candidateuploadeduserfileid")
+    private long candidateUploadedUserFileId;
 
     @Column(name="text")
     private String text;
@@ -101,6 +103,15 @@ public class RcRating implements Serializable, Cloneable
     
     @Transient
     private RcUploadedUserFile rcUploadedUserFile;
+    
+    @Transient
+    private RcUploadedUserFile candidateRcUploadedUserFile;
+    
+    @Transient
+    private RcRating candidateRcRating;
+    
+    
+    
     
     @Override
     public Object clone() throws CloneNotSupportedException
@@ -391,6 +402,30 @@ public class RcRating implements Serializable, Cloneable
 
     public void setRcUploadedUserFile(RcUploadedUserFile rcUploadedUserFile) {
         this.rcUploadedUserFile = rcUploadedUserFile;
+    }
+
+    public long getCandidateUploadedUserFileId() {
+        return candidateUploadedUserFileId;
+    }
+
+    public void setCandidateUploadedUserFileId(long candidateUploadedUserFileId) {
+        this.candidateUploadedUserFileId = candidateUploadedUserFileId;
+    }
+
+    public RcUploadedUserFile getCandidateRcUploadedUserFile() {
+        return candidateRcUploadedUserFile;
+    }
+
+    public void setCandidateRcUploadedUserFile(RcUploadedUserFile candidateRcUploadedUserFile) {
+        this.candidateRcUploadedUserFile = candidateRcUploadedUserFile;
+    }
+
+    public RcRating getCandidateRcRating() {
+        return candidateRcRating;
+    }
+
+    public void setCandidateRcRating(RcRating candidateRcRating) {
+        this.candidateRcRating = candidateRcRating;
     }
 
     

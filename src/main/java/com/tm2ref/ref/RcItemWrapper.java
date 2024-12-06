@@ -8,9 +8,11 @@ package com.tm2ref.ref;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.report.RcHistogram;
+import com.tm2ref.util.StringUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -92,8 +94,52 @@ public class RcItemWrapper implements Comparable<RcItemWrapper>, Serializable {
                 return true;
         }
         return false;
+    }    
+    
+    public boolean getShowPrimaryItemToCandidate()
+    {
+        return this.getRcItem().getIntParam2()<=0;
     }
     
+    public boolean getHasCandidateSelectionToShow()
+    {
+        if( getRcItem().getShowCandRespToRater()<=0 || getRcRating()==null || getRcRating().getCandidateRcRating()==null || (!getRcRating().getCandidateRcRating().getIsComplete() && !getRcRating().getCandidateRcRating().getIsSkipped()) )
+            return false;
+        
+        if( getRcRating().getCandidateRcRating().getIsSkipped() )
+            return true;
+              
+        
+        return getRcItem().getRcItemFormatType().getShowPrimaryItemToCandidate( getRcItem(), getRcRating().getCandidateRcRating());
+    }
+
+    public boolean getHasCandidateCommentsToShow()
+    {
+        if( getRcItem().getShowCandRespToRater()<=0 || getRcRating()==null || getRcRating().getCandidateRcRating()==null || (!getRcRating().getCandidateRcRating().getIsComplete() && !getRcRating().getCandidateRcRating().getIsSkipped()) )
+            return false;
+        
+        return getRcRating().getCandidateRcRating().getText()!=null && !getRcRating().getCandidateRcRating().getText().isBlank();
+    }
+    
+
+    public String getCandidateResponseValueXhtml( Locale locale )
+    {
+        
+        if( !getHasCandidateSelectionToShow() )
+            return  "";
+
+        String vals = getRcItem().getRcItemFormatType().getResponseValueForRating( getRcItem(), locale, getRcRating().getCandidateRcRating() );
+        
+        return StringUtils.replaceStandardEntities(vals);
+    }
+    
+    public String getCandidateCommentsValueXhtml()
+    {
+        if( !getHasCandidateCommentsToShow() )
+            return  "";
+
+        return StringUtils.replaceStandardEntities( getRcRating().getCandidateRcRating().getText() );        
+    }
     
     public boolean getHasRatingInfoToShow()
     {

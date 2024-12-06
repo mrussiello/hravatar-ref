@@ -209,7 +209,7 @@
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
                                 </p:commandLink>
                                 &#160;
-                                <p:commandLink rendered="#{rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
+                                <p:commandLink rendered="#{not refBean.hasUnconvertedAvMediaForReview and rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
                                     <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
                                 </p:commandLink>

@@ -23,14 +23,19 @@ public class ReminderService implements ServletContextListener {
   
         try
         {            
-            // LogService.logIt( "AutoScoreService.contextInitialized() STARTING SETUP  AAAA ");
+            // LogService.logIt( "ReminderService.contextInitialized() STARTING SETUP  AAAA ");
             (new Thread(new ReminderStarter())).start();                       
-            // LogService.logIt( "AutoScoreService.contextInitialized() COMPLETED SETUP  BBBB ");
+
+
+            // LogService.logIt( "ReminderService.contextInitialized() COMPLETED SETUP  BBBB ");
+            (new Thread(new DelayedInvitationStarter())).start();                       
+            
+            // LogService.logIt( "ReminderService.contextInitialized() COMPLETED SETUP  CCC ");
         }
         
         catch( Exception e )
         {
-            LogService.logIt( e, "AutoScoreService.contextInitialized() ");
+            LogService.logIt( e, "ReminderService.contextInitialized() ");
            //  EmailUtils.getInstance().sendEmailToAdmin( "AutoScoreService.doReportAutoBatch() Error during Score Batch.", "Time: " + (new Date()).toString() + ", Error was: " + e.toString() );
             
         }

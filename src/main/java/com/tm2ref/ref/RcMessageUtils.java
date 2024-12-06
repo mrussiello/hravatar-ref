@@ -329,12 +329,11 @@ public class RcMessageUtils {
     */
     public int[] sendRcCheckToRater( RcCheck rc, RcRater rater, RcOrgPrefs rcOrgPrefs, int sourceCode, long userId, boolean sendIfNeedsOnly, boolean reminder) throws Exception
     {
-        User user = null;
         if( rc==null )
             throw new Exception( "rcCheck is null" );
         if( rater==null )
             throw new Exception( "rater is null"); 
-        user = rater.getUser();        
+        User user = rater.getUser();        
         if( user==null )
             throw new Exception( "RcMessageUtils.sendRcCheckToRater() user is null. rcCheckId=" + rc.getRcCheckId() );
         

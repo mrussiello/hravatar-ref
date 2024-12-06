@@ -1,5 +1,10 @@
 package com.tm2ref.ref;
 
+import com.tm2ref.entity.ref.RcItem;
+import com.tm2ref.entity.ref.RcRating;
+import com.tm2ref.service.LogService;
+import java.util.Locale;
+
 
 
 /**
@@ -12,7 +17,8 @@ public enum RcItemFormatType
     RADIO(2,"Radios Plus Comments", "rcift.radiospluscomments" ),  
     BUTTON(3,"Buttons Only - No Comments", "rcift.button" ),  
     MULTIPLE_CHECKBOX(4,"Multiple Checkboxes - No Comments", "rcift.multicheckbox" ),
-    COMMENTS_ONLY(5,"Comments Only", "rcift.commentsonly" );  
+    COMMENTS_ONLY(5,"Comments Only", "rcift.commentsonly" );
+    //CANDIDATE_FILE_UPLOAD(6,"Candidate File Upload", "rcift.candfileupload" );  
 
     private final int rcItemFormatTypeId;
 
@@ -30,6 +36,41 @@ public enum RcItemFormatType
         // this.page = p;
     }
     
+    public boolean getShowPrimaryItemToCandidate( RcItem rcItem, RcRating rating )
+    {
+        if( rating==null )
+            return false;
+        
+        if( equals( RATING ) )
+            return rating.getSelectedResponse()!=null && !rating.getSelectedResponse().isBlank() && !rating.getSelectedResponse().equalsIgnoreCase("0");
+        
+        if( equals( RADIO ) || equals( BUTTON ) || equals( MULTIPLE_CHECKBOX ))
+            return rating.getSelectedResponse()!=null && !rating.getSelectedResponse().isBlank();
+               
+        return false;
+
+    }
+
+    
+    public String getResponseValueForRating( RcItem rcItem, Locale locale, RcRating rating )
+    {
+        if( rating==null )
+            return "";
+        
+        if( equals( RATING ) )
+            return rating.getSelectedResponse();
+        
+        if( equals( RADIO ) || equals( BUTTON ) || equals( MULTIPLE_CHECKBOX ))
+        {
+            rating.setRcItem(rcItem);
+            return rating.getSelectedChoicesText();
+        }
+               
+        return "";
+
+    }
+    
+    
     public boolean getIsScoreOk()
     {
         return getIsRating() || getHasChoicePoints();
@@ -39,11 +80,16 @@ public enum RcItemFormatType
     {
         return equals(RATING);
     }
-
+    
     public boolean getIsCommentsOnly()
     {
         return equals(COMMENTS_ONLY);
     }
+
+    //public boolean getIsCandidateFileUpload()
+    //{
+    //    return equals(CANDIDATE_FILE_UPLOAD);
+    //}
 
     public boolean getIsRadio()
     {
@@ -61,10 +107,10 @@ public enum RcItemFormatType
     {
         return equals(MULTIPLE_CHECKBOX);
     }
-    
+        
     public boolean getCanHaveComments()
     {
-        return equals(RATING) || equals(RADIO) || equals(MULTIPLE_CHECKBOX) || equals(COMMENTS_ONLY);
+        return equals(RATING) || equals(RADIO) || equals(MULTIPLE_CHECKBOX) || equals(COMMENTS_ONLY); // || equals(CANDIDATE_FILE_UPLOAD);
     }
 
     

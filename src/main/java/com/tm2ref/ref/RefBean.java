@@ -44,6 +44,10 @@ public class RefBean extends BaseRefBean implements Serializable
     boolean adminOverride;
     boolean accessibleActive=false;
     
+    Boolean hasUnconvertedAvMediaForReview = null;
+    
+    
+    
     
     // private String httpSessionId;
 
@@ -92,6 +96,7 @@ public class RefBean extends BaseRefBean implements Serializable
         strParam4=null;
         strParam5=null;
         tgtUser=null;
+        hasUnconvertedAvMediaForReview = null;
     }
 
     public boolean getIsMrf()
@@ -180,7 +185,7 @@ public class RefBean extends BaseRefBean implements Serializable
         if( rcCheck==null )
             return false;
         
-        if( getAudioVideoCommentsOk() )
+        if( getAudioVideoCommentsOk() || getAudioVideoCandidateUpload() )
             return true;  
         
         return false;
@@ -240,6 +245,10 @@ public class RefBean extends BaseRefBean implements Serializable
         // candidate photos
         if( refUserType.getIsCandidate() && rcCheck.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() )
             return true;
+
+        // candidate photos
+        if( refUserType.getIsCandidate() && getAudioVideoCandidateUpload() )
+            return true;
         
         // rater photos
         if( refUserType.getIsRater() && rcCheck.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture() )
@@ -271,6 +280,16 @@ public class RefBean extends BaseRefBean implements Serializable
         return rcCheck.getAvCommentsTypeId()>0;
     }
     
+    public boolean getAudioVideoCandidateUpload()
+    {
+        return getRefUserType().getIsCandidate() && rcCheck!=null && rcCheck.getRcScript()!=null && rcCheck.getRcScript().getHasCandidateAudioVideoFileUploads( false );
+    }
+    
+    public boolean getRequiresAudioVideoCandidateUpload()
+    {
+        return getRefUserType().getIsCandidate() && rcCheck!=null && rcCheck.getRcScript()!=null && rcCheck.getRcScript().getHasCandidateAudioVideoFileUploads( true );
+    }
+    
     public boolean getVideoCommentsOk()
     {
         // LogService.logIt( "RefBean.getAudioVideoCommentsOk() MedRecApi=" + medRecApi + ", avCommentTypeId=" + rcCheck.getAvCommentsTypeId() );
@@ -283,6 +302,7 @@ public class RefBean extends BaseRefBean implements Serializable
     {
         if( rcCheck==null )
             return false;
+        
         return rcCheck.getAvCommentsTypeId()==1;
     }
     
@@ -417,6 +437,14 @@ public class RefBean extends BaseRefBean implements Serializable
 
     public void setAccessibleActive(boolean accessibleActive) {
         this.accessibleActive = accessibleActive;
+    }
+
+    public Boolean getHasUnconvertedAvMediaForReview() {
+        return hasUnconvertedAvMediaForReview;
+    }
+
+    public void setHasUnconvertedAvMediaForReview(Boolean hasUnconvertedAvMediaForReview) {
+        this.hasUnconvertedAvMediaForReview = hasUnconvertedAvMediaForReview;
     }
 
 

@@ -7,7 +7,10 @@ package com.tm2ref.reminder;
 
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcRater;
+import com.tm2ref.entity.user.User;
 import com.tm2ref.global.I18nUtils;
+import com.tm2ref.ref.CandidateRefUtils;
+import com.tm2ref.ref.RcCheckUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.ref.RcMessageUtils;
 import com.tm2ref.ref.RcReminderType;
@@ -19,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -59,6 +63,27 @@ public class ReminderUtils
             LogService.logIt( e, "ReminderUtils.doReminderBatch() " );                        
         }
     }
+
+    public void doDelayedInvitationBatch() throws Exception
+    {
+        int[] count = new int[2];
+        int[] sent;
+        try
+        {
+            sent = sendRaterDelayedInvitations();
+            if( sent[0]>0 )
+                count[0] += sent[0];
+            if( sent[1]>0 )
+                count[1] += sent[1];
+            
+            LogService.logIt( "ReminderUtils.doDelayedInvitationBatch() COMPLETE sent " + count[0] + " emails and " + count[1] + " text messages." );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "ReminderUtils.doDelayedInvitationBatch() " );                        
+        }
+    }
+
     
     public int[] sendCandidateReminders() throws Exception
     {
@@ -205,7 +230,7 @@ public class ReminderUtils
             {
                 LogService.logIt( "ReminderUtils.sendRaterReminders() Skipping rater has completed. rcCheckId=" + rc.getRcCheckId() );
                 continue;
-            }            
+            }   
             
             // Candidate has acted within the last day.
             if( rater.getRcRaterStatusType().getStartedOrHigher() && rater.getLastUpdate()!=null && rater.getLastUpdate().after(oneDayBefore) )
@@ -213,6 +238,12 @@ public class ReminderUtils
                 LogService.logIt( "ReminderUtils.sendRaterReminders() Skipping rater has started. rcCheckId=" + rc.getRcCheckId() );
                 continue;
             }            
+            
+            if( rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
+            {
+                LogService.logIt( "ReminderUtils.sendRaterReminders() Skipping rater because RcCheck set to not send until Candidate Ratings Completed and they are not complete. rcCheckId=" + rc.getRcCheckId() );
+                continue;
+            }
             
             if( rater.getSendDate()==null )
             {
@@ -271,7 +302,144 @@ public class ReminderUtils
         LogService.logIt( "ReminderUtils.sendRaterReminders() COMPLETE idList=" + idList.size() + ", sent " + count[0] + " emails and " + count[1] + " text messages." );
         return count;
     }
+    
+    public int[] sendRaterDelayedInvitations()throws Exception
+    {
+        if( rcReminderFacade==null )
+            rcReminderFacade = RcReminderFacade.getInstance();
 
+        List<Long> idList = rcReminderFacade.getRcRaterIdsNeedingDelayedInvitationSends();        
+        LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() START RcRaterIds found: " + idList.size() );
+        int[] count = new int[2];
+        int[] sent;
+        RcRater rater;
+        RcCheck rc = null;
+        
+        int errorCount = 0;
+        for( Long id : idList )
+        {
+            try
+            {
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                rater = rcFacade.getRcRater( id, true );
+                
+                if( rater.getIsCandidateOrEmployee() )
+                {
+                    LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() Skipping rater this rater is the Candidate or Employee. rcRaterId=" + rater.getRcRaterId() );
+                    continue;
+                }
+                
+                if( rc==null || rc.getRcCheckId()!=rater.getRcCheckId() )
+                    rc = rcFacade.getRcCheck( rater.getRcCheckId(), true );
+
+                // set for delayed send after media
+                if( rc.getRaterSendDelayTypeId()!=10 )
+                    continue;
+
+                if( rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
+                {
+                    LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() Skipping rater because RcCheck set to not send until Candidate Ratings Completed and they are not complete. rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
+                    continue;
+                }
+
+                if( rater.getRcRaterStatusType().getCompleteOrHigher())
+                {
+                    LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() Skipping rater has completed. rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
+                    continue;
+                }   
+
+                if( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade) )
+                {
+                    LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() Skipping. Candidate Rater still has media in conversion to be reviewed. rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
+                    continue;
+                }
+
+                if( rater.getSendDate()!=null )
+                {
+                    LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() Skipping rater send because send date is NOT null. Invitation already sent. rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
+                    continue;
+                }            
+
+                sent = sendRcCheckInvitationToRater( rc, rater );
+
+                if( sent[0]>0 || sent[1]>0 )
+                    Tracker.addDelayedInvitationRater();
+
+                if( sent[0]>0 )
+                {
+                    count[0] += sent[0];
+                    Tracker.addDelayedInvitationEmailRater();
+                }
+                if( sent[1]>0 )
+                {
+                    count[1] += sent[1];
+                    Tracker.addDelayedInvitationTextRater();
+                }
+            }
+            catch( Exception e )
+            {
+                errorCount++;
+                LogService.logIt( e, "ReminderUtils.sendRaterDelayedInvitations() Processing rcRaterId=" + id + ", errorCount=" + errorCount );
+                if( errorCount>20)
+                    break;
+            }
+        }
+        LogService.logIt( "ReminderUtils.sendRaterDelayedInvitations() COMPLETE idList=" + idList.size() + ", sent " + count[0] + " emails and " + count[1] + " text messages." );
+        return count;        
+    }
+
+    
+    /*
+     data[0] = email sent count
+     data[1] = text sent count
+
+    */
+    protected int[] sendRcCheckInvitationToRater( RcCheck rc, RcRater rater ) throws Exception
+    {
+        if( rc==null )
+            throw new Exception( "rcCheck is null" );
+        if( rater==null )
+            throw new Exception( "rater is null");
+        if( userFacade == null )
+            userFacade = UserFacade.getInstance();
+        User user = rater.getUser();
+
+        if( user==null )
+        {
+            user = userFacade.getUser( rater.getUserId());
+            rater.setUser(user);
+        }
+
+        if( user==null )
+            throw new Exception( "CandidateRefUtils.sendRcCheckToRater() user is null. rcCheckId=" + rc.getRcCheckId() );
+
+        if( rc.getAdminUser()==null )
+            rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ) );
+        if( rc.getLocale()==null && rc.getLangCode()!=null )
+            rc.setLocale( I18nUtils.getLocaleFromCompositeStr( rc.getLangCode() ));
+
+        if( rc.getRcOrgPrefs()==null )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            rc.setRcOrgPrefs( rcFacade.getRcOrgPrefsForOrgId( rc.getOrgId() ));
+        }
+
+        if( rc.getSuborgId()>0 && rc.getRcSuborgPrefs()==null )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            rc.setRcSuborgPrefs( rcFacade.getRcSuborgPrefsForSuborgId( rc.getSuborgId() ));
+        }
+
+        RcMessageUtils rcmu = new RcMessageUtils();
+        int[] sent = rcmu.sendRcCheckToRater(rc, rater, rc.getRcOrgPrefs(), 1, rc.getUserId(), true, false );
+
+        return sent;
+    }
+    
+    
     
     /**
      * returns 
