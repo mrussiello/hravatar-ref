@@ -1071,16 +1071,31 @@ public class BaseRefUtils  extends FacesUtils
                 rcu.checkRcPreAuthorization(rc, refUserType.getIsRater() ? rc.getRcRater() : null );
             }
 
+            if( rc.getReportId()<=0 && rc.getRcScript().getReportId()>0 )
+            {
+                rc.setReportId( rc.getRcScript().getReportId() );
+                rc.setReportId2( rc.getRcScript().getReportId2());
+                if( !adminOverride )
+                {
+                    if( rcFacade==null )
+                        rcFacade = RcFacade.getInstance();
+                    rcFacade.saveRcCheck(rc, false);
+                }
+            }
+            
+            
             if( rc.getReportId()<=0 )
             {
                 List<Integer> ridl = rcCheckUtils.getReportIdsForRcCheck(rc, rc.getLangCode()!=null && !rc.getLangCode().isBlank() ? rc.getLangCode() : getLocale().toString() );
                 rc.setReportId( ridl.get(0) );
                 if( ridl.size()>1 )
                     rc.setReportId2( ridl.get(1));
-                if( rcFacade==null )
-                    rcFacade = RcFacade.getInstance();
                 if( !adminOverride )
+                {
+                    if( rcFacade==null )
+                        rcFacade = RcFacade.getInstance();
                     rcFacade.saveRcCheck(rc, false);
+                }
             }
 
             refBean.setRefUserType( refUserType );

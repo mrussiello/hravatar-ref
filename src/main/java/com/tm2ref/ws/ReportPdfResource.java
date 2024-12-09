@@ -11,6 +11,7 @@ import com.tm2ref.global.I18nUtils;
 import com.tm2ref.ref.RcCheckUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.ref.RcMessageUtils;
+import com.tm2ref.ref.RcResultReportingUtils;
 import com.tm2ref.ref.RefUserType;
 import com.tm2ref.report.ReportManager;
 import com.tm2ref.service.EncryptUtils;
@@ -124,7 +125,14 @@ public class ReportPdfResource extends BaseApiResource {
                 reportId = jo.containsKey( "reportid" )  ? jo.getInt("reportid" ) : 0;
                 String destEmails = jo.containsKey( "recipientemails" ) && !jo.isNull("recipientemails") ? jo.getString( "recipientemails" ) : null;
                 // String langCode = jo.containsKey( "langcode" ) && !jo.isNull("langcode") ? jo.getString( "langcode" ) : null;
-                outJob = doSendReportEmail( rcCheckId, langStr, reportId, destEmails, langStr );
+                outJob = doSendReportEmail(rcCheckId, reportId, destEmails, langStr );
+            }
+            
+            else if( tran.equals("rccandfbkrptemail") )
+            {
+                langStr = jo.containsKey( "langstr" ) && !jo.isNull("langstr") ? jo.getString( "langstr" ) : null;
+                reportId = jo.containsKey( "reportid" )  ? jo.getInt("reportid" ) : 0;
+                outJob = doSendCandFbkReportEmail( rcCheckId, reportId, langStr );
             }
             
             else
@@ -209,7 +217,7 @@ public class ReportPdfResource extends BaseApiResource {
         return outJob;        
     }
        
-    private JsonObjectBuilder doSendReportEmail( long rcCheckId, String langStr, int reportId, String destEmails, String langCode ) throws Exception
+    private JsonObjectBuilder doSendReportEmail( long rcCheckId, int reportId, String destEmails, String langCode) throws Exception
     {
         JsonObjectBuilder outJob = Json.createObjectBuilder();             
         
@@ -221,8 +229,7 @@ public class ReportPdfResource extends BaseApiResource {
         if( rc==null )
             throw new Exception( "RcCheck not found for rcCheckId=" + rcCheckId );
 
-        Locale locale = null;
-        
+        Locale locale;        
         if( langCode==null || langCode.isBlank() )
             locale = I18nUtils.getLocaleFromCompositeStr( rc.getLangCode()!=null && !rc.getLangCode().isBlank() ? rc.getLangCode() : "en_US" );
         else
@@ -243,6 +250,34 @@ public class ReportPdfResource extends BaseApiResource {
         
         return outJob;        
     }
+
+    private JsonObjectBuilder doSendCandFbkReportEmail( long rcCheckId, int reportId, String langCode) throws Exception
+    {
+        JsonObjectBuilder outJob = Json.createObjectBuilder();             
         
-    
+        if( rcFacade==null )
+            rcFacade = RcFacade.getInstance();
+        
+        RcCheck rc = rcFacade.getRcCheck(rcCheckId, true);        
+        if( rc==null )
+            throw new Exception( "RcCheck not found for rcCheckId=" + rcCheckId );
+
+        Locale locale;        
+        if( langCode==null || langCode.isBlank() )
+            locale = I18nUtils.getLocaleFromCompositeStr( rc.getLangCode()!=null && !rc.getLangCode().isBlank() ? rc.getLangCode() : "en_US" );
+        else
+            locale = I18nUtils.getLocaleFromCompositeStr( langCode );
+        
+        // Load for admin
+        RcResultReportingUtils rcru = new RcResultReportingUtils();          
+
+        int[] out = rcru.sendCandidateFeedbackReportEmails(rc, reportId, true, locale);
+        
+        int emailsSent = out[0];
+        
+        outJob.add( "rccheckid", rcCheckId );        
+        outJob.add( "emailssent", emailsSent );        
+        
+        return outJob;        
+    }
 }

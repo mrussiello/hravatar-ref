@@ -1087,6 +1087,7 @@ public class BaseFormatter {
 
 
     
+    
     public String getReportName( Report r ) {
 
         String ttl = "";

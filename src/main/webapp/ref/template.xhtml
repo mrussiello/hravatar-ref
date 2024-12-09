@@ -8,7 +8,8 @@
       lang="#{userBean.htmlLangCode}"
       xml:lang="#{userBean.htmlLangCode}"
       dir="#{userBean.textDirection}"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:misc="jakarta.faces.composite/misc">
 
     <ui:insert name="headsection">
         <h:head>
@@ -20,11 +21,13 @@
                 <meta http-equiv="Expires" content="0"/>
             </ui:insert>
 
+            <misc:standard-font />
+
             <ui:insert name="titletag">
                 <title><h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) gt 0}" value="#{corpBean.corp.pageTitle}"/>
                     <h:outputText rendered="#{fn:length( corpBean.corp.pageTitle ) eq 0}" value="#{corpBean.corp.name}"/>
                 </title>
-            </ui:insert>            
+            </ui:insert>
 
             <meta name="viewport" content="width=#{refUtils.viewportWidth}, initial-scale=1" />
 
@@ -123,7 +126,7 @@
         <h:body>
 
             <ui:insert name="metadata">
-            </ui:insert>  
+            </ui:insert>
 
 
             <div id="pagebgdiv" class="pagewrapper pagebgdiv">
@@ -133,9 +136,9 @@
                     <ui:insert name="headtable">
                         <div class="mobileheadertopdiv" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-bottom:8px">
                             <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" value="#{corpBean.corpImageIconUrl}" alt=""/>
-                            <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>                    
+                            <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
                         </div>
-                    </ui:insert>        
+                    </ui:insert>
                     <!-- END HEADER TABLE -->
 
                     <!-- <br style="clear:both"/> -->
@@ -149,7 +152,7 @@
                     <!-- <br style="clear:both"/> -->
 
                     <!-- BEGIN FOOTER TABLE -->
-                    <ui:insert name="footertable">        
+                    <ui:insert name="footertable">
                         <h:form id="footerform" prependId="false">
                             <ref:stdforminputs />
                             <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
@@ -165,7 +168,7 @@
                     <div style="padding-top:10px"></div>
 
 
-                </div>                 
+                </div>
             </div>
 
 

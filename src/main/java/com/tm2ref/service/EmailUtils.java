@@ -2,6 +2,15 @@ package com.tm2ref.service;
 
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import static com.tm2ref.service.EmailConstants.ATTACH_BYTES;
+import static com.tm2ref.service.EmailConstants.ATTACH_FN;
+import static com.tm2ref.service.EmailConstants.ATTACH_MIME;
+import static com.tm2ref.service.EmailConstants.CONTENT;
+import static com.tm2ref.service.EmailConstants.FROM;
+import static com.tm2ref.service.EmailConstants.MIME_TYPE;
+import static com.tm2ref.service.EmailConstants.OVERRIDE_BLOCK;
+import static com.tm2ref.service.EmailConstants.SUBJECT;
+import static com.tm2ref.service.EmailConstants.TO;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
 import java.util.HashMap;
@@ -201,7 +210,7 @@ public class EmailUtils
         if( em==null )
             return em;
         
-        return StringUtils.removeWhitespaceAndControlChars(em);
+        return StringUtils.removeWhitespaceAndControlCharsPlusLowercase(em);
     }
 
 
@@ -392,4 +401,63 @@ public class EmailUtils
         }
     }
 
+    
+    public int sendEmailWithSingleAttachment( String subject, String content, String toEmailsCommaDelim, String mimeType, String attachMimeType, String attachFilename, byte[] attachBytes  )
+    {
+        try
+        {
+            if( attachBytes==null || attachBytes.length<=0)
+                throw new Exception( "Attachment bytes is missing." );
+
+            if( attachMimeType == null || attachMimeType.isEmpty() )
+                throw new Exception( "Attachment MimeType is missing." );
+            
+            if( attachFilename == null || attachFilename.isEmpty() )
+                throw new Exception( "Attachment Filename is missing." );
+            
+            
+            if( content == null || content.isEmpty() )
+                throw new Exception( "Content is missing." );
+            
+            if( subject==null || subject.isEmpty() )
+                subject = "HR Avatar Internal Message ";
+            
+            Map<String, Object> emailMap = new HashMap<>();
+
+            emailMap.put( SUBJECT, subject );
+            emailMap.put( CONTENT, content );            
+            emailMap.put( MIME_TYPE, mimeType==null || mimeType.isBlank() ? "text/plain" : mimeType );
+
+            StringBuilder sb; //  = new StringBuilder();
+
+            emailMap.put( TO, toEmailsCommaDelim  );
+
+            sb = new StringBuilder();
+            sb.append( RuntimeConstants.getStringValue("no-reply-email") );
+            emailMap.put( FROM, sb.toString() );
+            emailMap.put( OVERRIDE_BLOCK, "true" );
+
+            emailMap.put( ATTACH_MIME + "0", attachMimeType );
+            emailMap.put( ATTACH_FN + "0", attachFilename );
+            emailMap.put( ATTACH_BYTES + "0", attachBytes );
+            
+            LogService.logIt("EmailUtils.sendEmailWithSingleAttachment() content=" + content + ", bytes attached.length=" + attachBytes.length );
+            
+            // EmailerFacade  emailerFacade = EmailerFacade.getInstance();
+
+            sendEmail( emailMap );
+            
+            return 1;
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt(e, "EmailUtils.sendEmailWithSingleAttachment() " );
+            return 0;
+        }
+
+    }
+    
+    
+    
 }

@@ -8,7 +8,8 @@
       lang="#{userBean.htmlLangCode}"
       xml:lang="#{userBean.htmlLangCode}"
       dir="#{userBean.textDirection}"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:misc="jakarta.faces.composite/misc">
 
 <ui:insert name="headsection">
     <h:head>
@@ -19,6 +20,8 @@
 	<meta http-equiv="Pragma" content="no-cache"/>
 	<meta http-equiv="Expires" content="0"/>
 	</ui:insert>
+        
+        <misc:standard-font />
 
 	<meta name="robots" content="index,follow" />
 

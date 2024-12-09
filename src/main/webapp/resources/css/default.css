@@ -9,7 +9,7 @@ body
     font-size: 1.2rem;
     color: #3d3d3d;
     background-color: #fff;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-family: Roboto, Verdana, Arial, Helvetica, sans-serif;
     overscroll-behavior: none;
 }
 
@@ -102,7 +102,7 @@ audio
 /* Used to make links created with h tags or a tag looks the same as links created by primefaces  */
 .pflinktext 
 {
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-family: Roboto, Verdana, Arial, Helvetica, sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 .visiborder
@@ -143,8 +143,8 @@ img
 body .ui-widget
 {
     font-size:  1.2rem;
+    font-family: Roboto, Verdana, Arial, Helvetica, sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
 }
-
 .ui-g-12, .ui-md-12
 {
     padding:0 !important;

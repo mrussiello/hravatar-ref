@@ -33,6 +33,11 @@ public class EmailConstants {
     
     public static String OVERRIDE_BLOCK = "overrideblock";
 
+    public static String ATTACH_BYTES = "attach_bytes_";
+    public static String ATTACH_MIME = "attach_mime_";
+    public static String ATTACH_FN = "attach_name_";
+    
+    
     public static String[] VALID_SUPPORT_ADDRESSES = { "support" , "help" , "payments" , "info" , "sales" };
 
 }

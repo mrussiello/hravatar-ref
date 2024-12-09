@@ -1488,6 +1488,12 @@ public class RcCheckUtils {
             // No need to do this in AdminOverride
             if( adminOverride )
                 return;
+
+            if( rc.getRcCheckStatusType().getIsComplete() && rc.getEmailReportsToCandidate()==1 && rc.getCandidateReportSendDate()==null )
+            {
+                RcResultReportingUtils rrru = new RcResultReportingUtils();
+                rrru.sendCandidateFeedbackReportEmails(rc, 0, false, rc.getLocale() );
+            }
             
             // already complete.
             if( !updateIfAlreadyComplete && rc.getRcCheckStatusType().getCompleteOrHigher() )
@@ -1633,7 +1639,13 @@ public class RcCheckUtils {
                 rcFacade=RcFacade.getInstance();   
             if( !adminOverride )
                 rcFacade.saveRcCheck(rc, false);
-            Tracker.addRcCheckComplete();            
+            Tracker.addRcCheckComplete(); 
+            
+            if( rc.getEmailReportsToCandidate()==1 && rc.getCandidateReportSendDate()==null )
+            {
+                RcResultReportingUtils rrru = new RcResultReportingUtils();
+                rrru.sendCandidateFeedbackReportEmails(rc, 0, false, rc.getLocale() );
+            }
         }
         catch( Exception e )
         {
@@ -2045,6 +2057,7 @@ public class RcCheckUtils {
         
         // s = StringUtils.replaceStr( s, "[CANDIDATENAME]", rater.getRcRaterType().getIsRater() ? rc.getUser().getFullname() : MessageFactory.getStringMessage(locale, "g.RCSelfReference1" ) );
         s = StringUtils.replaceStr( s, "[CANDIDATENAME]", rc.getUser().getFullname() );
+        s = StringUtils.replaceStr( s, "[CANDIDATE]", rc.getUser().getFullname() );
         s = StringUtils.replaceStr( s, "[CANDIDATENAMEABSOLUTE]", rc.getUser().getFullname() );
         s = StringUtils.replaceStr( s, "[CANDIDATETYPENAME]", MessageFactory.getStringMessage( locale, rc.getRcCheckType().getIsPrehire() ? "g.Candidate" : "g.Employee" ));
         s = StringUtils.replaceStr( s, "[CANDIDATEROLERESP]", rater!=null && rater.getCandidateRoleResp()!=null && !rater.getCandidateRoleResp().isBlank() ? rater.getCandidateRoleResp() : MessageFactory.getStringMessage(locale, "g.XRNoCandRoleRespFnd" ) );

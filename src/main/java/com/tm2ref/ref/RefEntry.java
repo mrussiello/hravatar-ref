@@ -232,6 +232,7 @@ public class RefEntry
             rcx.setSuborgId( tkx.getSuborgId() );
             rcx.setTestKeyId(testKeyId);
             rcx.setRcScriptId(rcScriptId);
+            rcx.setEmailReportsToCandidate(rcScript.getEmailReportsToCandidate());
             rcx.setJobTitle( rcScript.getName() );
             rcx.setLangCode( rcScript.getLangCode() );
             rcx.setCreateDate( new Date() );

@@ -162,6 +162,142 @@ public class RcMessageUtils {
         return sent;
     }
     
+    public int sendCandFbkReportEmail(RcCheck rc, byte[] bytes, String filename, Locale locale, String title )
+    {
+        try
+        {
+            if( rc==null )
+                throw new Exception( "RcCheck is null");
+
+            if( bytes==null )
+                throw new Exception( "bytes[] is null");
+
+            if( filename==null || filename.isBlank() )
+                throw new Exception( "filename is missing.");
+            
+            if( title==null || title.isBlank() )
+                title="Feedback Report";
+            
+            User user = rc.getUser();
+
+            if( rc.getUser()==null )
+                rc.setUser( UserFacade.getInstance().getUser( rc.getUserId() ));                
+            
+            if( user==null )
+                return 0;
+            
+            if( !EmailUtils.validateEmailNoErrors( user.getEmail() ) )
+            {
+                LogService.logIt("RcMessageUtils.sendRcCheckEmailToCandidate() To address is not a valid email address: " + user.getEmail() );
+                return 0;
+            }
+
+            if( rc.getOrg()==null )
+                rc.setOrg( UserFacade.getInstance().getOrg( rc.getOrgId() ));                
+            
+            if( locale==null )
+                locale = Locale.US;
+            
+            String completeDate = I18nUtils.getFormattedDateTime(locale, rc.getCompleteDate(), user.getTimeZone() );
+            
+            String[] params = new String[] {user.getFullname(), 
+                rc.getOrg().getName(), 
+                title, 
+                rc.getRcCheckType().getName(locale), 
+                completeDate, 
+                filename,
+                getContactUsUrl( rc, null ) 
+            };
+            
+            String subject = MessageFactory.getStringMessage( rc.getLocale(), "g.RCCandFbkRptSubj", params );
+
+            String content = MessageFactory.getStringMessage( rc.getLocale(), "g.RCCandFbkRptContent", params );
+                                  
+            if( emailBlockFacade==null )
+                emailBlockFacade=EmailBlockFacade.getInstance();
+            if( emailBlockFacade.hasEmailBlock(user.getEmail(), true, true))
+            {
+                    String identifier = "RC_" + rc.getRcCheckId() + "_CANDIDATE_FEEDBACK_REPORT_" + (new Date()).getTime();
+                    if( userFacade == null )
+                        userFacade = UserFacade.getInstance();
+                    userFacade.saveMessageAction(rc.getAdminUserId(), // rc.getAdminUserId(), 
+                                                    user, 
+                                                    subject, 
+                                                    UserActionType.SENT_EMAIL_BLOCKED.getUserActionTypeId(), 
+                                                    0, // intParam1
+                                                    rc.getRcCheckId(), // longparam1
+                                                    0, // longparam2 (sourceCode)
+                                                    0, // longparam4 
+                                                    identifier, 
+                                                    null, 
+                                                    user.getEmail() );                    
+                    return 0;                
+            }                
+            
+
+            String fromAddr = rc.getOrg().getHasCustomSupportSendEmail() ? rc.getOrg().getSupportSendEmail() : RuntimeConstants.getStringValue("no-reply-email");
+            
+            // boolean includeVia = rc.getOrg()==null || !rc.getOrg().getHasCustomSupportSendEmail();
+            
+            /*
+            StringBuilder sb = new StringBuilder();
+            sb.append( fromAddr ); // + "|" + MessageFactory.getStringMessage( getLocale(), "g.SupportEmailKey", null ) );
+            if( includeVia && rc.getOrg()!=null )
+            {
+                if( rc.getAdminUser()==null )
+                    rc.setAdminUser( UserFacade.getInstance().getUser( rc.getAdminUserId()));
+                
+                boolean useAdminName = rc.getAdminUser()!=null && includeVia && rc.getOrg().getUseInitiatorNameInEmails();
+                String om = useAdminName ? rc.getAdminUser().getFullname() :  rc.getOrg().getName();
+                om = StringUtils.replaceStr(om, "\"", "" );
+                om = StringUtils.truncateString(om, 60 );
+                sb.append( "|" + MessageFactory.getStringMessage(locale, "g.TestInviteOrgName" , new String[]{ om, RuntimeConstants.getStringValue("default-site-name") } ));
+            }
+            else if( rc.getOrg()!=null )
+                sb.append( "|" + rc.getOrg().getName() );
+            */
+            
+            if( EmailUtils.isNoReplyAddress(fromAddr ) )
+                content = EmailUtils.addNoReplyMessage(content, true, locale );
+            
+            // wrap content
+            content = wrapEmailContent( content, locale );
+            
+            EmailUtils emailUtils = EmailUtils.getInstance();
+            int sent = emailUtils.sendEmailWithSingleAttachment(subject, content, user.getEmail(), "text/html", "application/pdf", filename, bytes ); 
+            
+            return sent;                
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcMessageUtils.sendRcCheckEmailToRater()  rcCheckId=" + rc.getRcCheckId()  );
+            return 0;
+        }
+    }
+    
+    
+    public String getContactUsUrl( RcCheck rc, RcRater rtr ) 
+    {
+        // UserBean userBean = UserBean.getInstance();
+        String out = RuntimeConstants.getStringValue( "contactFormUrl" );        
+        out += "?t=21";
+        
+        if( rc!=null  )
+        {
+            out += "&rcid=" + rc.getRcCheckIdEncrypted();
+        }
+
+        if( rtr!=null )
+        {
+            out += "&uid=" + rtr.getUserIdEncrypted();
+        }
+        else
+            out += "&uid=" + rc.getUserIdEncrypted();
+        
+        return out;
+    }
+    
+    
     
     public int sendRcCheckEmailToCandidate( RcCheck rc, RcOrgPrefs rcOrgPrefs, String[] params, Locale l)
     {

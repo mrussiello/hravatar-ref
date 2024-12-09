@@ -175,6 +175,16 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
     @Column(name="forceallanonymous")
     private int forceAllAnonymous;
         
+
+    @Column(name="emailreportstocandidate")
+    private int emailReportsToCandidate = 0;
+    
+    @Column(name="reportid")
+    private int reportId;
+
+    @Column(name="reportid2")
+    private int reportId2;
+        
     
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -986,5 +996,28 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
         this.rcCheckTypeId = rcCheckTypeId;
     }
 
+    public int getEmailReportsToCandidate() {
+        return emailReportsToCandidate;
+    }
+
+    public void setEmailReportsToCandidate(int emailReportsToCandidate) {
+        this.emailReportsToCandidate = emailReportsToCandidate;
+    }
+
+    public int getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(int reportId) {
+        this.reportId = reportId;
+    }
+
+    public int getReportId2() {
+        return reportId2;
+    }
+
+    public void setReportId2(int reportId2) {
+        this.reportId2 = reportId2;
+    }
     
 }

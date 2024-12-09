@@ -92,7 +92,6 @@ public class Report implements Serializable, Cloneable
     @Column(name="includescoretextinfo")
     private int includeScoreText = 1;
 
-
     
     @Column(name="includenumericscores")
     private int includeNumericScores = 1;

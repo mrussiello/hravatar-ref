@@ -1436,6 +1436,8 @@ public class RefUtils extends BaseRefUtils
                 reason = "Rater refused to participate.";
 
             String note = refBean.getStrParam1();
+            note = StringUtils.removeAllControlChars(note);
+            
             if( !refBean.getAdminOverride() && note!=null && !note.isBlank() )
             {
                 rtr.setNote(note);
@@ -1871,6 +1873,8 @@ public class RefUtils extends BaseRefUtils
 
 
             String comments = refBean.getStrParam1();
+            comments = StringUtils.removeAllControlChars(comments);
+
             User refUser = refBean.getRefUser();
 
             // record comments if there are any.

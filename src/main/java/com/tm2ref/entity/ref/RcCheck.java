@@ -228,8 +228,9 @@ public class RcCheck implements Serializable, Cloneable
     @Column(name="topbottomsrctypeid")
     private int topBottomSrcTypeId=3;
    
-    
-    
+    @Column(name="emailreportstocandidate")
+    private int emailReportsToCandidate = 0;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
@@ -272,7 +273,10 @@ public class RcCheck implements Serializable, Cloneable
     @Column(name="candidatelastupdate")
     private Date candidateLastUpdate;
 
-    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="candidatereportsenddate")
+    private Date candidateReportSendDate;
+                
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="completedate")
     private Date completeDate;
@@ -845,6 +849,8 @@ public class RcCheck implements Serializable, Cloneable
             return;
         
         textStr1 = StringUtils.removeBracketedArtifactFromString( textStr1, "CANDIDATEINPUTSTR" + idx );
+        
+        s = StringUtils.removeAllControlChars(s);
         
         if( s==null || s.isBlank() )
             return;
@@ -1718,6 +1724,22 @@ public class RcCheck implements Serializable, Cloneable
 
     public void setCandidateRatingsCompleteDate(Date candidateRatingsCompleteDate) {
         this.candidateRatingsCompleteDate = candidateRatingsCompleteDate;
+    }
+
+    public int getEmailReportsToCandidate() {
+        return emailReportsToCandidate;
+    }
+
+    public void setEmailReportsToCandidate(int emailReportsToCandidate) {
+        this.emailReportsToCandidate = emailReportsToCandidate;
+    }
+
+    public Date getCandidateReportSendDate() {
+        return candidateReportSendDate;
+    }
+
+    public void setCandidateReportSendDate(Date candidateReportSendDate) {
+        this.candidateReportSendDate = candidateReportSendDate;
     }
 
     

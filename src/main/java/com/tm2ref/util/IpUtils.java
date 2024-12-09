@@ -138,7 +138,7 @@ public class IpUtils {
 
                 //if( resultStr==null || resultStr.isBlank() || resultStr.trim().startsWith("<") )
                 //{
-                    LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
+                //     LogService.logIt( "IpUtils.getIPLocationData() ERROR service response appears invalid. response=" + (resultStr==null ? "null" : resultStr) + "\nurl=" + uri );
                 //    return out;                    
                 //}
                 

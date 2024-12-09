@@ -29,7 +29,7 @@ public class StringUtils
     private static final char[] alphaDigits = { '2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z' };
 
 
-    public static String removeWhitespaceAndControlChars(String str )
+    public static String removeWhitespaceAndControlCharsPlusLowercase(String str )
     {
         if( str==null )
             return str;        
@@ -52,7 +52,7 @@ public class StringUtils
     {
         if( str==null )
             return str;        
-        return removeNonPrintable(str).replaceAll("[\\r\\n\\t]", "");
+        return removeNonPrintable(str).replaceAll("[\\r\\n\\t]", "").trim();
     }    
     
     public static String capitalizeFirstChar( String inStr )
@@ -527,6 +527,8 @@ public class StringUtils
         if( inStr == null || inStr.length() == 0 )
             return inStr;
 
+        inStr = removeAllControlChars(inStr );
+        
         // HTML tag, including Script tag - Cross-site scripting
         // matches < and </ plus any letter, any number,
         inStr = inStr.replaceAll( "((%3C)|<)((%2F)|\\/)*[ac-hj-tv-zAC-HJ-TV-Z0-9%]+((%3E)|>)" , "" );
@@ -542,6 +544,9 @@ public class StringUtils
     {
         if( s==null || s.isEmpty() )
             return "";
+        
+        s = removeAllControlChars(s );
+        
         
         s = StringUtils.replaceStr(s,  "''", "" );
         
@@ -559,6 +564,8 @@ public class StringUtils
     {
         if( inStr == null || inStr.length() == 0 )
             return inStr;
+
+        inStr = removeAllControlChars(inStr );
 
         // HTML tag, including Script tag - Cross-site scripting
         // matches < and </ plus any letter, any number,
@@ -600,6 +607,8 @@ public class StringUtils
         if( inStr == null || inStr.length() == 0 )
             return inStr;
 
+        inStr = removeAllControlChars(inStr );
+        
         inStr = replaceStr( inStr, "\\" , "\\\\" );
         
         // return escapeChar( inStr, '\'' , '\\' ); //replaceUnescapedChar( inStr , '\'' ,"\\\'" ); // inStr.replaceAll( "\'" , "\\\'" );

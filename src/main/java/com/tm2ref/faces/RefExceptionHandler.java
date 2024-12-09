@@ -62,7 +62,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
 
                 String viewId = fc.getViewRoot()!=null ? fc.getViewRoot().getViewId() : "ViewRoot unavailable (FacesContext or FacesContext.viewRoot is null) fc=" + (fc==null ? "null" : "not null");
                 
-                LogService.logIt(t, "RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", message=" + t.getMessage() );
+                LogService.logIt( "RefExceptionHandler.handle() AAA.2 viewId=" + viewId + ", Exception: " + t.toString() + ", message=" + t.getMessage() );
                 
                 Throwable rootCause = t;
                 Throwable cause=null;

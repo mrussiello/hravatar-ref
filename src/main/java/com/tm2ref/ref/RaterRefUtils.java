@@ -35,6 +35,7 @@ import com.tm2ref.user.UserType;
 import com.tm2ref.util.GooglePhoneUtils;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
+import static com.tm2ref.util.StringUtils.removeAllControlChars;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1478,6 +1479,8 @@ public class RaterRefUtils extends BaseRefUtils
                 }
             }
 
+            rating.setText( StringUtils.removeAllControlChars( rating.getText() ) );
+            
             RcItemFormatType itmFmt = itm.getRcItemFormatType();
 
             String validMessage = null;
@@ -2267,7 +2270,7 @@ public class RaterRefUtils extends BaseRefUtils
             if( rc.getRcScript()!=null )
                 rfrl.setTargetRole(rc.getRcScript().getName() );
             if( textNotes!=null && !textNotes.isBlank() )
-                rfrl.setReferrerNotes(textNotes);
+                rfrl.setReferrerNotes(StringUtils.removeAllControlChars(textNotes));
             else
                 rfrl.setReferrerNotes(null);
 
