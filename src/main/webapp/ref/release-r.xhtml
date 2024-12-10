@@ -117,14 +117,14 @@
                             <h:panelGroup>
                                 <div style="text-align: center">
                                     <div style="display:inline-block">
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.Accept']}" title="#{stMessages['g.AcceptInfo']}">
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.Accept']}" title="#{stMessages['g.AcceptInfo']}">
                                             <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
                                         </p:commandButton>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" ajax="true" styleClass="notmebut" value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
+                                        <p:commandButton style="margin-bottom:5px" ajax="true" styleClass="notmebut" value="#{stMessages['g.Deny']}" onclick="PF('denyreleaseconfirm').show(); return false;" title="#{stMessages['g.DenyInfo']}">
                                         </p:commandButton>                
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
                                     </div>
                                 </div>
                             </h:panelGroup>
@@ -140,11 +140,11 @@
                                 <h:outputText value="#{stMessages['g.DenyReleaseConfirm.P2']}" />
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.DenyReleaseConfirmYes']}" title="#{stMessages['g.DenyReleaseConfirmInfo']}"    onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processSubmitRelease}" value="#{stMessages['g.DenyReleaseConfirmYes']}" title="#{stMessages['g.DenyReleaseConfirmInfo']}"    onclick="return clearChanges()">
                                         <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('denyreleaseconfirm').hide()" title="#{stMessages['g.Cancel']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('denyreleaseconfirm').hide()" title="#{stMessages['g.Cancel']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>

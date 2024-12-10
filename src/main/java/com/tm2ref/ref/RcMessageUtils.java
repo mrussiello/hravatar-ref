@@ -315,7 +315,30 @@ public class RcMessageUtils {
             }
 
             if( rc.getOrg()==null )
-                rc.setOrg( UserFacade.getInstance().getOrg( rc.getOrgId() ));                
+            {
+                if( userFacade == null )
+                    userFacade = UserFacade.getInstance();
+                rc.setOrg( userFacade.getOrg( rc.getOrgId() ));
+            }                
+            
+            if( rc.getAdminUser()==null )
+            {
+                if( userFacade == null )
+                    userFacade = UserFacade.getInstance();
+                rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ));
+            }
+                        
+            String ccEmails = null;
+            
+            if( rc.getOrg().getCcOnCandEmails()>=2 && rc.getAdminUser()!=null && EmailUtils.validateEmailNoErrors(rc.getAdminUser().getEmail()))
+            {
+                if( emailBlockFacade==null )
+                    emailBlockFacade=EmailBlockFacade.getInstance();
+
+                if( !emailBlockFacade.hasEmailBlock( rc.getAdminUser().getEmail(), true, true))
+                    ccEmails = rc.getAdminUser().getEmail();
+            }
+                
             
             if( l==null )
                 throw new Exception( "Locale is null" );
@@ -420,7 +443,11 @@ public class RcMessageUtils {
             emailMap.put( EmailConstants.MIME_TYPE, "text/html" );            
             emailMap.put( EmailConstants.OVERRIDE_BLOCK, "true" );                        
             emailMap.put( EmailConstants.TO, user.getEmail() );            
-            emailMap.put( EmailConstants.FROM, sb.toString() );            
+            emailMap.put( EmailConstants.FROM, sb.toString() );  
+            
+            if( ccEmails!=null && !ccEmails.isBlank() )
+                emailMap.put( EmailConstants.CC, ccEmails );            
+                            
             EmailUtils emailUtils = EmailUtils.getInstance();
             boolean sent = emailUtils.sendEmail( emailMap );
             

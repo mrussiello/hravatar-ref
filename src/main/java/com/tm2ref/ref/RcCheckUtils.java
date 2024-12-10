@@ -16,7 +16,6 @@ import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
-import com.tm2ref.entity.user.User;
 import com.tm2ref.event.EventFacade;
 import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.file.BucketType;
@@ -37,6 +36,7 @@ import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
 import jakarta.persistence.PersistenceException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
@@ -826,34 +827,9 @@ public class RcCheckUtils {
             rc.getRcRaterList().add( cRtr );
             return cRtr;
         }
-        catch( PersistenceException e )
-        {
-            try
-            {
-                LogService.logIt( "RccheckUtils.createRcRaterForCandidate() XXX.0 " + e.toString() + " Checking for an existing RcRater record for userId=" + rc.getUserId() + ", rcCheckId=" + rc.getRcCheckId() );
-                Thread.sleep(200);
-                
-                cRtr = rcFacade.getRcRaterByRcCheckIdAndUserId(rc.getRcCheckId(), rc.getUserId());
-                if( cRtr!=null )
-                {
-                    LogService.logIt( "RccheckUtils.createRcRaterForCandidate() XXX.1 Found existing rater. Using it. rcCheckId=" + rc.getRcCheckId() );
-                    rc.getRcRaterList().add(cRtr );
-                    return cRtr;
-                }
-                
-                // not found, throw the exception
-                LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() XXX.2 rcCheckId=" + rc.getRcCheckId() );
-                throw e;
-            }
-            catch( Exception ee )
-            {
-                LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() YYY.1 got new exception when checking again. " + ee.toString() + ", rcCheckId=" + rc.getRcCheckId() );
-                throw e;
-            }
-        }        
         catch( Exception e )
         {
-            LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() rcCheckId=" + rc.getRcCheckId() );
+            LogService.logIt(e, "RccheckUtils.createRcRaterForCandidate() ZZZ.1 rcCheckId=" + rc.getRcCheckId() );
             throw e;
         }
     }

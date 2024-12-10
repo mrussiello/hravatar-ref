@@ -150,3 +150,47 @@ body .ui-widget
     padding:0 !important;
 }
 
+@media screen and (max-width: 900px) {
+    .hide-900
+    {
+        display:none;
+    }
+}
+
+
+@media screen and (max-width: 800px) {
+    .hide-800
+    {
+        display:none;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .hide-700
+    {
+        display:none;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .hide-600
+    {
+        display:none;
+    }    
+    .show-600
+    {
+        display:block !important;
+    }    
+}
+
+@media screen and (max-width: 500px) {
+    .hide-500
+    {
+        display:none;
+    }
+    .show-500
+    {
+        display:block !important;
+    }
+}
+

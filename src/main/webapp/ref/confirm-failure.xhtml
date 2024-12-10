@@ -69,11 +69,11 @@
                             <h:panelGroup>
                                 <div style="text-align:center">
                                     <div style="display:inline-block;margin-left:auto;margin-right:auto;margin-bottom:18px">
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoCorrect']}" title="#{stMessages['g.ConfFail.InfoCorrect.info']}">
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoCorrect']}" title="#{stMessages['g.ConfFail.InfoCorrect.info']}">
                                             <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
                                         </p:commandButton>  
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processConfirmFail}" value="#{stMessages['g.InfoNotCorrect']}" title="#{stMessages['g.ConfFail.InfoNotCorrect.info']}">
                                             <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                                         </p:commandButton>
                                     </div>

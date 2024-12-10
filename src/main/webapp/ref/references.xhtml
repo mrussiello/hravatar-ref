@@ -81,7 +81,7 @@
 
                 <br style="clear:both"/>
 
-                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                <div style="padding-left:5px;padding-right:5px;max-width:800px;margin:0px auto;text-align:center">
                     <h:form prependId="false">
 
                         <ref:stdforminputs />
@@ -150,7 +150,7 @@
 
 
                         <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) gt 0}" value="#{refBean.rcCheck.rcRaterListCandidate}" var="rater" resizableColumns="true" resizeMode="expand" 
-                                     style="background-color:white;width:100%;margin:10px auto">
+                                     style="background-color:white;width:100%;margin:10px auto;padding-right:5px;padding-left:5px;border-radius:10px">
 
                             <!--
                             <f:facet name="header">
@@ -168,7 +168,7 @@
                                 <h:outputText styleClass="ttwindowformtext" value="#{rater.user.fullname}"/>
                             </p:column>
 
-                            <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
+                            <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall hide-600" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Status']}"/>
                                 </f:facet>
@@ -181,7 +181,7 @@
                                 </ui:fragment>
                             </p:column>
 
-                            <p:column sortBy="#{rater.user.email}" styleClass="textsmall" style="vertical-align:middle;width:25%;white-space:normal">
+                            <p:column sortBy="#{rater.user.email}" styleClass="textsmall hide-600" style="vertical-align:middle;width:25%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.ContactInfo']}"/>
                                 </f:facet>
@@ -192,7 +192,7 @@
                                 </ui:fragment>
                             </p:column>
 
-                            <p:column sortBy="#{rater.rcRaterRoleTypeName}" styleClass="textsmall" style="vertical-align:middle;width:14%;white-space:normal">
+                            <p:column sortBy="#{rater.rcRaterRoleTypeName}" styleClass="textsmall hide-500" style="vertical-align:middle;width:14%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Role']}"/>
                                 </f:facet>
@@ -230,12 +230,12 @@
                             <h:panelGroup>
                                 <div style="text-align:center;margin-top:10px;margin-bottom:10px">
                                     <div style="display:inline-block">
-                                        <p:commandButton style="margin-bottom:3px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isPrehire}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater']}"/>
-                                        <p:commandButton style="margin-bottom:3px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater.employee']}"/>
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isPrehire}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater']}"/>
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) lt refBean.rcCheck.maxRatersDefault and refBean.rcCheck.rcCheckType.isEmployeeFeedback}" ajax="false" action="#{candidateRefUtils.processCreateNewRcRater}" title="#{stMessages['g.XCCreateNewRaterInfo']}" value="#{stMessages['g.XCCreateNewRater.employee']}"/>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" rendered="#{candidateRefUtils.canExitReferences}" ajax="false" action="#{candidateRefUtils.processExitAllCore}" value="#{stMessages['g.XCExitAndSave']}"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.canExitReferences}" ajax="false" action="#{candidateRefUtils.processExitAllCore}" value="#{stMessages['g.XCExitAndSave']}"/>                
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" rendered="#{candidateRefUtils.showReferencesGoBack}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.showReferencesGoBack}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>                
                                     </div>
                                 </div>
                             </h:panelGroup>
@@ -261,9 +261,9 @@
                                 </h:outputFormat>
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes']}" title="#{stMessages['g.XCCancelConfirmYesInfo']}" onclick="beaconOn = false; return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes']}" title="#{stMessages['g.XCCancelConfirmYesInfo']}" onclick="beaconOn = false; return clearChanges()">
                                     </p:commandButton>
-                                    <p:commandButton style="margin-bottom:3px" rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes.employee']}" title="#{stMessages['g.XCCancelConfirmYesInfo.employee']}" onclick="beaconOn = false; return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" immediate="true" ajax="false" action="#{candidateRefUtils.processCancelRater}" value="#{stMessages['g.XCCancelConfirmYes.employee']}" title="#{stMessages['g.XCCancelConfirmYesInfo.employee']}" onclick="beaconOn = false; return clearChanges()">
                                     </p:commandButton>
                                     &#160;
                                     <p:button value="#{stMessages['g.Cancel']}" onclick="return PF('cancelraterconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>

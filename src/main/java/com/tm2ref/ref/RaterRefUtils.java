@@ -35,7 +35,6 @@ import com.tm2ref.user.UserType;
 import com.tm2ref.util.GooglePhoneUtils;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
-import static com.tm2ref.util.StringUtils.removeAllControlChars;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -1502,6 +1501,12 @@ public class RaterRefUtils extends BaseRefUtils
                 rating.setRcUploadedUserFile( fileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId, rcRaterId, itemId, UploadedUserFileType.REF_CHECK_RATER_COMMENT.getUploadedUserFileTypeId() ) );
             }
 
+            if( uploadedFile !=null )
+            {
+                // LogService.logIt( "Wait a few seconds for upload
+                Thread.sleep(1500);
+            }
+            
             // candidate uploaded file
             if( refBean.getRefUserType().getIsCandidate() && itm.getHasCandidateFileUpload() )
             {

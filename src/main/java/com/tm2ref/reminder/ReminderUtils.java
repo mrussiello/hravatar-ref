@@ -460,6 +460,12 @@ public class ReminderUtils
                     userFacade = UserFacade.getInstance();
                 rc.setUser( userFacade.getUser( rc.getUserId() ));
             }
+            if( rc.getOrg()==null )
+            {
+                if( userFacade==null )
+                    userFacade = UserFacade.getInstance();
+                rc.setOrg( userFacade.getOrg( (int) rc.getOrgId() ));
+            }
             if( rc.getAdminUser()==null )
             {
                 if( userFacade==null )

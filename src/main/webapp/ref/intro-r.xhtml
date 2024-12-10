@@ -145,10 +145,10 @@
                                 <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}" onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}" onclick="return clearChanges()">
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>
@@ -161,12 +161,12 @@
                                 </h:outputFormat>
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRDontKnowXConfirmYes']}" title="#{stMessages['g.XRDontKnowXConfirmYes']}" onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRDontKnowXConfirmYes']}" title="#{stMessages['g.XRDontKnowXConfirmYes']}" onclick="return clearChanges()">
                                         <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                                         <f:setPropertyActionListener target="#{refBean.intParam1}" value="1"/>
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('dontknowconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('dontknowconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>
@@ -179,12 +179,12 @@
                                 </h:outputFormat>
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotFamiliarXConfirmYes']}" title="#{stMessages['g.XRNotFamiliarXConfirmYes']}" onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotFamiliarXConfirmYes']}" title="#{stMessages['g.XRNotFamiliarXConfirmYes']}" onclick="return clearChanges()">
                                         <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                                         <f:setPropertyActionListener target="#{refBean.intParam1}" value="2"/>
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('notfamiliarconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('notfamiliarconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>
@@ -205,12 +205,12 @@
 
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" title="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processRaterReject}" value="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" title="#{stMessages['g.XRNotWishToContinueXConfirmYes']}" onclick="return clearChanges()">
                                         <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="false"/>
                                         <f:setPropertyActionListener target="#{refBean.intParam1}" value="3"/>
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('notwishcontinueconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('notwishcontinueconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>

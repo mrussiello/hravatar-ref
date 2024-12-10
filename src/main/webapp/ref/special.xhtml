@@ -47,7 +47,7 @@
                             <h:outputText value="#{stMessages['g.XCSpecialInst']}"/>
                         </div>
 
-                        <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:800px;overflow-y: scroll;padding:5px;margin:15px auto">
+                        <div class="textmedsmall whitecontentshadowdiv" style="max-width:650px;max-height:800px;overflow-y: scroll;padding:5px;margin:15px auto;border-radius:10px">
                             <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
                                 <h:outputText styleClass="ttwindowformtext" value="#{refUtils.specialInstructionsXhtml}" escape="false"/>
@@ -60,11 +60,11 @@
                             <h:panelGroup>
                                 <div style="text-align: center">
                                     <div style="display:inline-block">
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processSubmitSpecialInst}" value="#{stMessages['g.Continue']}" title="#{stMessages['g.Continue']}">
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processSubmitSpecialInst}" value="#{stMessages['g.Continue']}" title="#{stMessages['g.Continue']}">
                                             <f:setPropertyActionListener target="#{refUtils.booleanParam1}" value="true"/>
                                         </p:commandButton>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:3px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processGoBackOneStep}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackInfo']}"/>
                                     </div>
                                 </div>
                             </h:panelGroup>

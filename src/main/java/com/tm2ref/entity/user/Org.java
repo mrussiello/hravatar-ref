@@ -147,6 +147,15 @@ public class Org implements Serializable
     private String defaultCorpErrorUrl;
 
 
+    /**
+     * 0 = none
+     * 1 = invitations only
+     * 2 = invitations and reminders only
+     * 10 = all (invitations, reminders, reports, etc).
+     */   
+    @Column(name="cconcandemails")
+    private int ccOnCandEmails;
+
 
 
     @Column(name="emailresultsto")
@@ -528,6 +537,14 @@ public class Org implements Serializable
 
     public void setTextResultsTo(String textResultsTo) {
         this.textResultsTo = textResultsTo;
+    }
+
+    public int getCcOnCandEmails() {
+        return ccOnCandEmails;
+    }
+
+    public void setCcOnCandEmails(int ccOnCandEmails) {
+        this.ccOnCandEmails = ccOnCandEmails;
     }
 
 

@@ -92,10 +92,10 @@
                                 <h:outputText value="#{stMessages['g.ExitConfirm.P2']}" />
 
                                 <h:panelGroup>
-                                    <p:commandButton style="margin-bottom:3px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"    onclick="return clearChanges()">
+                                    <p:commandButton style="margin-bottom:5px" immediate="true" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"    onclick="return clearChanges()">
                                     </p:commandButton>
                                     &#160;
-                                    <p:button style="margin-bottom:3px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                                    <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                         </p:dialog>

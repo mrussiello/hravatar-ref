@@ -27,9 +27,11 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.sql.DataSource;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 
 
@@ -604,9 +606,13 @@ public class RcFacade
     }
     
     
-    
-    
     public RcRater saveRcRater(RcRater ir, boolean updateSeconds) throws Exception
+    {
+        return saveRcRater( ir,  updateSeconds, 0);
+    }
+    
+    
+    public RcRater saveRcRater(RcRater ir, boolean updateSeconds, int count) throws Exception
     {
         try
         {
@@ -678,6 +684,31 @@ public class RcFacade
             em.flush();
 
             return ir;
+        }        
+        catch( DatabaseException | PersistenceException | SQLIntegrityConstraintViolationException e )
+        {
+            if( count<3 )
+            {
+                LogService.logIt( "RcFacade.saveRcRater() XXX.1 Database error so waiting and trying again. count=" + count +", " + e.toString() + ", " + ir.toString() );
+
+                if( ir.getRcRaterId()<=0 )
+                {
+                    RcRater cRtr = getRcRaterByRcCheckIdAndUserId(ir.getRcCheckId(), ir.getUserId());
+                    if( cRtr!=null )
+                    {
+                        LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rater so using it.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() );
+                        ir.setRcRaterId(cRtr.getRcRaterId());                        
+                        return cRtr;
+                    }
+                }                
+
+                Thread.sleep((long) ((Math.random()) * 2000l));
+                count++;
+                return saveRcRater( ir,  updateSeconds, count);
+            }
+            
+            LogService.logIt( e, "RcFacade.saveRcRater() XXX.2 count=" + count + ", " + ir.toString() );
+            throw new STException( e );
         }
         catch( STException e )
         {
@@ -686,13 +717,18 @@ public class RcFacade
 
         catch( Exception e )
         {
-            LogService.logIt(e, "RcFacade.saveRcRater() " + ir.toString() );
+            LogService.logIt(e, "RcFacade.saveRcRater() ZZZ.1 " + ir.toString() );
             throw new STException( e );
         }
     }    
 
-    
     public RcRating saveRcRating( RcRating ir) throws Exception
+    {
+        return saveRcRating( ir, 0 ); 
+    }
+
+    
+    public RcRating saveRcRating( RcRating ir, int count ) throws Exception
     {
         try
         {
@@ -724,16 +760,40 @@ public class RcFacade
 
             return ir;
         }     
-        catch( PersistenceException e )
+        catch( DatabaseException | PersistenceException | SQLIntegrityConstraintViolationException e )
         {
                 
             LogService.logIt( "RcFacade.saveRcRating() XXX.1 " + e.toString() + ", " + ir.toString() + ", rcCheckId=" + ir.getRcCheckId() +", rcItemId=" + ir.getRcItemId() );
+
+            if( count<3 )
+            {
+                LogService.logIt( "RcFacade.saveRcRating() XXX.1 Database error so waiting and trying again. count=" + count +", " + e.toString() + ", " + ir.toString() );
+
+                if( ir.getRcRatingId()<=0 )
+                {
+                    RcRating cRtr = this.getRcRatingForRcRaterAndRcItem(ir.getRcRaterId(), ir.getRcItemId());
+                    if( cRtr!=null )
+                    {
+                        LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rating. rcRatingId=" + cRtr.getRcRatingId() + ", rcCheckId=" + ir.getRcCheckId() );
+                        ir.setRcRatingId(cRtr.getRcRatingId());                        
+                    }
+                }                
+
+                Thread.sleep((long) ((Math.random()) * 2000l));
+                count++;
+                return saveRcRating( ir, count);
+            }
+
+            LogService.logIt( e, "RcFacade.saveRcRating() Checking for duplicate after error. XXX.5 " + ir.toString() );
+            throw new STException( e );            
+
+            /*
             try
             {
                 // let the constrain violation clear itself if necessary
-                Thread.sleep(1000);
+                Thread.sleep((long) (Math.random()*2000l) );
                 
-                long rcRatingId = getRcRatingIdForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );   
+                long rcRatingId = ir.getRcRatingId()>0 ? ir.getRcRatingId() : getRcRatingIdForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );   
                 // RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );                
                 LogService.logIt("RcFacade.saveRcRating() XXX.2 Checking for overlapping rating: rcRatingId=" + rcRatingId );
                 if( rcRatingId>0 )
@@ -745,13 +805,16 @@ public class RcFacade
                 }
                 
                 else
-                    LogService.logIt(e, "RcFacade.saveRcRating() XXX.4 Unexplained Persistence exception after short wait and duplicate check. " + ir.toString() + ", rcCheckId=" + ir.getRcCheckId() +", rcItemId=" + ir.getRcItemId() );                    
+                {
+                    LogService.logIt(e, "RcFacade.saveRcRating() XXX.4 Unexplained Persistence exception after short wait and duplicate check. " + ir.toString() + ", rcCheckId=" + ir.getRcCheckId() +", rcItemId=" + ir.getRcItemId() );
+                }                    
             }
             catch( Exception ee )
             {
                 LogService.logIt( ee, "RcFacade.saveRcRating() Checking for duplicate after error. XXX.5 " + ir.toString() );
             }
-            throw new STException( e );            
+            throw new STException( e );
+            */
         }
         catch( STException e )
         {
