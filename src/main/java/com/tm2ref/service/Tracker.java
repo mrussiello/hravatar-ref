@@ -51,6 +51,8 @@ public class Tracker
     private static int imageFileUploadErrors = 0;
     private static int mediaFileUploads = 0;
     private static int mediaFileUploadErrors = 0;
+    private static int candidateFileUploadErrors = 0;
+    private static int candidateFileUploads = 0;
 
     
     public static void addSelfReferral()
@@ -63,6 +65,10 @@ public class Tracker
         rcExtraReferrals++;
     }
 
+    public static void addCandidateFileUpload()
+    {
+        candidateFileUploads++;
+    }
     
     public static void addMediaFileUpload()
     {
@@ -71,6 +77,10 @@ public class Tracker
     public static void addImageFileUpload()
     {
         imageFileUploads++;
+    }
+    public static void addCandidateFileUploadError()
+    {
+        candidateFileUploadErrors++;
     }
     public static void addImageFileUploadError()
     {
@@ -230,6 +240,7 @@ public class Tracker
         
         outMap.put( "ERRORS: ", ((int) errors ) );
         outMap.put( "ERRORS: Faces", ((int) facesErrors ) );
+        outMap.put( "ERRORS: Candidate File Uploads", ((int) candidateFileUploadErrors ) );
         outMap.put( "ERRORS: Image File Uploads", ((int) imageFileUploadErrors ) );
         outMap.put( "ERRORS: Media File Uploads", ((int) mediaFileUploadErrors ) );
 
@@ -253,6 +264,7 @@ public class Tracker
         outMap.put( "REF: Remote Log Warning Messages", ((int) rcLogWarningMessages ) );
         outMap.put( "REF: Remote Log Info Messages", ((int) rcLogInfoMessages ) );
 
+        outMap.put( "FILE: Candidate File Uploads", ((int) candidateFileUploads ) );
         outMap.put( "FILE: Image File Uploads", ((int) imageFileUploads ) );
         outMap.put( "FILE: Media File Uploads", ((int) mediaFileUploads ) );
                 

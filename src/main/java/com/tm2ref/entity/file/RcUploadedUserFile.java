@@ -265,7 +265,7 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
 
     @Override
     public String toString() {
-        return "RcUploadedUserFile{" + "rcUploadedUserFileId=" + rcUploadedUserFileId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", rcItemId=" + rcItemId + '}';
+        return "RcUploadedUserFile{" + "rcUploadedUserFileId=" + rcUploadedUserFileId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", rcItemId=" + rcItemId + ", uploadedUserFileTypeId=" + uploadedUserFileTypeId + '}';
     }
     
     

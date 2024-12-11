@@ -5,6 +5,7 @@
 package com.tm2ref.file;
 
 import com.tm2ref.entity.file.RcUploadedUserFile;
+import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.LogService;
 import com.tm2ref.util.StringUtils;
@@ -15,7 +16,10 @@ import javax.naming.InitialContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
+import java.sql.SQLIntegrityConstraintViolationException;
+import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
@@ -43,22 +47,23 @@ public class FileUploadFacade
     }
 
 
-
-
     public RcUploadedUserFile saveRcUploadedUserFile( RcUploadedUserFile uuf ) throws Exception
+    {
+        return saveRcUploadedUserFile( uuf, 0 );
+    }
+
+
+    public RcUploadedUserFile saveRcUploadedUserFile( RcUploadedUserFile uuf, int count ) throws Exception
     {
         //  utx.begin();
 
         try
         {
-        	  // LogService.logIt( "FileUploadFacade.saveUploadedUserFile() saving UploadedUserFile "  );
-
             if( uuf.getRcCheckId() <= 0  )
                 throw new Exception( "rcCheckId=0" );
 
             if( uuf.getFilename() == null || uuf.getFilename().isEmpty() )
                 throw new Exception( "filename is missing" );
-
 
             if( uuf.getCreateDate() == null )
                 uuf.setCreateDate( new Date() );
@@ -85,13 +90,34 @@ public class FileUploadFacade
             em.flush();
 
         }
+        catch( DatabaseException | PersistenceException | SQLIntegrityConstraintViolationException e )
+        {
+            if( count<3 )
+            {
+                LogService.logIt( "FileUploadFacade.saveRcUploadedUserFile()XXX.1 Database error so waiting and trying again. count=" + count +", " + e.toString() + ", " + uuf.toString() );
 
+                if( uuf.getRcUploadedUserFileId()<=0 )
+                {
+                    RcUploadedUserFile cUuf = this.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(uuf.getRcCheckId(), uuf.getRcRaterId(), uuf.getRcItemId(), count);
+                    if( cUuf!=null )
+                    {
+                        LogService.logIt( "FileUploadFacade.saveRcUploadedUserFile() XXX.2 Found existing UploadedUserFile so using it.UploadedUserFileId=" + cUuf.getRcUploadedUserFileId()+ ", rcCheckId=" + uuf.getRcCheckId() + ", rcRaterId=" + uuf.getRcRaterId() + ", rcItemId=" + uuf.getRcItemId() );
+                        uuf.setRcUploadedUserFileId(cUuf.getRcUploadedUserFileId());                        
+                        return cUuf;
+                    }
+                }                
+
+                Thread.sleep((long) ((Math.random()) * 2000l));
+                count++;
+                return saveRcUploadedUserFile( uuf, count);
+            }
+            
+            LogService.logIt( e, "FileUploadFacade.saveRcUploadedUserFile() XXX.2 count=" + count + ", " + uuf.toString() );
+            throw new STException( e );
+        }
         catch( Exception e )
         {
-        	// utx.rollback();
-
-            LogService.logIt( e, "FileUploadFacade.saveRcUploadedUserFile() " + uuf.toString() );
-
+            LogService.logIt( e, "FileUploadFacade.saveRcUploadedUserFile() ZZZ.1 " + uuf.toString() );
             throw new STException( e );
         }
 

@@ -1517,7 +1517,10 @@ public class RaterRefUtils extends BaseRefUtils
                     rating.setCandidateRcUploadedUserFile(fileUploadFacade.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType( rcCheckId, rcRaterId, itemId, UploadedUserFileType.REF_CHECK_CANDIDATE_FILE_UPLOAD.getUploadedUserFileTypeId() ) );
 
                 if( rating.getCandidateUploadedUserFileId()>0 && rating.getCandidateRcUploadedUserFile()==null )
+                {
+                    Tracker.addCandidateFileUploadError();
                     throw new Exception( "Cannot find CandidateUploadedUserFileId=" + rating.getCandidateUploadedUserFileId() + ", for rcRatingId=" + rating.getRcRatingId() + ", rcItemId=" + itm.getRcItemId() + ", rcCheckId=" + rating.getRcCheckId() + ", rcRaterId=" + rating.getRcRaterId());
+                }
 
                 getProctorBean();
                 
@@ -2119,11 +2122,12 @@ public class RaterRefUtils extends BaseRefUtils
             }
 
             LogService.logIt("RaterRefUtils.saveUploadedUserFile() Successfully saved Candidate Uploaded File initial filename=" + uploadedFile.getFileName() + ", mime=" + fct.getBaseContentType() +", size=" + uuf.getFileSize() + ", saved filename=" + uuf.getFilename() +", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId() );
-
+            Tracker.addCandidateFileUpload();
             return uuf;
         }
         catch( Exception e )
         {
+            Tracker.addCandidateFileUploadError();
             LogService.logIt(e, "RaterRefUtils.saveUploadedUserFile() " + (rating==null ? "RcRating is null" : "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId()) );
             throw e;
         }

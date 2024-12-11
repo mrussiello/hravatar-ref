@@ -74,7 +74,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 if( !rootCause.equals(t))
                 {
                     if( rootCause instanceof EOFException )
-                        LogService.logIt( rootCause, "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
+                        LogService.logIt( "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
     
                     else
                         LogService.logIt( rootCause, "RefExceptionHandler.handle() AAA.2B Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
