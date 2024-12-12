@@ -138,6 +138,10 @@
                         <p:inputText value="#{adminRefBean.rcCheckId3}" size="8"/>
                         <p:commandButton ajax="false" action="#{adminRefUtils.processRecomputeRaterAndOverallScores}" value="Re-Score RcCheck"/>
 
+                        <h:outputText value="Send Delayed Rater Invites:"/>
+                        <p:inputText value="#{adminRefBean.rcCheckIds}" size="20"/>
+                        <p:commandButton ajax="false" action="#{adminRefUtils.processSendUnsentDelayedRaterInvitations}" value="Send Delayed Invites"/>
+
 
                         <h:outputText style="font-weight:bold" value="Run As Admin:"/>
                         <h:panelGroup></h:panelGroup>

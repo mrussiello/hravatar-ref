@@ -32,6 +32,8 @@ public class AdminRefBean  extends FacesBean implements Serializable {
     String langStr2;
     String langStr4;
     
+    String rcCheckIds;
+    
     int reportId3;
     int reportId4;
     
@@ -170,6 +172,14 @@ public class AdminRefBean  extends FacesBean implements Serializable {
 
     public void setRcRaterId5(long rcRaterId5) {
         this.rcRaterId5 = rcRaterId5;
+    }
+
+    public String getRcCheckIds() {
+        return rcCheckIds;
+    }
+
+    public void setRcCheckIds(String rcCheckIds) {
+        this.rcCheckIds = rcCheckIds;
     }
 
 

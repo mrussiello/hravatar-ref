@@ -1398,7 +1398,9 @@ public class RcCheckUtils {
             
             // see if candidate is now complete.
             if( rater.getIsCandidateOrEmployee() )
+            {
                 performRcCandidateCompletionIfReady(rc, adminOverride);
+            }
             
             // check for suspicious
             else

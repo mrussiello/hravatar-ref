@@ -276,6 +276,16 @@ public class RaterRefUtils extends BaseRefUtils
 
             RcItemWrapper rciwx = getFirstRcItemWrapper( goToFirstUnanswered);
 
+            //if( rciwx==null && goToFirstUnanswered && refBean.getRefUserType().getIsCandidate() )
+            //{
+            //    CandidateRefUtils cru = CandidateRefUtils.getInstance();
+            //    if( cru.getStartAtEndOfCore2() )
+           //     {
+            //        rciwx = this.getLastRcItemWrapper();
+            //        LogService.logIt( "RaterRefUtils.doEnterCore() BBB.1 rciwx=null and Candidate and start at end of Core2, so going to Last RcItemWrapper()" + (rciwx==null ? "null" : rciwx.getRcItemId() + ", status=" + rciwx.getRcRating().getRcRatingStatusType().getName() ) );
+            //    }
+            //}
+            
             // LogService.logIt( "RaterRefUtils.doEnterCore() rciwx=" + (rciwx==null ? "null" : rciwx.getRcItemId() ) + ", needsCore=" + this.getNeedsCore() + ", rcCheckId="  + rc.getRcCheckId() );
             raterRefBean.setRcItemWrapper(rciwx, rc.getRcRater().getIsCandidateOrEmployee() );
             // all items are complete.
@@ -790,17 +800,47 @@ public class RaterRefUtils extends BaseRefUtils
 
     public String getNextViewFromRatings() throws Exception
     {
+        getRefBean();
+
+        if( refBean.getRcCheck()==null )
+        {
+            RcCheck rcx = repairRefBeanForCurrentAction(refBean, true, 206 );
+            if( rcx!=null )
+                return getViewFromPageType( refBean.getRefPageType() );
+        }
+        
         if( raterRefBean.getRcItemWrapper()==null )
         {
             getRefBean();
+
+            // check completion of Rater
+            if( rcCheckUtils==null )
+                rcCheckUtils = new RcCheckUtils();
+            // complete the RcRater
+            boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(refBean.getRcCheck(), refBean.getRcCheck().getRcRater(), refBean.getAdminOverride() );
+            
             if( refBean.getRcCheck().getRcRater().getIsCandidateOrEmployee() )
             {
-                //if( this.rcCheckUtils==null )
-                //    rcCheckUtils = new RcCheckUtils();
-                //rcCheckUtils.performRcRaterCompletionIfReady( refBean.getRcCheck(), refBean.getRcCheck().getRcRater() );
-                CandidateRefUtils cru = CandidateRefUtils.getInstance();
-
-                return cru.doCompleteSelfRatings();
+                if( !isComplete )
+                {
+                    LogService.logIt( "RaterRefUtils.getNextViewFromRatings() AAA.1 NONFATAL ERROR. next RcItemWrapper is null, but Candidate/Employee RcRater is not complete. Restarting. rcCheck: "  + (refBean.getRcCheck()==null ? "null" : refBean.getRcCheck().toStringShort() + ", rcRaterId=" + (refBean.getRcCheck().getRcRater()==null ? "null" : refBean.getRcCheck().getRcRater().getRcRaterId())));
+                
+                    RefUtils ru = RefUtils.getInstance();
+                    return ru.performRcCheckStart( refBean.getRcCheck(), refBean.getRefUserType(), true, refBean.getAdminOverride());
+                }
+                 
+                else
+                {
+                    CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                    return cru.doCompleteSelfRatings();
+                }
+            }
+            
+            else if( !isComplete )
+            {
+                LogService.logIt( "RaterRefUtils.getNextViewFromRatings() AAA.2 Next RcItemWrapper is null, but Non-candidate RcRater is not complete. rcCheck: "  + (refBean.getRcCheck()==null ? "null" : refBean.getRcCheck().toStringShort() + ", rcRaterId=" + (refBean.getRcCheck().getRcRater()==null ? "null" : refBean.getRcCheck().getRcRater().getRcRaterId())));
+                RefUtils ru = RefUtils.getInstance();
+                return ru.performRcCheckStart( refBean.getRcCheck(), refBean.getRefUserType(), true, refBean.getAdminOverride());
             }
 
             refBean.setRefPageType(RefPageType.CORE );
@@ -829,13 +869,18 @@ public class RaterRefUtils extends BaseRefUtils
         RcScript rcs = refBean.getRcCheck().getRcScript();
 
         if( isSelf && rcs.getItemCount(isSelf)==0 )
+        {
+            LogService.logIt( "RaterRefUtils.computeRaterPercentComplete() isSelf is true but RcScrit.getItemCount() for self ratings is 0. Setting percent complete to 100. rcCheck: " + refBean.getRcCheck().toString());
             return 100f;
+        }
 
         return (float) NumberUtils.roundIt( 100f* ((float)rcs.getItemsAnswered(isSelf)) / ((float)rcs.getItemCount(isSelf)), 0 );
     }
 
     public boolean getNeedsCore() throws Exception
     {
+        
+        
         return raterRefBean.getRcItemWrapper()!=null;
     }
 
@@ -846,7 +891,25 @@ public class RaterRefUtils extends BaseRefUtils
         if( refBean.getRcCheck()==null )
             return false;
 
-        return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
+        if( refBean.getRefUserType().getIsRater() )
+            return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
+        
+        // Candidate
+        else
+        {
+            // need ratings from candidate and have rater in RcCheck for Candidate
+            if( refBean.getRcCheck().getCollectRatingsFmCandidate() )
+            {
+                if( refBean.getRcCheck().getRcRater()==null || !refBean.getRcCheck().getRcRater().getIsCandidateOrEmployee() )
+                    return false;
+                
+                // Not complete, or no expiration, or not expired.
+                return !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher() || refBean.getRcCheck().getExpireDate()==null || refBean.getRcCheck().getExpireDate().after(new Date());
+            }
+            
+            // No ratings from candidate
+            return false;
+        }
     }
 
 
@@ -862,7 +925,7 @@ public class RaterRefUtils extends BaseRefUtils
 
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 200 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
@@ -904,7 +967,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 201 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -963,7 +1026,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 202 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1020,7 +1083,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 203 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1052,6 +1115,13 @@ public class RaterRefUtils extends BaseRefUtils
                 if( !isComplete )
                     LogService.logIt( "RaterRefUtils.processMarkCompleteAndExit()  NONFATAL ERROR. rciwNew is null, but Rater is not complete after checking ratings. Will return to nextViewFromRatings. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + rc.getRcRater().getRcRaterId());
 
+                // should not happen but just in case.
+                else if( rc.getRcRater().getIsCandidateOrEmployee() )
+                {
+                    CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                    return cru.doCompleteSelfRatings();                        
+                }
+                
                 if( !refBean.getAdminOverride() && !rc.getRcRater().getIsCandidateOrEmployee() && (rc.getRcRater().getRcRaterStatusType().getIsComplete() ) )
                     rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, rc.getRcRater(), false);
             }
@@ -1224,6 +1294,10 @@ public class RaterRefUtils extends BaseRefUtils
 
     }
 
+    
+    
+    
+    
     public String processExitCore2()
     {
         getCorpBean();
@@ -1231,6 +1305,7 @@ public class RaterRefUtils extends BaseRefUtils
         RcCheck rc = refBean.getRcCheck();
         try
         {
+            LogService.logIt( "RaterRefUtils.processExitCore2() START rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
             if( rc==null )
             {
                 LogService.logIt( "RaterRefUtils.processExitCore2() Fatal Error refBean.rcCheck is null." );
@@ -1250,10 +1325,20 @@ public class RaterRefUtils extends BaseRefUtils
                     LogService.logIt( "RaterRefUtils.processExitCore2()  NONFATAL ERROR. Rater ratings not completed (or skipped). rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + " Rater is not completed sending to next view from ratings. rcRaterId=" + rc.getRcRater().getRcRaterId());
                     return getNextViewFromRatings();
                 }
+                
+                // should not happen but just in case
+                else if( rc.getRcRater().getIsCandidateOrEmployee() )
+                {
+                    CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                    return cru.doCompleteSelfRatings();                        
+                }
             }
 
             refBean.setRefPageType(RefPageType.CORE2 );
             RefPageType pt = getNextPageTypeForRefProcess();
+
+            LogService.logIt( "RaterRefUtils.processExitCore2() going to pageType=" + pt.getName() );
+            
             refBean.setRefPageType(pt);
             return conditionUrlForSessionLossGet(getViewFromPageType(pt), true);
         }
@@ -1281,7 +1366,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( rc==null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 204 );
                 if( rc!=null )
                     return this.conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1368,7 +1453,7 @@ public class RaterRefUtils extends BaseRefUtils
         {
             if( rc==null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 205 );
                 if( rc!=null )
                     return getViewFromPageType( refBean.getRefPageType() );
             }
@@ -1599,7 +1684,7 @@ public class RaterRefUtils extends BaseRefUtils
 
                         RcUploadedUserFile uuf = rating.getRcUploadedUserFile();
                         
-                        LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.1 uuf=" + (uuf==null ? "null" : "Not Null. rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + ", filename=" + uuf.getFilename() + ", conv status=" + uuf.getConversionStatusTypeId() ) );
+                        // LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.1 uuf=" + (uuf==null ? "null" : "Not Null. rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + ", filename=" + uuf.getFilename() + ", conv status=" + uuf.getConversionStatusTypeId() ) );
                         
                         if( uuf==null )
                         {
@@ -1940,6 +2025,19 @@ public class RaterRefUtils extends BaseRefUtils
                 {
                     rc.getRcRater().setPercentComplete( computeRaterPercentComplete() );
 
+                    if( rc.getRcRater().getPercentComplete()>=100 )
+                    {
+                        if( rcCheckUtils==null )
+                            rcCheckUtils = new RcCheckUtils();
+                        // complete the RcRater
+                        boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride() );
+                        
+                        if( !isComplete )
+                        {
+                            LogService.logIt( "RaterRefUtils.doSaveItemResp() WWW.1 NONFATAL ERROR. percentcomplete is 100 but RcRater is not complete. Will send to next view from ratings.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + (rc.getRcRater()==null ? "null" : rc.getRcRater().getRcRaterId()) );                    
+                        }
+                    }
+                    
                     if( !refBean.getAdminOverride() )
                         rcFacade.saveRcRater(rc.getRcRater(), true );
 
@@ -1960,7 +2058,7 @@ public class RaterRefUtils extends BaseRefUtils
                 }
             }
 
-            RcItemWrapper rciwNew = null;
+            RcItemWrapper rciwNew;
 
             if( goBack )
                 rciwNew = getPreviousRcItemWrapper();
@@ -1977,11 +2075,10 @@ public class RaterRefUtils extends BaseRefUtils
                 if( rc.getRcRater().getIsCandidateOrEmployee() && rc.getRcScript().getHasAnyCandidateInput() )
                 {
                     CandidateRefUtils cru = CandidateRefUtils.getInstance();
-
                     return cru.processGoBackToLastCandidateInputQuestion();
                 }
                 else
-                    throw new Exception( "Previous RcItemWrapper is null." );
+                    throw new Exception( "goBack=true but Previous RcItemWrapper is null or new rcItemWrapper is the same as the current rcItemWrapper. rcItemWrapper=" + (rciwNew==null ? "null" : rciwNew.toString()) );
             }
 
             // if rciwNew is null, we think it should be done.
@@ -1999,15 +2096,31 @@ public class RaterRefUtils extends BaseRefUtils
                     boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride() );
 
                     if( !isComplete )
-                        LogService.logIt( "RaterRefUtils.doSaveItemResp() NONFATAL ERROR. next RcItemWrapper is null, but Candidate/Employee RcRater is not complete. Will send to next view from ratings.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + (rc.getRcRater()==null ? "null" : rc.getRcRater().getRcRaterId()) );
+                        LogService.logIt( "RaterRefUtils.doSaveItemResp() XXX.1 NONFATAL ERROR. next RcItemWrapper is null, but Candidate/Employee RcRater is not complete. Will send to next view from ratings.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + (rc.getRcRater()==null ? "null" : rc.getRcRater().getRcRaterId() + ", rcRater.percentComplete=" + rc.getRcRater().getPercentComplete()) );                    
+                    else
+                    {
+                        CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                        return cru.doCompleteSelfRatings();                        
+                    }
+                }
 
-                    if( !refBean.getAdminOverride() && !rc.getRcRater().getIsCandidateOrEmployee() && (rc.getRcRater().getRcRaterStatusType().getIsComplete() ) )
+               else if( rciwNew==null && !rc.getRcRater().getIsCandidateOrEmployee() )
+                {
+                    if( rcCheckUtils==null )
+                        rcCheckUtils = new RcCheckUtils();
+                    // complete the RcRater
+                    boolean isComplete = rcCheckUtils.performRcRaterCompletionIfReady(rc, rc.getRcRater(), refBean.getAdminOverride() );
+
+                    if( !isComplete )
+                        LogService.logIt( "RaterRefUtils.doSaveItemResp() XXX.2 NONFATAL ERROR. next RcItemWrapper is null, but Candidate/Employee RcRater is not complete. Will send to next view from ratings.  rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + (rc.getRcRater()==null ? "null" : rc.getRcRater().getRcRaterId()) );
+
+                    if( !refBean.getAdminOverride() && (rc.getRcRater().getRcRaterStatusType().getIsComplete() ) )
                     {
                         rcCheckUtils.loadRcCheckForScoringOrResults(rc);
                         rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, rc.getRcRater(), false);
                     }
                 }
-
+               
                 // use the completed survey as a reason to check for candidate completion if this is not the candidate.
                 else if( rciwNew==null && !rc.getRcRater().getIsCandidateOrEmployee() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
                    rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );

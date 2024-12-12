@@ -507,6 +507,8 @@ public class RcCheck implements Serializable, Cloneable
     }
         
     
+    
+    
     public boolean getCollectRatingsFmCandidate()
     {
         return this.collectCandidateRatings>0;

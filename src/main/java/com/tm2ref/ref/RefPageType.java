@@ -18,8 +18,8 @@ public enum RefPageType
     PHOTO(45,"Photo", "photo.xhtml", "photo.xhtml" ),
     ID_PHOTO(46,"Id Photo", "photo-id.xhtml", "photo-id.xhtml" ),
     PRE_QUESTIONS(47,"Pre-Questions", "pre-questions-candidate.xhtml", null ),
-    CORE(50,"Core", "question.xhtml" , "item-rating.xhtml" ),
-    CORE2(60,"Core2", "item-rating.xhtml", "referrals.xhtml" ),
+    CORE(50,"Core", "question.xhtml" , "item.xhtml" ),
+    CORE2(60,"Core2", "item.xhtml", "referrals.xhtml" ),
     CORE3(70,"Core3", "references.xhtml", null ),
     COMPLETE(100,"Complete", "complete.xhtml" , "complete-r.xhtml" ),
     CANCELLED(200,"Cancelled", "cancelled.xhtml", "cancelled-r.xhtml" ),
@@ -82,7 +82,7 @@ public enum RefPageType
     {
         RefPageType pt = getNextPageType( this );
         
-        while(pt.getPage(rcUserType) == null)
+        while(pt.getPage(rcUserType)==null)
         {
             pt = getNextPageType(pt );
         } 
@@ -100,6 +100,9 @@ public enum RefPageType
         } 
         
         if( pt.getIsCore2() && rcUserType.getIsCandidate() && ( !rc.getCollectRatingsFmCandidate() || !rc.getRcScript().getHasAnyCandidateRatings()) )
+            pt = pt.getPreviousPageTypeNoNull(rcUserType, rc);
+        
+        if( pt.getIsCore3() && rcUserType.getIsCandidate() && !rc.getCandidateCanAddRaters() )
             pt = pt.getPreviousPageTypeNoNull(rcUserType, rc);
         
         return pt;

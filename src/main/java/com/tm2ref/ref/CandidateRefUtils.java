@@ -8,12 +8,9 @@ package com.tm2ref.ref;
 import com.tm2ref.corp.CorpBean;
 import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.ref.RcCheck;
-import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcRater;
-import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.user.User;
-import com.tm2ref.file.FileUploadFacade;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.EmailUtils;
@@ -76,7 +73,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 100 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -110,7 +107,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 else if( getNeedsCore3() )
                 {
                     refBean.setRefPageType(RefPageType.CORE3 );
-                    if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
+                    if( !rc.getRcRaterListCandidate().isEmpty() && rc.getNeedsSupervisors() )
                         setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
                 }
@@ -153,7 +150,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 101 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -184,7 +181,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 // return "/ref/question.xhtml";
             }
 
-            LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() AAA.1 idx=" + idx + ", goBack=" + goBack );
+            // LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() AAA.1 idx=" + idx + ", goBack=" + goBack );
             if( goBack && idx<=1 )
                 goBack=false;
 
@@ -203,7 +200,7 @@ public class CandidateRefUtils extends BaseRefUtils
             if( goBack )
             {
                 setPreviousCandidateInputNumberAndValue();
-                LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() BBB.1 after setPreviousCandidateInputNumber, candidateInputNumber=" + candidateRefBean.getCandidateInputNumber() );
+                // LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() BBB.1 after setPreviousCandidateInputNumber, candidateInputNumber=" + candidateRefBean.getCandidateInputNumber() );
                 if( candidateRefBean.getCandidateInputNumber()<=0 )
                 {
                     LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() set to go back but there is no question to go back to. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
@@ -223,7 +220,7 @@ public class CandidateRefUtils extends BaseRefUtils
                         else if( getNeedsCore3() )
                         {
                             refBean.setRefPageType(RefPageType.CORE3 );
-                            if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
+                            if( !rc.getRcRaterListCandidate().isEmpty() && rc.getNeedsSupervisors() )
                                 setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
                             return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
                         }
@@ -238,7 +235,7 @@ public class CandidateRefUtils extends BaseRefUtils
             else
             {
                 setNextCandidateInputNumberAndValue(false);
-                LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() BBB.2 after setNextCandidateInputNumberAndValue, candidateInputNumber=" + candidateRefBean.getCandidateInputNumber() );
+                // LogService.logIt( "CandidateRefUtils.processSaveQuestionResp() BBB.2 after setNextCandidateInputNumberAndValue, candidateInputNumber=" + candidateRefBean.getCandidateInputNumber() );
 
                 // No more questions.
                 if( candidateRefBean.getCandidateInputNumber()<=0 )
@@ -254,7 +251,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     else if( getNeedsCore3() )
                     {
                         refBean.setRefPageType(RefPageType.CORE3 );
-                        if( rc.getRcRaterListCandidate().size()>0 && rc.getNeedsSupervisors() )
+                        if( !rc.getRcRaterListCandidate().isEmpty() && rc.getNeedsSupervisors() )
                             setInfoMessage( "g.XCAddReferences.belowminsups", new String[]{ getRcCheckRaterNameLc(), getRcCheckRatersNameLc(),Integer.toString(rc.getRcRaterListCandidate().size()),null,null,null,null,Integer.toString(rc.getRcRaterListCandidateSupers().size()), Integer.toString(rc.getMinSupervisors())} );
                         return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
                     }
@@ -314,6 +311,8 @@ public class CandidateRefUtils extends BaseRefUtils
             //rcCheckUtils.performRcCandidateCompletionIfReady(rc);
             if( !refBean.getAdminOverride() )
             {
+                // Need to check that all ratings are done. 
+
                 // update the Rc Check
                 if( rc.getCandidateRatingsCompleteDate()==null )
                 {
@@ -322,20 +321,23 @@ public class CandidateRefUtils extends BaseRefUtils
                         rcFacade = RcFacade.getInstance();
                     rcFacade.saveRcCheck( rc, true );
 
-                    if( rc.getRaterSendDelayTypeId()==1 && rc.getCandidateRcRaterId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
-                    {
-                        // indicates must wait and check media.
-                        rc.setRaterSendDelayTypeId(10);
-                        rcFacade.saveRcCheck( rc, true );                                                    
-                    }                    
-                    
-                    // initial ratings completed, so send Rater Invitations
-                    if( rc.getRaterSendDelayTypeId()==1 ) //  || rc.getRaterSendDelayTypeId()==10 )
-                    {
-                        sendDelayedRaterInvitations( rc );
-                    }
                 }
-                                
+
+                if( rc.getRaterSendDelayTypeId()==1 && rc.getCandidateRcRaterId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
+                {
+                    LogService.logIt( "CandidateRefUtils.doCompleteSelfRatings() rcCheck is complete but there is unconverted media for review. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
+                    // indicates must wait and check media.
+                    rc.setRaterSendDelayTypeId(10);
+                    rcFacade.saveRcCheck( rc, true );                                                    
+                }                    
+
+                // initial ratings completed, so send Rater Invitations
+                if( rc.getRaterSendDelayTypeId()==1 ) //  || rc.getRaterSendDelayTypeId()==10 )
+                {
+                    sendDelayedRaterInvitations( rc );
+                }
+                
+                
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
             }
             
@@ -362,16 +364,18 @@ public class CandidateRefUtils extends BaseRefUtils
     }
 
     
-    public void sendDelayedRaterInvitations( RcCheck rc )
+    public int[] sendDelayedRaterInvitations( RcCheck rc )
     {
         getRefBean();
+        
+        int[] out = new int[2];
         
         try
         {
             if( rc.getCandidateRatingsCompleteDate()==null )
             {
                 LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() candidateRatingsCompleteDate is null. Cannot send delayed invitations. " + rc.toString() );
-                return;
+                return out;
             }
 
             if( refBean.getHasUnconvertedAvMediaForReview()==null )
@@ -380,14 +384,15 @@ public class CandidateRefUtils extends BaseRefUtils
             if( refBean.getHasUnconvertedAvMediaForReview() )
             {
                 LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() Candidate Ratings has uncoverted av media for rater review. Cannot send delayed invitations. " + rc.toString() );
-                return;
+                return out;
             }
             
-            sendUnsentRcRaters( rc, false );
+            return sendUnsentRcRaters( rc, false );
         }
         catch( Exception e )
         {
             LogService.logIt( e, "CandidateRefUtils.sendDelayedRaterInvitations() " + (rc==null ? "rcCheck is null" : rc.toString() ) );
+            return out;
         }
     }
     
@@ -537,8 +542,28 @@ public class CandidateRefUtils extends BaseRefUtils
     public boolean getNeedsCore2() throws Exception
     {
         getRefBean();
-        return refBean.getRcCheck().getCollectRatingsFmCandidate() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
+        
+        if( !refBean.getRcCheck().getCollectRatingsFmCandidate() )
+            return false;
+        
+        if( refBean.getRcCheck().getRcRater()==null || !refBean.getRcCheck().getRcRater().getIsCandidateOrEmployee() )
+            return false;
+
+        // Not complete, or no expiration, or not expired.
+        return !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher() || refBean.getRcCheck().getExpireDate()==null || refBean.getRcCheck().getExpireDate().after(new Date());
+        
+        
+        // return refBean.getRcCheck().getCollectRatingsFmCandidate() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
     }
+    
+    
+    public boolean getStartAtEndOfCore2() throws Exception
+    {
+        return getNeedsCore2() && !getNeedsCore3();
+    }
+    
+    
+    
     public boolean getNeedsCore3() throws Exception
     {
         getRefBean();
@@ -607,7 +632,7 @@ public class CandidateRefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 102 );
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
             List<RcRater> rcrl = rc.getRcRaterListCandidate();
@@ -668,13 +693,19 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 103 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
             if( rc == null )
                 return CorpUtils.getInstance().processCorpHome();
 
+            if( !rc.getCandidateCanAddRaters() )
+            {
+                LogService.logIt( "CandidateRefUtils.processViewRaters() Candidate cannot add raters. Should not be here. Processing Go Back from here.  rcCheck: "  + rc.toStringShort());
+                return processReferencesGoBack();
+            }
+            
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
                 throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
@@ -683,7 +714,7 @@ public class CandidateRefUtils extends BaseRefUtils
             if( !refPageType.getIsCore3() )
                 return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
 
-            LogService.logIt( "CandidateRefUtils.processViewRaters() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            LogService.logIt( "CandidateRefUtils.processViewRaters() rcCheck: "  + rc.toStringShort());
             RefUserType refUserType = refBean.getRefUserType();
             if( !refUserType.getIsCandidate() )
                 throw new Exception( "RefUserType is incorrect: " + refUserType.getName() );
@@ -791,7 +822,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 104 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -803,7 +834,7 @@ public class CandidateRefUtils extends BaseRefUtils
 
             refBean.setRefPageType( RefPageType.CORE3 );
             RefPageType rpt = getPreviousPageTypeForRefProcess();
-            LogService.logIt( "CandidateRefUtils.processReferencesGoBack() BBB new RefPageType=" + rpt.getName() + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            LogService.logIt( "CandidateRefUtils.processReferencesGoBack() BBB new RefPageType=" + rpt.getName() + ", rcCheck "  + (rc==null ? "null" : rc.toStringShort() ));
             refBean.setRefPageType(rpt);
 
             if( rpt.getIsCore() && rc.getRcScript().getHasAnyCandidateInput() )
@@ -828,7 +859,7 @@ public class CandidateRefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 105 );
             // LogService.logIt( "CandidateRefUtils.doExitCoreBeacon() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcCheckId=" + rcCheckId );
             if( rc == null )
                 return;
@@ -892,24 +923,36 @@ public class CandidateRefUtils extends BaseRefUtils
     }
 
 
-    protected void sendUnsentRcRaters( RcCheck rc, boolean candidateRatersOnly) throws Exception
+    protected int[] sendUnsentRcRaters( RcCheck rc, boolean candidateRatersOnly) throws Exception
     {
         getRefBean();
 
+        int[] out = new int[2];
+        
         if( candidateRatersOnly && rc.getCandidateCannotAddRaters()==1 )
-            return;
+            return out;
 
         List<RcRater> rcrl = candidateRatersOnly ? rc.getRcRaterListCandidate() : rc.getRcRaterList();
         int[]  sendstats;
 
         for( RcRater rcr : rcrl )
         {
-            if( !rcr.getCandidateCanSend() )
+            if( candidateRatersOnly && !rcr.getCandidateCanSend() )
+                continue;
+            
+            if( rcr.getRaterNoSend()==1 )
                 continue;
 
             if( !rcr.getRcRaterStatusType().getSentOrHigher() )
             {
                 sendstats = refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(rc, rcr, false, false, false );
+                
+                if( sendstats!=null )
+                {
+                    out[0] += sendstats[0];
+                    out[1] += sendstats[1];
+                }
+                
                 if( sendstats[0]>0 || sendstats[1]>0 )
                 {
                     rcr.setRcRaterStatusTypeId( RcRaterStatusType.SENT.getRcRaterStatusTypeId() );
@@ -922,9 +965,12 @@ public class CandidateRefUtils extends BaseRefUtils
                     }
                 }
             }
+            
             else if( !refBean.getAdminOverride() && (rcr.getNeedsResendEmail() || rcr.getNeedsResendMobile()) )
                 sendRcCheckToRater(rc, rcr, true, false, false );
         }
+        
+        return out;        
     }
 
     public String processExitAllCore()
@@ -937,14 +983,14 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 106 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
-            if( rc == null )
+            if( rc==null )
                 return CorpUtils.getInstance().processCorpHome();
 
-            long rcChkReq = this.getRcCheckIdFmRequest();
+            long rcChkReq = getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
                 throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
             // LogService.logIt( "CandidateRefUtils.processExitAllCore() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
@@ -1007,7 +1053,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 107 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1120,7 +1166,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 108 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
             }
@@ -1205,7 +1251,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 109 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1293,7 +1339,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 110 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1369,7 +1415,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 111);
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
@@ -1385,6 +1431,12 @@ public class CandidateRefUtils extends BaseRefUtils
             if( !refPageType.getIsCore3() )
                 return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
 
+            if( !rc.getCandidateCanAddRaters() )
+            {
+                LogService.logIt( "CandidateRefUtils.processSaveRater() Candidate cannot add raters!  Should not be here. Processing Go Back from here.  rcCheck: "  + rc.toStringShort());
+                return processReferencesGoBack();
+            }
+            
             rcRater = candidateRefBean.getRcRater();
             if( rcRater==null )
                 throw new Exception( "RcRater is null!" );
@@ -1728,7 +1780,7 @@ public class CandidateRefUtils extends BaseRefUtils
             rc = refBean.getRcCheck();
             if( rc == null )
             {
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 112 );
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }

@@ -66,7 +66,8 @@
                                     <div style="display:inline-block">
                                         <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackToReferencesTitle']}"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and not refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.collectRatingsFmCandidate}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.BackToQuestions']}" title="#{stMessages['g.BackToQuestionsTitle']}"/>                
                                     </div>
                                 </div>
                             </h:panelGroup>

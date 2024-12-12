@@ -171,7 +171,7 @@ public class CorpBean extends FacesBean implements Serializable
                     LogService.logIt( "CorpBean.sessionMissingCheckEntry() Repairing RcCheck." );
 
                     // LogService.logIt( "CorpBean.sessionMissingCheckEntry() TestBean.TestKey was null.  INFO DUMP: " + (new HttpInfoDumpUtils() ).getRequestInfo( getHttpServletRequest() ) );
-                    tu.repairRefBeanForCurrentAction( tb, true );
+                    tu.repairRefBeanForCurrentAction(tb, true, 300 );
                 }
                 
                     if( tb.getRcCheck() != null )

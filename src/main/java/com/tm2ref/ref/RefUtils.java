@@ -60,7 +60,7 @@ public class RefUtils extends BaseRefUtils
             // LogService.logIt( "RefUtils.performCoreExitEntry() AAA.1 rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", refUserTypeId=" + refUserTypeId );
             RcCheck rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 1 );
             if( rc == null )
             {               
                 if( corpUtils==null )
@@ -371,7 +371,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc==null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 2 );
             if( rc == null )
             {               
                 if( corpUtils==null )
@@ -539,7 +539,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc==null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 3 );
 
             if( rc==null )
             {
@@ -710,7 +710,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc==null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 4 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -771,7 +771,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 5 );
             if( rc == null )
             {
                 LogService.logIt( "RefUtils.processConfirmName() rc=null after attempt to repair. Going to corp.home." );
@@ -877,7 +877,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 6 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -901,21 +901,29 @@ public class RefUtils extends BaseRefUtils
                     cru.doEnterCore();
                     if( !cru.getNeedsCore() )
                     {
-                        cpt = cpt.getNextPageTypeNoNull(rut);
+                        // cpt = cpt.getNextPageTypeNoNull(rut);
+                        cpt = getNextPageTypeForRefProcess();
 
-                        // LogService.logIt( "BaseRefUtils.getNextPageTypeForRefProcess() BBB nextRefPageType=" + nextRefPageType.getName() +", refUserType=" + refUserType.getName() + ", needsCore2=" + cru.getNeedsCore2() + ", needsCore3=" + cru.getNeedsCore3() );
+                        LogService.logIt( "RefUtils.processReturnToRefCheckProcess() BBB.1 cpt=" + cpt.getName() +", refUserType=" + rut.getName() );
 
                         if( cpt.getIsCore2() )
                         {
                             if( !cru.getNeedsCore2() )
-                                cpt = cpt.getNextPageTypeNoNull(rut);
+                            {
+                                LogService.logIt( "RefUtils.processReturnToRefCheckProcess() BBB.2 cpt=" + cpt.getName() +" BUT CandidateRefUtls.needsCore2() is false. Moving on to the next PageType. refUserType=" + rut.getName() + ", needsCore2=" + cru.getNeedsCore2() + ", needsCore3=" + cru.getNeedsCore3() );
+                                cpt = getNextPageTypeForRefProcess(); // cpt.getNextPageTypeNoNull(rut);
+                            }
                             
                             else
                             {
+                                LogService.logIt( "RefUtils.processReturnToRefCheckProcess() BBB.3 cpt=" + cpt.getName() +" Going to Ratings. refUserType=" + rut.getName() );
                                 RaterRefUtils rru = RaterRefUtils.getInstance();
                                 rru.doEnterCore(true);
-                                if( !rru.getNeedsCore() )
-                                    cpt = cpt.getNextPageTypeNoNull(rut);
+                                //if( !rru.getNeedsCore() )
+                                //{
+                                //    LogService.logIt( "RefUtils.processReturnToRefCheckProcess() BBB.2 cpt=" + cpt.getName() +" Going to Ratings BUT RaterRefUtils.needsCore() is false. Moving on to the next PageType. refUserType=" + rut.getName() );
+                                //    cpt = getNextPageTypeForRefProcess(); // cpt.getNextPageTypeNoNull(rut);
+                                //}
                                 refBean.setRefPageType(cpt);
                                 return conditionUrlForSessionLossGet(rru.getViewFromPageType(cpt), true);
                                 
@@ -923,7 +931,7 @@ public class RefUtils extends BaseRefUtils
                         }
 
                         if( cpt.getIsCore3() && !cru.getNeedsCore3() )
-                            cpt = cpt.getNextPageTypeNoNull(rut);
+                            cpt = getNextPageTypeForRefProcess(); // cpt.getNextPageTypeNoNull(rut);
                     }
 
                     // Candidate, but does need core. 
@@ -969,14 +977,14 @@ public class RefUtils extends BaseRefUtils
                     if( !rru.getNeedsCore() )
                     {
                         // this will advance until a non-null page is found.
-                        cpt = cpt.getNextPageTypeNoNull(rut);
+                        cpt = getNextPageTypeForRefProcess();; // cpt.getNextPageTypeNoNull(rut);
                         
                         // core 2
                         if( cpt.getIsCore2() )
                         {
                             // doens't need core2, continue.
                             if( !rru.getNeedsCore2() )
-                                cpt = cpt.getNextPageTypeNoNull(rut);
+                                cpt = getNextPageTypeForRefProcess(); // cpt.getNextPageTypeNoNull(rut);
                             
                             else
                             {
@@ -995,7 +1003,7 @@ public class RefUtils extends BaseRefUtils
                 // doens't need core2, continue.
                 
                 if( !rru.getNeedsCore2() )
-                    cpt = cpt.getNextPageTypeNoNull(rut);
+                    cpt = getNextPageTypeForRefProcess(); // cpt.getNextPageTypeNoNull(rut);
 
                 else
                     rru.doEnterCore2();                
@@ -1027,7 +1035,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 7 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1058,7 +1066,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 8 );
             if( rc == null )
             {
                 LogService.logIt( "RefUtils.processSubmitIntro() rc=null after recovery attempt." );
@@ -1133,7 +1141,7 @@ public class RefUtils extends BaseRefUtils
                 return null;
             }
             
-            rc = repairRefBeanForCurrentAction(refBean, true );
+            rc = repairRefBeanForCurrentAction(refBean, true, 9 );
             
             if( rc==null )
                 return null;
@@ -1186,7 +1194,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 10 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1239,7 +1247,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 11 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1282,7 +1290,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 12 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1290,7 +1298,7 @@ public class RefUtils extends BaseRefUtils
                 return corpUtils.processCorpHome();            
             }
 
-            long rcChkReq = this.getRcCheckIdFmRequest();
+            long rcChkReq = getRcCheckIdFmRequest();
             if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
             {
                 String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
@@ -1329,7 +1337,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 13 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1407,7 +1415,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 14 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1607,7 +1615,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 15 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1735,7 +1743,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 16 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1848,7 +1856,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc == null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 17 );
             if( rc == null )
             {
                 if( corpUtils==null )
@@ -1926,7 +1934,7 @@ public class RefUtils extends BaseRefUtils
         {
             rc = refBean.getRcCheck();
             if( rc==null )
-                rc = repairRefBeanForCurrentAction(refBean, true );
+                rc = repairRefBeanForCurrentAction(refBean, true, 18 );
 
 
             if( refBean.getRcCheck()!=null )

@@ -360,7 +360,7 @@ public class FileXferUtils
 
             PutObjectResponse response = getS3Client(bucketType.getBucketRegion(), false).putObject(por, RequestBody.fromInputStream(iss, length));
 
-            LogService.logIt("FileXferUtils.saveFileToAws() with inputStream. Saving file " + key + " to bucket " + bucketType.getBucket() + ", response=" + response.toString() + ", contentType=" + contentType + ", length=" + length );
+            // LogService.logIt("FileXferUtils.saveFileToAws() with inputStream. Saving file " + key + " to bucket " + bucketType.getBucket() + ", response=" + response.toString() + ", contentType=" + contentType + ", length=" + length );
         } 
         catch (Exception e) 
         {

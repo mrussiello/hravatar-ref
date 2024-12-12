@@ -706,7 +706,7 @@ public class ProctorUtils extends FacesUtils {
         try
         {       
             if( rc==null )
-                rc = RefUtils.getInstance().repairRefBeanForCurrentAction(refBean, true );
+                rc = RefUtils.getInstance().repairRefBeanForCurrentAction(refBean, true, 400 );
             
             if( rc==null )
             {

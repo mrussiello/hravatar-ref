@@ -20,6 +20,7 @@ import jakarta.faces.event.ExceptionQueuedEventContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.EOFException;
+import java.util.concurrent.TimeoutException;
 
 /**
  *
@@ -73,7 +74,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 
                 if( !rootCause.equals(t))
                 {
-                    if( rootCause instanceof EOFException )
+                    if( rootCause instanceof EOFException || rootCause instanceof TimeoutException || rootCause instanceof FacesException )
                         LogService.logIt( "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
     
                     else

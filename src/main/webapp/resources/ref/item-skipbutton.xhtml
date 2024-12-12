@@ -3,7 +3,8 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"      
+      xmlns:ref="jakarta.faces.composite/ref">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -16,6 +17,9 @@
         <p:commandLink rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.rcItem.hideSkip le 0 and (not refBean.rcCheck.rcScript.allCommentsRequiredB or raterRefBean.rcItem.includeComments le 0 or not raterRefBean.rcItem.rcItemFormatType.canHaveComments)}" ajax="false" action="#{raterRefUtils.processSkipItem}" styleClass="textmedium ttformlink" onclick="doSkipButton()" title="#{stMessages['g.XRSkipButnAlt']}">
             <h:outputText style="text-decoration:underline" value="#{raterRefUtils.itemSkipButtonText}"/>
         </p:commandLink>
+        
+        <ref:item-exit-ratings-link />
+                
     </div>
 
 </cc:implementation>

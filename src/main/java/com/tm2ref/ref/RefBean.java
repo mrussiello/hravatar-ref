@@ -290,6 +290,11 @@ public class RefBean extends BaseRefBean implements Serializable
         return getRefUserType().getIsCandidate() && rcCheck!=null && rcCheck.getRcScript()!=null && rcCheck.getRcScript().getHasCandidateAudioVideoFileUploads( true );
     }
     
+    public boolean getCandidateCanReenter()
+    {
+        return rcCheck!=null && !rcCheck.getRcCheckStatusType().getCompleteOrHigher() && refUserType!=null && refUserType.getIsCandidate();
+    }
+    
     public boolean getVideoCommentsOk()
     {
         // LogService.logIt( "RefBean.getAudioVideoCommentsOk() MedRecApi=" + medRecApi + ", avCommentTypeId=" + rcCheck.getAvCommentsTypeId() );

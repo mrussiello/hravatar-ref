@@ -89,8 +89,9 @@
             <p:commandLink  styleClass="textmedium ttformlink" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
                 <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
             </p:commandLink>
-
+            
             <ref:item-skipbutton />
+
         </h:panelGrid>
                 
     </h:form>

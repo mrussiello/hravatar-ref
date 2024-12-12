@@ -23,6 +23,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.util.ArrayList;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -374,6 +375,116 @@ public class AdminRefUtils extends FacesUtils {
             return null;
         }        
     }    
+    
+    
+    public String processSendUnsentDelayedRaterInvitations()
+    {
+        try
+        {
+            adminRefBean.setStrParam1(null);
+            getUserBean();
+            if( !userBean.getUserLoggedOnAsAdmin() )
+                throw new Exception( "Logon invalid." );
+            String rcCheckIdStr = adminRefBean.getRcCheckIds();            
+            if( rcCheckIdStr==null || rcCheckIdStr.isBlank() )
+                throw new Exception( "RcCheckIds are missing. Should be comma delimited. " );
+            
+            List<Long> rcCheckIds = new ArrayList<>();
+            long rcCheckId = 0;
+            for( String rcid : rcCheckIdStr.split(",") )
+            {
+                if( rcid.isBlank() )
+                    continue;
+                
+                rcCheckId = Long.parseLong(rcid);
+                
+                if( rcCheckId>0 )
+                    rcCheckIds.add( rcCheckId );
+            }
+            
+            if( rcCheckIds.isEmpty() )
+                throw new Exception( "Could not parse any rcCheckIds from inStr=" + rcCheckIdStr );
+                        
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            RcCheck rc;
+            
+            if( rcCheckUtils==null )
+                rcCheckUtils = new RcCheckUtils();
+            
+            CandidateRefUtils cru = CandidateRefUtils.getInstance();
+            
+            int[] out = new int[2];
+            
+            int[] tempOut;
+                 
+            for( Long id : rcCheckIds )
+            {
+                rc = rcFacade.getRcCheck(id, true );
+                
+                if( rc==null )
+                {
+                    this.setStringErrorMessage("Could not find RcCheck for rcCheckId=" + id );
+                    continue;
+                }
+
+                if( rc.getRcCheckStatusType().getCompleteOrHigher()  )
+                {
+                    this.setStringErrorMessage("RcCheck is completed or higher. Not sending. rcCheckId=" + id );
+                    continue;
+                }
+                
+                rcCheckUtils.loadRcCheckForAdmin(rc, RefUserType.CANDIDATE, getLocale(), true );
+                
+                if( rc.getCandidateRatingsCompleteDate()==null )
+                {
+                    RcRater rcr = rc.getRcRaterForUserId( rc.getUserId() );
+                    
+                    if( !rcr.getRcRaterStatusType().getCompleteOrHigher() )
+                        rcCheckUtils.performRcRaterCompletionIfReady(rc, rcr, false );
+                    
+                    if( rcr.getRcRaterStatusType().getCompleteOrHigher() )
+                    {
+                        rc.setCandidateRatingsCompleteDate(rcr.getCompleteDate() );
+                        rcFacade.saveRcCheck(rc, false );
+                    }                        
+                    
+                    if( rc.getCandidateRatingsCompleteDate()!=null )
+                    {
+                        setStringInfoMessage( "RcCheckId=" + rc.getRcCheckId() + ", changed to Candidate Ratings Complete." );
+                        LogService.logIt( "AdminRefUtils.processSendUnsentDelayedRaterInvitations() RcCheckId=" + rc.getRcCheckId() + ", changed to Candidate Ratings Complete." );            
+                    }                    
+                }
+
+                if( rc.getCandidateRatingsCompleteDate()==null )
+                {
+                    setStringInfoMessage( "RcCheckId=" + rc.getRcCheckId() + ", Skipped because Candidate Ratings are not complete." );
+                    LogService.logIt( "AdminRefUtils.processSendUnsentDelayedRaterInvitations() Skipped because Candidate Ratings are not complete rcCheckId=" + id );            
+                    continue;
+                }
+
+                LogService.logIt( "AdminRefUtils.processSendUnsentDelayedRaterInvitations() Sending delayed invites. rcCheckId=" + id + ", " + rc.getCandidateRatingsCompleteDate().toString() );            
+                
+                tempOut = cru.sendDelayedRaterInvitations(rc);
+                
+                setStringInfoMessage( "RcCheckId=" + rc.getRcCheckId() + ", emails sent: " + tempOut[0] + ", texts sent: " + tempOut[1] );
+                
+                out[0]+=tempOut[0];
+                out[1]+=tempOut[1];
+            }
+            
+            setStringInfoMessage( "Completion TOTAL emails sent: " + out[0] + ", TOTAL texts sent: " + out[1] );
+
+            LogService.logIt( "AdminRefUtils.processSendUnsentDelayedRaterInvitations() TOTAL emails sent: " + out[0] + ", TOTAL texts sent: " + out[1] + " text messages.  , rcCheckId=" + rcCheckId );            
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "AdminRefUtils.processSendUnsentDelayedRaterInvitations()" );
+            setMessage(e);
+            return null;
+        }        
+    }
     
     public String processRedistributeProgress()
     {
