@@ -28,12 +28,12 @@ import com.tm2ref.report.ReportTemplate;
 import com.tm2ref.report.ReportUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.user.UserFacade;
+import com.tm2ref.util.ColorUtils;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,6 +207,8 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
         
         initFonts();
         
+        parseCustomLogos();
+        
         initColors();  
         
         if( 1==1 )
@@ -218,6 +220,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
             lightBoxBorderWidth=0;
         }
 
+        parseCustomColors();
         
 
         prepNotes = new ArrayList<>();
@@ -255,6 +258,72 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
         dataTableEvent = new TableBackground( BaseColor.LIGHT_GRAY , 0.2f, BaseColor.WHITE );
         tableHeaderRowEvent = new TableBackground( null , 0, getTablePageBgColor() );
     }
+    
+    public void parseCustomColors()
+    {
+        String custColors = reportData.getReportRuleAsString( "basereportcolors" );
+        if( custColors==null || custColors.isBlank() )
+            return;
+        
+        String[] vals = custColors.split(",");
+        String custCol;
+        BaseColor bc;
+        if( vals.length>0 )
+        {
+            custCol = vals[0].trim();
+            if( !custCol.isEmpty() )
+            {
+                bc = ITextUtils.getItextBaseColorFromRGBStr(custCol);
+                if( bc!=null )
+                {
+                    ct2Colors.hraBlue = bc;
+                    ct2Colors.headerDarkBgColor = ct2Colors.hraBlue;
+                }              
+            }
+        }
+    }    
+    
+    public void parseCustomLogos()
+    {
+        String whiteTextSmallLogoUrl = reportData.getReportRuleAsString( "reportlogo1" );
+        if( whiteTextSmallLogoUrl!=null && !whiteTextSmallLogoUrl.isBlank() )
+        {
+            try
+            {
+                int sp = reportData.getReportRuleAsInt( "reportlogoscale1" );                
+                // Logo used in standard header/footer
+                hraLogoWhiteTextSmall = ITextUtils.getITextImage( (new URI(whiteTextSmallLogoUrl)).toURL() );  
+
+                if( sp>0 && sp<=100 )
+                    hraLogoWhiteTextSmall.scalePercent(sp);
+            }
+            catch( Exception e )
+            {
+                LogService.logIt(e, "BaseVWGAReportTemplate.initFonts() whiteTextSmallLogoUrl=" + whiteTextSmallLogoUrl );
+            }            
+        }
+        
+        String blackTextLargerLogoUrl = reportData.getReportRuleAsString( "reportlogo2" );
+        if( blackTextLargerLogoUrl!=null && !blackTextLargerLogoUrl.isBlank() )
+        {
+            try
+            {
+                int sp = reportData.getReportRuleAsInt( "reportlogoscale2" );                
+                // Logo used in standard header/footer
+                hraLogoBlackText = ITextUtils.getITextImage( (new URI(blackTextLargerLogoUrl)).toURL() );  
+
+                if( sp>0 && sp<=100 )
+                    hraLogoBlackText.scalePercent(sp);
+            }
+            catch( Exception e )
+            {
+                LogService.logIt(e, "BaseVWGAReportTemplate.initFonts() blackTextLargerLogoUrl=" + blackTextLargerLogoUrl );
+            }            
+        }
+        
+        
+    }
+    
     
     
     public Image getItextThumbImage( String url, float maxWid, boolean hasIds)

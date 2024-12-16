@@ -19,6 +19,13 @@ import com.itextpdf.text.pdf.PdfShading;
 import com.itextpdf.text.pdf.PdfShadingPattern;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.ShadingColor;
+import com.tm2ref.service.EmailUtils;
+import com.tm2ref.service.LogService;
+import com.tm2ref.util.ColorUtils;
+import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  *
@@ -27,6 +34,48 @@ import com.itextpdf.text.pdf.ShadingColor;
 public class ITextUtils
 {
 
+    public static Image getITextImage( URL url ) throws Exception
+    {
+        return getITextImage( url, 0 );
+    }
+    
+    public static Image getITextImage( URL url, int count ) throws Exception
+    {
+        try
+        {
+            return Image.getInstance(url);
+        }
+        catch( Exception e )
+        {
+            // this can happen when the 
+            if( e instanceof FileNotFoundException )
+            {
+                LogService.logIt( "ITextUtils.getITextImage() FILE NOT FOUND. Returning null. " + e.toString() + ",  count=" + count + ", url=" + url.toString() );
+                return null;
+                //EmailUtils eu = new EmailUtils();
+                //eu.sendEmailToAdmin("Tm2Score ItextUtils Unable to Load Image", "com.tm2score.custom.coretest.ITextUtils.getITextImage() error=" +  e.toString() + ", url=" + url.toString() + ", " + url.toExternalForm() );                    
+            }
+            if( count>=2 )
+            {
+                if( e instanceof IOException )
+                {
+                    LogService.logIt( "ITextUtils.getITextImage() " + e.toString() + ",  count=" + count + ", url=" + url.toString() );
+                    EmailUtils eu = new EmailUtils();
+                    eu.sendEmailToAdmin("Tm2Score ItextUtils Unable to Load Image", "com.tm2score.custom.coretest.ITextUtils.getITextImage() error=" +  e.toString() + ", url=" + url.toString() + ", " + url.toExternalForm() );
+                }
+                else
+                   LogService.logIt( e, "ITextUtils.getITextImage() count=" + count + ", url=" + url.toString() );
+                throw e;
+            }
+            
+            LogService.logIt( "ITextUtils.getITextImage()  count=" + count + ", waiting a moment and trying again. Error=" + e.toString() + ", url=" + url.toString() );            
+            Thread.sleep( (long) (Math.random()*2000));            
+            return getITextImage( url, count+1 );
+        }
+    }
+    
+    
+    
     public static void addDirectBox( PdfWriter pdfWriter, BaseColor color, float lineWid, float x, float y, float w, float h,  boolean isUnder ) throws Exception
     {
             PdfContentByte cb = isUnder ? pdfWriter.getDirectContentUnder() : pdfWriter.getDirectContent();
@@ -284,6 +333,22 @@ public class ITextUtils
         col.go();
     }
 
+    public static BaseColor getItextBaseColorFromRGBStr(String rgbString) 
+    {
+        Color c = ColorUtils.parseRGB(rgbString);
+        if (c == null) 
+        {
+            return null;
+        }
+        try 
+        {
+            return new BaseColor((int) c.getRed(), (int) c.getGreen(), (int) c.getBlue());
+        } catch (Exception e) 
+        {
+            LogService.logIt(e, "ColorUtils.getItextBaseColorFromRGBStr()  rgbString=" + rgbString + ", color.red=" + c.getRed() + ", color.green=" + c.getGreen() + ", color.blue=" + c.getBlue());
+            return null;
+        }
+    }
 
 
 }

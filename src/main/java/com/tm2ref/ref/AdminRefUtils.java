@@ -412,7 +412,7 @@ public class AdminRefUtils extends FacesUtils {
             if( rcCheckUtils==null )
                 rcCheckUtils = new RcCheckUtils();
             
-            CandidateRefUtils cru = CandidateRefUtils.getInstance();
+            // CandidateRefUtils cru = CandidateRefUtils.getInstance();
             
             int[] out = new int[2];
             
@@ -431,6 +431,12 @@ public class AdminRefUtils extends FacesUtils {
                 if( rc.getRcCheckStatusType().getCompleteOrHigher()  )
                 {
                     this.setStringErrorMessage("RcCheck is completed or higher. Not sending. rcCheckId=" + id );
+                    continue;
+                }
+                
+                if( rc.getRaterSendDelayTypeId()<=0 )
+                {
+                    this.setStringErrorMessage("RcCheck skipped because it's not set to send delayed rater messages. rcCheckId=" + id +", rc.raterSendDelayTypeId=" + rc.getRaterSendDelayTypeId() );
                     continue;
                 }
                 
@@ -465,7 +471,7 @@ public class AdminRefUtils extends FacesUtils {
 
                 LogService.logIt( "AdminRefUtils.processSendUnsentDelayedRaterInvitations() Sending delayed invites. rcCheckId=" + id + ", " + rc.getCandidateRatingsCompleteDate().toString() );            
                 
-                tempOut = cru.sendDelayedRaterInvitations(rc);
+                tempOut = rcCheckUtils.sendDelayedRaterInvitations(rc, null, false );
                 
                 setStringInfoMessage( "RcCheckId=" + rc.getRcCheckId() + ", emails sent: " + tempOut[0] + ", texts sent: " + tempOut[1] );
                 

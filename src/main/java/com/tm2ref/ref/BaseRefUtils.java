@@ -18,6 +18,7 @@ import com.tm2ref.event.EventFacade;
 import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.faces.FacesUtils;
 import com.tm2ref.faces.HttpReqUtils;
+import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.proctor.ProctorBean;
 import com.tm2ref.purchase.ProductType;
@@ -1670,6 +1671,8 @@ public class BaseRefUtils  extends FacesUtils
     }
 
 
+    
+    
 
     protected RefBean getRefBean()
     {

@@ -119,6 +119,11 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
     @Column( name = "headcode" )
     private String headCode;
     
+    @Column( name = "proctorparams" )
+    private String proctorParams;
+    
+    
+    
 
     @Transient
     private boolean isDefault = false;
@@ -622,5 +627,14 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
     public void setFaviconUri60(String faviconUri60) {
         this.faviconUri60 = faviconUri60;
     }
+
+    public String getProctorParams() {
+        return proctorParams;
+    }
+
+    public void setProctorParams(String proctorParams) {
+        this.proctorParams = proctorParams;
+    }
+    
     
 }

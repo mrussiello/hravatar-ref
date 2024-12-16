@@ -64,6 +64,8 @@ public class StandardHeaderFooter extends PdfPageEventHelper
 
     ReportSettings reportSettings;
     
+    boolean leftRightSwap = false;
+    
 
     public StandardHeaderFooter( Document d , Locale l, String t, ReportData rd, ReportSettings rs ) throws Exception
     {
@@ -100,6 +102,8 @@ public class StandardHeaderFooter extends PdfPageEventHelper
         }
 
         // LogService.logIt( "CT2HeaderFooter() title=" + title );
+        leftRightSwap = reportData.getReportRuleAsBoolean( "headerleftrightswap");
+        
     }
 
 
@@ -271,7 +275,7 @@ public class StandardHeaderFooter extends PdfPageEventHelper
 
             //  t.setTableEvent( tableEvent );
             //Font f = reportSettings.getFontSmallLightItalic();
-            t.setWidths( reportData.getIsLTR()? new int[] { 24, 60, 20 } : new int[] { 20, 60, 24 } );
+            t.setWidths( reportData.getIsLTR() && !leftRightSwap ? new int[] { 24, 40, 40 } : new int[] { 40, 40, 24 } );
             // t.setWidths( reportData.getIsLTR() ?  new int[] { 24,24,2 } :new int[] { 2,24,24 } );
 
             t.setTotalWidth( pageWidth - 2*PAD );
@@ -288,30 +292,53 @@ public class StandardHeaderFooter extends PdfPageEventHelper
             dc.setPadding( 2 );
             dc.setRunDirection( reportData.getTextRunDirection() );
 
+            
+            //Right Cell
+            Font fnt = dark ? reportSettings.getHeaderFontLargeWhite() : reportSettings.getHeaderFontLarge();
+
+            
+            PdfPCell c;
+            
             //LogoCell
-            PdfPCell c = new PdfPCell( reportSettings.getHraLogoWhiteTextSmall() );
+            if( leftRightSwap )
+            {
+                c = new PdfPCell( new Phrase( title , fnt ) );
+                c.setPadding( 1 );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            }
+            else
+            {
+                c = new PdfPCell( reportSettings.getHraLogoWhiteTextSmall() );
+                c.setVerticalAlignment( Element.ALIGN_TOP );
+                c.setPadding( 1 );
+                c.setPaddingTop( 5 );
+            }
             c.setBackgroundColor( reportSettings.getHeaderDarkBgColor() );
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
-            c.setVerticalAlignment( Element.ALIGN_TOP );
-            c.setPadding( 1 );
-            c.setPaddingTop( 5 );
             c.setRunDirection( reportData.getTextRunDirection() );
             t.addCell( c );
 
             //Middle Cell
             t.addCell( " " );
 
-            //Right Cell
-            Font fnt = dark ? reportSettings.getHeaderFontLargeWhite() : reportSettings.getHeaderFontLarge();
-
-            c = new PdfPCell( new Phrase( title , fnt ) );
+            if( leftRightSwap )
+            {
+                c = new PdfPCell( reportSettings.getHraLogoWhiteTextSmall() );
+                c.setVerticalAlignment( Element.ALIGN_TOP );
+                c.setPadding( 1 );
+                c.setPaddingTop(5);
+            }
+            else
+            {
+                c = new PdfPCell( new Phrase( title , fnt ) );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 1 );
+            }
             c.setBackgroundColor( reportSettings.getHeaderDarkBgColor() );
             c.setBorder( Rectangle.NO_BORDER );
             c.setRunDirection( reportData.getTextRunDirection() );
-            c.setHorizontalAlignment( reportData.getIsLTR() ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT );
-            c.setVerticalAlignment( Element.ALIGN_TOP );
-            c.setPadding( 1 );
+            c.setHorizontalAlignment( reportData.getIsLTR() && !leftRightSwap ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT );
             t.addCell( c );
 
 

@@ -14,7 +14,6 @@ import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.report.ReportData;
 import com.tm2ref.report.ReportSettings;
 import com.tm2ref.service.LogService;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -157,12 +156,12 @@ public class StandardReportSettings implements ReportSettings
     public BaseColor scoreBoxBgColor;  // #ffffff
     public BaseColor scoreBoxBorderColor;  // #525252
 
-    public BaseColor headerDarkBgColor;    // #3a3a3a
-    public BaseColor titlePageBgColor; // #ffffff
-    public BaseColor pageBgColor;      // #eaeaea
-    public BaseColor hraBaseReportColor;   // #f1592a
-    public BaseColor tablePageBgColor; // #ffffff
-    public BaseColor redShadeColor;
+    //public BaseColor headerDarkBgColor;    // #3a3a3a
+    //public BaseColor titlePageBgColor; // #ffffff
+    //public BaseColor pageBgColor;      // #eaeaea
+    //public BaseColor hraBaseReportColor;   // #f1592a
+    //public BaseColor tablePageBgColor; // #ffffff
+    //public BaseColor redShadeColor;
 
     public BaseColor barGraphCoreShade1 = new BaseColor( 0x17, 0xb4, 0xee ); // f68d2f // new BaseColor( 0xf6, 0x8d, 0x2f ); // f68d2f
     public BaseColor barGraphCoreShade2 = new BaseColor( 0x17, 0xb4, 0xee ); // f68d2f // new BaseColor( 0xfc, 0xab, 0x63 ); // fcab63
@@ -366,12 +365,12 @@ public class StandardReportSettings implements ReportSettings
             scoreBoxBgColor = new BaseColor( 255,255,255 );  // #ffffff
             scoreBoxBorderColor = new BaseColor( 82,82,82 );  // #525252
 
-            headerDarkBgColor = new BaseColor(33, 150, 243); // new BaseColor(39,178,231); // #27b2e7 // new BaseColor( 58,58,58 );    // #3a3a3a
-            titlePageBgColor = new BaseColor( 255,255,255 ); // #ffffff
-            pageBgColor = BaseColor.WHITE; // new BaseColor( 234,234,234 );      // #eaeaea
-            hraBaseReportColor = new BaseColor(33, 150, 243); // new BaseColor( 39,178,231 ); // #27b2e7   //   new BaseColor( 241,90,41 );   // #f1592a
-            tablePageBgColor = new BaseColor( 0xf9, 0xf9, 0xf9 );
-            redShadeColor = new BaseColor( 0xf0, 0x80, 0x80 );
+            //headerDarkBgColor = new BaseColor(33, 150, 243); // new BaseColor(39,178,231); // #27b2e7 // new BaseColor( 58,58,58 );    // #3a3a3a
+            //titlePageBgColor = new BaseColor( 255,255,255 ); // #ffffff
+            //pageBgColor = BaseColor.WHITE; // new BaseColor( 234,234,234 );      // #eaeaea
+            //hraBaseReportColor = new BaseColor(33, 150, 243); // new BaseColor( 39,178,231 ); // #27b2e7   //   new BaseColor( 241,90,41 );   // #f1592a
+            //tablePageBgColor = new BaseColor( 0xf9, 0xf9, 0xf9 );
+            //redShadeColor = new BaseColor( 0xf0, 0x80, 0x80 );
 
             BaseColor baseFontColor = darkFontColor;
 
@@ -1215,6 +1214,7 @@ public class StandardReportSettings implements ReportSettings
         this.fontSectionTitle = fontSectionTitle;
     }
 
+    /*
     @Override
     public BaseColor getWhiteFontColor() {
         return whiteFontColor;
@@ -1325,6 +1325,118 @@ public class StandardReportSettings implements ReportSettings
         this.tablePageBgColor = tablePageBgColor;
     }
 
+    */
+    
+    @Override
+    public BaseColor getWhiteFontColor() {
+        return ct2Colors.whiteFontColor;
+    }
+
+    @Override
+    public void setWhiteFontColor(BaseColor whiteFontColor) {
+        ct2Colors.whiteFontColor = whiteFontColor;
+    }
+
+    @Override
+    public BaseColor getDarkFontColor() {
+        return ct2Colors.darkFontColor;
+    }
+
+    @Override
+    public void setDarkFontColor(BaseColor darkFontColor) {
+        ct2Colors.darkFontColor = darkFontColor;
+    }
+
+    @Override
+    public BaseColor getLightFontColor() {
+        return ct2Colors.lightFontColor;
+    }
+
+    @Override
+    public void setLightFontColor(BaseColor lightFontColor) {
+        ct2Colors.lightFontColor = lightFontColor;
+    }
+
+    @Override
+    public BaseColor getScoreBoxHeaderBgColor() {
+        return ct2Colors.scoreBoxHeaderBgColor;
+    }
+
+    @Override
+    public void setScoreBoxHeaderBgColor(BaseColor scoreBoxHeaderBgColor) {
+        ct2Colors.scoreBoxHeaderBgColor = scoreBoxHeaderBgColor;
+    }
+
+    @Override
+    public BaseColor getScoreBoxBgColor() {
+        return ct2Colors.scoreBoxBgColor;
+    }
+
+    @Override
+    public void setScoreBoxBgColor(BaseColor scoreBoxBgColor) {
+        ct2Colors.scoreBoxBgColor = scoreBoxBgColor;
+    }
+
+    @Override
+    public BaseColor getScoreBoxBorderColor() {
+        return ct2Colors.scoreBoxBorderColor;
+    }
+
+    @Override
+    public void setScoreBoxBorderColor(BaseColor scoreBoxBorderColor) {
+        ct2Colors.scoreBoxBorderColor = scoreBoxBorderColor;
+    }
+
+    @Override
+    public BaseColor getHeaderDarkBgColor() {
+        return ct2Colors.headerDarkBgColor;
+    }
+
+    @Override
+    public void setHeaderDarkBgColor(BaseColor headerBgColor) {
+        ct2Colors.headerDarkBgColor = headerBgColor;
+    }
+
+    @Override
+    public BaseColor getTitlePageBgColor() {
+        return ct2Colors.titlePageBgColor;
+    }
+
+    @Override
+    public void setTitlePageBgColor(BaseColor titlePageBgColor) {
+        ct2Colors.titlePageBgColor = titlePageBgColor;
+    }
+
+    @Override
+    public BaseColor getPageBgColor() {
+        return ct2Colors.pageBgColor;
+    }
+
+    @Override
+    public void setPageBgColor(BaseColor pageBgColor) {
+        ct2Colors.pageBgColor = pageBgColor;
+    }
+
+    @Override
+    public BaseColor getHraBaseReportColor() {
+        return ct2Colors.hraBaseReportColor;
+    }
+
+    @Override
+    public void setHraBaseReportColor(BaseColor c) {
+        ct2Colors.hraBaseReportColor = c;
+    }
+
+    @Override
+    public BaseColor getTablePageBgColor() {
+        return ct2Colors.tablePageBgColor;
+    }
+
+    @Override
+    public void setTablePageBgColor(BaseColor c) {
+        ct2Colors.tablePageBgColor = c;
+    }
+    
 
     @Override
     public BaseColor getBarGraphCoreShade1() {

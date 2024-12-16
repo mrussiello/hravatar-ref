@@ -334,9 +334,11 @@ public class CandidateRefUtils extends BaseRefUtils
                 // initial ratings completed, so send Rater Invitations
                 if( rc.getRaterSendDelayTypeId()==1 ) //  || rc.getRaterSendDelayTypeId()==10 )
                 {
-                    sendDelayedRaterInvitations( rc );
+                    if( rcCheckUtils==null )
+                        rcCheckUtils = new RcCheckUtils();                    
+                    rcCheckUtils.sendDelayedRaterInvitations(rc, refBean.getHasUnconvertedAvMediaForReview(), refBean.getAdminOverride() );
                 }
-                
+             
                 
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
             }
@@ -364,38 +366,35 @@ public class CandidateRefUtils extends BaseRefUtils
     }
 
     
-    public int[] sendDelayedRaterInvitations( RcCheck rc )
+    protected void updateRcCheckAndCandidateStatusAndSendProgressMsgs( RcCheck rc ) throws Exception
     {
-        getRefBean();
-        
-        int[] out = new int[2];
-        
-        try
-        {
-            if( rc.getCandidateRatingsCompleteDate()==null )
-            {
-                LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() candidateRatingsCompleteDate is null. Cannot send delayed invitations. " + rc.toString() );
-                return out;
-            }
+        if( rcCheckUtils==null )
+            rcCheckUtils = new RcCheckUtils();
 
-            if( refBean.getHasUnconvertedAvMediaForReview()==null )
-                refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-                        
-            if( refBean.getHasUnconvertedAvMediaForReview() )
-            {
-                LogService.logIt( "CandidateRefUtils.sendDelayedRaterInvitations() Candidate Ratings has uncoverted av media for rater review. Cannot send delayed invitations. " + rc.toString() );
-                return out;
-            }
-            
-            return sendUnsentRcRaters( rc, false );
-        }
-        catch( Exception e )
+        getRefBean();
+
+        rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );
+        
+        if( (rc.getRcRaterList().size()>=1 || rc.getRcCandidateStatusType().getIsCompletedOrHigher()) && !rc.getRcCheckStatusType().getIsStartedOrHigher() )
         {
-            LogService.logIt( e, "CandidateRefUtils.sendDelayedRaterInvitations() " + (rc==null ? "rcCheck is null" : rc.toString() ) );
-            return out;
+            rc.setRcCheckStatusTypeId( RcCheckStatusType.STARTED.getRcCheckStatusTypeId() );
+
+            if( !refBean.getAdminOverride() )
+            {
+                if( rcFacade==null )
+                    rcFacade = RcFacade.getInstance();
+                rcFacade.saveRcCheck( rc, true );
+            }
+        }
+
+        if( !refBean.getAdminOverride() && rc.getRcCandidateStatusType().getIsCompletedOrHigher() && rc.getLastCandidateProgressMsgDate()==null )
+        {
+            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+            rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete(rc, null, false );
         }
     }
-    
+
+        
     public String getCandidateInputQuestion()
     {
         getRefBean();
@@ -879,11 +878,15 @@ public class CandidateRefUtils extends BaseRefUtils
             
             if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
             {
-                sendUnsentRcRaters(rc, true );
+                if( rcCheckUtils==null )
+                    rcCheckUtils = new RcCheckUtils();                    
+                rcCheckUtils.sendUnsentRcRaters(rc, true, refBean.getAdminOverride() );
             }
 
             if( !refBean.getAdminOverride() )
-                updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
+            {
+                updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );                
+            }
         }
         catch( Exception e )
         {
@@ -894,84 +897,6 @@ public class CandidateRefUtils extends BaseRefUtils
     }
 
 
-    protected void updateRcCheckAndCandidateStatusAndSendProgressMsgs( RcCheck rc ) throws Exception
-    {
-        if( rcCheckUtils==null )
-            rcCheckUtils = new RcCheckUtils();
-
-        getRefBean();
-
-        rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );
-
-        if( (rc.getRcRaterList().size()>=1 || rc.getRcCandidateStatusType().getIsCompletedOrHigher()) && !rc.getRcCheckStatusType().getIsStartedOrHigher() )
-        {
-            rc.setRcCheckStatusTypeId( RcCheckStatusType.STARTED.getRcCheckStatusTypeId() );
-
-            if( !refBean.getAdminOverride() )
-            {
-                if( rcFacade==null )
-                    rcFacade = RcFacade.getInstance();
-                rcFacade.saveRcCheck( rc, true );
-            }
-        }
-
-        if( !refBean.getAdminOverride() && rc.getRcCandidateStatusType().getIsCompletedOrHigher() && rc.getLastCandidateProgressMsgDate()==null )
-        {
-            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
-            rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete(rc, null, false );
-        }
-    }
-
-
-    protected int[] sendUnsentRcRaters( RcCheck rc, boolean candidateRatersOnly) throws Exception
-    {
-        getRefBean();
-
-        int[] out = new int[2];
-        
-        if( candidateRatersOnly && rc.getCandidateCannotAddRaters()==1 )
-            return out;
-
-        List<RcRater> rcrl = candidateRatersOnly ? rc.getRcRaterListCandidate() : rc.getRcRaterList();
-        int[]  sendstats;
-
-        for( RcRater rcr : rcrl )
-        {
-            if( candidateRatersOnly && !rcr.getCandidateCanSend() )
-                continue;
-            
-            if( rcr.getRaterNoSend()==1 )
-                continue;
-
-            if( !rcr.getRcRaterStatusType().getSentOrHigher() )
-            {
-                sendstats = refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(rc, rcr, false, false, false );
-                
-                if( sendstats!=null )
-                {
-                    out[0] += sendstats[0];
-                    out[1] += sendstats[1];
-                }
-                
-                if( sendstats[0]>0 || sendstats[1]>0 )
-                {
-                    rcr.setRcRaterStatusTypeId( RcRaterStatusType.SENT.getRcRaterStatusTypeId() );
-
-                    if( !refBean.getAdminOverride() )
-                    {
-                        if( rcFacade==null )
-                            rcFacade = RcFacade.getInstance();
-                        rcFacade.saveRcRater(rcr, false);
-                    }
-                }
-            }
-            
-            else if( !refBean.getAdminOverride() && (rcr.getNeedsResendEmail() || rcr.getNeedsResendMobile()) )
-                sendRcCheckToRater(rc, rcr, true, false, false );
-        }
-        
-        return out;        
-    }
 
     public String processExitAllCore()
     {
@@ -1011,7 +936,9 @@ public class CandidateRefUtils extends BaseRefUtils
                 
                 if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
                 {
-                    sendUnsentRcRaters(rc, true );
+                    if( rcCheckUtils==null )
+                        rcCheckUtils = new RcCheckUtils();                    
+                    rcCheckUtils.sendUnsentRcRaters(rc, true, refBean.getAdminOverride() );
                 }
             }
 
@@ -1219,7 +1146,16 @@ public class CandidateRefUtils extends BaseRefUtils
                 
             else
             {
-                int[] out = refBean.getAdminOverride() ? new int[2] : sendRcCheckToRater(  rc, rcRater, false, reminder, true); //    sendToRater( rc, rcRater, true, true );
+                if( rcCheckUtils==null )
+                    rcCheckUtils = new RcCheckUtils();                    
+                int[] out = refBean.getAdminOverride() ? new int[2] : rcCheckUtils.sendRcCheckToRater(  rc, rcRater, false, reminder, true); //    sendToRater( rc, rcRater, true, true );
+                
+                if( out[1]>0 )
+                    setInfoMessage( reminder ? "g.RCReminderTextSent" : "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
+                
+                if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
+                    setInfoMessage( reminder ? "g.RCReminderEmailSent" : "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
+                                
                 LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
             }
             
@@ -1388,12 +1324,12 @@ public class CandidateRefUtils extends BaseRefUtils
         rr.setOrgId( rcRater.getOrgId());
         rr.setRcCheckId(rcRater.getRcCheckId());
         rr.setRcRaterRoleTypeId(rcRater.getRcRaterRoleTypeId());
-        rr.setRcRaterSourceTypeId(rr.getRcRaterSourceTypeId());
         rr.setCompanyName(rcRater.getCompanyName());
         rr.setCandidateRoleResp( rcRater.getCandidateRoleResp() );
         rr.setRcRaterStatusTypeId( RcRaterStatusType.CREATED.getRcRaterStatusTypeId() );
         rr.setContactMethodTypeId( RcContactMethodType.BOTH.getRcContactMethodTypeId() );
         rr.setRcRaterSourceTypeId( RcRaterSourceType.CANDIDATE.getRcRaterSourceTypeId() );
+        rr.setSourceUserId( rcRater.getSourceUserId() );
         rr.setRcRaterTypeId( RcRaterType.RATER.getRcRaterTypeId() );
         rr.setTempEmail(null);
         rr.setTempMobile(null);
@@ -1462,10 +1398,14 @@ public class CandidateRefUtils extends BaseRefUtils
             if( !user.getHasNameEmail() )
                 throw new STException( "g.XCErrFullNameEmailReqd" );
 
-            if( user.getFirstName().equalsIgnoreCase( rc.getUser().getFirstName()) && user.getLastName().equalsIgnoreCase( rc.getUser().getLastName()) )
+            user.setFirstName( user.getFirstName().trim());
+            user.setLastName( user.getLastName().trim());
+            user.setEmail( user.getEmail().trim());
+            
+            if( user.getFirstName().equalsIgnoreCase( rc.getUser().getFirstName().trim()) && user.getLastName().equalsIgnoreCase( rc.getUser().getLastName().trim()) )
                 throw new STException( "g.XCErrSameEmailOrPhoneAsCand" );
-
-            if( user.getEmail().equalsIgnoreCase( rc.getUser().getEmail() ) )
+           
+            if( user.getEmail().trim().equalsIgnoreCase( rc.getUser().getEmail().trim() ) )
                 throw new STException( "g.XCErrSameEmailOrPhoneAsCand" );
 
             String mobile = user.getMobilePhone();
@@ -1641,8 +1581,17 @@ public class CandidateRefUtils extends BaseRefUtils
                                 
                 else if( !refBean.getAdminOverride() && exit )
                 {
-                    // if exiting, send if need to only.
-                    int[] out = sendRcCheckToRater(rc, rcRater, true, false, true);
+                    if( rcCheckUtils==null )
+                        rcCheckUtils = new RcCheckUtils();                    
+                    int[] out = rcCheckUtils.sendRcCheckToRater(rc, rcRater, true, false, true);
+                    
+                    if( out[1]>0 )
+                        setInfoMessage( "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
+
+                    if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
+                        setInfoMessage( "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
+                                
+                    
                     LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.1 sending because not create and exit is true emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
                 }
                 
@@ -1706,7 +1655,16 @@ public class CandidateRefUtils extends BaseRefUtils
             
             else if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
             {
-                int[] out = sendRcCheckToRater(rc, rcRater, false, false, true);
+                if( rcCheckUtils==null )
+                    rcCheckUtils = new RcCheckUtils();                    
+                int[] out = rcCheckUtils.sendRcCheckToRater(rc, rcRater, false, false, true);
+
+                if( out[1]>0 )
+                    setInfoMessage( "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
+                
+                if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
+                    setInfoMessage( "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
+                                
                 // LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
             }
 
@@ -1840,72 +1798,4 @@ public class CandidateRefUtils extends BaseRefUtils
 
 
 
-
-    /*
-     data[0] = email sent count
-     data[1] = text sent count
-
-    */
-    protected int[] sendRcCheckToRater( RcCheck rc, RcRater rater, boolean sendIfNeedsOnly, boolean reminder, boolean setWebsiteMessages) throws Exception
-    {
-        User user = null;
-        if( rc==null )
-            throw new Exception( "rcCheck is null" );
-        if( rater==null )
-            throw new Exception( "rater is null");
-        if( userFacade == null )
-            userFacade = UserFacade.getInstance();
-        user = rater.getUser();
-
-        if( user==null )
-        {
-            user = userFacade.getUser( rater.getUserId());
-            rater.setUser(user);
-        }
-
-        if( user==null )
-            throw new Exception( "CandidateRefUtils.sendRcCheckToRater() user is null. rcCheckId=" + rc.getRcCheckId() );
-
-        if( rc.getAdminUser()==null )
-            rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ) );
-        if( rc.getLocale()==null && rc.getLangCode()!=null )
-            rc.setLocale( I18nUtils.getLocaleFromCompositeStr( rc.getLangCode() ));
-        if( rc.getLocale()==null )
-            rc.setLocale( getLocale() );
-
-        if( rc.getRcOrgPrefs()==null )
-        {
-            if( rcFacade==null )
-                rcFacade=RcFacade.getInstance();
-            rc.setRcOrgPrefs( rcFacade.getRcOrgPrefsForOrgId( rc.getOrgId() ));
-        }
-
-        if( rc.getSuborgId()>0 && rc.getRcSuborgPrefs()==null )
-        {
-            if( rcFacade==null )
-                rcFacade=RcFacade.getInstance();
-            rc.setRcSuborgPrefs( rcFacade.getRcSuborgPrefsForSuborgId( rc.getSuborgId() ));
-        }
-
-
-        RcMessageUtils rcmu = new RcMessageUtils();
-        int[] sent = rcmu.sendRcCheckToRater(rc, rater, rc.getRcOrgPrefs(), 1, rc.getUserId(), sendIfNeedsOnly, reminder);
-
-        if( user.getHasMobilePhone() )
-        {
-            if( sent[1]>0 && setWebsiteMessages )
-                this.setInfoMessage( reminder ? "g.RCReminderTextSent" : "g.RCTextSent" , new String[]{user.getFullname(), user.getMobilePhone()} );
-            else if( sent[1]==0 && setWebsiteMessages )
-                this.setErrorMessage( reminder ? "g.RCReminderTextNotSentError" : "g.RCTextNotSentError" , new String[]{user.getFullname(), user.getMobilePhone()} );
-            else if( sent[1]==-1 && setWebsiteMessages )
-                this.setErrorMessage( reminder ? "g.RCReminderTextNotSentErrorInvalid" : "g.RCTextNotSentErrorInvalid" , new String[]{user.getFullname(), user.getMobilePhone()} );
-            else if( sent[1]<-1 && setWebsiteMessages )
-                this.setErrorMessage( reminder ? "g.RCReminderTextNotSentErrorBlock" : "g.RCTextNotSentErrorBlock" , new String[]{user.getFullname(), user.getMobilePhone()} );
-        }
-
-        if( user.getEmail()!=null && !user.getEmail().isBlank() && sent[0]>0 )
-            setInfoMessage( reminder ? "g.RCReminderEmailSent" : "g.RCEmailSent" , new String[]{user.getFullname(), user.getEmail()} );
-
-        return sent;
-    }
 }

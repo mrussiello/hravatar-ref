@@ -272,6 +272,17 @@ public class RaterRefUtils extends BaseRefUtils
             if( rc.getRcRater()==null )
                 throw new Exception( "RcRater is null in RcBean.rcCheck" );
 
+            if( !rc.getRcRater().getRcRaterStatusType().getStartedOrHigher() )
+            {
+                rc.getRcRater().setRcRaterStatusTypeId( RcRaterStatusType.STARTED.getRcRaterStatusTypeId() );
+                if( !refBean.getAdminOverride() )
+                {
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcRater(rc.getRcRater(), false );
+                }
+            }
+            
             raterRefBean.clearBean();
 
             RcItemWrapper rciwx = getFirstRcItemWrapper( goToFirstUnanswered);
@@ -2123,7 +2134,9 @@ public class RaterRefUtils extends BaseRefUtils
                
                 // use the completed survey as a reason to check for candidate completion if this is not the candidate.
                 else if( rciwNew==null && !rc.getRcRater().getIsCandidateOrEmployee() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
-                   rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );
+                {
+                    rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );
+                }
             }
 
             raterRefBean.setRcItemWrapper(rciwNew, rc.getRcRater().getIsCandidateOrEmployee() );

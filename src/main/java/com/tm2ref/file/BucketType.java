@@ -15,7 +15,10 @@ public enum BucketType
     REFRECORDING_TEST(8),
     OV_PRO_RECORDING(9),
     CT5(10),
-    CT5_TEST(11);
+    CT5_TEST(11),
+    PROCTOR_SEB(12),
+    USER_GENERAL(13),
+    USER_GENERAL_TEST(14);
 
 
     private final int bucketTypeId;
@@ -133,7 +136,7 @@ public enum BucketType
 
         else if( equals( CT5_TEST ) )
             return RuntimeConstants.getStringValue( "awsBaseKeyCt5Test" );
-        
+                
         return RuntimeConstants.getStringValue( "awsBaseKeyFileUpload" );
     }
 

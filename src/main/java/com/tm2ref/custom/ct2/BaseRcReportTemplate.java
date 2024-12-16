@@ -3082,6 +3082,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             float y = pageHeight - getHraLogoBlackText().getScaledHeight() - 50;  // ( (pageHeight - t.getTotalHeight() )/2 ) - cfLogo.getHeight() )/2 - cfLogo.getHeight();
             //java.util.List<Chunk> cl = new ArrayList<>();
 
+            boolean omitCoverImages = reportData.getReportRuleAsBoolean( "omitcoverimages" );
+                                    
             boolean coverInfoOk = !reportData.getReportRuleAsBoolean( "omitcoverinfopdf" );
 
             String reportCompanyName = reportData==null ? null : reportData.getReportCompanyName();
@@ -3121,7 +3123,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
             hraCover.scalePercent( 100*pageHeight/hraCover.getHeight());
 
-            ITextUtils.addDirectImage( pdfWriter, hraCover, pageWidth-hraCover.getScaledWidth() + 1, 0, true );
+            if(!omitCoverImages)
+                ITextUtils.addDirectImage( pdfWriter, hraCover, pageWidth-hraCover.getScaledWidth() + 1, 0, true );
 
             boolean clientLogoInHeader = reportData.getReportRuleAsBoolean( "clientlogopdfhdr" ) && includeCompanyInfo  && reportData.hasCustLogo();
             if( clientLogoInHeader )
@@ -3210,7 +3213,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             c.setBorder(Rectangle.NO_BORDER);
             c.setBorderWidth( 0 );
             setRunDirection(c);
-            c.setCellEvent( new CoverBlueBarCellEvent() );
+            if( !omitCoverImages )
+                c.setCellEvent( new CoverBlueBarCellEvent() );
             t.addCell(c);
 
             String testTakerTitle = lmsg( devel ? "g.PreparedForC" : "g.CandidateC" );
@@ -3445,7 +3449,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 c.setBorder( Rectangle.NO_BORDER );
                 c.setPadding(0);
                 c.setColspan(2);
-                c.setCellEvent( new CoverIncludedBarCellEvent(lmsg("g.Cvr2WhatsIncluded") , this.getFontXLargeBold()));
+                if( !omitCoverImages )
+                    c.setCellEvent( new CoverIncludedBarCellEvent(lmsg("g.Cvr2WhatsIncluded") , this.getFontXLargeBold()));
                 setRunDirection(c);
                 t.addCell( c );
 

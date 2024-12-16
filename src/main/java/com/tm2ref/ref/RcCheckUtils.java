@@ -16,6 +16,7 @@ import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcRating;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
+import com.tm2ref.entity.user.User;
 import com.tm2ref.event.EventFacade;
 import com.tm2ref.event.TestKeyStatusType;
 import com.tm2ref.file.BucketType;
@@ -1265,7 +1266,7 @@ public class RcCheckUtils {
 
             
             // needs to have candidate raters
-            if( rc.getMinRatersCandidate()>0 && rc.getCandidateCannotAddRaters()<=0 )
+            if( rc.getCandidateCanAddRaters() && rc.getMinRatersCandidate()>0 && rc.getCandidateCannotAddRaters()<=0 )
             {                
                 // Not enough supervisors
                 if( rc.getMinSupervisorsNeeded()>0 )
@@ -1284,13 +1285,41 @@ public class RcCheckUtils {
                 {
                      if( r.getIsCandidateOrEmployee() )
                      {
-                         hasComp = r.getRcRaterStatusType().getCompleteOrHigher();
-                         break;
+                        hasComp = r.getRcRaterStatusType().getCompleteOrHigher();
+                        
+                        if( hasComp )
+                        {
+                            if( r.getCompleteDate()==null )
+                            {
+                                r.setCompleteDate( new Date() );
+                                if( !adminOverride )
+                                {
+                                    if( rcFacade==null )
+                                        rcFacade=RcFacade.getInstance();
+                                    rcFacade.saveRcRater(r, false );
+                                }
+                            }
+                            if( rc.getCandidateRatingsCompleteDate()==null )
+                            {
+                                rc.setCandidateRatingsCompleteDate( r.getCompleteDate() );
+                                if( !adminOverride )
+                                {
+                                    if( rcFacade==null )
+                                        rcFacade=RcFacade.getInstance();
+                                    rcFacade.saveRcCheck(rc, false );  
+
+                                    if( rc.getRaterSendDelayTypeId()>0 )
+                                        sendDelayedRaterInvitations(rc, null, adminOverride);
+                                }
+                            }
+                        }
+                        break;
                      }
                 }
+                
                 // No complete ratings.
                 if( !hasComp )
-                    return;
+                    return;                
             }
             
             if( rc.getRcScript()==null )
@@ -1325,11 +1354,17 @@ public class RcCheckUtils {
             rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
             rc.setCandidateCompleteDate( new Date() );
             
+            if( rc.getCollectRatingsFmCandidate() && rc.getCandidateRatingsCompleteDate()==null )
+                rc.setCandidateRatingsCompleteDate(rc.getCandidateCompleteDate() );
+            
             if( !adminOverride )
             {
                 if( rcFacade==null )
                     rcFacade=RcFacade.getInstance();
                 rcFacade.saveRcCheck(rc, false );
+                
+                if( rc.getRaterSendDelayTypeId()>0 )
+                    sendDelayedRaterInvitations(rc, null, adminOverride);                
             }
             
             // useful data from candidate - charge credit.
@@ -1428,6 +1463,177 @@ public class RcCheckUtils {
         }
         
     }
+    
+    
+    public int[] sendDelayedRaterInvitations( RcCheck rc, Boolean hasUnconvertedMedia, boolean adminOverride)
+    {
+        int[] out = new int[2];
+        
+        try
+        {
+            if( rc.getRaterSendDelayTypeId()<=0 )
+                return out;
+            
+            if( rc.getCandidateRatingsCompleteDate()==null )
+            {
+                LogService.logIt("CandidateRefUtils.sendDelayedRaterInvitations() candidateRatingsCompleteDate is null. Cannot send delayed invitations. " + rc.toString() );
+                return out;
+            }
+
+            if( hasUnconvertedMedia==null )
+            {
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                hasUnconvertedMedia = RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade);
+            }
+                     
+            if( rc.getRaterSendDelayTypeId()==1 && rc.getCandidateRcRaterId()>0 && hasUnconvertedMedia )
+            {
+                LogService.logIt("CandidateRefUtils.doCompleteSelfRatings() rcCheck is complete but there is unconverted media for review. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
+                // indicates must wait and check media.
+                rc.setRaterSendDelayTypeId(10);
+                
+                if( !adminOverride )
+                {
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcCheck( rc, true );                                                    
+                }
+            }                    
+            
+            if( hasUnconvertedMedia )
+            {
+                LogService.logIt("CandidateRefUtils.sendDelayedRaterInvitations() Candidate Ratings has uncoverted av media for rater review. Cannot send delayed invitations. " + rc.toString() );
+                return out;
+            }
+            
+            return sendUnsentRcRaters(rc, false, adminOverride);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "CandidateRefUtils.sendDelayedRaterInvitations() " + (rc==null ? "rcCheck is null" : rc.toString() ) );
+            return out;
+        }
+    }
+
+    protected int[] sendUnsentRcRaters( RcCheck rc, boolean candidateRatersOnly, boolean adminOverride ) throws Exception
+    {
+        int[] out = new int[2];
+        
+        if( candidateRatersOnly && rc.getCandidateCannotAddRaters()==1 )
+            return out;
+
+        List<RcRater> rcrl = candidateRatersOnly ? rc.getRcRaterListCandidate() : rc.getRcRaterList();
+        int[]  sendstats;
+
+        for( RcRater rcr : rcrl )
+        {
+            if( candidateRatersOnly && !rcr.getCandidateCanSend() )
+                continue;
+            
+            if( rcr.getRaterNoSend()==1 )
+                continue;
+
+            if( !rcr.getRcRaterStatusType().getSentOrHigher() )
+            {
+                sendstats = adminOverride ? new int[2] : sendRcCheckToRater(rc, rcr, false, false, false );
+                
+                if( sendstats!=null )
+                {
+                    out[0] += sendstats[0];
+                    out[1] += sendstats[1];
+                }
+                
+                if( sendstats[0]>0 || sendstats[1]>0 )
+                {
+                    rcr.setRcRaterStatusTypeId( RcRaterStatusType.SENT.getRcRaterStatusTypeId() );
+
+                    if( !adminOverride )
+                    {
+                        if( rcFacade==null )
+                            rcFacade = RcFacade.getInstance();
+                        rcFacade.saveRcRater(rcr, false);
+                    }
+                }
+            }
+            
+            else if( !adminOverride && (rcr.getNeedsResendEmail() || rcr.getNeedsResendMobile()) )
+                sendRcCheckToRater(rc, rcr, true, false, false );
+        }
+        
+        return out;        
+    }
+    
+    
+
+    /*
+     data[0] = email sent count
+     data[1] = text sent count
+
+    */
+    public int[] sendRcCheckToRater( RcCheck rc, RcRater rater, boolean sendIfNeedsOnly, boolean reminder, boolean setWebsiteMessages) throws Exception
+    {
+        if( rc==null )
+            throw new Exception( "rcCheck is null" );
+        if( rater==null )
+            throw new Exception( "rater is null");
+        if( userFacade == null )
+            userFacade = UserFacade.getInstance();
+        User user = rater.getUser();
+
+        if( user==null )
+        {
+            user = userFacade.getUser( rater.getUserId());
+            rater.setUser(user);
+        }
+
+        if( user==null )
+            throw new Exception( "BaseRefUtils.sendRcCheckToRater() user is null. rcCheckId=" + rc.getRcCheckId() );
+
+        if( rc.getAdminUser()==null )
+            rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ) );
+        if( rc.getLocale()==null && rc.getLangCode()!=null )
+            rc.setLocale( I18nUtils.getLocaleFromCompositeStr( rc.getLangCode() ));
+        if( rc.getLocale()==null )
+            rc.setLocale( Locale.US );
+
+        if( rc.getRcOrgPrefs()==null )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            rc.setRcOrgPrefs( rcFacade.getRcOrgPrefsForOrgId( rc.getOrgId() ));
+        }
+
+        if( rc.getSuborgId()>0 && rc.getRcSuborgPrefs()==null )
+        {
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            rc.setRcSuborgPrefs( rcFacade.getRcSuborgPrefsForSuborgId( rc.getSuborgId() ));
+        }
+
+        RcMessageUtils rcmu = new RcMessageUtils();
+        int[] sent = rcmu.sendRcCheckToRater(rc, rater, rc.getRcOrgPrefs(), 1, rc.getUserId(), sendIfNeedsOnly, reminder);
+
+        if( user.getHasMobilePhone() )
+        {
+            //if( sent[1]>0 && setWebsiteMessages )
+            //    setInfoMessage( reminder ? "g.RCReminderTextSent" : "g.RCTextSent" , new String[]{user.getFullname(), user.getMobilePhone()} );
+            if( sent[1]==0 && setWebsiteMessages )
+                throw new STException( reminder ? "g.RCReminderTextNotSentError" : "g.RCTextNotSentError" , new String[]{user.getFullname(), user.getMobilePhone()} );
+            else if( sent[1]==-1 && setWebsiteMessages )
+                throw new STException( reminder ? "g.RCReminderTextNotSentErrorInvalid" : "g.RCTextNotSentErrorInvalid" , new String[]{user.getFullname(), user.getMobilePhone()} );
+            else if( sent[1]<-1 && setWebsiteMessages )
+               throw new STException( reminder ? "g.RCReminderTextNotSentErrorBlock" : "g.RCTextNotSentErrorBlock" , new String[]{user.getFullname(), user.getMobilePhone()} );
+        }
+
+        //if( user.getEmail()!=null && !user.getEmail().isBlank() && sent[0]>0 )
+        //    setInfoMessage( reminder ? "g.RCReminderEmailSent" : "g.RCEmailSent" , new String[]{user.getFullname(), user.getEmail()} );
+
+        return sent;
+    }
+    
+    
+    
 
     public void chargeCreditIfNeeded( RcCheck rc, RcRater rater ) throws Exception
     {

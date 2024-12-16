@@ -8,6 +8,8 @@ import com.tm2ref.ref.RefBean;
 import com.tm2ref.ref.RefUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
+import jakarta.el.ELException;
+import jakarta.el.PropertyNotFoundException;
 import java.util.Iterator;
 import java.util.Map;
 import jakarta.faces.FacesException;
@@ -20,6 +22,7 @@ import jakarta.faces.event.ExceptionQueuedEventContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.EOFException;
+import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -74,7 +77,12 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 
                 if( !rootCause.equals(t))
                 {
-                    if( rootCause instanceof EOFException || rootCause instanceof TimeoutException || rootCause instanceof FacesException )
+                    if( rootCause instanceof EOFException || 
+                            rootCause instanceof TimeoutException || 
+                            rootCause instanceof FacesException || 
+                            rootCause instanceof ELException || 
+                            rootCause instanceof PropertyNotFoundException || 
+                            rootCause instanceof IOException )
                         LogService.logIt( "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
     
                     else

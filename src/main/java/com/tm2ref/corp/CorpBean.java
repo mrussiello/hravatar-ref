@@ -145,6 +145,11 @@ public class CorpBean extends FacesBean implements Serializable
         return "ref";        
     }
     
+    public boolean getSwapLeftRight()
+    {
+        return corp!=null && corp.getProctorParams()!=null && !corp.getProctorParams().isBlank() && corp.getProctorParams().contains("headerleftrightswap|1");
+    }
+    
  
     public void sessionMissingCheckEntry(boolean navigate)
     {
