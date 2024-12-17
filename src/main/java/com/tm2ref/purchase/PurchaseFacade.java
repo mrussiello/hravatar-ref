@@ -140,7 +140,7 @@ public class PurchaseFacade
         Calendar cal = new GregorianCalendar();
         cal.add( Calendar.DAY_OF_MONTH, -1*daysPrev - 1 ); // go back 90 days.
         Date startDate = cal.getTime();
-        java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
+        java.sql.Timestamp sDate = new java.sql.Timestamp( startDate.getTime() );
         
         String sql;
         
@@ -251,7 +251,7 @@ public class PurchaseFacade
         try (Connection con = pool.getConnection();
              Statement stmt = con.createStatement() )
         {
-            java.sql.Date sDate = new java.sql.Date( new Date().getTime() );
+            java.sql.Timestamp sDate = new java.sql.Timestamp( new Date().getTime() );
 
             String sql = "SELECT SUM( remainingcount) FROM credit WHERE orgid=" + orgId + " AND creditstatustypeid=" + CreditStatusType.ACTIVE.getCreditStatusTypeId() + " AND credittypeid=" + creditTypeId + " AND expiredate > '" + sDate.toString() + "' ";
             

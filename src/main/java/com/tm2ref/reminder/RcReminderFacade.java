@@ -46,12 +46,12 @@ public class RcReminderFacade
     {
         Calendar cal = new GregorianCalendar();
         cal.add( Calendar.DAY_OF_MONTH, -4 );
-        java.sql.Date minSendDate = new java.sql.Date( cal.getTime().getTime() );
+        java.sql.Timestamp minSendDate = new java.sql.Timestamp( cal.getTime().getTime() );
 
         cal = new GregorianCalendar();
         cal.add( Calendar.HOUR, -24 );
         Date oneDayBefore = cal.getTime();
-        java.sql.Date maxLastSendDate = new java.sql.Date( oneDayBefore.getTime() );
+        java.sql.Timestamp maxLastSendDate = new java.sql.Timestamp( oneDayBefore.getTime() );
         
         cal.add( Calendar.HOUR, -24 );
         Date twoDaysBefore = cal.getTime();
@@ -145,12 +145,12 @@ public class RcReminderFacade
     {
         Calendar cal = new GregorianCalendar();
         cal.add( Calendar.DAY_OF_MONTH, -4 );
-        java.sql.Date minSendDate = new java.sql.Date( cal.getTime().getTime() );
+        java.sql.Timestamp minSendDate = new java.sql.Timestamp( cal.getTime().getTime() );
 
         cal = new GregorianCalendar();
         cal.add( Calendar.HOUR, -24 );
         Date oneDayBefore = cal.getTime();
-        java.sql.Date maxLastSendDate = new java.sql.Date( oneDayBefore.getTime() );
+        java.sql.Timestamp maxLastSendDate = new java.sql.Timestamp( oneDayBefore.getTime() );
         
         cal.add( Calendar.HOUR, -24 );
         Date twoDaysBefore = cal.getTime();
