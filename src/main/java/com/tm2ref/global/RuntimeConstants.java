@@ -87,7 +87,7 @@ public class RuntimeConstants
 
         cache.put( "defaultskinid", ( 1 ) );
 
-        cache.put( "defaultcorpid", 67 );
+        cache.put( "defaultcorpid", 131 );  // 67
 
         cache.put( "defaultorgid", ( 1 ) );
 
