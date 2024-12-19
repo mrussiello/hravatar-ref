@@ -49,7 +49,7 @@
                         </div>
 
                         <ui:fragment rendered="#{refUtils.hasCustomIntro}">
-                            <div class="textmedsmall whitecontentshadowdiv" style="width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
+                            <div class="textmedsmall whitecontentshadowdiv" style="max-width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
                                 <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
                                     <h:outputText styleClass="ttwindowformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
@@ -59,8 +59,6 @@
                         </ui:fragment>
 
                         <h:panelGrid rendered="#{not refUtils.hasCustomIntro}" columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:5px;margin:0 auto">
-
-                            <h:outputText rendered="#{refUtils.hasCustomIntro}" styleClass="ttformtext" value="#{refUtils.customIntroXhtml}" escape="false"/>
 
                             <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XRIntro.P1']}" escape="false">
                                 <f:param value="#{refUtils.rcCheckTypeName}"/>

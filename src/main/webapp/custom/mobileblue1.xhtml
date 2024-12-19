@@ -138,11 +138,17 @@
 
                     <!-- BEGIN HEADER SECTION -->
                     <ui:insert name="headtable">
-                        <div class="mobileheadertopdiv" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-bottom:8px">
-                            <h:graphicImage rendered="#{corpBean.corp.hasImageIcon and not corpBean.swapLeftRight}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" value="#{corpBean.corpImageIconUrl}" alt=""/>
-                            <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon and not corpBean.swapLeftRight}" style="float:left;margin-left:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
-                            <h:graphicImage rendered="#{corpBean.corp.hasImageIcon and corpBean.swapLeftRight}" style="float:right;margin-right:15px;margin-top:10px;max-height:54px;" value="#{corpBean.corpImageIconUrl}" alt=""/>
-                            <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon and corpBean.swapLeftRight}" style="float:right;margin-right:15px;margin-top:10px;max-height:54px;" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
+                        <div class="mobileheadertopdiv" role="banner" style="width:1005px;margin-left:auto;margin-right:auto;padding-bottom:8px">
+
+                            <h:outputText rendered="#{corpBean.corp.hasHeader}" value="#{corpBean.corp.header}" escape="false"/>
+
+                            <ui:fragment rendered="#{not corpBean.corp.hasHeader}">
+                                <div style="#{corpBean.headerFloatCss};margin-left:10px;margin-right:10px">
+                                    <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="margin-top:10px;max-height:54px;min-height:0px" value="#{corpBean.corpImageIconUrl}" alt=""/>
+                                    <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="max-height:54px" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
+                                </div>
+                            </ui:fragment>
+
                         </div>
                     </ui:insert>
                     <!-- END HEADER TABLE -->

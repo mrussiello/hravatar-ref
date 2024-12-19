@@ -158,7 +158,7 @@ public class Corp implements Serializable, Comparable<Corp>, Cloneable
 
     public boolean getHasMobileTemplate()
     {
-        return mobileTemplate != null && !mobileTemplate.isEmpty();
+        return mobileTemplate != null && !mobileTemplate.isBlank();
     }
 
     public Locale getLocaleToUse()

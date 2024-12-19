@@ -275,7 +275,7 @@ public class StandardHeaderFooter extends PdfPageEventHelper
 
             //  t.setTableEvent( tableEvent );
             //Font f = reportSettings.getFontSmallLightItalic();
-            t.setWidths( reportData.getIsLTR() && !leftRightSwap ? new int[] { 24, 40, 40 } : new int[] { 40, 40, 24 } );
+            t.setWidths( reportData.getIsLTR() && !leftRightSwap ? new int[] { 30, 40, 40 } : new int[] { 40, 40, 30 } );
             // t.setWidths( reportData.getIsLTR() ?  new int[] { 24,24,2 } :new int[] { 2,24,24 } );
 
             t.setTotalWidth( pageWidth - 2*PAD );

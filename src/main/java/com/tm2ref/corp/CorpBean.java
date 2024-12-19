@@ -120,13 +120,13 @@ public class CorpBean extends FacesBean implements Serializable
 
     public String getTemplate()
     {
-        // LogService.logIt( "CorpBean.getTemplate() Starting. hasCorp=" + getHasCorp() );
+        LogService.logIt( "CorpBean.getTemplate() Starting. hasCorp=" + getHasCorp() );
 
         if( !getHasCorp() )
             loadDefaultCorp();
         
         // Always use MobileTemplate if present
-        if( corp.getHasMobileTemplate() )
+        if(corp.getHasMobileTemplate() )
             return "/custom/" + corp.getMobileTemplate();            
 
         // use template if present and no mobile template.
@@ -144,6 +144,12 @@ public class CorpBean extends FacesBean implements Serializable
 
         return "ref";        
     }
+    
+    public String getHeaderFloatCss()
+    {
+        return "float:" + (getSwapLeftRight() ? "right" : "left");
+    }
+    
     
     public boolean getSwapLeftRight()
     {
