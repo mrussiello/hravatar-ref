@@ -36,18 +36,18 @@
 
             <div style="text-align:center;margin-top:10px">
             <ui:fragment rendered="#{facesUtils.startOverOk}">
-            <p:commandLink tabindex="10" styleClass="textmedium ttformlink" ajax="false" action="#{refUtils.processStartOver}">
-                <h:outputText value="#{stMessages['g.StartOver']}"/>
+            <p:commandLink tabindex="0" styleClass="textmedium ttformlink" ajax="false" action="#{refUtils.processStartOver}">
+                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.StartOver']}"/>
             </p:commandLink>
             &#160;
             </ui:fragment>
 
-            <h:outputLink tabindex="11" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) gt 0}" value="#{refBean.errorReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText styleClass="pflinktext" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+            <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) gt 0}" value="#{refBean.errorReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
+                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
             </h:outputLink>
 
-            <h:outputLink tabindex="12" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) le 0 and fn:length(corpBean.corp.defaultReturnUrl) gt 0}" value="#{corpBean.corp.defaultReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText styleClass="pflinktext" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+            <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) le 0 and fn:length(corpBean.corp.defaultReturnUrl) gt 0}" value="#{corpBean.corp.defaultReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
+                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
             </h:outputLink>
 
             <ui:fragment rendered="#{refBean.errorAutoForward}">

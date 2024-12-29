@@ -128,14 +128,14 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" value="#{stMessages['g.XCEditReference']}">
                                 <f:param value="#{refUtils.rcCheckRaterName}"/>
                             </h:outputFormat>
                             <h:outputFormat rendered="#{candidateRefBean.rcRater.rcRaterId le 0}" value="#{stMessages['g.XCCreateReference']}">
                                 <f:param value="#{refUtils.rcCheckRaterName}"/>
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
 
                         <h:panelGrid columns="3" columnClasses="pincolclass reflabelcol,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
@@ -146,7 +146,7 @@
                                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.FirstName']}" for="rffirstname"/>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup></h:panelGroup>
@@ -157,7 +157,7 @@
                                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="rflastname"/>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup></h:panelGroup>
@@ -167,7 +167,7 @@
                                 <p:inputText id="rfemailtb" styleClass="refinputtext" size="30" value="#{candidateRefBean.rcRater.user.email}" maxlength="250" placeholder="#{stMessages['g.Email']}"/>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup></h:panelGroup>
@@ -195,7 +195,7 @@
                                 </p:selectOneMenu>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup>
@@ -209,7 +209,7 @@
                                 <p:inputText id="refcompanyname" styleClass="refinputtext" value="#{candidateRefBean.rcRater.companyName}" size="30" required="true" requiredMessage="#{stMessages['g.RCCompanyNameReqd']}" placeholder="#{stMessages['g.RCCompanyName']}"/>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">
@@ -230,7 +230,7 @@
                                         <p:datePicker id="refformto" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" required="false" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
                                         <span class="reffieldreqd">                    
                                             &#160;
-                                            <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                            <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                         </span>
                                     </h:panelGroup>
                                 </h:panelGrid>
@@ -248,7 +248,7 @@
                                 </p:selectOneMenu>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup>
@@ -262,7 +262,7 @@
                                 <p:inputTextarea id="candroleresptb" rows="3" cols="30" maxlength="1999" style="width:90%;max-width:450px" autoResize="true" value="#{candidateRefBean.rcRater.candidateRoleResp}" placeholder="#{stMessages['g.XCRoleResp4Rater']}" required="true" requiredMessage="#{stMessages['g.XCRoleResp4RaterReqd']}"/>
                                 <span class="reffieldreqd">                    
                                     &#160;
-                                    <h:outputText style="color:red;font-weight:bold" value="*"/>
+                                    <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
                                 </span>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{refBean.rcCheck.rcCheckType.isPrehire}">

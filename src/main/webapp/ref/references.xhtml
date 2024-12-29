@@ -89,11 +89,11 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat value="#{stMessages['g.XCAddReferences']}">
                                 <f:param value="#{refUtils.rcCheckRatersName}"/>
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
@@ -204,18 +204,18 @@
                                     <h:outputText value="#{stMessages['g.Actions']}"/>
                                 </f:facet>
 
-                                <p:commandLink rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
-                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
+                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
                                 </p:commandLink>
                                 &#160;
-                                <p:commandLink rendered="#{not refBean.hasUnconvertedAvMediaForReview and rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
-                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
+                                <p:commandLink tabindex="0" rendered="#{not refBean.hasUnconvertedAvMediaForReview and rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
                                 </p:commandLink>
                                 &#160;                
-                                <p:commandLink rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
-                                    <h:outputText styleClass="ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCCancel']}"/>
+                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCCancel']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
                                 </p:commandLink>
 

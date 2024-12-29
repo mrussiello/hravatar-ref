@@ -8,7 +8,8 @@
       lang="#{userBean.htmlLangCode}"
       xml:lang="#{userBean.htmlLangCode}"
       dir="#{userBean.textDirection}"
-      xmlns:misc="jakarta.faces.composite/misc">
+      xmlns:misc="jakarta.faces.composite/misc"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:insert name="headsection">
         <h:head>
@@ -35,7 +36,7 @@
             <h:outputScript library="js" name="keepalive.js"/>
             <h:outputScript library="js" name="core.js"/>
 
-            <h:outputStylesheet library="css" name="default.css"/>
+            <h:outputStylesheet library="css" name="default2.css"/>
 
             <ui:debug />
 
@@ -71,62 +72,68 @@
 
 
                             <!-- BEGIN HEADER SECTION -->
-                            <ui:insert name="headtable">
+                            <header>
+                                <ui:insert name="headtable">
 
-                                <ui:fragment  rendered="#{corpBean.corp.hasHeader}">
-                                    <h:form id="headform" prependId="false">
+                                    <ui:fragment  rendered="#{corpBean.corp.hasHeader}">
+                                        <h:form id="headform" prependId="false">
 
-                                        <table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;padding-top:10px">
+                                            <table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;padding-top:10px">
 
-                                            <tr>
-                                                <td width="100%">
-                                                    <h:outputText value="#{corpBean.corp.header}" escape="false"/>
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td width="100%">
+                                                        <h:outputText value="#{corpBean.corp.header}" escape="false"/>
+                                                    </td>
+                                                </tr>
 
-                                            <tr>
-                                                <td class="thinbuffer">&#160;</td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="thinbuffer">&#160;</td>
+                                                </tr>
 
-                                        </table>
-                                    </h:form>
-                                </ui:fragment>
-                            </ui:insert>
+                                            </table>
+                                        </h:form>
+                                    </ui:fragment>
+                                </ui:insert>
+                            </header>
                             <!-- END HEADER TABLE -->
 
                             <!-- BEGIN CONTENT TABLE -->
 
-                            <table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;margin-left: auto;margin-right: auto">
+                            <main>
+                                <table cellspacing="0" cellpadding="0" style="width:#{corpBean.corp.activeWidth}px;margin-left: auto;margin-right: auto">
 
-                                <tr>
-                                    <td style="width:100%;vertical-align:top">
+                                    <tr>
+                                        <td style="width:100%;vertical-align:top">
 
-                                        <div id="ttcontentdiv">
-                                            <!-- BEGIN CONTENTS OF CORE -->
-                                            <ui:insert name="coreinnersection">
-                                                CORE PAGE SHOULD BE HERE!
-                                            </ui:insert>
-                                            <!-- END CONTENTS OF CORE -->
-                                        </div>
-                                    </td>
-                                </tr>
+                                            <div id="ttcontentdiv">
+                                                <!-- BEGIN CONTENTS OF CORE -->
+                                                <ui:insert name="coreinnersection">
+                                                    CORE PAGE SHOULD BE HERE!
+                                                </ui:insert>
+                                                <!-- END CONTENTS OF CORE -->
+                                            </div>
+                                        </td>
+                                    </tr>
 
-                            </table>
+                                </table>
+                            </main>
                             <!-- END CONTENT TABLE -->
 
 
 
                             <!-- BEGIN FOOTER TABLE -->
-                            <ui:insert name="footertable">
+                            <footer>
+                                <ui:insert name="footertable">
 
-                                <ui:fragment  rendered="#{corpBean.corp.hasFooter}">
-                                    <h:form id="footerform" prependId="false">
-                                        <ref:stdforminputs />
-                                        <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
-                                    </h:form>
-                                </ui:fragment>
+                                    <ui:fragment  rendered="#{corpBean.corp.hasFooter}">
+                                        <h:form id="footerform" prependId="false">
+                                            <ref:stdforminputs />
+                                            <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
+                                        </h:form>
+                                    </ui:fragment>
 
-                            </ui:insert>
+                                </ui:insert>
+                            </footer>
                             <!-- END FOOTER TABLE -->
 
 

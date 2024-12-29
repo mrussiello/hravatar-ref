@@ -31,7 +31,7 @@
                     .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
                     {
                         border:0;
-                        background:red;
+                        background:#e30000;
                         color:white;
                         font-weight:normal;
                     }
@@ -52,9 +52,9 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputText value="#{stMessages['g.XCRelease']}"/>
-                        </div>
+                        </h1>
 
                         <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:800px;max-height:2000px;overflow-y: scroll;padding:5px;margin:15px auto">
                             <h:panelGrid rendered="#{refUtils.hasCustomRelease}" columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">

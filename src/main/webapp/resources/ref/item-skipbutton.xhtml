@@ -14,8 +14,8 @@
 <cc:implementation>
     
     <div style="text-align: center">
-        <p:commandLink rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.rcItem.hideSkip le 0 and (not refBean.rcCheck.rcScript.allCommentsRequiredB or raterRefBean.rcItem.includeComments le 0 or not raterRefBean.rcItem.rcItemFormatType.canHaveComments)}" ajax="false" action="#{raterRefUtils.processSkipItem}" styleClass="textmedium ttformlink" onclick="doSkipButton()" title="#{stMessages['g.XRSkipButnAlt']}">
-            <h:outputText style="text-decoration:underline" value="#{raterRefUtils.itemSkipButtonText}"/>
+        <p:commandLink tabindex="0" rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee and raterRefBean.rcItem.hideSkip le 0 and (not refBean.rcCheck.rcScript.allCommentsRequiredB or raterRefBean.rcItem.includeComments le 0 or not raterRefBean.rcItem.rcItemFormatType.canHaveComments)}" ajax="false" action="#{raterRefUtils.processSkipItem}" styleClass="textmedium ttformlink" onclick="doSkipButton()" title="#{stMessages['g.XRSkipButnAlt']}">
+            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{raterRefUtils.itemSkipButtonText}"/>
         </p:commandLink>
         
         <ref:item-exit-ratings-link />

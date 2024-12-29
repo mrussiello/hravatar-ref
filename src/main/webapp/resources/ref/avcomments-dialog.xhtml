@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <!-- INTERFACE -->
 <cc:interface>
@@ -47,7 +48,7 @@
                 </h:panelGroup>
                 
                 <h:panelGroup>
-                    <div id="recordinginprogressdiv" style="text-align:center;color:red;font-size:1.2rem"></div>
+                    <div id="recordinginprogressdiv" style="text-align:center;color:#e30000;font-size:1.2rem"></div>
                     
                     <div id="visualizerouterdiv" style="text-align:center;display:none">
                         <table id="visualizertable" class="visualizertable" style="margin-left:auto;margin-right:auto">
@@ -69,21 +70,21 @@
                 <div style="text-align:center">
                     <div style="display:inline-block">                        
                         <span id="startrecbut" style="display:none">
-                            <p:button value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>                        
                         <span id="startrecbutaudio" style="display:none">
-                            <p:button value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>                        
-                        <span  id="stoprecbut" style="display:none">
-                            <p:button value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                        <span id="stoprecbut" style="display:none">
+                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                         </span>
                         
                         <span id="playbut" style="display:none;margin-left:15px">
-                            <p:button value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
+                            <p:button pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
                         </span>
                         
                         <span id="pausebut" style="display:none;margin-left:15px">
-                            <p:button value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
+                            <p:button pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
                         </span>
                         <!-- Need stop/start button here. -->
                         <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->                            
@@ -95,11 +96,11 @@
                     <div style="text-align:center">
                         <div style="display:inline-block">
                             <span id="uploadbuttondiv" style="display:none">
-                                <p:button value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
+                                <p:button pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
                             </span>
                             &#160;
                             <span id="dialogclosebut">
-                            <p:button value="#{stMessages['g.Cancel']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
+                            <p:button value="#{stMessages['g.Cancel']}" title="#{stMessages['g.CancelEscapeAlt']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
                             </span>
                         </div>
                     </div>

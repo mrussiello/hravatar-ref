@@ -258,12 +258,11 @@ public class CorpUtils extends FacesUtils
             RefBean refBean = RefBean.getInstance();
             RefUtils refUtils = RefUtils.getInstance();
             
-            
             if( refBean.getRcCheck()!=null && refBean.getRefPageType()!=null )
                 return conditionUrlForSessionLossGet( refUtils.getViewFromPageType( refBean.getRefPageType() ) );
                 // return refBean.getRefPageType().getPageFull(refBean.getRefUserType());
             
-            return this.processCorpHome();
+            return processCorpHome();
         }
         catch( STException e )
         {

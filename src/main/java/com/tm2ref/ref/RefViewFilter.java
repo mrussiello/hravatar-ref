@@ -45,7 +45,7 @@ public class RefViewFilter implements Filter
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException
     {
-        // LogService.logIt( "RefViewFilter.doFilter() START testBean.viewAdmin=" + (testBean.getViewAdmin()==null ? "null" : testBean.getViewAdmin().toString()) );
+        // LogService.logIt( "RefViewFilter.doFilter() START " );
 
         if( refBean.getRcCheck()==null )
         {
@@ -53,13 +53,17 @@ public class RefViewFilter implements Filter
             HttpServletRequest hreq = (HttpServletRequest) req;
             
             String p = hreq.getRequestURI();
+            LogService.logIt( "RefViewFilter.doFilter() AAA.1 p=" + p );
             if( p.contains("complete.xhtml") || p.contains("complete-r.xhtml") ||
                 p.contains("cancelled.xhtml") || p.contains("cancelled-r.xhtml") || 
                 p.contains("error-fatal.xhtml")|| 
                 p.contains("expired.xhtml") || p.contains("expired-r.xhtml") || 
                 p.contains("index.xhtml") || 
                 p.contains("initerror.xhtml") || 
-                p.contains("offline.xhtml")|| 
+                p.contains("offline.xhtml") || 
+                p.contains("help.xhtml") || 
+                p.contains("help-camera.xhtml") || 
+                p.contains("help-exit-entry.xhtml") || 
                 p.contains("thank-you.xhtml") )
             {
                 chain.doFilter(req, resp);        

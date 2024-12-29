@@ -13,11 +13,11 @@
 <cc:implementation>
     
     <div style="text-align: center;padding:6px">
-        <p:commandLink rendered="#{refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRExitAccessibleAlt']}">
-            <h:outputText style="text-decoration:underline" value="#{stMessages['g.XRExitAccessible']}"/>
+        <p:commandLink tabindex="0" rendered="#{refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRExitAccessibleAlt']}">
+            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.XRExitAccessible']}"/>
         </p:commandLink>
-        <p:commandLink rendered="#{not refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRViewAccessibleAlt']}">
-            <h:outputText style="text-decoration:underline" value="#{stMessages['g.XRViewAccessible']}"/>
+        <p:commandLink tabindex="0" rendered="#{not refBean.accessibleActive}" ajax="false" action="#{raterRefUtils.processToggleAccessible}" styleClass="textmedium ttformlink" title="#{stMessages['g.XRViewAccessibleAlt']}">
+            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.XRViewAccessible']}"/>
         </p:commandLink>
     </div>
 

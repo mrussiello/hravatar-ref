@@ -13,10 +13,69 @@ body
     overscroll-behavior: none;
 }
 
+fieldset
+{
+    border: 0;
+    padding:0;
+    margin:0;
+}
+
+legend
+{
+    visibility:hidden;
+    padding:0;
+    height:0;
+}
+
+body .ui-button
+{
+    background-color:#0077cc;
+    border-color:#0077cc;
+}
+
+body .ui-button.ui-state-hover
+{
+    background-color:#085ea1;
+    border-color:#085ea1;
+}
+
+h1.pagetitle
+{
+    font-size:1.4rem;
+    font-weight: bold;
+
+}
+
+h2.refinfosection
+{
+    margin-top:0;
+    margin-bottom:0;
+    padding-bottom:28px;
+    padding-top:10px;
+    font-size:1.2rem;
+    font-weight: normal;
+    text-align:left;
+}
+
+h2.refquestionsection
+{
+    margin-top:0;
+    margin-bottom:0;
+    padding-top:0px;
+    padding-bottom:8px;
+    font-size:1.2rem;
+    font-weight:bold;
+    text-align:left;
+}
+
+
+
+
+
 /**********************************************
  * Screen Reader Only
  **********************************************/
-.sr-only 
+.sr-only
 {
     position:absolute;
     left:-10000px;
@@ -60,12 +119,12 @@ audio
 
 .textbold
 {
-    font-weight: bold;    
+    font-weight: bold;
 }
 
 .textitalic
 {
-    font-style: italic;    
+    font-style: italic;
 }
 
 .textverylarge
@@ -100,7 +159,7 @@ audio
 }
 
 /* Used to make links created with h tags or a tag looks the same as links created by primefaces  */
-.pflinktext 
+.pflinktext
 {
     font-family: Roboto, Verdana, Arial, Helvetica, sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
@@ -111,6 +170,11 @@ audio
     border-radius:10px;
 }
 
+.anylink
+{
+    text-decoration:underline;
+    font-weight:normal;
+}
 
 
 
@@ -120,14 +184,14 @@ audio
 
 .pagewrapper
 {
-   text-align:center; 
+   text-align:center;
    margin-top:5px;
    margin-bottom:10px;
 }
 
 .pageinnerdiv
 {
-    display:block;        
+    display:block;
 }
 
 img
@@ -176,11 +240,11 @@ body .ui-widget
     .hide-600
     {
         display:none;
-    }    
+    }
     .show-600
     {
         display:block !important;
-    }    
+    }
 }
 
 @media screen and (max-width: 500px) {

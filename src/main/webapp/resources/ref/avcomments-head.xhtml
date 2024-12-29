@@ -200,6 +200,8 @@
                     isIphone = isIos && /iPhone|iPod/.test(ua);
                     //isSafari = ua.indexOf("Chrome")<0 && ua.indexOf("Safari")>=0;
                     setUseLocalAudioRecording();
+                    
+                    window.addEventListener('keydown', function(e){doAvMediaKeyDown(e);} );
 
                     // Testing only
                     // isIos=true;
@@ -315,8 +317,8 @@
                         if (!recordingIsAudioOnly)
                         {
                             playbackMedEle.disablePictureInPicture = true;
-                            pes.width = desWid + 'px';
-                            pes.height = desHgt + 'px';
+                            pes.maxWidth = desWid + 'px';
+                            pes.maxHeight = desHgt + 'px';
                             pes.borderRadius = '10px';
 
                             el3 = document.getElementById('visualizerouterdiv');
@@ -657,7 +659,7 @@
 
                     //var playbut = document.getElementById( 'playpausebut' );
                     //playbut.src = PAUSEBUTSRC;
-                    //playing = true;
+                    playing = true;
 
                 }
 
@@ -673,10 +675,18 @@
                     but.style.display = 'none';
                     //var playbut = document.getElementById( 'playpausebut' );
                     //playbut.src = PLAYBUTSRC;
-                    //playing = false;
+                    playing = false;
 
                 }
 
+
+                function doStartStopPlayback()
+                {                    
+                    if( playing )
+                        doStopPlayback();
+                    else
+                        doStartPlayback();
+                }
 
                 function doStartPlayback()
                 {
@@ -798,9 +808,9 @@
                                     recordMedEle.srcObject = stream;
                                     recordMedEle.setAttribute('playsinline', 'true');
                                     recordMedEle.setAttribute('defaultMuted', '');
-                                    recordMedEle.setAttribute('muted', '');
+                                    // recordMedEle.setAttribute('muted', '');
                                     recordMedEle.volume = 0;
-                                    recordMedEle.load();
+                                    //recordMedEle.load();
                                     recordMedEle.play();
                                 }
 
@@ -1639,11 +1649,76 @@
                     useLocalAudioRecording = false;
                 }
 
+                function doAvMediaKeyDown(evt)
+                {
+                    if( !(evt) )
+                    {
+                        logIt( 'ref/resources/ref/avcomments-head.xhtml.doAvMediaKeyDown() evt not present. Ignoring.' );
+                        return;
+                    }
+
+                    if( (evt.isComposing) )
+                    {
+                        logIt( 'ref/resources/ref/avcomments-head.xhtml.doAvMediaKeyDown() evt is composing. Ignoring.' );
+                        return;
+                    }
+
+                    logIt( 'ref/resources/ref/avcomments-head.xhtml.doAvMediaKeyDown() key=' + evt.key );
 
 
+                    if( evt.key==='F3')
+                    {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        doStartStopRecClick();
+                        return;
+                    }
 
+                    else if( evt.key==='F4')
+                    {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        var submitEle = document.getElementById( 'uploadbuttondiv' );
+                        if( (submitEle) && submitEle.style.display!=='none')
+                        {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            doStopPlayback(); 
+                            doUploadAvRecording();
+                        }
+                        else
+                        {
+                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F4 - Upload. The upload button is not visible. Ignoring.' );
+                        }
+                        return;
+                    }
+                    
+                    else if( evt.key==='F5')
+                    {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        
+                        var playBut = document.getElementById('playbut');
+                        var pauseBut = document.getElementById('pausebut');
 
-                // ]]>
+                        var okToPlay = false;
+                        if( (playBut) && playBut.style.display!=='none' )
+                            okToPlay = true;
+                        else if( (pauseBut) && pauseBut.style.display!=='none' )
+                            okToPlay = true;
+
+                        if( !okToPlay )
+                        {
+                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F5 - play/pause Neither the playbutton or the pausebutton appears to be visible. Ignoring. playing=' + playing);
+                            return;
+                        }
+                                                
+                        doStartStopPlayback();
+                        return;
+                    }
+                }
+
+            // ]]>
             </script>
 
 

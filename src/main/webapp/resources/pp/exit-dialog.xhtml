@@ -17,7 +17,7 @@
     <!-- cc.attrs.value -->
 
 
-        <p:dialog closable="true" header="#{stMessages['g.PPT.ConfirmExit']}" widgetVar="confirmpptexitdialog" style="max-width:600px;margin-left:2px;margin-right:2px">
+        <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.ConfirmExit']}" widgetVar="confirmpptexitdialog" style="max-width:600px;margin-left:2px;margin-right:2px">
             <h:form>
                 <ref:stdforminputs />
                 <ref:noncoreforminputs />
@@ -27,7 +27,7 @@
                    <h:outputText value="#{stMessages['g.PPT.ConfirmExit.P1']}"/>
 
                     <h:panelGroup>
-                        <p:commandButton style="margin-bottom:5px" id="confirmexit2dialogstopbut" tabindex="16" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}"/>                        
+                        <p:commandButton style="margin-bottom:5px" id="confirmexit2dialogstopbut" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}"/>                        
                         &#160;
                         <p:button style="margin-bottom:5px" id="confirmexit2dialogcancelbut" value="#{stMessages['g.Cancel']}"  onclick="PF('confirmpptexitdialog').hide()"/>
                     </h:panelGroup>

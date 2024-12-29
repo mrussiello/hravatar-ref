@@ -24,7 +24,7 @@
                     .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.notmebut
                     {
                         border:0;
-                        background:red;
+                        background:red !important;
                         color:white;
                         font-weight:normal;
                     }
@@ -45,11 +45,11 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat value="#{stMessages['g.Welcome']}">
                                 <f:param value="#{refBean.refUser.fullname}" />
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 

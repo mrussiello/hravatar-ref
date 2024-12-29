@@ -14,8 +14,8 @@
     
                         <ui:fragment rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}">
                         &#160;
-                        <p:commandLink ajax="false" action="#{raterRefUtils.processExitCore2}" styleClass="ttformtext" title="#{stMessages['g.ExitRatingsTitle']}">
-                            <h:outputText styleClass="ttformtext" style="text-decoration: underline;font-weight:normal;" value="#{stMessages['g.ExitRatings']}"/>
+                        <p:commandLink tabindex="0" ajax="false" action="#{raterRefUtils.processExitCore2}" styleClass="ttformlink" title="#{stMessages['g.ExitRatingsTitle']}">
+                            <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;" value="#{stMessages['g.ExitRatings']}"/>
                         </p:commandLink>
                         </ui:fragment>
 

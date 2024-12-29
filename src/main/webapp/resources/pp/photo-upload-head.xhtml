@@ -23,15 +23,15 @@
             border-radius:10px;
         }
     </style>
-    
-    <h:outputScript library="pp" name="pp-core.js" /> 
+
+    <h:outputScript library="pp" name="pp-core.js" />
     <h:outputScript library="pp" name="pp-img.js" />
 
     <script type="text/javascript">
-    // <![CDATA[    
-    
+    // <![CDATA[
+
     var isDebugMode = false;
-    var uploadedUserFileTypeId = #{refBean.uploadedUserFileTypeId};        
+    var uploadedUserFileTypeId = #{refBean.uploadedUserFileTypeId};
     var cameraMaxWid = 300;
     var cameraMaxHgt = 300;
     var playing = true;
@@ -44,49 +44,99 @@
     var errorDeviceInUseMessage = "#{stMessages['g.PPErrorDeviceAlreadyInUseMessage']} #{userBean.supportEmail}.";
     var errorDeviceAccessDenied = "#{stMessages['g.PPErrorDeviceAccessDeniedMessage']} #{userBean.supportEmail}.";
     var errorCameraNotFound = "#{stMessages['g.PPErrorCameraNotFoundMessage']}";
-    var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}"; 
-    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}."; 
+    var errorBrowserNotSupported = "#{stMessages['g.PPErrorBrowserNotSupportedMessage']}";
+    var errorDeviceAccessError = "#{stMessages['g.PPErrorDeviceAccessErrorMessage']} #{userBean.supportEmail}.";
     var keepFaceInFrontOfCameraMessage = "#{stMessages['g.PPKeepFaceInFrontOfCameraMessage']}";
-        
+
     var selCameraDevice = '#{userBean.selCamera}';
     var selMicrophoneDevice = '#{userBean.selMicrophone}';
-        
-        
+
+
     window.addEventListener( 'load', function() {doOnPhotoPageLoad();} );
-        
-        
+
+
     function doOnPhotoPageLoad()
     {
         logIt( '/pp/photo-upload-head.xhtml START' );
-        initLog(); 
-        piInitVideoEleForImages( cameraMaxWid, cameraMaxHgt );        
+        initLog();
+        piInitVideoEleForImages( cameraMaxWid, cameraMaxHgt );
+        window.addEventListener( 'keydown', function(e) {doPhotoKeyDown(e);} );
     }
+
+    function doPhotoKeyDown(evt)
+    {
+        if( !(evt) )
+        {
+            logIt( 'ref/pp/photo-upload-head.xhtml.doPhotoKeyDown() evt not present. Ignoring.' );
+            return;
+        }
+
+        if( (evt.isComposing) )
+        {
+            logIt( 'ref/pp/photo-upload-head.xhtml.doPhotoKeyDown() evt is composing. Ignoring.' );
+            return;
+        }
+
+        logIt( 'ref/pp/photo-upload-head.xhtml.doPhotoKeyDown() key=' + evt.key );
+
+
+        if( evt.key==='F3')
+        {
+            evt.preventDefault();
+            evt.stopPropagation();
+            doImageSnap();
+            return;
+        }
+
+        else if( evt.key==='F4')
+        {
+            var submitEle = document.getElementById( 'uploadimagebutton' );
+            if( (submitEle) && submitEle.style.display!=='none')
+            {
+                evt.preventDefault();
+                evt.stopPropagation();
+                showHideImageUploadDialog(true);
+                doImageUpload();
+            }
+            else
+            {
+                evt.preventDefault();
+                evt.stopPropagation();
+                doImageSnap();
+                showHideImageUploadDialog(true);
+                doImageUpload();
+            }
+            return;
+        }
     
+    }
+
+
     function doImageSnap()
     {
         try
         {
             if( !getUserMediaOk )
             {
-                showDeviceAccessErrorMessage( lastGetUserMediaError );  
+                showDeviceAccessErrorMessage( lastGetUserMediaError );
                 return;
             }
-            
+
             var medEle = localPublisherVideoElement; // document.getElementById( localPublisherVideoElementId );
-                        
+
             if( !playing )
                 medEle.play();
-            
-            medEle.pause();   
+
+            medEle.pause();
             playing = false;
             var submitEle = document.getElementById( 'uploadimagebutton' );
             if( (submitEle) )
                 submitEle.style.display='inline-block';
-            
+
             var but = document.getElementById( 'capturebut' );
             if( but )
                 but.style.display='none';
-            
+
             var retryLink = document.getElementById( 'snapshotretrylink' );
             if( retryLink )
                 retryLink.style.display='block';
@@ -97,7 +147,7 @@
             ppHandleError( msg );
         }
     }
-    
+
     function doImageUpload()
     {
         try
@@ -108,10 +158,10 @@
         {
             var msg = '/pp/photo-upload-head.xhtml.doImageUpload() ' + e.message + ', ' + e.stack;
             ppHandleError( msg );
-        }                
+        }
     }
 
-    
+
     function showHideImageUploadDialog( show )
     {
         try
@@ -124,16 +174,16 @@
         catch( e )
         {
             logIt( '/pp/photo-upload-head.xhtml.showHideImageUploadDialog() show=' + show + ', ' + e.message );
-        }                
+        }
     }
-    
-    
+
+
     function doImageCaptureRetry()
     {
         var submitEle = document.getElementById( 'uploadimagebutton' );
         if( (submitEle) )
             submitEle.style.display='none';
-        
+
         var medEle = localPublisherVideoElement;
         if( !playing )
             medEle.play();
@@ -145,10 +195,10 @@
         if( but )
             but.style.display='block';
 
-        
+
     }
-    
-    
+
+
     function cancelImageFileUpload()
     {
         try
@@ -161,45 +211,45 @@
         {
             var msg = '/pp/photo-upload-head.xhtml.cancelImageFileUpload() ' + e.message + ', ' + e.stack;
             ppHandleError( msg );
-        }        
+        }
     }
-    
+
     function openCameraHelp()
     {
         document.location.href='/tr/pp/help-camera-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';
     }
-        
-        
+
+
     function localDoOnImageUploadError( msg )
     {
         msg = (msg) ? msg : '';
         logIt( '/pp/photo-upload-head.xhtml.localDoOnImageUploadError() ' + msg );
         showHideImageUploadDialog( false );
-        // PF('uploadingfiledialog').hide(); 
+        // PF('uploadingfiledialog').hide();
         var ele = document.getElementById( 'uploaderrormsgspan' );
         if( ele )
             ele.innerHTML=msg;
-        PF('uploaderrordialog').show();         
+        PF('uploaderrordialog').show();
     }
 
 
     function localDoOnImageUploadSuccess()
     {
         logIt( 'pp-photo-upload-head.xhtml.localDoOnImageUploadSuccess() SUCCESS!' );
-        
+
         if( uploadedUserFileTypeId===201 || uploadedUserFileTypeId===211 )
             location.href='/tr/pp/photo-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';   // &pageidx=
         else
             location.href='/tr/pp/photo-id-success-entry.xhtml?acidx=#{refBean.activeAccessCodeX}&refpagex=#{refBean.activeRefPageTypeIdX}';  // &pageidx=
-    }        
-        
-        
+    }
+
+
     function initLog()
     {
         if( !window.console )
             console = {};
         console.log = console.log || function(){};
-    }    
+    }
 
     /**
      * levels:
@@ -229,17 +279,17 @@
         }
     }
 
-        
-        
-    // ]]> 
+
+
+    // ]]>
     </script>
 
-    
+
     <style>
         .imgcapturecola
         {
             max-width:300px;
-            padding-top:10px;            
+            padding-top:10px;
         }
         .imgcapturecolb
         {
@@ -247,7 +297,7 @@
             padding-top:100px;
         }
     </style>
-    
+
 </cc:implementation>
 
 </html>

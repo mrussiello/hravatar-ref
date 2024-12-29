@@ -56,12 +56,12 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat value="#{stMessages['g.XCQuestionXofY']}">
                                 <f:param value="#{candidateRefUtils.candidateQuestionNumber}"/>
                                 <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
@@ -71,7 +71,7 @@
                                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                                     <div style="display:inline-block;">
                                         <p:inputTextarea id="candinptquestiontb" styleClass="commenttextarea" style="width:100%;max-width:550px" cols="50" rows="4" autoResize="true" value="#{candidateRefBean.candidateInputStr}"/>
-                                        <p:outputLabel styleClass="sr-only" value="#{candidateRefUtils.candidateInputQuestion}" for="candinptquestiontb"/>
+                                        <p:outputLabel styleClass="sr-only" value="#{candidateRefUtils.candidateInputQuestionPlain}" for="candinptquestiontb"/>
                                     </div>
                                 </div>
                             </h:panelGroup>

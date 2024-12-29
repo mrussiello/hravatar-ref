@@ -5,6 +5,7 @@
 package com.tm2ref.ref;
 
 import com.tm2ref.corp.CorpBean;
+import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcOrgPrefs;
@@ -430,6 +431,44 @@ public class RefEntry
          
      }
      
+     public void doHelpExitEntry()
+     {
+        LogService.logIt( "RefEntry.doHelpExitEntry() acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+        // FacesContext fc = FacesContext.getCurrentInstance();
+        try
+        {
+            if( !refUtils.getNewRefStartsOk() )
+            {
+                CorpBean corpBean = CorpBean.getInstance();                
+                if( !corpBean.getHasCorp() )
+                    corpBean.loadDefaultCorp();
+                                
+                navigateTo( corpBean.getCorp().getOfflinePage() ); // "/ref/offline.xhtml" );
+                return;                
+            }
+                        
+            CorpUtils cu = CorpUtils.getInstance();
+            String nextViewId = cu.processHelpExit();
+            
+            LogService.logIt( "RefEntry.doHelpExitEntry() AAA.1 after refUtils.doHelpExitEntry() nextViewId=" + nextViewId );
+
+            //if( fc!=null )
+            //{
+            //    HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+            //    fc.responseComplete();
+            //    response.sendRedirect("/tr" + nextViewId);
+            //    return;
+            //}            
+            
+            if( nextViewId != null )
+                navigateTo( nextViewId );
+         
+        }
+        catch( Exception e )
+        {
+             LogService.logIt( e, "RefEntry.doHelpExitEntry() XXX.1  acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+        }         
+     }
      
      
      public void doRefReturnEntry()
@@ -469,7 +508,7 @@ public class RefEntry
         }
         catch( Exception e )
         {
-             LogService.logIt( e, "RefEntry.doSimpleRefEntry() XXX.1  acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+             LogService.logIt( e, "RefEntry.doRefReturnEntry() XXX.1  acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
         }         
      }
      

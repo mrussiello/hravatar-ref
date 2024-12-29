@@ -7,114 +7,118 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:ref="jakarta.faces.composite/ref">
 
-<!-- INTERFACE -->
-<cc:interface>
-    <!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-    
-    <br style="clear:both"/>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
 
-    <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
-    <h:form prependId="false" enctype="#{raterRefUtils.formEncType}">
-    <ref:stdforminputs />
-    <ref:raterforminputs />
-    <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
+        <br style="clear:both"/>
 
-        <ref:messages-embedded />
+        <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+            <h:form prependId="false" enctype="#{raterRefUtils.formEncType}">
+                <ref:stdforminputs />
+                <ref:raterforminputs />
+                <input type="hidden" id="ratingvalue" name="ratingvalue" value="#{raterRefBean.rcItemWrapper.rcRating.score}"/>
 
-        <div class="textverylarge textbold ttboldtitle">
-            <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
-                <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
-                <f:param value="#{raterRefUtils.raterQuestionCount}"/>
-            </h:outputFormat>
-            <h:outputFormat rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
-                <f:param value="#{candidateRefUtils.raterQuestionNumberForCandidate}"/>
-                <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
-            </h:outputFormat>
+                <ref:messages-embedded />
+
+                <h1 class="pagetitle ttboldtitle">
+                    <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                        <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
+                        <f:param value="#{raterRefUtils.raterQuestionCount}"/>
+                    </h:outputFormat>
+                    <h:outputFormat rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
+                        <f:param value="#{candidateRefUtils.raterQuestionNumberForCandidate}"/>
+                        <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
+                    </h:outputFormat>
+                </h1>
+
+                <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:20px;padding-bottom:20px;margin:0 auto">
+
+                    <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
+                        <ref:item-candidate-response-body />    
+                    </ui:fragment>
+
+                    <ref:item-infoquestion />
+
+                    <h:panelGroup>
+                        <div role="group" aria-label="#{raterRefUtils.itemQuestionForRaterPlain}" class="ttformtext">
+                            <p:selectManyCheckbox rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" id="itemradio1" value="#{raterRefBean.selectedCheckboxesStr}" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
+                                <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
+                            </p:selectManyCheckbox>
+
+                            <h:panelGrid rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" columns="2" style="margin-left:10px;margin-right:auto" columnClasses="chtablecola,chtablecolb">
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" id="itrb2" for="itemradio1" itemIndex="1"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" for="itrb2" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice2}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" id="itrb3" for="itemradio1" itemIndex="2"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" for="itrb3" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice3}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" id="itrb4" for="itemradio1" itemIndex="3"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" for="itrb4" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice4}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" id="itrb5" for="itemradio1" itemIndex="4"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" for="itrb5" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice5}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" id="itrb6" for="itemradio1" itemIndex="5"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" for="itrb6" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice6}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" id="itrb7" for="itemradio1" itemIndex="6"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" for="itrb7" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice7}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" id="itrb8" for="itemradio1" itemIndex="7"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" for="itrb8" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice8}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" id="itrb9" for="itemradio1" itemIndex="8"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" for="itrb9" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice9}"/>
+
+                                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" id="itrb10" for="itemradio1" itemIndex="9"/>                    
+                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
+
+                            </h:panelGrid>
+                        </div>
+                    </h:panelGroup>
+
+                    <ref:item-fileupload-body />    
+
+                    <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
+                        <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <div style="text-align: center">
+                            <div style="display:inline-block;">
+                                <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
+                                    <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
+                                </p:commandButton>
+                                &#160;
+                                <p:commandButton style="margin-bottom:5px" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+                                    <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
+                                </p:commandButton>
+
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <ref:item-skipbutton />
+
+
+                </h:panelGrid>
+
+                <ref:avcomments-dialog />
+
+            </h:form>
+
         </div>
 
-        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:20px;padding-bottom:20px;margin:0 auto">
 
-            <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
-                <ref:item-candidate-response-body />    
-            </ui:fragment>
-            
-            <ref:item-infoquestion />
-            
-            <p:selectManyCheckbox rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" id="itemradio1" value="#{raterRefBean.selectedCheckboxesStr}" styleClass="ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">                
-                    <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
-            </p:selectManyCheckbox>
 
-            <h:panelGrid rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}" columns="2" style="margin-left:10px;margin-right:auto" columnClasses="chtablecola,chtablecolb">
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" id="itrb2" for="itemradio1" itemIndex="1"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" for="itrb2" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice2}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" id="itrb3" for="itemradio1" itemIndex="2"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" for="itrb3" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice3}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" id="itrb4" for="itemradio1" itemIndex="3"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" for="itrb4" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice4}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" id="itrb5" for="itemradio1" itemIndex="4"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" for="itrb5" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice5}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" id="itrb6" for="itemradio1" itemIndex="5"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" for="itrb6" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice6}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" id="itrb7" for="itemradio1" itemIndex="6"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" for="itrb7" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice7}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" id="itrb8" for="itemradio1" itemIndex="7"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" for="itrb8" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice8}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" id="itrb9" for="itemradio1" itemIndex="8"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" for="itrb9" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice9}"/>
-
-                <p:checkbox rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" id="itrb10" for="itemradio1" itemIndex="9"/>                    
-                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlink ttformlink" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
-
-            </h:panelGrid>
-                        
-            <ref:item-fileupload-body />    
-                                    
-            <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments gt 0}">
-                <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
-            </h:panelGroup>
-            
-            <h:panelGroup>
-                <div style="text-align: center">
-                    <div style="display:inline-block;">
-                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
-                            <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
-                        </p:commandButton>
-                        &#160;
-                        <p:commandButton style="margin-bottom:5px" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
-                            <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
-                        </p:commandButton>
-                        
-                    </div>
-                </div>
-            </h:panelGroup>
-            
-            <ref:item-skipbutton />
-
-                        
-        </h:panelGrid>
-
-        <ref:avcomments-dialog />
-    
-    </h:form>
-        
-    </div>
-
-    
-
-</cc:implementation>
+    </cc:implementation>
 </html>

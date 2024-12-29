@@ -42,11 +42,11 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat value="#{stMessages['g.WelcomeX']}">
                                 <f:param value="#{refBean.refUser.fullname}" />
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
                         <ui:fragment rendered="#{refUtils.hasCustomIntro}">
                             <div class="textmedsmall whitecontentshadowdiv" style="padding-left:10px;padding-right:10px;max-width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto;border-radius:10px">
@@ -100,8 +100,8 @@
                                     <div style="display:inline-block">
                                         <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
                                         &#160;
-                                        <p:commandLink styleClass="textmedium ttformlink" ajax="true" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
-                                            <h:outputText style="text-decoration:underline" value="#{stMessages['g.Exit']}"/>
+                                        <p:commandLink tabindex="0" styleClass="textmedium ttformlink" ajax="true" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
+                                            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.Exit']}"/>
                                         </p:commandLink>                        
                                     </div>
                                 </div>

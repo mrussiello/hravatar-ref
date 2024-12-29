@@ -655,6 +655,10 @@ public class StringUtils
         {
             if( inStr == null || inStr.length() == 0 )
                 return "";
+            
+            if( !inStr.contains("<") && !inStr.contains( ">" ) && !inStr.contains( "&" ) )
+                return inStr;
+            
 
             // first, convert all br tags to hard returns
             outStr = replaceStr( outStr , "<br>", "\n" );
@@ -716,7 +720,6 @@ public class StringUtils
         catch( Exception e )
         {
             LogService.logIt( e , "StringUtils.convertHtml2PlainText() inStr=" + inStr + ", outStr=" + outStr );
-
             return outStr;
         }
     }

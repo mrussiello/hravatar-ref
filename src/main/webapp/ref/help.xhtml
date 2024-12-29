@@ -9,7 +9,64 @@
 
             <ui:define name="titletag">
                 <title><h:outputText value="#{stMessages['ttl.Help']}"/></title>
-            </ui:define>    
+            </ui:define>
+
+            <ui:define name="headspec">
+
+                <script type="text/javascript">
+                    //<![CDATA[
+
+                    window.addEventListener('load', doRefHelpPageOnload);
+
+                    function doRefHelpPageOnload()
+                    {
+                        window.addEventListener('keydown', function (e) { doRefHelpKeydownEvent(e); });
+                    }
+
+                    function doRefHelpKeydownEvent(evt)
+                    {
+                        if (!(evt))
+                        {
+                            logIt('ref/tr/ref/help.xhtml.doRefHelpKeydownEvent() evt not present. Ignoring.');
+                            return;
+                        }
+
+                        if ((evt.isComposing))
+                        {
+                            logIt('ref/tr/ref/help.xhtml.doRefHelpKeydownEvent() evt is composing. Ignoring.');
+                            return;
+                        }
+
+                        logIt('ref/tr/ref/help.xhtml.doRefHelpKeydownEvent() shift=' + evt.shiftKey + ', key=' + evt.key);
+
+                        if (evt.key === 'F1')
+                        {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            // document.location.href = '/tr/ref/help.xhtml';
+                            return;
+                        }
+
+                        if (evt.key === 'F2')
+                        {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            document.location.href = '/tr/pp/help-camera.xhtml';
+                            return;
+                        }
+
+                        if (evt.key === 'Escape')
+                        {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            document.location.href = '/tr/ref/help-exit-entry.xhtml?rcide=#{refBean.rcCheckIdEncrypted}&amp;rcride=#{refBean.rcRaterIdEncrypted}&amp;acidx=#{refBean.accessCode}&amp;refpagex=#{refBean.refPageType.refPageTypeId}';
+                            return;
+                        }
+                    }
+                    // ]]>
+                </script>
+
+            </ui:define>
 
             <ui:define name="coreinnersection">
 
@@ -18,7 +75,7 @@
 
             </ui:define>
 
-            <ui:define name="footerhelplink">        
+            <ui:define name="footerhelplink">
             </ui:define>
 
         </ui:composition>

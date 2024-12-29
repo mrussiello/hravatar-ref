@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+    
+<f:view contentType="text/html">
+    <f:metadata>
+        <f:viewParam name="rcide" value="#{refEntry.rc}"/>
+        <f:viewParam name="rcride" value="#{refEntry.rr}"/>
+        <f:viewParam name="acidx" value="#{refEntry.ac}"/>
+        <f:viewParam name="refpagex" value="#{refEntry.orgAutoTestId}"/>
+    </f:metadata>
+<f:event listener="#{refEntry.doHelpExitEntry}" type="preRenderView" />
+</f:view>
+</html>

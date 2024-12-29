@@ -39,9 +39,9 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputText value="#{stMessages['g.ConfFail']}"/>
-                        </div>
+                        </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 
@@ -61,8 +61,8 @@
                                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="cflastname"/>
                             </h:panelGroup>
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourEmail']}:"/>
-                            <p:inputText size="30" value="#{refBean.strParam3}" placeholder="#{stMessages['g.Email']}"/>
+                            <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourEmail']}:" for="confirmyouremail3"/>
+                            <p:inputText id="confirmyouremail3" size="30" value="#{refBean.strParam3}" placeholder="#{stMessages['g.Email']}"/>
 
                             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.WhatWrong']}:" for="cfreasontypeid"/>
                             <p:selectOneMenu id="cfreasontypeid" value="#{refBean.intParam1}" style="max-width:450px">

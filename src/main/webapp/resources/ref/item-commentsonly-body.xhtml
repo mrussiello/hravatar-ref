@@ -25,7 +25,7 @@
 
         <ref:messages-embedded />
 
-        <div class="textverylarge textbold ttboldtitle">
+        <h1 class="pagetitle ttboldtitle">
             <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
                 <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
                 <f:param value="#{raterRefUtils.raterQuestionCount}"/>
@@ -34,7 +34,7 @@
                 <f:param value="#{candidateRefUtils.raterQuestionNumberForCandidate}"/>
                 <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
             </h:outputFormat>            
-        </div>
+        </h1>
 
         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:5px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
 

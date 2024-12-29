@@ -32,14 +32,14 @@
                 <h:panelGroup></h:panelGroup>
 
                  <p:outputLabel for="username" value="Email/Username:" />
-                 <p:inputText id="username" value="#{userUtils.logonName}" autocomplete="username" label="username" validatorMessage="Username is required.">
+                 <p:inputText id="username" value="#{userUtils.logonName}" autocomplete="username" validatorMessage="Username is required.">
                     <f:validateLength minimum="2" />
                 </p:inputText>
                 <h:panelGroup></h:panelGroup>
 
                  <p:outputLabel for="password" value="Password:" />
                  <p:password id="password"
-                             value="#{userUtils.logonKey}" label="password" autocomplete="current-password"  validatorMessage="Password is required." feedback="false">
+                             value="#{userUtils.logonKey}" autocomplete="current-password"  validatorMessage="Password is required." feedback="false">
                     <f:validateLength minimum="4" maximum="20" />
                 </p:password>
                 <h:panelGroup></h:panelGroup>
@@ -63,7 +63,7 @@
         <div style="font-size:1rem">
             
         <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin and fn:length(adminRefBean.strParam1) gt 0}">               
-            <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear reports">Clear Online Report(s)</p:commandLink>
+            <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear reports">Clear Online Report(s)</p:commandLink>
             <br />
             <br />            
             <h:outputText style="font-size:1.2rem" value="#{adminRefBean.strParam1}" escape="false" />
@@ -83,7 +83,7 @@
                 </ui:fragment>
                 
                 <ui:fragment rendered="#{not adminRefUtils.newRefStartsOk}">
-                <div style="color:red;padding:10px;font-size:24pt;font-weight: bold;text-align:center">
+                <div style="color:#e30000;padding:10px;font-size:24pt;font-weight: bold;text-align:center">
                     New Ref Starts are  OFF!!!!!
                 </div>
                 </ui:fragment>
@@ -95,12 +95,12 @@
                                  columns="3">
 
 
-                        <p:commandLink ajax="false" action="#{adminRefUtils.processToggleRefStarts}" title="Toggle New Ref starts. When off, no new reference checks can begin.">Toggle New Ref Starts</p:commandLink>
-                        <p:commandLink ajax="false" action="#{adminRefUtils.processToggleRemindersBatches}" title="Toggle automatic Reminders Batches.">Toggle Reminder Batches</p:commandLink>
-                        <p:commandLink ajax="false" action="#{adminRefUtils.processClearDmbsCache}" title="Clear dbms cache">DBMS Cache</p:commandLink>
+                        <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processToggleRefStarts}" title="Toggle New Ref starts. When off, no new reference checks can begin.">Toggle New Ref Starts</p:commandLink>
+                        <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processToggleRemindersBatches}" title="Toggle automatic Reminders Batches.">Toggle Reminder Batches</p:commandLink>
+                        <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processClearDmbsCache}" title="Clear dbms cache">DBMS Cache</p:commandLink>
 
-                        <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>                        
-                        <p:commandLink ajax="false" action="#{userUtils.processStartReminderBatch}" title="Starts a reminder batch">Start Reminder Batch</p:commandLink>
+                        <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>                        
+                        <p:commandLink tabindex="0" ajax="false" action="#{userUtils.processStartReminderBatch}" title="Starts a reminder batch">Start Reminder Batch</p:commandLink>
                         <h:panelGroup></h:panelGroup>
                         
                         <h:outputText value="HTML Result Report:"/>
@@ -180,16 +180,16 @@
             <p:panel rendered="#{fn:length(adminRefBean.pdfReportList) gt 0}" header="PDF Reports" style="width:750px;margin-left:auto;margin-right:auto;margin-top:12px">
 
                 <f:facet name="header">
-                    <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
+                    <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
                 </f:facet>
                 <f:facet name="footer">
-                    <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
+                    <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Clear downloadable reports">Clear Downloadable Report(s)</p:commandLink>
                 </f:facet>
 
                 <p:dataTable value="#{adminRefBean.pdfReportList}" var="pdfReport">
 
                     <p:column>
-                        <p:commandLink ajax="false">
+                        <p:commandLink tabindex="0" ajax="false">
                             <h:graphicImage library="images" name="report.png" style="width:20px" alt=""/>
                             <!-- NOTE: The SetPropertyActionListener MUST go above the FileDownload component to ensure that the
                                  TestEventScore is in the right place before the code looks for it. -->
@@ -242,7 +242,7 @@
 
                 <f:facet name="header">Session-level Status
                 &#160;
-                <p:commandLink ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>
+                <p:commandLink tabindex="0" ajax="false" action="#{adminRefUtils.processRefAdminTop}" title="Refresh this page">Refresh</p:commandLink>
                 </f:facet>
 
                 <p:column style="white-space: normal">

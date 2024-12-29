@@ -5,7 +5,8 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp"
-      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <body>
 
         <ui:composition template="#{corpBean.template}">
@@ -65,17 +66,19 @@
 
                             <h:panelGroup>
                                 <div style="text-align:center">
-                                    <div style="inline-block">                            
+                                    <div style="inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">                            
                                         <span id="capturebut">
-                                            <p:button value="#{stMessages['g.CapturePhoto']}" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
+                                            <p:button value="#{stMessages['g.CapturePhoto']}" pt:aria-keyshortcuts="F3" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                                         </span>
 
-<!-- <h:graphicImage library="images" name="camera-snapshot.png" title="#{stMessages['g.PPT.candphoto.clickthisicon']}" onclick="doImageSnap(); return false;" width="60" height="60" style="margin-left:40px;margin-right:40px;cursor:pointer"/>
-<br />
+                                        <!-- 
+                                        <h:graphicImage library="images" name="camera-snapshot.png" title="#{stMessages['g.PPT.candphoto.clickthisicon']}" onclick="doImageSnap(); return false;" width="60" height="60" style="margin-left:40px;margin-right:40px;cursor:pointer"/>
+                                        <br />
                                         -->
-                                        <a id="snapshotretrylink" href="#" style="display:none" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
-                                            <h:outputText styleClass="pflinktext ttformtext" style="text-decoration:underline;font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
+                                        <a tabindex="0" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
+                                            <h:outputText styleClass="pflinktext ttformtext anylink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
                                         </a>
+                                        <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>                        
                                     </div>
                                 </div>
                             </h:panelGroup>
@@ -86,15 +89,15 @@
                             <div style="text-align:center;padding-top:10px">
                                 <div style="display:inline-block">
                                     <div id="uploadimagebutton" style="display:none">
-                                        <p:commandButton ajax="true" value="#{stMessages['g.PPT.candid.upload']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>                        
+                                        <p:commandButton ajax="true" pt:aria-keyshortcuts="F4" value="#{stMessages['g.PPT.candid.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>                        
                                     </div>
                                     <ui:fragment rendered="#{proctorUtils.photosOptional}">
                                         &#160;
                                         <p:commandButton ajax="false" value="#{stMessages['g.Skip']}" action="#{proctorUtils.processSkipPhotoUpload}" title="#{stMessages['g.PPT.candphoto.skipinfo']}"/>                                                    
                                     </ui:fragment>                        
                                     &#160; 
-                                    <p:commandLink  title="#{stMessages['g.PPT.StopForNowAlt']}" onclick="PF('confirmpptexitdialog').show(); return false;">
-                                        <h:outputText styleClass="ttformtext" style="text-decoration:underline" value="#{stMessages['g.PPT.StopForNow']}"/>
+                                    <p:commandLink tabindex="0"  title="#{stMessages['g.PPT.StopForNowAlt']}" styleClass="ttformlink" onclick="PF('confirmpptexitdialog').show(); return false;">
+                                        <h:outputText styleClass="pflinktext textformtext anylink ttformlink" style="text-decoration:underline" value="#{stMessages['g.PPT.StopForNow']}"/>
                                     </p:commandLink>                                               
                                 </div>                    
                             </div>
@@ -132,7 +135,7 @@
                     </div>
                 </p:dialog>
 
-                <p:dialog closable="true" header="#{stMessages['g.PPT.candphoto.uperror']}" widgetVar="uploaderrordialog" style="max-width:500px;margin-left:2px;margin-right:2px">
+                <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.candphoto.uperror']}" widgetVar="uploaderrordialog" style="max-width:500px;margin-left:2px;margin-right:2px">
                     <h:form>
                         <div role="error">
                             <h:panelGrid columns="2" cellpadding="10" style="margin-left:auto;margin-right:auto">
@@ -172,7 +175,7 @@
                                         </h:form>
                                         </p:dialog>
 
-                                        <p:dialog closable="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" style="max-width:600px;margin-left:2px;margin-right:2px">
+                                        <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" style="max-width:600px;margin-left:2px;margin-right:2px">
                                             <h:form>
                                                 <div role="error">
                                                     <h:panelGrid columns="1" cellpadding="5">               
@@ -199,13 +202,13 @@
 
                                                         <h:panelGroup>
                                                             <div id="alertmessagehelpbut2" style="display:none">
-                                                                <p:commandLink ajax="false" action="#{proctorUtils.processChangeDevices}" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
-                                                                    <h:outputText value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
+                                                                <p:commandLink tabindex="0" ajax="false" action="#{proctorUtils.processChangeDevices}" styleClass="ttdialoglink" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
+                                                                    <h:outputText styleClass="anylink ttdialoglink" value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
                                                                 </p:commandLink>
                                                                 <ui:fragment rendered="#{proctorUtils.photosOptional}">                   
                                                                     <br />
-                                                                    <p:commandLink ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
-                                                                        <h:outputText value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
+                                                                    <p:commandLink tabindex="0" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" styleClass="ttdialoglink" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
+                                                                        <h:outputText styleClass="anylink ttdialoglink" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
                                                                     </p:commandLink>
                                                                 </ui:fragment>     
                                                             </div>

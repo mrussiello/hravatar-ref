@@ -33,7 +33,7 @@
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile ne null}">
-                        <a target="_blank" href="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileUrl}" title="#{stMessages['g.ClickToDownloadCandFile'] }">
+                        <a tabindex="0" target="_blank" href="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileUrl}" title="#{stMessages['g.ClickToDownloadCandFile'] }">
                             <h:graphicImage library="images" name="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileIconFilename}" style="max-width: 50px" alt="#{stMessages['g.ClickToDownloadCandFile'] }"/>
                         </a>                            
                     </h:panelGroup>
@@ -61,7 +61,7 @@
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.hasRecordingReadyForPlayback}">
 
                         <div style="display:inline-block;padding:10px;background-color: white;border-radius:10px">
-                            <h:outputLink value="#" title="#{stMessages['g.UploadedCandAvPlayTitle']}" onclick="PF('candmo').show(); return false">
+                            <h:outputLink tabindex="0" value="#" title="#{stMessages['g.UploadedCandAvPlayTitle']}" styleClass="ttformlink" onclick="PF('candmo').show(); return false">
                                 <h:graphicImage rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.video}" library="images" name="video_icon_ta2_70.png" alt="#{stMessages['g.UploadedCandAudioPlayTitle']}" style="max-width:50px"/>
                                 <h:graphicImage rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.audio}" library="images" name="audio_icon_ta_70.png" alt="#{stMessages['g.UploadedCandVideoPlayTitle']}" style="max-width:50px"/>
                             </h:outputLink>                            
@@ -91,7 +91,7 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.video}">
                                     <div style="display:inline-block;">
-                                        <video id="candmo" preload="false" src="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.uploadedFileUrl}" controls="true" style="max-width:550px" alt="#{stMessages['g.UploadedCandVideo']}">
+                                        <video id="candmo" preload="false" src="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.uploadedFileUrl}" controls="true" disablePictureInPicture="true" style="max-width:550px" alt="#{stMessages['g.UploadedCandVideo']}">
                                             <h:outputText value="#{stMessages['g.UploadedMediaPlayMessage']}"/>
                                         </video>
                                     </div>

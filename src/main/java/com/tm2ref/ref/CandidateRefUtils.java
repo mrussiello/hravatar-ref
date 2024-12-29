@@ -11,7 +11,6 @@ import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.entity.user.User;
-import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
@@ -406,6 +405,11 @@ public class CandidateRefUtils extends BaseRefUtils
     {
         getRefBean();
         return getUserTextXhtml( refBean.getRcCheck().getRcScript().getCandidateStrQuestion( candidateRefBean.getCandidateInputNumber() ) );
+    }
+
+    public String getCandidateInputQuestionPlain()
+    {
+        return StringUtils.convertHtml2PlainText(getCandidateInputQuestion(), true);
     }
 
 

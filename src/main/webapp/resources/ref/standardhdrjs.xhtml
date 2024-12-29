@@ -30,6 +30,12 @@
             return this.getTimezoneOffset() < this.stdTimezoneOffset();
         };
 
+        function doRefPageOnload()
+        {
+            initLog();
+            window.addEventListener('keydown', function(e) {doRefGenKeydownEvent(e);} );            
+            setHiddenFlds();            
+        }
 
         function setHiddenFlds()
         {
@@ -183,8 +189,42 @@
                 });
             }
         }
+        
+        function doRefGenKeydownEvent(evt)
+        {
+            if( !(evt) )
+            {
+                logIt( 'ref/resources/ref/standardhdrjs.xhtml.doRefGenKeydownEvent() evt not present. Ignoring.' );
+                return;
+            }
 
-        window.addEventListener('load', setHiddenFlds, false);
+            if( (evt.isComposing) )
+            {
+                logIt( 'ref/resources/ref/standardhdrjs.xhtml.doRefGenKeydownEvent() evt is composing. Ignoring.' );
+                return;
+            }
+
+            logIt( 'ref/resources/ref/standardhdrjs.xhtml.doRefGenKeydownEvent() key=' + evt.key );
+
+            if( evt.key==='F1')
+            {
+                evt.preventDefault();
+                evt.stopPropagation();
+                document.location.href='/tr/ref/help.xhtml';
+                return;
+            }
+
+            if( evt.key==='F2')
+            {
+                evt.preventDefault();
+                evt.stopPropagation();
+                document.location.href='/tr/pp/help-camera.xhtml';
+                return;
+            }            
+        }
+        
+
+        window.addEventListener('load', doRefPageOnload, false);
 
         //]]>
         </script>

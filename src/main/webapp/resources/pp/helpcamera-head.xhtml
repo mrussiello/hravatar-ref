@@ -77,6 +77,8 @@
     
     function doHelpCameraOnload()
     {
+        window.addEventListener('keydown', function (e) { doRefHelpKeydownEvent(e); });
+        
         document.getElementById( 'useragent').innerHTML=window.navigator.userAgent;
         document.getElementById( 'platform').innerHTML=window.navigator.platform;                        
 
@@ -100,9 +102,52 @@
         catch( e)
         {
             logIt( '/alt/test/help-camera.xhtml.doHelpCameraOnload() error calling createMicrophoneWindow(): ' + e.message );
-        }
-           
+        }           
     }
+    
+
+    function doRefHelpKeydownEvent(evt)
+    {
+        if(!(evt))
+        {
+            logIt('ref/tr/pp/helpcamera-head.xhtml.doRefHelpKeydownEvent() evt not present. Ignoring.');
+            return;
+        }
+
+        if((evt.isComposing))
+        {
+            logIt('ref/tr/pp/helpcamera-head.xhtml.doRefHelpKeydownEvent() evt is composing. Ignoring.');
+            return;
+        }
+
+        logIt('ref/tr/pp/helpcamera-head.xhtml.doRefHelpKeydownEvent() shift=' + evt.shiftKey + ', key=' + evt.key);
+
+        if(evt.key === 'F1')
+        {
+            evt.preventDefault();
+            evt.stopPropagation();
+            document.location.href = '/tr/pp/helpcamera-head.xhtml';
+            return;
+        }
+
+        if(evt.key === 'F2')
+        {
+            evt.preventDefault();
+            evt.stopPropagation();
+            // document.location.href = '/tr/pp/help-camera.xhtml';
+            return;
+        }
+
+        if(evt.key === 'Escape')
+        {
+            evt.preventDefault();
+            evt.stopPropagation();
+            document.location.href = '/tr/ref/help-exit-entry.xhtml?rcide=#{refBean.rcCheckIdEncrypted}&amp;rcride=#{refBean.rcRaterIdEncrypted}&amp;acidx=#{refBean.accessCode}&amp;refpagex=#{refBean.refPageType.refPageTypeId}';
+            return;
+        }
+    }
+
+
     
     function getWindowOrientation()
     {

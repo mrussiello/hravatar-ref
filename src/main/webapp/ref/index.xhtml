@@ -55,13 +55,13 @@
                         <h:panelGrid columns="3" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="2" style="padding-top:30px;padding-bottom:5px;margin:0 auto">
 
                             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.EnterAccessCodeC']}" for="rfaccesscode"/>
-                            <p:inputText id="rfaccesscode" styleClass="txtcoldark" tabindex="10" value="#{refBean.accessCode}" autocomplete="off" size="16" placeholder="#{stMessages['g.EnterAccessCodeHere']}"/>
-                            <p:commandButton tabindex="11" ajax="false" action="#{refUtils.processEnterAccessCode}" value="#{stMessages['g.SubmitAccessCd']}"/>
+                            <p:inputText id="rfaccesscode" styleClass="txtcoldark" value="#{refBean.accessCode}" autocomplete="off" size="16" placeholder="#{stMessages['g.EnterAccessCodeHere']}"/>
+                            <p:commandButton ajax="false" action="#{refUtils.processEnterAccessCode}" value="#{stMessages['g.SubmitAccessCd']}"/>
 
                         </h:panelGrid>
 
                         <div style="text-align:center;margin-top:30px">
-                            <h:outputFormat styleClass="textmedium ttfooterlink" value="#{stMessages['g.IfNotHereForRef']}" escape="false">
+                            <h:outputFormat styleClass="textmedium tttextcolor" value="#{stMessages['g.IfNotHereForRef']}" escape="false">
                                 <f:param value="#{userBean.baseAdminDomain}"/>
                                 <f:param value="#{userBean.siteNameCap}"/>
                             </h:outputFormat>

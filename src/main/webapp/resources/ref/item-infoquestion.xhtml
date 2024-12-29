@@ -5,26 +5,26 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
 
-<!-- INTERFACE -->
-<cc:interface>
-    <!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-    
-            <h:panelGroup rendered="#{raterRefBean.rcItem.hasInfoText}">
-                <div style="padding-bottom: 28px;padding-top:10px">
-                    <h:outputText styleClass="textmedium ttformtext" value="#{raterRefUtils.itemInfoTextXhtml}" escape="false"/>
-                </div>
-            </h:panelGroup>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
 
-            <h:panelGroup>
-                <div style="padding-bottom: 8px">
-                    <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" style="font-weight:bold" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
-                    <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" style="font-weight:bold" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
-                </div>
-            </h:panelGroup>            
-    
-</cc:implementation>
+        <h:panelGroup rendered="#{raterRefBean.rcItem.hasInfoText}">
+            <h2 class="refinfosection" role="region" aria-label="#{stMessages['g.InfoRegion']}">
+                <h:outputText styleClass="textmedium ttformtext" value="#{raterRefUtils.itemInfoTextXhtml}" escape="false"/>
+            </h2>
+        </h:panelGroup>
+
+        <h:panelGroup>
+            <h2 class="refquestionsection" role="region" aria-label="#{stMessages['g.QuestionRegion']}">
+                <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
+                <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
+            </h2>
+        </h:panelGroup>
+
+    </cc:implementation>
 </html>

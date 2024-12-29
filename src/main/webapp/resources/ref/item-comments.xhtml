@@ -19,8 +19,8 @@
                 <div style="display:inline-block;">
 
 
-                    <p:outputLabel  rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbnotsamsung"/>
-                    <p:outputLabel  rendered="#{facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbsamsung"/>
+                    <p:outputLabel rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbnotsamsung"/>
+                    <p:outputLabel rendered="#{facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbsamsung"/>
 
                     <p:inputTextarea rendered="#{not facesUtils.isMsieOrSamsungAndroid and (not cc.attrs.avCommentsOk or not refBean.audioVideoCommentsOk)}" id="cmntstbnotsamsung" styleClass="commenttextarea" style="width:100%;max-width:550px" cols="50" rows="4" autoResize="true" value="#{raterRefBean.rcItemWrapper.rcRating.text}" required="false" requiredMessage="#{stMessages['g.XRCommentsReqd']}" placeholder="#{raterRefUtils.commentsPlaceholderStr}">
                     </p:inputTextarea>
@@ -28,8 +28,8 @@
                     </p:inputTextarea>
 
 
-                    <p:outputLabel  rendered="#{not facesUtils.isMsieOrSamsungAndroid and (cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbnotsamsungav"/>
-                    <p:outputLabel  rendered="#{facesUtils.isMsieOrSamsungAndroid and (cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbsamsungav"/>
+                    <p:outputLabel rendered="#{not facesUtils.isMsieOrSamsungAndroid and (cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbnotsamsungav"/>
+                    <p:outputLabel rendered="#{facesUtils.isMsieOrSamsungAndroid and (cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk)}" styleClass="sr-only" value="#{raterRefUtils.commentsPlaceholderStr}" for="cmntstbsamsungav"/>
 
                     <ui:fragment rendered="#{cc.attrs.avCommentsOk and refBean.audioVideoCommentsOk}">
                         <h:panelGrid columns="2">
@@ -44,13 +44,13 @@
                                     </div>
 
                                     <div>
-                                        <p:commandLink rendered="#{refBean.videoCommentsOk}" ajax="true" onclick="setForUploadStart(false); PF('avcommentsdialog').show()" styleClass="ttformtext"  title="#{stMessages['g.RecordVideoCommentInfo']}">
-                                            <span id="rerecordtxtvid" class="ttformtext" style="text-decoration: underline;font-weight:normal;;font-size:16px">
+                                        <p:commandLink tabindex="0" rendered="#{refBean.videoCommentsOk}" ajax="true" onclick="setForUploadStart(false); PF('avcommentsdialog').show()" styleClass="ttformlink"  title="#{stMessages['g.RecordVideoCommentInfo']}">
+                                            <span id="rerecordtxtvid" class="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;font-size:16px">
                                                 <h:outputText value="#{stMessages['g.RecordVideoComment']}"/>                                            
                                             </span>
                                         </p:commandLink><br />                                    
-                                        <p:commandLink ajax="true" onclick="setForUploadStart(true); PF('avcommentsdialog').show()" styleClass="ttformtext"  title="#{stMessages['g.RecordAudioCommentInfo']}">
-                                            <span id="rerecordtxtaud" class="ttformtext" style="text-decoration: underline;font-weight:normal;font-size:16px">
+                                        <p:commandLink tabindex="0" ajax="true" onclick="setForUploadStart(true); PF('avcommentsdialog').show()" styleClass="ttformlink"  title="#{stMessages['g.RecordAudioCommentInfo']}">
+                                            <span id="rerecordtxtaud" class="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;font-size:16px">
                                                 <h:outputText value="#{stMessages['g.RecordAudioComment']}"/>
                                             </span>
                                         </p:commandLink>

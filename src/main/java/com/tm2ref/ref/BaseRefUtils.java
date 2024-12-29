@@ -130,6 +130,21 @@ public class BaseRefUtils  extends FacesUtils
         return StringUtils.replaceStandardEntities(s);
     }
 
+    protected String getUserTextPlain( String s )
+    {
+        getRefBean();
+
+        if( s==null || s.isBlank() )
+            return "";
+
+        if( rcCheckUtils==null )
+            rcCheckUtils=new RcCheckUtils();
+        s = rcCheckUtils.performSubstitutions( s, refBean.getRcCheck(), refBean.getRcCheck().getRcRater(), getLocale() );
+
+        return StringUtils.convertHtml2PlainText(s, true);
+    }
+    
+    
 
     public float getUnencryptedFloatFmRequest( String name )
     {

@@ -6,7 +6,8 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
-      xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp">
+      xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 
 <!-- INTERFACE -->
@@ -57,19 +58,20 @@
                 
                 <h:panelGroup>
                     <div style="text-align:center">
-                        <div style="display:inline-block">     
+                        <div style="display:inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">     
                             
                             <span id="capturebut">
-                            <p:button value="#{stMessages['g.CapturePhoto']}" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
+                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.CapturePhoto']}" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                             </span>
                             
                             <!-- <h:graphicImage library="images" name="camera-snapshot.png" title="#{stMessages['g.PPT.candphoto.clickthisicon']}" onclick="doImageSnap(); return false;" width="60" height="60" style="margin-left:40px;margin-right:40px;cursor:pointer"/>
                             <br />
                             -->
-                            <a id="snapshotretrylink" href="#" style="display:none" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
-                                <h:outputText styleClass="pflinktext ttformtext" style="text-decoration:underline;font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
+                            <a tabindex="0" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
+                                <h:outputText styleClass="pflinktext ttformtext anylink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
                             </a>
-                        </div>
+                            <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>                        
+                       </div>
                     </div>
                 </h:panelGroup>
                 
@@ -79,7 +81,7 @@
                 <div style="text-align:center;padding-top:10px">
                     <div style="display:inline-block">
                         <div id="uploadimagebutton" style="display:none">
-                            <p:commandButton ajax="true" value="#{stMessages['g.PPT.candphoto.upload']}" onclick="showHideImageUploadDialog( true ); doImageUpload(); return false;"/>                        
+                            <p:commandButton ajax="true" value="#{stMessages['g.PPT.candphoto.upload']}" pt:aria-keyshortcuts="F4" title="#{stMessages['g.PPT.candphoto.upload.alt']}" onclick="showHideImageUploadDialog( true ); doImageUpload(); return false;"/>                        
                         </div>
                         <ui:fragment rendered="#{proctorUtils.photosOptional}">
                         &#160;
@@ -121,7 +123,7 @@
             </div>
         </p:dialog>
         
-        <p:dialog closable="true" header="#{stMessages['g.PPT.candphoto.uperror']}" widgetVar="uploaderrordialog" style="max-width:650px;margin-left:2px;margin-right:2px">
+        <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.candphoto.uperror']}" widgetVar="uploaderrordialog" style="max-width:650px;margin-left:2px;margin-right:2px">
             <h:form>
             <div role="error">
             <h:panelGrid columns="2" cellpadding="10" style="margin-left:auto;margin-right:auto">
@@ -144,13 +146,13 @@
                 <h:panelGroup></h:panelGroup>
 
                 <h:panelGroup>
-                    <p:commandLink ajax="false" style="color:blue" action="#{proctorUtils.processChangeDevices}" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
-                        <h:outputText value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
+                    <p:commandLink tabindex="0" ajax="false" styleClass="ttdialoglink" style="color:blue" action="#{proctorUtils.processChangeDevices}" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
+                        <h:outputText styleClass="pflinktext anylink ttdialoglink" value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
                     </p:commandLink>
                     <ui:fragment rendered="#{proctorUtils.photosOptional}">                   
                     <br />
-                    <p:commandLink ajax="false" style="color:blue" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
-                        <h:outputText value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
+                    <p:commandLink tabindex="0" ajax="false" styleClass="ttdialoglink" style="color:blue" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
+                        <h:outputText styleClass="pflinktext anylink ttdialoglink" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
                     </p:commandLink>
                     </ui:fragment>                         
                 </h:panelGroup>
@@ -161,7 +163,7 @@
             </h:form>
         </p:dialog>
         
-        <p:dialog closable="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" style="max-width:650px;margin-left:2px;margin-right:2px">
+        <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" style="max-width:650px;margin-left:2px;margin-right:2px">
             <h:form>
             <div role="error">
             <h:panelGrid columns="1" cellpadding="5">               
@@ -188,12 +190,12 @@
                 
                 <h:panelGroup>
                     <div id="alertmessagehelpbut2" style="display:none">
-                        <p><p:commandLink ajax="false" style="color:blue" action="#{proctorUtils.processStopProcessForNow}" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
-                            <h:outputText style="color:blue" value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
+                        <p><p:commandLink tabindex="0" ajax="false" styleClass="ttdialoglink" style="color:blue" action="#{proctorUtils.processStopProcessForNow}" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
+                            <h:outputText styleClass="pflinktext anylink ttdialoglink" style="color:blue" value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
                         </p:commandLink></p>
                         <ui:fragment rendered="#{proctorUtils.photosOptional}">                   
-                        <p><p:commandLink ajax="false" style="color:blue" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
-                            <h:outputText style="color:blue" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
+                        <p><p:commandLink tabindex="0" ajax="false" styleClass="ttdialoglink" style="color:blue" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
+                            <h:outputText styleClass="pflinktext anylink ttdialoglink" style="color:blue" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
                         </p:commandLink></p>
                         </ui:fragment>     
                     </div>

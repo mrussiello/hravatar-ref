@@ -9,7 +9,8 @@
       xml:lang="#{userBean.htmlLangCode}"
       dir="#{userBean.textDirection}"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
-      xmlns:misc="jakarta.faces.composite/misc">
+      xmlns:misc="jakarta.faces.composite/misc"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:insert name="headsection">
         <h:head>
@@ -35,7 +36,7 @@
 
             <meta name="viewport" content="width=#{refUtils.viewportWidth}, initial-scale=1" />
 
-            <h:outputStylesheet library="css" name="default.css"/>
+            <h:outputStylesheet library="css" name="default2.css"/>
 
             <h:outputScript library="js" name="keepalive.js"/>
             <h:outputScript library="js" name="core.js"/>
@@ -116,7 +117,7 @@
 
                 *:focus
                 {
-                    outline: none;
+                    /* outline: none; */
                 }
             </style>
 
@@ -134,50 +135,56 @@
 
 
             <div id="pagebgdiv" class="pagewrapper pagebgdiv">
-                <div id="pageinnerdiv" class="pageinnerdiv pageinnerdivwidth" tabindex="-1">
+                <div id="pageinnerdiv" class="pageinnerdiv pageinnerdivwidth">
 
                     <!-- BEGIN HEADER SECTION -->
-                    <ui:insert name="headtable">
-                        <div class="mobileheadertopdiv" role="banner" style="width:1005px;margin-left:auto;margin-right:auto;padding-bottom:8px">
+                    <header>
+                        <ui:insert name="headtable">
+                            <div class="mobileheadertopdiv" role="banner" style="width:1005px;margin-left:auto;margin-right:auto;padding-bottom:8px">
 
-                            <h:outputText rendered="#{corpBean.corp.hasHeader}" value="#{corpBean.corp.header}" escape="false"/>
+                                <h:outputText rendered="#{corpBean.corp.hasHeader}" value="#{corpBean.corp.header}" escape="false"/>
 
-                            <ui:fragment rendered="#{not corpBean.corp.hasHeader}">
-                                <div style="#{corpBean.headerFloatCss};margin-left:10px;margin-right:10px">
-                                    <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="margin-top:10px;max-height:54px;min-height:0px" value="#{corpBean.corpImageIconUrl}" alt=""/>
-                                    <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="max-height:54px" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
-                                </div>
-                            </ui:fragment>
+                                <ui:fragment rendered="#{not corpBean.corp.hasHeader}">
+                                    <div style="#{corpBean.headerFloatCss};margin-left:10px;margin-right:10px">
+                                        <h:graphicImage rendered="#{corpBean.corp.hasImageIcon}" style="margin-top:10px;max-height:54px;min-height:0px" value="#{corpBean.corpImageIconUrl}" alt=""/>
+                                        <h:graphicImage rendered="#{not corpBean.corp.hasImageIcon}" style="max-height:54px" library="images" name="hr-avatar-logo-210x48.png" alt=""/>
+                                    </div>
+                                </ui:fragment>
 
-                        </div>
-                    </ui:insert>
+                            </div>
+                        </ui:insert>
+                    </header>
                     <!-- END HEADER TABLE -->
 
                     <!-- <br style="clear:both"/> -->
 
                     <!-- BEGIN CONTENTS OF CORE -->
-                    <ui:insert name="coreinnersection">
-                        CORE PAGE SHOULD BE HERE!
-                    </ui:insert>
+                    <main>
+                        <ui:insert name="coreinnersection">
+                            CORE PAGE SHOULD BE HERE!
+                        </ui:insert>
+                    </main>
                     <!-- END CONTENTS OF CORE -->
 
                     <!-- <br style="clear:both"/> -->
 
                     <!-- BEGIN FOOTER TABLE -->
-                    <ui:insert name="footertable">
-                        <h:form id="footerform" prependId="false">
-                            <ref:stdforminputs />
-                            <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
-                            <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
-                                <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
-                                    <ui:insert name="footerhelplink"><p:commandLink id="pmtemplatehelplink" tabindex="31010" styleClass="textmedium ttfooter" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText style="text-decoration:underline" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
-                                </div>
-                            </ui:fragment>
-                        </h:form>
-                    </ui:insert>
+                    <footer>
+                        <ui:insert name="footertable">
+                            <h:form id="footerform" prependId="false">
+                                <ref:stdforminputs />
+                                <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
+                                <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
+                                    <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
+                                        <ui:insert name="footerhelplink"><p:commandLink tabindex="0" id="pmtemplatehelplink" styleClass="textmedium ttfooterlink" pt:aria-keyshortcuts="F1" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText styleClass="anylink ttfooterlink" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
+                                    </div>
+                                </ui:fragment>
+                            </h:form>
+                        </ui:insert>
+                    </footer>
+                    <!-- END FOOTER TABLE -->
 
                     <div style="padding-top:10px"></div>
-                    <!-- END FOOTER TABLE -->
 
 
                 </div>

@@ -2301,6 +2301,34 @@ public class RaterRefUtils extends BaseRefUtils
             return "";
         return getUserTextXhtml( raterRefBean.getRcItemWrapper().getRcItem().getQuestion() );
     }
+
+    public String getItemQuestionForRaterPlain()
+    {
+        getRefBean();
+        
+        if( refBean.getRefUserType().getIsCandidate() )
+            return getItemQuestionCandidatePlain();
+        return getItemQuestionPlain();
+    }
+    
+    public String getItemQuestionCandidatePlain()
+    {
+        if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null )
+            return "";
+        if( raterRefBean.getRcItemWrapper().getRcItem().getQuestionCandidate()==null || raterRefBean.getRcItemWrapper().getRcItem().getQuestionCandidate().isBlank() )
+            return getItemQuestionPlain();
+        return getUserTextPlain( raterRefBean.getRcItemWrapper().getRcItem().getQuestionCandidate() );
+    }
+    
+    public String getItemQuestionPlain()
+    {
+        if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null )
+            return "";
+        return getUserTextPlain( raterRefBean.getRcItemWrapper().getRcItem().getQuestion() );
+    }
+
+    
+
     public String getItemChoice1Xhtml()
     {
         if( raterRefBean.getRcItemWrapper()==null || raterRefBean.getRcItemWrapper().getRcItem()==null )

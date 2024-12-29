@@ -42,11 +42,11 @@
 
                         <ref:messages-embedded />
 
-                        <div class="textverylarge textbold ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle">
                             <h:outputFormat value="#{stMessages['g.WelcomeX']}">
                                 <f:param value="#{refBean.refUser.fullname}" />
                             </h:outputFormat>
-                        </div>
+                        </h1>
 
                         <ui:fragment rendered="#{refUtils.hasCustomIntro}">
                             <div class="textmedsmall whitecontentshadowdiv" style="max-width:650px;max-height:300px;overflow-y: scroll;padding:5px;margin:15px auto">
@@ -102,20 +102,20 @@
 
                                     <p:commandButton ajax="false" action="#{refUtils.processSubmitIntro}" value="#{stMessages['g.ContinueGreat']}"/>
 
-                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('dontknowconfirm').show(); return false">
-                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRDontKnowX']}">
+                                    <p:commandLink tabindex="0" ajax="true" styleClass="textmedium ttformlink"  onclick="PF('dontknowconfirm').show(); return false">
+                                        <h:outputFormat styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.XRDontKnowX']}">
                                             <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                         </h:outputFormat>
                                     </p:commandLink>
 
-                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notfamiliarconfirm').show(); return false">
-                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotFamiliarX']}">
+                                    <p:commandLink tabindex="0" ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notfamiliarconfirm').show(); return false">
+                                        <h:outputFormat styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.XRNotFamiliarX']}">
                                             <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                         </h:outputFormat>
                                     </p:commandLink>
 
-                                    <p:commandLink ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notwishcontinueconfirm').show(); return false">
-                                        <h:outputFormat styleClass="textmedium ttformlink" style="text-decoration:underline" value="#{stMessages['g.XRNotWishToContinueX']}">
+                                    <p:commandLink tabindex="0" ajax="true" styleClass="textmedium ttformlink"  onclick="PF('notwishcontinueconfirm').show(); return false">
+                                        <h:outputFormat styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.XRNotWishToContinueX']}">
                                             <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                         </h:outputFormat>
                                     </p:commandLink>
@@ -125,8 +125,8 @@
                                          &#160;
                                          
                                          &#160;
-                                         <p:commandLink ajax="true" styleClass="textmedium ttformlink" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
-                                             <h:outputText styleClass="textmedium  ttformlink" value="#{stMessages['g.Exit']}"/>
+                                         <p:commandLink tabindex="0" ajax="true" styleClass="textmedium ttformlink" onclick="PF('exitcheckconfirm').show(); return false" title="#{stMessages['g.Exit']}">
+                                             <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.Exit']}"/>
                                          </p:commandLink>
                                     </h:panelGroup>
                                     -->
