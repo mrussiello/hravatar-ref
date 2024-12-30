@@ -120,7 +120,7 @@ public class CorpBean extends FacesBean implements Serializable
 
     public String getTemplate()
     {
-        LogService.logIt( "CorpBean.getTemplate() Starting. hasCorp=" + getHasCorp() );
+        // LogService.logIt( "CorpBean.getTemplate() Starting. hasCorp=" + getHasCorp() );
 
         if( !getHasCorp() )
             loadDefaultCorp();

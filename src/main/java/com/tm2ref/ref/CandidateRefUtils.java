@@ -1213,7 +1213,7 @@ public class CandidateRefUtils extends BaseRefUtils
             if( rcRater.getUser()==null )
                 throw new Exception( "RcRater.user is null" );
 
-            LogService.logIt( "CandidateRefUtils.processEditRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));
+            // LogService.logIt( "CandidateRefUtils.processEditRater() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ));
 
             if( rcRater.getRcRaterStatusType().getStartedOrHigher() )
                 throw new STException( "g.XCCannotEditRater", new String[]{rcRater.getUser().getFullname()} );
