@@ -502,7 +502,10 @@ public class RcMessageUtils {
         
         // Never sent to the target.
         if( rater.getIsCandidateOrEmployee() )
+        {
+            LogService.logIt( "RcMessageUtils.sendRcCheckToRater() rater.getIsCandidateOrEmployee() NOT SENDING. rcCheckId=" + rc.getRcCheckId() + ", raterId=" + rater.getRcRaterId() );
             return new int[2];
+        }
         
         if( userFacade == null )
             userFacade = UserFacade.getInstance();
@@ -734,7 +737,10 @@ public class RcMessageUtils {
         try
         {
             if( user==null || !user.getHasMobilePhone() )
+            {
+                LogService.logIt("RcMessageUtils.User record missing or no mobile phone: " + (user==null ? "null" : user.toString()) );
                 return 0;
+            }
             
             if( l==null )
                 throw new Exception( "Locale is null" );
@@ -747,7 +753,10 @@ public class RcMessageUtils {
             }
             
             if( rc.getOrg()!=null && !rc.getOrg().getIsSmsOk() )
+            {
+                LogService.logIt("RcMessageUtils.User Org.getIsSmsOK is false: orgId=" +  rc.getOrg().getOrgId() + ", issmsOk=" + rc.getOrg().getIsSmsOk() );
                 return 0;
+            }
             
             boolean smsOk = GooglePhoneUtils.getIsPhoneNumberAllowedForSms( user.getMobilePhone(), rc.getOrg(), user, rc.getAdminUser() );
             if( !smsOk )

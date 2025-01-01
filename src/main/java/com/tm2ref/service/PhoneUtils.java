@@ -100,7 +100,10 @@ public class PhoneUtils
             SmsBlock smsBlock = smsBlockFacade.getActiveSmsBlock(to);
             
             if( smsBlock!=null && smsBlock.getIsActiveBlock() )
+            {                
+                LogService.logIt("PhoneUtils.sendTextMessage() SMS Block found for: " + to +", smsBlock.getSmsBlockReasonId()=" + smsBlock.getSmsBlockReasonId() );
                 return smsBlock.getSmsBlockReasonId()==1 ? -3 : -2;
+            }
             
             msg += " " + MessageFactory.getStringMessage(locale, "g.SMSSenderId", new String[]{RuntimeConstants.getStringValue("default-site-name")} );
                         
@@ -116,6 +119,7 @@ public class PhoneUtils
                 
                 if( message.getStatus()!=null && (message.getStatus().equals(Message.Status.FAILED) || message.getStatus().equals(Message.Status.UNDELIVERED)) )
                 {
+                    LogService.logIt("PhoneUtils.sendTextMessage() Message failed or undelivered. Creating block. message.getStatus()=" + message.getStatus().toString() + ", to=" + to + ", from=" + from + ", " + msg );
                     smsBlock = smsBlockFacade.createSmsBlock(to, false);
                     return smsBlock.getSmsBlockReasonId()==1 ? -3 : -2;
                 }
