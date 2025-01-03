@@ -1390,7 +1390,7 @@ public class RcCheckUtils {
             
             if( rater.getRcRaterStatusType().getCompleteOrHigher() )
             {
-                LogService.logIt("RcCheckUtils.performRcRaterCompletionIfReady() RcRater is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
+                // LogService.logIt("RcCheckUtils.performRcRaterCompletionIfReady() RcRater is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + rater.getRcRaterId() );
                 return true;                
             }
             if( rcFacade==null )

@@ -82,9 +82,7 @@ public class CoverIncludedBarCellEvent implements PdfPCellEvent
                         
             float textPad =(barHeight - textHeight)/2f;
             
-            LogService.logIt( "CoverIncludedBarCellEvent.cellLayout() cellWidth=" + cellWidth + ", cellHeight=" + cellHeight + ", barWidth=" + barWidth + ",barHeight=" + barHeight + ", barArrowWidth=" + barArrowWidth + ", textHeight=" + textHeight + ", textWidth=" + textWidth + ", fontSize=" + fontSize + ", textPad=" + textPad + ", text=" + text );
-
-            
+            // LogService.logIt( "CoverIncludedBarCellEvent.cellLayout() cellWidth=" + cellWidth + ", cellHeight=" + cellHeight + ", barWidth=" + barWidth + ",barHeight=" + barHeight + ", barArrowWidth=" + barArrowWidth + ", textHeight=" + textHeight + ", textWidth=" + textWidth + ", fontSize=" + fontSize + ", textPad=" + textPad + ", text=" + text );
             
             PdfContentByte pcb = pcbs[ PdfPTable.BACKGROUNDCANVAS ];
 

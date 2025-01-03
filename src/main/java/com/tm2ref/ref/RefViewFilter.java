@@ -53,7 +53,7 @@ public class RefViewFilter implements Filter
             HttpServletRequest hreq = (HttpServletRequest) req;
             
             String p = hreq.getRequestURI();
-            LogService.logIt( "RefViewFilter.doFilter() AAA.1 p=" + p );
+            // LogService.logIt( "RefViewFilter.doFilter() AAA.1 p=" + p );
             if( p.contains("complete.xhtml") || p.contains("complete-r.xhtml") ||
                 p.contains("cancelled.xhtml") || p.contains("cancelled-r.xhtml") || 
                 p.contains("error-fatal.xhtml")|| 

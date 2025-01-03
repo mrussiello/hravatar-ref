@@ -191,14 +191,12 @@ public class StandardReportSettings implements ReportSettings
     @Override
     public void initSettings( ReportData reportData ) throws Exception
     {
-        LogService.logIt( "StandardREportSettings.initSettings() START " + (baseFont == null) );
+        // LogService.logIt( "StandardREportSettings.initSettings() START " + (baseFont == null) );
         initColors();
         
         rtl = I18nUtils.isTextRTL( reportData==null ? Locale.US :  reportData.getLocale() );
         usesNonAscii = rtl || ( reportData==null ? false : reportData.getUsesNonAscii() );
-        
-        
-        
+            
         if( baseFont == null )
         {
             String filesRoot = RuntimeConstants.getStringValue( "filesroot" ) + "/rc/fonts/";

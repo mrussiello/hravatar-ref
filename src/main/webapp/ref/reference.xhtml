@@ -190,7 +190,7 @@
 
                             <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.Role']}:" for="rfrefrole"/>
                             <h:panelGroup style="white-space:nowrap">
-                                <p:selectOneMenu id="rfrefrole" styleClass="refinputtext" value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}">
+                                <p:selectOneMenu id="rfrefrole" styleClass="refinputtext" value="#{candidateRefBean.rcRater.rcRaterRoleTypeId}" title="#{stMessages['g.Role']}, #{stMessages['g.UseAltDown4List']}">
                                     <f:selectItems value="#{candidateRefUtils.rcRaterRoleTypeSelectItemList}"/>
                                 </p:selectOneMenu>
                                 <span class="reffieldreqd">                    
@@ -243,7 +243,7 @@
 
                             <p:outputLabel styleClass="ttformtext reflabel" value="#{stMessages['g.Country']}:" for="rfrefcountrycode"/>
                             <h:panelGroup style="white-space:nowrap">
-                                <p:selectOneMenu id="rfrefcountrycode" value="#{candidateRefBean.rcRater.user.countryCode}">
+                                <p:selectOneMenu id="rfrefcountrycode" value="#{candidateRefBean.rcRater.user.countryCode}" title="#{stMessages['g.Country']}, #{stMessages['g.UseAltDown4List']}">
                                     <f:selectItems value="#{candidateRefUtils.countryCodeSelectItemList}"/>
                                 </p:selectOneMenu>
                                 <span class="reffieldreqd">                    

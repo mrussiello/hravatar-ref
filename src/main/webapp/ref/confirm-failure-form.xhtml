@@ -65,7 +65,7 @@
                             <p:inputText id="confirmyouremail3" size="30" value="#{refBean.strParam3}" placeholder="#{stMessages['g.Email']}"/>
 
                             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.WhatWrong']}:" for="cfreasontypeid"/>
-                            <p:selectOneMenu id="cfreasontypeid" value="#{refBean.intParam1}" style="max-width:450px">
+                            <p:selectOneMenu id="cfreasontypeid" value="#{refBean.intParam1}" style="max-width:450px" title="#{stMessages['g.ConfFailForm.WhatWrong']} #{stMessages['g.UseAltDown4List']}">
                                 <f:selectItem itemValue="0" itemLabel="#{stMessages['g.PleaseChoose']}" />
                                 <f:selectItem itemValue="1" itemLabel="#{stMessages['g.ConfFailForm.ErrNameWrong']}" />
                                 <!-- <f:selectItem itemValue="2" itemLabel="#{stMessages['g.ConfFailForm.ErrDontKnowPerson']}" /> -->

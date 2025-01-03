@@ -180,7 +180,7 @@ public class ReportPdfResource extends BaseApiResource {
             
         ReportManager rm = new ReportManager();
 
-        LogService.logIt( "ReportPdfResource.doGenPdfReport() Starting PDF Report Gen. rcCheckId=" + rcCheckId );
+        // LogService.logIt( "ReportPdfResource.doGenPdfReport() Starting PDF Report Gen. rcCheckId=" + rcCheckId );
         
         outJob.add( "rccheckid", rcCheckId );        
         
@@ -207,7 +207,7 @@ public class ReportPdfResource extends BaseApiResource {
             //throw new Exception( "Bytes are missing." );
         }
 
-        LogService.logIt( "ReportPdfResource.doGenPdfReport() PDF Report Gen. Complete. Bytes=" + bytes.length + ", rcCheckId=" + rcCheckId + ", filename=" + filename );
+        // LogService.logIt( "ReportPdfResource.doGenPdfReport() PDF Report Gen. Complete. Bytes=" + bytes.length + ", rcCheckId=" + rcCheckId + ", filename=" + filename );
 
         String base64Encoded = DatatypeConverter.printBase64Binary(bytes);
 

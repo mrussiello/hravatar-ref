@@ -261,7 +261,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
     {
         try
         {
-            LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() AAA.1 START high=" + high );
+            // LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() AAA.1 START high=" + high );
             int q = reportData.getRc().getTopBottomCount(); // Constants.DEFAULT_HILOWCOMPETENCIES;
             int scoredComps = 0;
             for( RcCompetencyWrapper rcw : reportData.getRcScript().getRcCompetencyWrapperList() )
@@ -270,7 +270,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     scoredComps++;
             }
 
-            LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() BBB.1 scoredComps=" + scoredComps );
+            // LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() BBB.1 scoredComps=" + scoredComps );
             if( scoredComps<=0 )
                 return;
 
@@ -286,7 +286,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             //    rcl =    rcCheckUtils.getRcCompetenciesSubList( reportData.getRc(), true, 0.001f, q, false );
 
             
-            LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() CCC.1 high=" + high + ", scoredComps=" + scoredComps + ", found comps=" + rcl.size() );
+            // LogService.logIt( "BaseRcReportTemplate.addTopCompetenciesTable() CCC.1 high=" + high + ", scoredComps=" + scoredComps + ", found comps=" + rcl.size() );
 
             if( rcl.isEmpty() )
                 return;
@@ -1205,7 +1205,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             if( thgt> pageHeight )
             {
                 y -= 2*TPAD;
-                LogService.logIt( "BaseRcReportTemplate.addRatingsTable() ZZZ.1 Table height is higher than page height." );
+                // LogService.logIt( "BaseRcReportTemplate.addRatingsTable() ZZZ.1 Table height is higher than page height." );
                 t.setHeaderRows( 1 );
                 t.setSplitLate( false );
 
@@ -3119,7 +3119,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
             Image hraCover = getHraCoverPageImage();
 
-            LogService.logIt( "BaseRcReportTemplate.addCoverPageV2() START page dims=" + pageWidth + "," + pageHeight + ", imageDims=" + hraCover.getWidth() + "," + hraCover.getHeight() );
+            // LogService.logIt( "BaseRcReportTemplate.addCoverPageV2() START page dims=" + pageWidth + "," + pageHeight + ", imageDims=" + hraCover.getWidth() + "," + hraCover.getHeight() );
 
             hraCover.scalePercent( 100*pageHeight/hraCover.getHeight());
 

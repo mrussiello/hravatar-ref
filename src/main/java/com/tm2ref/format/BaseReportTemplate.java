@@ -338,7 +338,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
             Image photoImg = Image.getInstance( new URI( url ).toURL() );
             if( photoImg!=null )
             {
-                 LogService.logIt( "BaseReportTemplate.getItextThumbImage() wid hgt=" + photoImg.getWidth() + "," + photoImg.getHeight() );
+                 // LogService.logIt( "BaseReportTemplate.getItextThumbImage() wid hgt=" + photoImg.getWidth() + "," + photoImg.getHeight() );
                  float scale = 1;
                  if( photoImg.getWidth()>maxWid )
                      scale = maxWid/photoImg.getWidth();
@@ -473,7 +473,7 @@ public abstract class BaseReportTemplate extends StandardReportSettings implemen
             float y = currentYLevel;
             if( thgt + 75 > y )
             {
-                LogService.logIt( "BaseReportTemplate.addPreparationNotesSection() ZZZ.2  Too close to bottom of page, Adding new page. currentYLevel=" + currentYLevel + ", thgt=" + thgt );
+                // LogService.logIt( "BaseReportTemplate.addPreparationNotesSection() ZZZ.2  Too close to bottom of page, Adding new page. currentYLevel=" + currentYLevel + ", thgt=" + thgt );
                 addNewPage();
                 y = currentYLevel;
             }            
