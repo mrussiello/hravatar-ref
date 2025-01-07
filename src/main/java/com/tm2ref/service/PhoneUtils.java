@@ -115,7 +115,7 @@ public class PhoneUtils
                 
                 Message message = Message.creator( new PhoneNumber(to), new PhoneNumber(from), msg ).setStatusCallback(URI.create(callbackUrl)).create();
                 
-                LogService.logIt("PhoneUtils.sendTextMessage() SENT to=" + to + ", from=" + from + ", " + msg );
+                // LogService.logIt("PhoneUtils.sendTextMessage() SENT to=" + to + ", from=" + from + ", " + msg );
                 
                 if( message.getStatus()!=null && (message.getStatus().equals(Message.Status.FAILED) || message.getStatus().equals(Message.Status.UNDELIVERED)) )
                 {

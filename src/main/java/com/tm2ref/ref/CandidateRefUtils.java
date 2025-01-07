@@ -1160,7 +1160,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
                     setInfoMessage( reminder ? "g.RCReminderEmailSent" : "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
                                 
-                LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
+                // LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
             }
             
             // OK we can edit.
