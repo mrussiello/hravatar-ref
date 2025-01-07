@@ -24,6 +24,7 @@ import com.tm2ref.ref.RcCheckLogUtils;
 import com.tm2ref.ref.RcFacade;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
+import jakarta.persistence.PersistenceException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -242,7 +243,7 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
             if( xfer==null )
                 xfer = new FileXferUtils(); //  FileXferUtils.getInstance();
             // String dirBase = RuntimeConstants.getStringValue( "userFileUploadBaseDir" );   // /hra or /ful/hra or locals
-            String directory = null;
+            String directory;
 
             boolean create = false;
             
@@ -390,9 +391,31 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
             uuf.setThumbHeight( uuf.getHeight() );
             uuf.setFileSize( bytes.length );
                 
-            // LogService.logIt( "ProctorFileUploadThread.doFileUpload() FFF " );         
-            fuf.saveRcUploadedUserFile(uuf);
-            
+            try
+            {
+                // LogService.logIt( "ProctorFileUploadThread.doFileUpload() FFF " );         
+                fuf.saveRcUploadedUserFile(uuf);
+            }
+            catch( PersistenceException e )
+            {
+                if( uuf.getRcUploadedUserFileId()<=0 )
+                {
+                    LogService.logIt( "ProctorFileUploadThread.doFileUpload() GGG.1 " + e.toString() + ", " + uuf.toString() );         
+                    Thread.sleep( (long)(Math.random()*1200) );
+                    
+                    RcUploadedUserFile uuf2  = fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(rcCheckId, rcRaterId, rcItemId, uploadedUserFileTypeId );
+
+                    if( uuf2!=null )
+                    {
+                        LogService.logIt( "ProctorFileUploadThread.doFileUpload() GGG.2 Found an existing record for same key. Existing RcUploadedUserFileId=" + uuf2.getRcUploadedUserFileId() );         
+                        uuf.setRcUploadedUserFileId( uuf2.getRcUploadedUserFileId() );
+                        fuf.saveRcUploadedUserFile(uuf);
+                    }
+                    
+                }
+                else
+                    throw e;
+            }
             // LogService.logIt( "ProctorFileUploadThread.doFileUpload() Completed saving! to " + directory + "/" + newFilename );
 
             Tracker.addImageFileUpload();
