@@ -404,14 +404,17 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
                     Thread.sleep( (long)(Math.random()*1200) );
                     
                     RcUploadedUserFile uuf2  = fuf.getSingleRcUploadedUserFileForRcCheckRcRaterRcItemAndType(rcCheckId, rcRaterId, rcItemId, uploadedUserFileTypeId );
-
                     if( uuf2!=null )
                     {
                         LogService.logIt( "ProctorFileUploadThread.doFileUpload() GGG.2 Found an existing record for same key. Existing RcUploadedUserFileId=" + uuf2.getRcUploadedUserFileId() );         
                         uuf.setRcUploadedUserFileId( uuf2.getRcUploadedUserFileId() );
                         fuf.saveRcUploadedUserFile(uuf);
                     }
-                    
+                    else
+                    {
+                        LogService.logIt( "ProctorFileUploadThread.doFileUpload() GGG.3 No existing record found for same key. " );  
+                        throw e;
+                    }                    
                 }
                 else
                     throw e;
