@@ -1011,7 +1011,7 @@ public class RcMessageUtils {
         
         if( !forceSend && !rc.getRcDistributionType().sendForRaterCompletion( rc, rater ) )
         {
-            LogService.logIt( "RcmesageUtils.sendProgressUpdateForRaterOrCandidateComplete() RcDistributionType denies sending. rcCheckId=" + rc.getRcCheckId() );
+            LogService.logIt( "RcMessageUtils.sendProgressUpdateForRaterOrCandidateComplete() RcDistributionType denies sending. rcCheckId=" + rc.getRcCheckId() );
             return sent;
         }
         

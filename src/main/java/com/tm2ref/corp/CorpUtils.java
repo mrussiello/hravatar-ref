@@ -323,7 +323,7 @@ public class CorpUtils extends FacesUtils
             if( !getNewRefStartsOk() )
                 return corpBean.getCorp().getOfflinePage();
 
-            LogService.logIt( "CorpUtils.processCorpHome() BBB " + "/" + corpBean.getDirectory() + corpBean.getCorp().getHomePage() );
+            // LogService.logIt( "CorpUtils.processCorpHome() BBB " + "/" + corpBean.getDirectory() + corpBean.getCorp().getHomePage() );
             
             //if( 1==1 )
             //    throw new Exception( "CorpUtils.processCorpHome() TESTING ONLY ");
