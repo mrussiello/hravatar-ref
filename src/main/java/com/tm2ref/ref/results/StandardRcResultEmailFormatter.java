@@ -30,7 +30,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
         if( locale==null )
             locale=Locale.US;
         
-        rowStyleHdr = " style=\"background-color:#2196F3;vertical-align:top;color:white\"";
+        rowStyleHdr = " style=\"background-color:#0077cc;vertical-align:top;color:white\"";
         rowStyle0 = " style=\"background-color:#ffffff;vertical-align:top\"";
         rowStyle1 =  " style=\"background-color:#e6e6e6;vertical-align:top\"";
         rowStyle2 = " style=\"background-color:#f3f3f3;vertical-align:top\"";                
