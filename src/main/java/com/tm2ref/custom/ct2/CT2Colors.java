@@ -52,8 +52,9 @@ public class CT2Colors
     //public BaseColor redShadeColor;
     public BaseColor keyBackgroundColor = new BaseColor( 0xe6, 0xe6, 0xe6 ); // e6e6e6    
     
-    // public BaseColor hraBlue = new BaseColor( 0x27, 0xb2, 0xe7 );
-    public BaseColor hraBlue = new BaseColor( 0x21, 0x96, 0xf3 );
+    // public BaseColor hraBlue = new BaseColor( 0x21, 0x96, 0xf3 );
+    public BaseColor hraBlue = new BaseColor( 0x00, 0x77, 0xcc );
+    
     //public BaseColor barGraphCoreShade1 = new BaseColor( 0x27, 0xb2, 0xe7 ); // f68d2f // new BaseColor( 0xf6, 0x8d, 0x2f ); // f68d2f
     //public BaseColor barGraphCoreShade2 = new BaseColor( 0xab, 0xe7, 0xff );
     
