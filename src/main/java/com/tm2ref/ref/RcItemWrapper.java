@@ -164,7 +164,7 @@ public class RcItemWrapper implements Comparable<RcItemWrapper>, Serializable {
         if( rcRatingList==null)
             return 0;
         
-        if( rcItem==null || !rcItem.getIncludeNumRatingB() )
+        if( rcItem==null || !rcItem.getIsItemScored())
             return 0;
         
         for( RcRating r : rcRatingList )
@@ -183,7 +183,7 @@ public class RcItemWrapper implements Comparable<RcItemWrapper>, Serializable {
         if( rcRatingList==null)
             return 0;
         
-        if( rcItem==null || !rcItem.getIncludeNumRatingB() )
+        if( rcItem==null || !rcItem.getIsItemScored() )
             return 0;
         
         float t = 0;
