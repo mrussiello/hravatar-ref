@@ -224,10 +224,10 @@
                                 <h:panelGrid columns="2" cellpadding="2" style="margin-left: 0">
 
                                     <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.From']}:" for="reffrmfrom"/>
-                                    <p:datePicker id="reffrmfrom" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationStartDate}" required="false" requiredMessage="#{stMessages['g.RCObservationPeriodRqd']}"/>
+                                    <p:datePicker id="reffrmfrom" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" showOnFocus="false" showIcon="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationStartDate}" placeholder="MM/YYYY" required="false" requiredMessage="#{stMessages['g.RCObservationPeriodRqd']}"/>
                                     <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.to']}:" for="refformto"/>
                                     <h:panelGroup>
-                                        <p:datePicker id="refformto" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" required="false" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
+                                        <p:datePicker id="refformto" styleClass="refdatepicker" view="month" pattern="MM/yyyy" yearNavigator="true" showOnFocus="false" showIcon="true" size="8" yearRange="1980:#{candidateRefBean.currentYear}" value="#{candidateRefBean.rcRater.observationEndDate}" placeholder="MM/YYYY"  required="false" requiredMessage="#{stMessages['g.RCObservationPeriodEndRqd']}"/>
                                         <span class="reffieldreqd">                    
                                             &#160;
                                             <h:outputText style="color:#e30000;font-weight:bold" value="*"/>
