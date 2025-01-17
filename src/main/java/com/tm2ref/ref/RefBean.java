@@ -4,6 +4,7 @@ import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.file.UploadedUserFileType;
 import com.tm2ref.global.RuntimeConstants;
+import com.tm2ref.previousresult.PreviousResult;
 import com.tm2ref.service.LogService;
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import jakarta.faces.context.FacesContext;
 
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
+import java.util.List;
 
 @Named
 @SessionScoped
@@ -40,14 +42,13 @@ public class RefBean extends BaseRefBean implements Serializable
     private String activeRefPageTypeIdX;
     
     private User tgtUser;
+    private PreviousResult previousResult;
     
     boolean adminOverride;
     boolean accessibleActive=false;
     
     Boolean hasUnconvertedAvMediaForReview = null;
-    
-    
-    
+            
     
     // private String httpSessionId;
 
@@ -450,6 +451,14 @@ public class RefBean extends BaseRefBean implements Serializable
 
     public void setHasUnconvertedAvMediaForReview(Boolean hasUnconvertedAvMediaForReview) {
         this.hasUnconvertedAvMediaForReview = hasUnconvertedAvMediaForReview;
+    }
+
+    public PreviousResult getPreviousResult() {
+        return previousResult;
+    }
+
+    public void setPreviousResult(PreviousResult previousResult) {
+        this.previousResult = previousResult;
     }
 
 

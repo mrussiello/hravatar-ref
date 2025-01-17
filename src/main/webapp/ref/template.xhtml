@@ -169,10 +169,18 @@
                         <ui:insert name="footertable">
                             <h:form id="footerform" prependId="false">
                                 <ref:stdforminputs />
+                                <ref:noncoreforminputs />
                                 <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
                                 <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
                                     <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
                                         <ui:insert name="footerhelplink"><p:commandLink tabindex="0" id="pmtemplatehelplink" styleClass="pflinktext textmedium anylink ttfooterlink" pt:aria-keyshortcuts="F1" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText styleClass="pflinktext textmedium anylink ttfooterlink" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
+
+                                        <ui:insert name="previousresultslink">
+                                        <ui:fragment rendered="#{refUtils.showPrevResultLink}">
+                                            &#160;
+                                            <p:commandLink tabindex="0" id="prevresultsfooterlink" styleClass="pflinktext textmedium anylink ttfooterlink" action="#{refUtils.processViewPreviousResultsTable}" ajax="false" title="#{stMessages[ 'g.PrevResViewTableAlt' ]}"><h:outputText styleClass="pflinktext textmedium anylink ttfooterlink" value="#{stMessages[ 'g.PrevResViewTable' ]}"/></p:commandLink>
+                                        </ui:fragment>
+                                        </ui:insert>
                                     </div>
                                 </ui:fragment>
                             </h:form>

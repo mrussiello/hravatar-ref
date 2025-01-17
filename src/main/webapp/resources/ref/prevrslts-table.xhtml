@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
+        <table cellpadding="5" cellspacing="0" style="margin-left:auto;margin-right:auto;margin-top:20px;margin-bottom:20px;">
+
+            <ui:repeat value="#{refBean.rcCheck.previousResultList}" var="pr">
+                <tr>
+                    <td>
+                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultTypeName}"/>
+                    </td>
+                    <td>
+                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultName}"/>
+                    </td>
+                    <td>
+                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultDate}">
+                            <f:convertDateTime type="date" dateStyle="short"/>
+                        </h:outputText>
+                    </td>                    
+                    <td>
+                        <h:outputLink tabindex="0" styleClass="ttformlink" value="#" onclick="doPrShowPrevResult('#{pr.previousResultViewUrl}'); return false;" title="#{stMessages['g.PrevResViewAlt']}">
+                            <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" value="#{stMessages['g.PrevResView']}" />
+                        </h:outputLink>
+                    </td>
+                </tr>
+            </ui:repeat>
+                        
+        </table>
+        
+    </cc:implementation>
+
+
+</html>

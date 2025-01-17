@@ -28,9 +28,9 @@ import org.eclipse.persistence.exceptions.DatabaseException;
 @Stateless
 public class FileUploadFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-    
+        
     public static FileUploadFacade getInstance()
     {
         try

@@ -13,6 +13,7 @@ import com.tm2ref.faces.HttpReqUtils;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import com.tm2ref.previousresult.PreviousResult;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.user.UserFacade;
@@ -359,7 +360,167 @@ public class RefUtils extends BaseRefUtils
     }
 
 
+    
+    /**
+     */
+    public String processSubmitInlinePreviousResults()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = null;
+        try
+        { 
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true, 8 );
+            if( rc == null )
+            {
+                LogService.logIt( "RefUtils.processSubmitInlinePreviousResults() rc=null after recovery attempt." );
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
 
+            long rcChkReq = this.getRcCheckIdFmRequest();
+            if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
+            {
+                String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
+                LogService.logIt( "RefUtils.processViewPreviousResults() " + msg );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), msg , null, null, rc, rc.getRcRater(), true );
+                // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
+            }
+            
+            // check correct RcRater
+            if( refBean.getRefUserType().getIsRater() )
+            {
+                long rcRtrReq = getRcRaterIdFmRequest();
+                if( rcRtrReq!=rc.getRcRater().getRcRaterId() )
+                    throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+            }
+
+            // LogService.logIt( "RefUtils.processSubmitSpecialInst() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            refBean.setRefPageType( RefPageType.PREVIOUSRESULTS );
+            RefPageType rpt = getNextPageTypeForRefProcess();
+            refBean.setRefPageType(rpt);
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.processSubmitInlinePreviousResults() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }
+    }
+
+
+    /**
+     */
+    public String processViewPreviousResultsTable()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = null;
+        try
+        { 
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true, 8 );
+            if( rc == null )
+            {
+                LogService.logIt( "RefUtils.processViewPreviousResultsTable() rc=null after recovery attempt." );
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
+
+            long rcChkReq = this.getRcCheckIdFmRequest();
+            if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
+            {
+                String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
+                LogService.logIt( "RefUtils.processViewPreviousResults() " + msg );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), msg , null, null, rc, rc.getRcRater(), true );
+                // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
+            }
+            
+            // check correct RcRater
+            if( refBean.getRefUserType().getIsRater() )
+            {
+                long rcRtrReq = getRcRaterIdFmRequest();
+                if( rcRtrReq!=rc.getRcRater().getRcRaterId() )
+                    throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+            }
+            
+            if( !getHasPreviousResults() )
+            {
+                LogService.logIt( "RefUtils.processViewPreviousResultsTable() There are no previous results to view. rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+                return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ), true );
+            }
+            
+            return conditionUrlForSessionLossGet( "/ref/prevreslts.xhtml", true );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.processViewPreviousResultsTable() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }
+    }
+    
+    public String processClosePreviousResultsTable()
+    {
+        getCorpBean();
+        getRefBean();
+        RcCheck rc = null;
+        try
+        { 
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true, 8 );
+            if( rc == null )
+            {
+                LogService.logIt( "RefUtils.processClosePreviousResultsTable() rc=null after recovery attempt." );
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();            
+            }
+
+            long rcChkReq = this.getRcCheckIdFmRequest();
+            if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
+            {
+                String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
+                LogService.logIt( "RefUtils.processClosePreviousResultsTable() " + msg );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), msg , null, null, rc, rc.getRcRater(), true );
+                // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
+            }
+            
+            // check correct RcRater
+            if( refBean.getRefUserType().getIsRater() )
+            {
+                long rcRtrReq = getRcRaterIdFmRequest();
+                if( rcRtrReq!=rc.getRcRater().getRcRaterId() )
+                    throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
+            }
+                        
+            LogService.logIt( "RefUtils.processClosePreviousResultsTable() CCC rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            return conditionUrlForSessionLossGet( getViewFromPageType( refBean.getRefPageType() ), true );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RefUtils.processClosePreviousResultsTable() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }
+    }    
+    
+    public boolean getShowPrevResultLink()
+    {
+        if( !getHasPreviousResults() )
+            return false;
+
+        getRefBean();
+        
+        return refBean.getRefPageType().getIsCore();
+    }
 
     public String processConfirmFailFormSubmit()
     {

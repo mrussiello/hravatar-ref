@@ -5,7 +5,6 @@ import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcScript;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.LogService;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +24,7 @@ import jakarta.persistence.TypedQuery;
 // @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class RcScriptFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
 
     // private static EntityManagerFactory tm2Factory;

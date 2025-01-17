@@ -25,9 +25,9 @@ import javax.sql.DataSource;
 @Stateless
 public class RcReminderFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
+    
     public static RcReminderFacade getInstance()
     {
         try

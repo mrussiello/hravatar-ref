@@ -7,6 +7,7 @@ import com.tm2ref.entity.user.User;
 import com.tm2ref.file.UploadedUserFileType;
 import com.tm2ref.global.Constants;
 import com.tm2ref.global.RuntimeConstants;
+import com.tm2ref.previousresult.PreviousResult;
 import com.tm2ref.ref.RcAvType;
 import com.tm2ref.ref.RcCandidatePhotoCaptureType;
 import com.tm2ref.ref.RcCandidateStatusType;
@@ -45,7 +46,7 @@ import jakarta.persistence.Transient;
         @NamedQuery( name = "RcCheck.findByCandidateAccessCode", query = "SELECT o FROM RcCheck AS o WHERE o.candidateAccessCode=:candidateAccessCode" ),
         @NamedQuery( name = "RcCheck.findRecentByUserIdAndScriptId", query = "SELECT o FROM RcCheck AS o WHERE o.userId=:userId AND o.adminUserId=:adminUserId AND o.rcScriptId=:rcScriptId AND o.createDate>=:createdAfterDate" ),        
 })
-public class RcCheck implements Serializable, Cloneable
+public class RcCheck implements Serializable, Cloneable, PreviousResult
 {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -354,6 +355,10 @@ public class RcCheck implements Serializable, Cloneable
 
     @Transient
     private List<RcUploadedUserFile> fauxRcUploadedUserFileList;
+    
+    
+    @Transient
+    List<PreviousResult> previousResultList;
     
     //@Transient
     //private RefUserType refUserType;
@@ -970,6 +975,53 @@ public class RcCheck implements Serializable, Cloneable
     {
         return RcAvType.getValue( avCommentsTypeId );
     }
+    
+    @Override
+    public long getPreviousResultId()
+    {
+        return rcCheckId;
+    }
+    
+    @Override
+    public String getPreviousResultTypeName()
+    {
+        if( this.locale==null )
+            this.locale=Locale.US;
+        return this.getRcCheckType().getName(locale);
+    }
+    
+    @Override
+    public String getPreviousResultName()
+    {
+        if( this.rcScript!=null )
+            return this.rcScript.getName();
+        
+        if( this.user!=null )
+            return user.getLastName();
+        
+        return "";
+    }
+    
+    @Override
+    public Date getPreviousResultDate()
+    {
+        return completeDate==null ? new Date() : completeDate;
+    }
+    
+    @Override
+    public float getPreviousResultOverallScore()
+    {
+        return this.overallScore;
+    }
+    
+    @Override
+    public String getPreviousResultViewUrl()
+    {
+        return this.getResultsViewUrl() + "&c=1";
+    }
+    
+    
+    
     
     public int getOrgId() {
         return orgId;
@@ -1742,6 +1794,14 @@ public class RcCheck implements Serializable, Cloneable
 
     public void setCandidateReportSendDate(Date candidateReportSendDate) {
         this.candidateReportSendDate = candidateReportSendDate;
+    }
+
+    public List<PreviousResult> getPreviousResultList() {
+        return previousResultList;
+    }
+
+    public void setPreviousResultList(List<PreviousResult> previousResultList) {
+        this.previousResultList = previousResultList;
     }
 
     

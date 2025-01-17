@@ -19,9 +19,9 @@ import jakarta.persistence.Query;
 // @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class SmsBlockFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
+    
     public static SmsBlockFacade getInstance()
     {
         try

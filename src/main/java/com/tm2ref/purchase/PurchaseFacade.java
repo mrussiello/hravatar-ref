@@ -27,9 +27,9 @@ import javax.sql.DataSource;
 // @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class PurchaseFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
+    
     public static PurchaseFacade getInstance()
     {
         try

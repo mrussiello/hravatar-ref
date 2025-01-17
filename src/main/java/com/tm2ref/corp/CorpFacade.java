@@ -21,10 +21,9 @@ import jakarta.persistence.PersistenceContext;
 //@PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class CorpFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
-
+    
     public static CorpFacade getInstance()
     {
         try

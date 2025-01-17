@@ -9,5 +9,12 @@
     <shared-cache-mode>ALL</shared-cache-mode>
     <properties/>
   </persistence-unit>
+  
+  <persistence-unit name="tm2mirror" transaction-type="JTA">
+    <jta-data-source>jdbc/tm2mirror</jta-data-source>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+  </persistence-unit>
+  
 </persistence>
 

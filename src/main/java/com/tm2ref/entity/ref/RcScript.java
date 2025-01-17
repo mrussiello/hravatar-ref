@@ -91,8 +91,9 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
     @Column(name="nocommentsratingitems")
     private int noCommentsRatingItems;
     
-    
-    
+    @Column(name="shareprevresultswithrater")
+    private int sharePrevResultsWithRater;
+        
     @Column(name="usediscreteratings")
     private int useDiscreteRatings;
     
@@ -1018,6 +1019,14 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
 
     public void setReportId2(int reportId2) {
         this.reportId2 = reportId2;
+    }
+
+    public int getSharePrevResultsWithRater() {
+        return sharePrevResultsWithRater;
+    }
+
+    public void setSharePrevResultsWithRater(int sharePrevResultsWithRater) {
+        this.sharePrevResultsWithRater = sharePrevResultsWithRater;
     }
     
 }

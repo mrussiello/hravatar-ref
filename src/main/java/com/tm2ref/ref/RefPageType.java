@@ -14,7 +14,8 @@ public enum RefPageType
     INTRO(20,"Intro", "intro.xhtml" , "intro-r.xhtml" ),
     RELEASE(30,"Release", "release.xhtml", "release-r.xhtml" ),
     SPECIAL(40,"Special Instructions", "special.xhtml", "special.xhtml" ),
-    AVCOMMENTS(41,"AvComments Allowed", "avcommentsallowed.xhtml", "avcommentsallowed.xhtml" ),
+    PREVIOUSRESULTS(41,"Previous Results", null, "prevreslts-inline.xhtml" ),
+    AVCOMMENTS(42,"AvComments Allowed", "avcommentsallowed.xhtml", "avcommentsallowed.xhtml" ),
     PHOTO(45,"Photo", "photo.xhtml", "photo.xhtml" ),
     ID_PHOTO(46,"Id Photo", "photo-id.xhtml", "photo-id.xhtml" ),
     PRE_QUESTIONS(47,"Pre-Questions", "pre-questions-candidate.xhtml", null ),
@@ -94,7 +95,7 @@ public enum RefPageType
     {
         RefPageType pt = getPreviousPageType( this );    
                 
-        while(pt.getPage(rcUserType) == null)
+        while(pt.getPage(rcUserType)==null)
         {
             pt = getPreviousPageType( pt );
         } 
@@ -123,6 +124,8 @@ public enum RefPageType
             case RELEASE:
                 return SPECIAL;
             case SPECIAL:
+                return PREVIOUSRESULTS;
+            case PREVIOUSRESULTS:
                 return AVCOMMENTS;
             case AVCOMMENTS:
                 return PHOTO;
@@ -160,8 +163,10 @@ public enum RefPageType
                 return INTRO;
             case SPECIAL:
                 return RELEASE;
-            case AVCOMMENTS:
+            case PREVIOUSRESULTS:
                 return SPECIAL;
+            case AVCOMMENTS:
+                return PREVIOUSRESULTS;
             case PRE_QUESTIONS:
                 return AVCOMMENTS;
             case CORE:

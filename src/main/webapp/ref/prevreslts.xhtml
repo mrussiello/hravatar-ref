@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+    <body>
+
+        <ui:composition template="#{corpBean.template}">
+
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.PreviousResults']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.PreviousResults']}"/></title>
+            </ui:define>
+
+
+
+            <ui:define name="headspec">
+                <ref:prevrslts-head />
+            </ui:define>
+
+            <ui:define name="coreinnersection">
+
+                <br style="clear:both"/>
+
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+
+                    <ref:messages-embedded />
+
+                    <h1 class="pagetitle ttboldtitle">
+                        <h:outputFormat value="#{stMessages['g.PrevResForX']}">
+                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                        </h:outputFormat>
+                    </h1>
+
+                    <ref:prevrslts-table />
+
+                    <h:form prependId="false">
+
+                        <ref:stdforminputs />
+                        <ref:noncoreforminputs />
+
+
+                        <div id="priframediv" style="display:none;padding-left:5px;padding-right:5px">
+
+                            <div style="text-align: center;padding:10px">
+                                <div style="display:inline-block">
+                                    <p:commandButton action="#{refUtils.processClosePreviousResultsTable}" ajax="false" title="#{stMessages[ 'g.PrevResCloseButAlt' ]}" value="#{stMessages[ 'g.PrevResCloseBut' ]}"/>
+                                </div>
+                            </div>
+
+                            <iframe id="priframe" src="" style="width:100%;height:300px;border:1px solid gray;border-radius:10px" title="#{stMessges['g.PrevResIframeTitle']}" />
+                        </div>
+
+                        <div style="text-align: center;padding:10px">
+                            <div style="display:inline-block">
+                                <p:commandButton action="#{refUtils.processClosePreviousResultsTable}" ajax="false" title="#{stMessages[ 'g.PrevResCloseButAlt' ]}" value="#{stMessages[ 'g.PrevResCloseBut' ]}"/>
+                            </div>
+                        </div>
+
+                    </h:form>
+                </div>
+
+
+
+            </ui:define>
+            
+            <ui:define name="previousresultslink">   
+            </ui:define>
+            
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -62,7 +62,7 @@ public class RuntimeConstants
         cache.put( "default-email-logo", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_4x1715795136829.png" );
 
         
-        cache.put( "baseprotocol", "https" );
+        cache.put( "baseprotocol", "https" );        
         cache.put( "basedomain", "test.hravatar.com" );
         cache.put( "baseadmindomain", "www.hravatar.com" );
 

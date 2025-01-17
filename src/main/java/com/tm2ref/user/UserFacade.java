@@ -5,6 +5,7 @@
 package com.tm2ref.user;
 
 import com.tm2ref.affiliate.AffiliateAccountType;
+import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.LogonHistory;
 import com.tm2ref.entity.user.Org;
 import com.tm2ref.entity.user.Suborg;
@@ -40,9 +41,8 @@ import javax.sql.DataSource;
 @Stateless
 public class UserFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
     EntityManager em;
-
 
     public static UserFacade getInstance()
     {
@@ -71,8 +71,8 @@ public class UserFacade
             LogService.logIt( e, "UserFacade.clearSharedCache() " );
         }
     }
-    
-    
+
+
     public LogonHistory addLogonHistory( User user, int logonTypeId, String userAgent, String ipAddress) throws Exception
     {
         try
@@ -92,9 +92,9 @@ public class UserFacade
             lh.setSuborgId( user.getSuborgId() );
 
             lh.setSystemId( RuntimeConstants.getIntValue( "applicationSystemId" ) );
-            
+
             lh.setUserAgent( userAgent );
-            
+
             lh.setIpAddress( ipAddress );
 
             // utx.begin();
@@ -146,9 +146,44 @@ public class UserFacade
 
 
 
+    public List<Long> findUserIdsMatchingUser( User user ) throws Exception
+    {
+        List<Long> out = new ArrayList<>();
 
-    
-    
+        if( user==null )
+            return out;
+
+        String sqlStr = "SELECT u.userid FROM xuser u WHERE u.userid<>" + user.getUserId() + " AND u.orgid=" + user.getOrgId() + 
+                " AND ( (u.altidentifier IS NOT NULL AND u.altidentifier='" + user.getEmail() + "') OR (u.extref IS NOT NULL AND u.extref='" + user.getEmail() + "') )"; 
+
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
+        if( pool == null )
+            throw new Exception( "RcFacade.findCompleteRcChecksForUser Can not find Datasource" );
+
+        try (Connection con = pool.getConnection(); Statement stmt = con.createStatement() )
+        {
+            ResultSet rs = stmt.executeQuery( sqlStr );
+            while( rs.next() )
+            {
+                out.add(rs.getLong(1) );
+            }
+            rs.close();
+
+            out.add( user.getUserId() );            
+            return out;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "UserFacade.findUserIdsMatchingUser() " + sqlStr );
+            throw new STException( e );
+        }
+    }
+
+
+
+
+
+
     public Date getLastLogonDate( long userId, long logonHistoryId ) throws Exception
     {
         String sqlStr = "SELECT MAX(logondate) FROM logonhistory WHERE userid=" + userId + ( logonHistoryId>0 ? " AND logonhistoryid<>" + logonHistoryId : "" ) + " AND systemid=" + RuntimeConstants.getIntValue( "applicationSystemId" );
@@ -188,8 +223,8 @@ public class UserFacade
             throw new STException( e );
         }
     }
-    
-    
+
+
 
     public Org getOrg( int orgId ) throws Exception
     {
@@ -222,7 +257,7 @@ public class UserFacade
         }
     }
 
-    
+
     public UserAction saveMessageAction( User user, String subject, int userActionTypeId, long longParam1, long longParam2, String identifier, String strParam1)
     {
         try
@@ -284,7 +319,7 @@ public class UserFacade
         }
     }
 
-    
+
     public UserAction saveMessageAction( long initiatorUserId, User user, String subject, int userActionTypeId, int intParam1, long longParam1, long longParam2, long longParam4, String cpid, String uid, String strParam1)
     {
         try
@@ -301,15 +336,15 @@ public class UserFacade
 
             // LogService.logIt("UserFacade.saveUserAction() email=" + user.getEmail() + ", phone=" + user.getMobilePhone() );
 
-            
+
             UserAction ua = new UserAction();
 
             ua.setUid(uid);
             ua.setIntParam1(userActionTypeId);
-            ua.setLongParam1(longParam1);            
-            ua.setLongParam2(longParam2);            
-            ua.setIntParam1(intParam1);            
-            ua.setLongParam4(longParam4);            
+            ua.setLongParam1(longParam1);
+            ua.setLongParam2(longParam2);
+            ua.setIntParam1(intParam1);
+            ua.setLongParam4(longParam4);
             ua.setLongParam3(initiatorUserId);
             ua.setStrParam1(strParam1);
             ua.setIdentifier(cpid);
@@ -348,9 +383,9 @@ public class UserFacade
             // throw new Exception( "UserActionFacade.saveUserAction() " + userAction.toString() + " " + e.toString() );
         }
     }
-    
-    
-    
+
+
+
     public UserAction saveUserAction( UserAction userAction ) throws Exception
     {
         try
@@ -379,8 +414,8 @@ public class UserFacade
         return userAction;
     }
 
-    
-    
+
+
 
     public Org saveOrg( Org org ) throws Exception
     {
@@ -655,12 +690,12 @@ public class UserFacade
             {
                 ps = con.prepareStatement( "SELECT username FROM xuser WHERE xpass IS NOT NULL AND xpass=MD5( ? ) AND userid=?" );
                 ps.setString( 1, password );
-                ps.setLong( 2, userId );            
+                ps.setLong( 2, userId );
                 rs = ps.executeQuery();
                 if( rs.next() )
                     recordFound = true;
                 rs.close();
-                ps.close();   
+                ps.close();
 
                 // if it matched on old password storage, change to new password storage.
                 if( recordFound )
@@ -669,11 +704,11 @@ public class UserFacade
                     ps = con.prepareStatement( "UPDATE xuser SET xpass3=null,xpass2=null,xpass1=null,xpass=null,zpass=SHA2( ?, 224 ) WHERE userid=?" );
                     ps.setString( 1, password );
                     ps.setLong( 2, userId );
-                    ps.executeUpdate();                    
+                    ps.executeUpdate();
                 }
             }
-            
-            
+
+
             return recordFound;
         }
 
@@ -859,9 +894,9 @@ public class UserFacade
     }
 
 
-    
-    
-    
+
+
+
     public List<String> getCountryCodeList() throws Exception
     {
         // LogService.logIt( "UserFacade.getCountryCodeList() " );
@@ -877,7 +912,7 @@ public class UserFacade
              Statement stmt = con.createStatement() )
         {
             ResultSet rs = stmt.executeQuery( "SELECT countrycode FROM countrytype ORDER BY name" );
-            
+
             while( rs.next() )
             {
                 out.add( rs.getString(1));
@@ -888,7 +923,7 @@ public class UserFacade
         {
             LogService.logIt( e, "UserFacade.getCountryCodeList() " );
         }
-        
+
         return out;
     }
 }

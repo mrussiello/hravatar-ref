@@ -18,9 +18,9 @@ import jakarta.persistence.PersistenceContext;
 // @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class ReportFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
+    
     // private static EntityManagerFactory tm2Factory;
 
     // private static final String PERSISTENCE_UNIT_NAME = "tm2";

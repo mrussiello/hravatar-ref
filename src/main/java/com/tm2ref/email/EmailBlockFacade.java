@@ -22,11 +22,9 @@ import java.util.Date;
 @Stateless
 public class EmailBlockFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
     
-
     public static EmailBlockFacade getInstance()
     {
         try

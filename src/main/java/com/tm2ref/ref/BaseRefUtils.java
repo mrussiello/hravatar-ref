@@ -373,6 +373,9 @@ public class BaseRefUtils  extends FacesUtils
             if( nextRefPageType.equals( RefPageType.SPECIAL) && !getHasSpecialInstructions() )
                 nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
 
+            if( nextRefPageType.equals( RefPageType.PREVIOUSRESULTS) && !getHasPreviousResults() )
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+
             if( nextRefPageType.equals( RefPageType.AVCOMMENTS) && !getHasAvComments() )
                 nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
 
@@ -756,6 +759,9 @@ public class BaseRefUtils  extends FacesUtils
             if( pt.equals( RefPageType.SPECIAL) && !getHasSpecialInstructions() )
                 pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
 
+            if( pt.equals( RefPageType.PREVIOUSRESULTS) && !getHasPreviousResults())
+                pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
+
             if( pt.equals( RefPageType.RELEASE) && corpBean.getCorp().getReleaseRqd()<=0 )
                 pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
 
@@ -803,6 +809,21 @@ public class BaseRefUtils  extends FacesUtils
         return c.getHasSpecialInstructions(refBean.getRefUserType() );
     }
 
+    
+    public boolean getHasPreviousResults()
+    {
+        getRefBean();
+
+        return refBean.getRcCheck()!=null && 
+                refBean.getRcCheck().getPreviousResultList()!=null && 
+                !refBean.getRcCheck().getPreviousResultList().isEmpty() && 
+                refBean.getRcCheck().getRcRater()!=null && 
+                !refBean.getRcCheck().getRcRater().getIsCandidateOrEmployee() &&
+                refBean.getRcCheck().getRcScript()!=null && 
+                refBean.getRcCheck().getRcScript().getSharePrevResultsWithRater()==1;
+
+    }
+    
     public boolean getHasAvComments()
     {
         getCorpBean();

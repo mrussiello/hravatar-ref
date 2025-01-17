@@ -21,9 +21,9 @@ import jakarta.persistence.PersistenceContext;
 // @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
 public class CSCaseFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
-
+    
     // private static final String PERSISTENCE_UNIT_NAME = "tm2";
     // private static EntityManagerFactory tm2Factory;
 

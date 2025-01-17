@@ -9,7 +9,6 @@ import com.tm2ref.entity.ref.RcReferral;
 import com.tm2ref.entity.ref.RcSuborgPrefs;
 import com.tm2ref.entity.ref.RcSuspiciousActivity;
 import com.tm2ref.global.STException;
-import com.tm2ref.purchase.CreditType;
 import com.tm2ref.service.LogService;
 import com.tm2ref.util.StringUtils;
 import java.sql.Connection;
@@ -28,6 +27,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.sql.DataSource;
@@ -38,8 +38,9 @@ import org.eclipse.persistence.exceptions.DatabaseException;
 @Stateless
 public class RcFacade
 {
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
+
 
     public static RcFacade getInstance()
     {
@@ -54,8 +55,8 @@ public class RcFacade
             return null;
         }
     }
-    
-    
+
+
     public RcCheck getRcCheckForUserIdAndRcScriptId( long userId, long adminUserId, int rcScriptId, Date createdAfterDate ) throws Exception
     {
         try
@@ -72,7 +73,7 @@ public class RcFacade
             throw new STException( e );
         }
     }
-    
+
     public RcCheck getRcCheckForTestKeyId( long testKeyId ) throws STException
     {
         try
@@ -88,9 +89,9 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcCheckForTestKeyId( " + testKeyId + " ) " );
             throw new STException( e );
         }
-    }       
-    
-    
+    }
+
+
     public RcCheck getRcCheck( long rcCheckId, boolean refresh ) throws STException
     {
         try
@@ -111,14 +112,14 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcCheck( " + rcCheckId + ", " + refresh + " ) " );
             throw new STException( e );
         }
-    }       
+    }
 
     public RcOrgPrefs getRcOrgPrefsForOrgId( int orgId ) throws STException
     {
         try
         {
             Query q = em.createNamedQuery( "RcOrgPrefs.findByOrgId", RcOrgPrefs.class );
-            q.setParameter( "orgId", orgId );            
+            q.setParameter( "orgId", orgId );
             return (RcOrgPrefs) q.getSingleResult();
         }
         catch( NoResultException e )
@@ -130,14 +131,14 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcOrgPrefs( " + orgId + " ) " );
             throw new STException( e );
         }
-    }   
-    
+    }
+
     public RcSuborgPrefs getRcSuborgPrefsForSuborgId( int suborgId ) throws STException
     {
         try
         {
             Query q = em.createNamedQuery( "RcSuborgPrefs.findBySuborgId", RcSuborgPrefs.class );
-            q.setParameter( "suborgId", suborgId );            
+            q.setParameter( "suborgId", suborgId );
             return (RcSuborgPrefs) q.getSingleResult();
         }
         catch( NoResultException e )
@@ -149,9 +150,9 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcSuborgPrefsForSuborgId( " + suborgId + " ) " );
             throw new STException( e );
         }
-    }   
-    
-    
+    }
+
+
     public RcRater getRcRater( long rcRaterId, boolean refresh ) throws STException
     {
         try
@@ -172,7 +173,7 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcRater( " + rcRaterId + ", " + refresh + " ) " );
             throw new STException( e );
         }
-    }       
+    }
 
     public RcRating getRcRating( long rcRatingId, boolean refresh ) throws STException
     {
@@ -192,14 +193,14 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.getRcRating( " + rcRatingId + ", " + refresh + " ) " );
             throw new STException( e );
         }
-    }       
-    
-    
+    }
+
+
     public void deleteRcRater( long rcRaterId ) throws Exception
     {
         try
-        {      
-            RcRater r = this.getRcRater( rcRaterId, true);            
+        {
+            RcRater r = this.getRcRater( rcRaterId, true);
             if( r==null )
                 return;
             if( r.getRcRaterStatusType().getSentOrHigher() )
@@ -226,16 +227,16 @@ public class RcFacade
             if( ir.getReferrerUserId()<=0 )
                 throw new Exception( "ReferrerUserId is 0" );
             if( ir.getUserId()<=0 )
-                throw new Exception( "UserId is 0" );            
+                throw new Exception( "UserId is 0" );
             if( ir.getOrgId()<=0 )
-                throw new Exception( "OrgId is 0" );            
+                throw new Exception( "OrgId is 0" );
             if( ir.getRcScriptId()<=0 )
-                throw new Exception( "RcScriptId is 0" );            
+                throw new Exception( "RcScriptId is 0" );
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
-                        
+
             ir.setLastUpdate( new Date() );
-            
+
             if( ir.getRcCheckId() > 0 )
             {
                 em.merge( ir );
@@ -262,38 +263,38 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcReferral() " + ir.toString() );
             throw new STException( e );
         }
-    }    
+    }
 
 
-    
-    
+
+
     public RcCheck saveRcCheck( RcCheck ir, boolean updateSeconds) throws STException
     {
         try
         {
             if( ir.getUserId()<=0 )
                 throw new Exception( "UserId is 0" );
-            
+
             if( ir.getOrgId()<=0 )
                 throw new Exception( "OrgId is 0" );
-            
+
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
-            
+
             if( ir.getRcCheckId()<=0 || ir.getCandidateAccessCode()==null || ir.getCandidateAccessCode().isBlank() )
             {
                 ir.setCandidateAccessCode(Integer.toHexString( ir.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );
-                
+
                 RcCheck rcr = getRcCheckByCandidateAccessCode( ir.getCandidateAccessCode());
                 while( rcr!=null )
                 {
-                    ir.setCandidateAccessCode(Integer.toHexString( ir.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );  
+                    ir.setCandidateAccessCode(Integer.toHexString( ir.getOrgId() ) + "XC" + StringUtils.generateRandomStringForPin( 10 ) );
                     rcr = getRcCheckByCandidateAccessCode( ir.getCandidateAccessCode() );
                     if( rcr!=null && rcr.getRcCheckId()==ir.getRcCheckId() )
                         rcr=null;
-                }                
+                }
             }
-            
+
             // always check for creditId if none is there.
             if( ir.getRcCheckId()>0 && ir.getCreditId()<=0 )
             {
@@ -304,19 +305,19 @@ public class RcFacade
                     ir.setCreditIndex(d[1]);
                 }
             }
-                
-            
+
+
             ir.setLastUpdate( new Date() );
-            
+
             if( updateSeconds && ir.getLastSecondsDate()!=null )
             {
                 long ms = (new Date()).getTime() - ir.getLastSecondsDate().getTime();
                 int secs = (int) (ms/1000);
-                ir.setCandidateSeconds(ir.getCandidateSeconds()+secs);                
+                ir.setCandidateSeconds(ir.getCandidateSeconds()+secs);
             }
             ir.setLastSecondsDate( new Date() );
-            
-            
+
+
             if( ir.getRcCheckId() > 0 )
             {
                 em.merge( ir );
@@ -344,7 +345,7 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcCheck() " + ir.toString() );
             throw new STException( e );
         }
-    }    
+    }
 
     /*
     public boolean getAreAllRcRatersCompleteOrHigherOLD(long rcCheckId ) throws Exception
@@ -363,11 +364,11 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getAreAllRcRatersCompleteOrHigher( " + rcCheckId + " ) " );
             throw new STException( e );
-        }                
+        }
     }
     */
 
-    
+
     public RcRater findActiveRcRaterByRaterEmail( String email, boolean completeOk) throws Exception
     {
         if( email==null || email.isBlank() )
@@ -380,20 +381,20 @@ public class RcFacade
              Statement stmt = con.createStatement() )
         {
             // search for incomplete.
-            String sql =  "SELECT rcraterid FROM rcrater r INNER JOIN xuser u on u.userid=r.userid WHERE u.email='" + email.trim() + "' AND r.rcraterstatustypeid<" + (completeOk ? "101" : "100") + " ORDER BY r.rcraterid ";            
+            String sql =  "SELECT rcraterid FROM rcrater r INNER JOIN xuser u on u.userid=r.userid WHERE u.email='" + email.trim() + "' AND r.rcraterstatustypeid<" + (completeOk ? "101" : "100") + " ORDER BY r.rcraterid ";
             ResultSet rs = stmt.executeQuery( sql );
             long rcRaterId = 0;
             if( rs.next() )
                 rcRaterId = rs.getLong(1);
             rs.close();
-            
+
             return rcRaterId<=0 ? null : this.getRcRater(rcRaterId, true);
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.findActiveRcRaterByRaterEmail() email=" + email );
             return null;
-        }        
+        }
     }
 
     public RcCheck findActiveRcCheckForCandidateEmail( String email, boolean completeOk) throws Exception
@@ -408,26 +409,26 @@ public class RcFacade
              Statement stmt = con.createStatement() )
         {
             // search for incomplete.
-            String sql = "SELECT rccheckid FROM rccheck r INNER JOIN xuser u on u.userid=r.userid WHERE u.email='" + email.trim() + "' AND r.rccheckstatustypeid<" + (completeOk ? "102" : "101") + " AND r.rccandidatestatustypeid<" + (completeOk ? "101" : "100") + " ORDER BY r.rccheckid ";            
+            String sql = "SELECT rccheckid FROM rccheck r INNER JOIN xuser u on u.userid=r.userid WHERE u.email='" + email.trim() + "' AND r.rccheckstatustypeid<" + (completeOk ? "102" : "101") + " AND r.rccandidatestatustypeid<" + (completeOk ? "101" : "100") + " ORDER BY r.rccheckid ";
             ResultSet rs = stmt.executeQuery( sql );
             long rccheckId = 0;
             if( rs.next() )
                 rccheckId = rs.getLong(1);
             rs.close();
-            
+
             return rccheckId<=0 ? null : getRcCheck(rccheckId, true);
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.findActiveRcCheckForCandidateEmail() email=" + email );
             return null;
-        }        
+        }
     }
 
-    
-    
+
+
     /*
-    
+
     */
     public boolean getAreAllRcRatersCompleteOrHigher( long rcCheckId ) throws Exception
     {
@@ -441,7 +442,7 @@ public class RcFacade
              Statement stmt = con.createStatement() )
         {
             // search for incomplete.
-            String sql = "SELECT count(1) FROM rcrater r WHERE r.rccheckid=" + rcCheckId + " AND r.rcraterstatustypeid<100 ";            
+            String sql = "SELECT count(1) FROM rcrater r WHERE r.rccheckid=" + rcCheckId + " AND r.rcraterstatustypeid<100 ";
             ResultSet rs = stmt.executeQuery( sql );
             int incomplete = 0;
             if( rs.next() )
@@ -456,7 +457,7 @@ public class RcFacade
         }
     }
 
-    
+
     /*
     public float computeRcCheckPercentComplete( RcCheck rc ) throws Exception
     {
@@ -464,14 +465,14 @@ public class RcFacade
             return 0;
 
         // boolean stillNeedCandidateInput = rc.getRcCandidateStatusType().getIsCompletedOrHigher();
-        
+
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
         if( pool == null )
             throw new Exception( "Can not find Datasource" );
         try (Connection con = pool.getConnection();
              Statement stmt = con.createStatement() )
         {
-            String sql = "SELECT count(1), AVG(r.percentcomplete) FROM rcrater r WHERE r.rccheckid=" + rc.getRcCheckId() + " AND r.rcraterstatustypeid<=100";            
+            String sql = "SELECT count(1), AVG(r.percentcomplete) FROM rcrater r WHERE r.rccheckid=" + rc.getRcCheckId() + " AND r.rcraterstatustypeid<=100";
             ResultSet rs = stmt.executeQuery( sql );
             float pc=0;
             if( rs.next() )
@@ -481,20 +482,20 @@ public class RcFacade
                 {
                     // average pct complete.
                     float z = rs.getFloat(2);
-                    
+
                     // adjust if still need a candidate to complete. No ratings needed, but candidate still has stuff to do.
                     if( !rc.getCollectRatingsFmCandidate() && rc.getRequiresAnyCandidateInputOrSelfRating() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
                         pc = (z*ct)/(ct + 1);
-                                        
+
                     // no adjust needed
                     else
                         pc = z;
                 }
-                
+
                 if( rc.getCollectRatingsFmCandidate() && ct<=1 )
                     pc = Math.min( 50f, pc );
             }
-            
+
             rs.close();
             return (float) NumberUtils.roundIt(pc, 0);
         }
@@ -506,8 +507,8 @@ public class RcFacade
         }
     }
     */
-    
-    
+
+
     public List<RcReferral> getRcReferralList( long rcCheckId ) throws Exception
     {
         try
@@ -518,7 +519,7 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcReferralList( " + rcCheckId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
 
     public List<RcReferral> getRcReferralList( long rcCheckId, long rcRaterId ) throws Exception
@@ -527,19 +528,19 @@ public class RcFacade
         {
             if( rcRaterId<=0 )
                 return getRcReferralList( rcCheckId );
-            
+
             return em.createNamedQuery( "RcReferral.findByRcCheckIdAndRcRaterId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("rcCheckId", rcCheckId ).setParameter("rcRaterId", rcRaterId ).getResultList();
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.getRcReferralList( rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
 
-    
-            
-    
+
+
+
     public List<RcRater> getRcRaterList( long rcCheckId ) throws Exception
     {
         try
@@ -550,9 +551,9 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcRaterList( " + rcCheckId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
-    
+
     public RcRater getRcRaterByRcCheckIdAndUserId( long rcCheckId,  long userId ) throws Exception
     {
         try
@@ -567,10 +568,10 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcRaterByRcCheckIdAndUserId( rcCheckId=" + rcCheckId + ", userId=" + userId + ") " );
             throw new STException( e );
-        }                
-        
+        }
+
     }
-    
+
     public RcRater getRcRaterByRaterAccessCode( String raterAccessCode ) throws Exception
     {
         try
@@ -585,9 +586,9 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcRaterByRaterAccessCode( raterAccessCode=" + raterAccessCode+ " ) " );
             throw new STException( e );
-        }                
+        }
     }
-    
+
     public RcCheck getRcCheckByCandidateAccessCode( String candidateAccessCode ) throws Exception
     {
         try
@@ -602,29 +603,29 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcCheckByCandidateAccessCode( candidateAccessCode=" + candidateAccessCode+ " ) " );
             throw new STException( e );
-        }                
+        }
     }
-    
-    
+
+
     public RcRater saveRcRater(RcRater ir, boolean updateSeconds) throws Exception
     {
         return saveRcRater( ir,  updateSeconds, 0);
     }
-    
-    
+
+
     public RcRater saveRcRater(RcRater ir, boolean updateSeconds, int count) throws Exception
     {
         try
         {
             if( ir.getRcCheckId()<=0 )
                 throw new Exception( "RcCheck is 0" );
-            
+
             if( ir.getUserId()<=0 )
                 throw new Exception( "UserId is 0" );
-            
+
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
-                        
+
             ir.setLastUpdate( new Date() );
 
             if( ir.getRcRaterId()<=0 && ir.getUserId()>0 )
@@ -635,7 +636,7 @@ public class RcFacade
                     {
                         LogService.logIt("RcFacade.saveRcRater() Found existing RcRater for rcCheckId=" + ir.getRcCheckId() + " and userId=" + r.getUserId() + " returning." );
                         ir.setRcRaterId( r.getRcRaterId() );
-                        ir.setRaterAccessCode(r.getRaterAccessCode());                        
+                        ir.setRaterAccessCode(r.getRaterAccessCode());
                         r.setUser(ir.getUser());
                         r.setRcCheck(ir.getRcCheck());
                         r.setLocale( ir.getLocale());
@@ -643,31 +644,31 @@ public class RcFacade
                     }
                 }
             }
-            
+
             if( ir.getRcRaterId()<=0 || ir.getRaterAccessCode()==null || ir.getRaterAccessCode().isBlank() )
             {
-                ir.setRaterAccessCode(Integer.toHexString( ir.getOrgId() ) + "XR" + StringUtils.generateRandomStringForPin( 12 ) );                
+                ir.setRaterAccessCode(Integer.toHexString( ir.getOrgId() ) + "XR" + StringUtils.generateRandomStringForPin( 12 ) );
                 RcRater rcr = getRcRaterByRaterAccessCode( ir.getRaterAccessCode() );
                 while( rcr!=null )
                 {
-                    ir.setRaterAccessCode(Integer.toHexString( ir.getOrgId() ) + "XR" + StringUtils.generateRandomStringForPin( 12 ) );  
+                    ir.setRaterAccessCode(Integer.toHexString( ir.getOrgId() ) + "XR" + StringUtils.generateRandomStringForPin( 12 ) );
                     rcr = getRcRaterByRaterAccessCode( ir.getRaterAccessCode() );
                     if( rcr!=null && rcr.getRcRaterId()==ir.getRcRaterId() )
                         rcr=null;
                 }
             }
-            
+
             if( updateSeconds && ir.getLastSecondsDate()!=null )
             {
                 long ms = (new Date()).getTime() - ir.getLastSecondsDate().getTime();
                 int secs = (int) (ms/1000);
-                ir.setRaterSeconds(ir.getRaterSeconds()+secs);                
+                ir.setRaterSeconds(ir.getRaterSeconds()+secs);
             }
             ir.setLastSecondsDate( new Date() );
                 //        secs = (int) (rc.getRcRater().getLastUpdate().getTime()-rc.getRcRater().getStartDate().getTime())/1000;
                 //    rc.getRcRater().setRaterSeconds(rc.getRcRater().getRaterSeconds() + secs);
 
-                                   
+
             if( ir.getRcRaterId() > 0 )
             {
                 em.merge( ir );
@@ -684,7 +685,7 @@ public class RcFacade
             em.flush();
 
             return ir;
-        }        
+        }
         catch( DatabaseException | PersistenceException | SQLIntegrityConstraintViolationException e )
         {
             if( count<3 )
@@ -697,16 +698,16 @@ public class RcFacade
                     if( cRtr!=null )
                     {
                         LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rater so using it.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() );
-                        ir.setRcRaterId(cRtr.getRcRaterId());                        
+                        ir.setRcRaterId(cRtr.getRcRaterId());
                         return cRtr;
                     }
-                }                
+                }
 
                 Thread.sleep((long) ((Math.random()) * 2000l));
                 count++;
                 return saveRcRater( ir,  updateSeconds, count);
             }
-            
+
             LogService.logIt( e, "RcFacade.saveRcRater() XXX.2 count=" + count + ", " + ir.toString() );
             throw new STException( e );
         }
@@ -720,29 +721,29 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcRater() ZZZ.1 " + ir.toString() );
             throw new STException( e );
         }
-    }    
+    }
 
     public RcRating saveRcRating( RcRating ir) throws Exception
     {
-        return saveRcRating( ir, 0 ); 
+        return saveRcRating( ir, 0 );
     }
 
-    
+
     public RcRating saveRcRating( RcRating ir, int count ) throws Exception
     {
         try
         {
             if( ir.getRcCheckId()<=0 )
                 throw new Exception( "RcCheck is 0" );
-            
+
             if( ir.getRcRaterId()<=0 )
                 throw new Exception( "RcRaterId is 0" );
-            
+
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
-                        
+
             ir.setLastUpdate( new Date() );
-            
+
             if( ir.getRcRatingId()>0 )
             {
                 em.merge( ir );
@@ -759,10 +760,10 @@ public class RcFacade
             em.flush();
 
             return ir;
-        }     
+        }
         catch( DatabaseException | PersistenceException | SQLIntegrityConstraintViolationException e )
         {
-                
+
             LogService.logIt( "RcFacade.saveRcRating() XXX.1 " + e.toString() + ", " + ir.toString() + ", rcCheckId=" + ir.getRcCheckId() +", rcItemId=" + ir.getRcItemId() );
 
             if( count<3 )
@@ -775,9 +776,9 @@ public class RcFacade
                     if( cRtr!=null )
                     {
                         LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rating. rcRatingId=" + cRtr.getRcRatingId() + ", rcCheckId=" + ir.getRcCheckId() );
-                        ir.setRcRatingId(cRtr.getRcRatingId());                        
+                        ir.setRcRatingId(cRtr.getRcRatingId());
                     }
-                }                
+                }
 
                 Thread.sleep((long) ((Math.random()) * 2000l));
                 count++;
@@ -785,16 +786,16 @@ public class RcFacade
             }
 
             LogService.logIt( e, "RcFacade.saveRcRating() Checking for duplicate after error. XXX.5 " + ir.toString() );
-            throw new STException( e );            
+            throw new STException( e );
 
             /*
             try
             {
                 // let the constrain violation clear itself if necessary
                 Thread.sleep((long) (Math.random()*2000l) );
-                
-                long rcRatingId = ir.getRcRatingId()>0 ? ir.getRcRatingId() : getRcRatingIdForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );   
-                // RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );                
+
+                long rcRatingId = ir.getRcRatingId()>0 ? ir.getRcRatingId() : getRcRatingIdForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );
+                // RcRating r2 = this.getRcRatingForRcRaterAndRcItem( ir.getRcRaterId(), ir.getRcItemId() );
                 LogService.logIt("RcFacade.saveRcRating() XXX.2 Checking for overlapping rating: rcRatingId=" + rcRatingId );
                 if( rcRatingId>0 )
                 {
@@ -803,11 +804,11 @@ public class RcFacade
                     em.persist(ir);
                     em.flush();
                 }
-                
+
                 else
                 {
                     LogService.logIt(e, "RcFacade.saveRcRating() XXX.4 Unexplained Persistence exception after short wait and duplicate check. " + ir.toString() + ", rcCheckId=" + ir.getRcCheckId() +", rcItemId=" + ir.getRcItemId() );
-                }                    
+                }
             }
             catch( Exception ee )
             {
@@ -825,8 +826,8 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcRating() " + ir.toString() );
             throw new STException( e );
         }
-    }    
-    
+    }
+
     public long getRcRatingIdForRcRaterAndRcItem( long rcRaterId, int rcItemId ) throws Exception
     {
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
@@ -836,24 +837,24 @@ public class RcFacade
              Statement stmt = con.createStatement() )
         {
             // search for incomplete.
-            String sql =  "SELECT rcratingid FROM rcrating r WHERE r.rcraterid=" + rcRaterId + " AND r.rcitemid=" + rcItemId;    
+            String sql =  "SELECT rcratingid FROM rcrating r WHERE r.rcraterid=" + rcRaterId + " AND r.rcitemid=" + rcItemId;
             long rcRatingId = 0;
             ResultSet rs = stmt.executeQuery( sql );
             if( rs.next() )
                 rcRatingId = rs.getLong(1);
             rs.close();
-            
+
             return rcRatingId;
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.findActiveRcRaterByRaterEmail() rcRaterId=" + rcRaterId + ", rcItemId=" + rcItemId);
             return 0;
-        }        
+        }
     }
-    
-    
-    
+
+
+
     public RcRating getRcRatingForRcRaterAndRcItem( long rcRaterId, int rcItemId ) throws Exception
     {
         try
@@ -868,30 +869,30 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcRatingForRcRaterAndRcItem( rcRaterId=" + rcRaterId + ", rcItemId=" + rcItemId + " ) " );
             throw new STException( e );
-        }                
-        
+        }
+
     }
-    
-    
+
+
     public List<RcRating> getRcRatingList( long rcCheckId, long rcRaterId ) throws Exception
     {
         try
         {
-            
+
            Query q =  em.createNamedQuery( rcRaterId>0 ? "RcRating.findByRcCheckAndRater" : "RcRating.findByRcCheck" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("rcCheckId", rcCheckId );
-           
+
            if( rcRaterId>0 )
                q.setParameter("rcRaterId", rcRaterId );
-           
+
            return q.getResultList();
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcFacade.getRcRatingList( rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
-    
+
     public List<RcSuspiciousActivity> getRcSuspiciousActivityList( long rcCheckId ) throws Exception
     {
         try
@@ -902,23 +903,23 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcSuspiciousActivityList( " + rcCheckId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
-    
-    
+
+
     public RcSuspiciousActivity saveRcSuspiciousActivity( RcSuspiciousActivity ir) throws Exception
     {
         try
         {
             if( ir.getRcCheckId()<=0 )
                 throw new Exception( "RcCheck is 0" );
-            
+
             if( ir.getSuspiciousActivityTypeId()==RcSuspiciousActivityType.UNKNOWN.getRcSuspiciousActivityTypeId() )
                 throw new Exception( "SuspiciousActivityTypeId is invalid: " + ir.getSuspiciousActivityTypeId() );
-            
+
             if( ir.getCreateDate()==null )
                 ir.setCreateDate( new Date() );
-                                   
+
             if( ir.getRcSuspiciousActivityId() > 0 )
             {
                 em.merge( ir );
@@ -942,9 +943,9 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcSuspiciousActivity() " + ir.toString() );
             throw new STException( e );
         }
-    }    
+    }
 
-    
+
 
     public RcCheckLog saveRcCheckLog( RcCheckLog ir) throws Exception
     {
@@ -952,13 +953,13 @@ public class RcFacade
         {
             if( ir.getRcCheckId()<=0 )
                 throw new Exception( "RcCheck is 0" );
-            
+
             if( ir.getLog()==null || ir.getLog().isBlank() )
                 throw new Exception( "Log Entry is missing." );
-            
+
             if( ir.getLogDate()==null )
                 ir.setLogDate( new Date() );
-                                   
+
             if( ir.getRcCheckLogId() > 0 )
             {
                 em.merge( ir );
@@ -982,31 +983,31 @@ public class RcFacade
             LogService.logIt(e, "RcFacade.saveRcCheckLog() " + ir.toString() );
             throw new STException( e );
         }
-    }    
+    }
 
-    
-    
-    
+
+
+
     public int[] getRcCheckCreditInfo( long rcCheckId ) throws Exception
     {
         // out[0] = creditId
         // out[1] = creditIndex
         int[] out = new int[2];
-        
+
         if( rcCheckId<=0 )
             return out;
 
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2" );
         if( pool == null )
             throw new Exception( "Can not find Datasource" );
-        
+
         String sql = "SELECT creditid,creditindex FROM rccheck WHERE rccheckid=" + rcCheckId;
-        
-        // LogService.logIt( "PurchaseFacade.getRcCheckCreditInfo( orgId=" + orgId + ", candidateUserId=" + candidateUserId + " ) sql=" + sql );        
+
+        // LogService.logIt( "PurchaseFacade.getRcCheckCreditInfo( orgId=" + orgId + ", candidateUserId=" + candidateUserId + " ) sql=" + sql );
         try (Connection con = pool.getConnection();
              Statement stmt = con.createStatement() )
         {
-            try (ResultSet rs = stmt.executeQuery( sql )) 
+            try (ResultSet rs = stmt.executeQuery( sql ))
             {
                 if( rs.next() )
                 {
@@ -1021,8 +1022,59 @@ public class RcFacade
         {
             LogService.logIt(e, "RcFacade.getRcCheckCreditInfo( rcCheckId=" + rcCheckId + " ) " );
             throw new STException( e );
-        }        
+        }
     }
-    
-    
+
+    public List<RcCheck> findCompleteRcChecksForUser( List<Long> userIdList ) throws Exception
+    {
+        List<RcCheck> out = new ArrayList<>();
+
+        if( userIdList==null || userIdList.isEmpty() )
+            return out;
+
+        StringBuilder sb = new StringBuilder();
+        for( Long id : userIdList )
+        {
+            if( !sb.isEmpty() )
+                sb.append(",");
+            sb.append( id.toString() );
+        }
+
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MONTH, -12);
+        cal.add( Calendar.DAY_OF_YEAR, -1 );
+        java.sql.Date sdate = new java.sql.Date( cal.getTime().getTime() );
+        
+        String sqlStr = "SELECT rc.rccheckid FROM rccheck rc WHERE rc.userid in (" + sb.toString() + ") AND rc.rccheckstatustypeid=101  AND rc.completedate>='" + sdate.toString() + "' ";
+
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
+        if( pool == null )
+            throw new Exception( "RcFacade.findCompleteRcChecksForUser Can not find Datasource" );
+
+        try (Connection con = pool.getConnection(); Statement stmt = con.createStatement() )
+        {
+            RcCheck rc;
+            long rcCheckId;
+
+            ResultSet rs = stmt.executeQuery( sqlStr );
+            while( rs.next() )
+            {
+                rcCheckId = rs.getLong(1);
+                rc = this.getRcCheck(rcCheckId, false);
+                if( rc!=null )
+                    out.add(rc );
+            }
+            rs.close();
+
+            return out;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RcFacade.findCompleteRcChecksForUser() " + sqlStr );
+            throw new STException( e );
+        }
+    }
+
+
+
 }

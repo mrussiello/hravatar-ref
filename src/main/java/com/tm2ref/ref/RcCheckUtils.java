@@ -7,6 +7,7 @@ package com.tm2ref.ref;
 
 import com.tm2ref.api.ResultPoster;
 import com.tm2ref.api.ResultPosterFactory;
+import com.tm2ref.entity.event.TestEvent;
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.ref.RcCheck;
@@ -28,6 +29,8 @@ import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.NumberUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import com.tm2ref.previousresult.PreviousResult;
+import com.tm2ref.previousresult.PreviousResultDateComparator;
 import com.tm2ref.proctor.ProctorUtils;
 import com.tm2ref.purchase.ProductType;
 import com.tm2ref.purchase.RefCreditUtils;
@@ -36,8 +39,6 @@ import com.tm2ref.service.Tracker;
 import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
-import jakarta.persistence.PersistenceException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -47,7 +48,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
@@ -725,6 +725,28 @@ public class RcCheckUtils {
                         }
                         rc.setRcRaterList(rl);
                     }
+                }
+                
+                if( !rc.getRcRater().getIsCandidateOrEmployee() && rc.getRcScript().getSharePrevResultsWithRater()>0 )
+                {
+                    if( eventFacade==null )
+                        eventFacade=EventFacade.getInstance();
+                    List<Long> userIdList = userFacade.findUserIdsMatchingUser(rc.getUser());
+                    List<PreviousResult> prl = new ArrayList<>();
+                    
+                    prl.addAll( eventFacade.findCompleteTestEventsForUser(userIdList));
+                    prl.addAll( rcFacade.findCompleteRcChecksForUser(userIdList));
+                    
+                    for( PreviousResult pr : prl )
+                    {
+                        pr.setLocale( locale );
+                        
+                        if( pr instanceof TestEvent testEvent )
+                            testEvent.setProduct(eventFacade.getProduct(testEvent.getProductId() ));
+                    }
+                    
+                    Collections.sort( prl, new PreviousResultDateComparator() );                    
+                    rc.setPreviousResultList(prl);
                 }
             }
             

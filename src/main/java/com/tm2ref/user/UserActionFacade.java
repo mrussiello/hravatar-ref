@@ -24,7 +24,7 @@ import jakarta.persistence.PersistenceContext;
 public class UserActionFacade {
 
     //private static EntityManagerFactory tm2Factory;
-    @PersistenceContext
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )  // ( unitName = "tm2" )
     EntityManager em;
 
 
