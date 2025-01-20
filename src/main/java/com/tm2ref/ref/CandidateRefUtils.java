@@ -1388,7 +1388,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 return processViewRaters();
                 // throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
             }
-
+            
             if( rcRater.getRcRaterRoleType().equals( RcRaterRoleType.UNKNOWN ) )
                 throw new STException( rc.getRcCheckType().getIsPrehire() ? "g.XCErrSelectRoleType" : "g.XCErrSelectRoleType.reviewer" );
 
@@ -1464,6 +1464,36 @@ public class CandidateRefUtils extends BaseRefUtils
                     }
                 }
 
+                if( r2==null )
+                {
+                    Thread.sleep( (long) (Math.random()*1000f) );
+                    
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+
+                    // check database to try to catch double clicks. 
+                    List<RcRater> rcl = rcFacade.getRcRaterList( rc.getRcCheckId() );
+                    for( RcRater rx : rcl )
+                    {
+                        if( rx.getUserId()==u2.getUserId() )
+                        {
+                            r2=rx;
+                            break;
+                        }
+                    }
+                    if( r2!=null )
+                    {
+                        for( RcRater rx : rcl )
+                        {
+                            rx.setUser( userFacade.getUser( rx.getUserId() ));
+                            rx.setRcCheck(rc );
+                            rx.setLocale( rc.getLocale());                            
+                        }
+                        rc.setRcRaterList(rcl);
+                    }                                        
+                }
+                
+                
                 // Found a different rater.
                 if( r2!=null && r2.getRcRaterId()!=rcRater.getRcRaterId() )
                 {
@@ -1611,21 +1641,21 @@ public class CandidateRefUtils extends BaseRefUtils
                 // this could return a new copy of this rater if it already exists.
                 rcRater = rcFacade.saveRcRater( rcRater , false);
 
-                // replace if existing
-                if( create )
+                // replace if existin. Note that event if this is not a 'create' the system will return a matching RcRater if one already exists. 
+                //if( create )
+                //{
+                ListIterator<RcRater> iter = rc.getRcRaterList().listIterator();
+                while( iter.hasNext() )
                 {
-                    ListIterator<RcRater> iter = rc.getRcRaterList().listIterator();
-                    while( iter.hasNext() )
+                    if( iter.next().getRcRaterId()==rcRater.getRcRaterId() )
                     {
-                        if( iter.next().getRcRaterId()==rcRater.getRcRaterId() )
-                        {
-                            iter.remove();
-                            iter.add(rcRater);
-                            break;
-                        }
+                        iter.remove();
+                        iter.add(rcRater);
+                        break;
                     }
-                    candidateRefBean.setRcRater(rcRater);
                 }
+                candidateRefBean.setRcRater(rcRater);
+                //}
             }
 
             if( create )

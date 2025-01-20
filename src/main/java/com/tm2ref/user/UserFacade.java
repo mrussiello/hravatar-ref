@@ -153,8 +153,20 @@ public class UserFacade
         if( user==null )
             return out;
 
-        String sqlStr = "SELECT u.userid FROM xuser u WHERE u.userid<>" + user.getUserId() + " AND u.orgid=" + user.getOrgId() + 
-                " AND ( (u.altidentifier IS NOT NULL AND u.altidentifier='" + user.getEmail() + "') OR (u.extref IS NOT NULL AND u.extref='" + user.getEmail() + "') )"; 
+        String sqlStr = "SELECT u.userid FROM xuser u WHERE u.userid<>" + user.getUserId() + " AND u.orgid=" + user.getOrgId() + " AND ( " + 
+            " (u.altidentifier IS NOT NULL AND u.altidentifier='" + user.getEmail() + "') OR (u.extref IS NOT NULL AND u.extref='" + user.getEmail() + "') "; 
+                
+        // DRAGNET HACK if the user has an altid and not equal to the email, see if there are other users that have this altid as their email
+        if( user.getHasAltIdentifier() && !user.getAltIdentifier().equalsIgnoreCase( user.getEmail() ) )
+            sqlStr +=    " OR (u.email IS NOT NULL AND u.email='" + user.getAltIdentifier()+ "') "; 
+
+        // DRAGNET HACK if the user has an altid and not equal to the email, see if there are other users that have this altid as their email
+        // if the user has an user.extref and not equal to the email, see if there are other users that have this user.extref as their email
+        if( user.getExtRef()!=null && !user.getExtRef().isBlank() && !user.getExtRef().equalsIgnoreCase( user.getEmail() ) )
+            sqlStr +=    " OR (u.email IS NOT NULL AND u.email='" + user.getExtRef()+ "') "; 
+        
+
+        sqlStr += " )"; 
 
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
         if( pool == null )

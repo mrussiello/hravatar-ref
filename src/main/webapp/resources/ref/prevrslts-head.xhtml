@@ -18,6 +18,19 @@
     <cc:implementation>
         <!-- cc.attrs.value -->
 
+        <style>
+
+        @media screen and (max-width: 525px) {
+            .prevresulttypetd
+            {
+                display:none;
+            }
+        }
+
+
+        </style>
+
+
                 <script type="text/javascript">
                     //<![CDATA[
 
@@ -28,7 +41,7 @@
                             logIt( 'ref/resources/ref/prevrslts-head.xhtml.doPrShowPrevResult() url is missing.' + url );
                             return;
                         }
-                        
+
                         var theDiv = document.getElementById('priframediv');
                         if( !(theDiv) )
                         {
@@ -36,7 +49,7 @@
                             return;
                         }
                         theDiv.style.display='block';
-                        
+
                         var theIframe = document.getElementById('priframe');
                         if( !(theIframe) )
                         {
@@ -45,15 +58,15 @@
                         }
 
                         logIt( 'ref/resources/ref/prevrslts-head.xhtml.doPrShowPrevResult() showing prev result for url=' + url );
-        
+
                         theIframe.src=url;
-                        
+
                         theDiv.scrollIntoView({ behavior: "smooth"} );
                     }
-                    
-                    
-                    
-                    
+
+
+
+
                     function setIframeHeight( hgt )
                     {
                         var theIframe = document.getElementById('priframe');
@@ -67,15 +80,15 @@
                             logIt( 'ref/resources/ref/prevrslts-head.xhtml.setIframeHeight() hgt is invalid. Ignoring. hgt=' + hgt );
                             return;
                         }
-                        
+
                         if( hgt<=100 )
                             hgt = 100;
 
                         logIt( 'ref/resources/ref/prevrslts-head.xhtml.setIframeHeight() setting hgt=' + hgt );
-                        
+
                         theIframe.style.height= hgt + 'px';
                     }
-                    
+
                     function receivePostMessage( e )
                     {
                        try
@@ -99,7 +112,7 @@
                                 var hgt = (jo.ifhgt) ? jo.ifhgt : 0;
 
                                 console.log( 'ref/resources/ref/prevrslts-head.xhtml.receivePostMessage() hgt='  + hgt );
-                
+
                                 if( hgt>=100  )
                                 {
                                     setIframeHeight( hgt );
@@ -111,12 +124,12 @@
                         {
                            console.log( 'ref/resources/ref/prevrslts-head.xhtml.receivePostMessage() Error '  + ( e.message ) );
                         }
-                    }                    
-                    
-                    
+                    }
+
+
                     window.addEventListener( 'message', function(e){receivePostMessage(e);}, false);
-                    
-                    
+
+
                     // ]]>
                 </script>
 

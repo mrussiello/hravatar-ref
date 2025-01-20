@@ -396,6 +396,8 @@ public class AdminRefUtils extends FacesUtils {
                 if( rcid.isBlank() )
                     continue;
                 
+                rcid=rcid.trim();
+                
                 rcCheckId = Long.parseLong(rcid);
                 
                 if( rcCheckId>0 )

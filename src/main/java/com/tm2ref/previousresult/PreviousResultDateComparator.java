@@ -12,7 +12,6 @@ import java.util.Comparator;
  */
 public class PreviousResultDateComparator implements Comparator<PreviousResult> 
 {
-
     @Override
     public int compare(PreviousResult o1, PreviousResult o2) 
     {

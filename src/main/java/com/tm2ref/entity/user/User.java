@@ -475,7 +475,7 @@ public class User implements Serializable
 
     public boolean getHasAltIdentifier()
     {
-        return altIdentifier!=null && !altIdentifier.isEmpty();
+        return altIdentifier!=null && !altIdentifier.isBlank();
     }
 
 

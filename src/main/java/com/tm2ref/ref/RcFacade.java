@@ -692,18 +692,51 @@ public class RcFacade
             {
                 LogService.logIt( "RcFacade.saveRcRater() XXX.1 Database error so waiting and trying again. count=" + count +", " + e.toString() + ", " + ir.toString() );
 
-                if( ir.getRcRaterId()<=0 )
+                // wait a bit before checking again. 
+                Thread.sleep((long) ((Math.random()) * 2000l));
+                
+                //if( ir.getRcRaterId()<=0 )
+                //{
+                RcRater cRtr = getRcRaterByRcCheckIdAndUserId(ir.getRcCheckId(), ir.getUserId());                        
+                if( cRtr!=null )
                 {
-                    RcRater cRtr = getRcRaterByRcCheckIdAndUserId(ir.getRcCheckId(), ir.getUserId());
-                    if( cRtr!=null )
+                    LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rater so using it.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() + ", userId=" + cRtr.getUserId() + ", count=" + count );
+
+                    if(ir.getRcRaterId()<=0 || ir.getRcRaterId()==cRtr.getRcRaterId() )
                     {
-                        LogService.logIt( "RcFacade.saveRcRater() XXX.2 Found existing rater so using it.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() );
                         ir.setRcRaterId(cRtr.getRcRaterId());
                         return cRtr;
                     }
-                }
 
-                Thread.sleep((long) ((Math.random()) * 2000l));
+                    else
+                    {
+                        LogService.logIt( "RcFacade.saveRcRater() XXX.2B Found existing rater with a different RcRaterId so using it and removing the new one. duplicate.rcRaterId (disabling), existing.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() + ", userId=" + cRtr.getUserId() + ", count=" + count );
+                        long rcRaterIdToDisable = ir.getRcRaterId();
+
+                        RcRater rcRaterToDisable = getRcRater( rcRaterIdToDisable, true );
+                        
+                        // found and not the same, the reloaded should NOT have the same userid so either keep it or disable it.
+                        if( rcRaterToDisable!=null && rcRaterToDisable.getRcRaterId()!=cRtr.getRcRaterId() )
+                        {
+                            // never sent, so disable it.
+                            if( !ir.getRcRaterStatusType().getSentOrHigher() )
+                            {
+                                LogService.logIt( "RcFacade.saveRcRater() XXX.2D disabling duplicate.rcRaterId (disabling), existing.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() + ", userId=" + cRtr.getUserId() + ", count=" + count );
+                                ir.setRcRaterId(cRtr.getRcRaterId());
+                                ir.setRcRaterStatusTypeId( RcRaterStatusType.DEACTIVATED.getRcRaterStatusTypeId() );
+                                saveRcRater( ir,  false , count );                                
+                            }  
+                            else
+                            {
+                                LogService.logIt( "RcFacade.saveRcRater() XXX.2E Unable to disable duplicate because it has already been sent. So just moving. on.  duplicate.rcRaterId (disabling), existing.rcRaterId=" + cRtr.getRcRaterId() + ", rcCheckId=" + ir.getRcCheckId() + ", userId=" + cRtr.getUserId() + ", count=" + count );                                
+                            }                                
+                        }
+                        
+                        return cRtr;
+                    }
+                }
+                //}
+
                 count++;
                 return saveRcRater( ir,  updateSeconds, count);
             }

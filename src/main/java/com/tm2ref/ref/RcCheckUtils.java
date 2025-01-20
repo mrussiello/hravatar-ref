@@ -745,7 +745,8 @@ public class RcCheckUtils {
                             testEvent.setProduct(eventFacade.getProduct(testEvent.getProductId() ));
                     }
                     
-                    Collections.sort( prl, new PreviousResultDateComparator() );                    
+                    Collections.sort( prl, new PreviousResultDateComparator() ); 
+                    Collections.reverse(prl);
                     rc.setPreviousResultList(prl);
                 }
             }
@@ -816,7 +817,8 @@ public class RcCheckUtils {
         RcRater cRtr = rcFacade.getRcRaterByRcCheckIdAndUserId(rc.getRcCheckId(), rc.getUserId());
         if( cRtr!=null )
         {
-            rc.getRcRaterList().add(cRtr );
+            if( !rc.getRcRaterList().contains(cRtr ))
+                rc.getRcRaterList().add(cRtr );
             return cRtr;
         }
                           
@@ -847,7 +849,9 @@ public class RcCheckUtils {
             //if( adminOverride )
             //    cRtr = (RcRater) cRtr.clone();
 
-            rc.getRcRaterList().add( cRtr );
+            if( !rc.getRcRaterList().contains(cRtr ));            
+                rc.getRcRaterList().add( cRtr );
+            
             return cRtr;
         }
         catch( Exception e )
