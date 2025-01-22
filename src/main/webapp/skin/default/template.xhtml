@@ -97,7 +97,9 @@
                     <h:outputText value="#{facesUtils.localTime}" escape="false"/>
                     <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
                     <br />
-                    <p:commandLink tabindex="0" action="#{userUtils.processUserLogOff}" styleClass="ttformlink" ajax="false" title="Sign Off">Sign Off</p:commandLink>
+                    <p:commandLink tabindex="0" action="#{userUtils.processUserLogOff}" styleClass="ttformlink" ajax="false" title="Sign Off">
+                        <h:outputText styleClass="ttformlink" value="Sign Off"/>
+                    </p:commandLink>
                     </ui:fragment>
                 </h:panelGroup>
             </h:panelGrid>

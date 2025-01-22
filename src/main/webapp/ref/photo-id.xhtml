@@ -71,12 +71,8 @@
                                             <p:button value="#{stMessages['g.CapturePhoto']}" pt:aria-keyshortcuts="F3" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                                         </span>
 
-                                        <!-- 
-                                        <h:graphicImage library="images" name="camera-snapshot.png" title="#{stMessages['g.PPT.candphoto.clickthisicon']}" onclick="doImageSnap(); return false;" width="60" height="60" style="margin-left:40px;margin-right:40px;cursor:pointer"/>
-                                        <br />
-                                        -->
-                                        <a tabindex="0" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
-                                            <h:outputText styleClass="pflinktext ttformtext anylink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
+                                        <a tabindex="0" class="ttformlink" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
+                                            <h:outputText styleClass="pflinktext anylink ttformlink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
                                         </a>
                                         <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>                        
                                     </div>

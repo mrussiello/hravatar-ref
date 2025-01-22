@@ -54,6 +54,91 @@
             </script>
 
             <style>
+
+                body
+                {
+                    margin:0px;
+                    padding:0px;
+                    background: #ffffff;
+                }
+
+                .ttredtextshade
+                {
+                    color:#ff9595;
+                }
+
+                .pagebgdiv
+                {
+                    margin-top:0px;
+                }
+
+                .ttcontentshadowdiv
+                {
+                }
+
+                .ttwindowtabletext
+                {
+                    color:#495057;
+                }
+                
+                .tttextcolor
+                {
+                    color:#495057;
+                }
+
+                .ttboldtitle
+                {
+                    color:#495057;
+                }
+
+                .tttitle
+                {
+                    color:#495057;
+                }
+
+                .ttformtext
+                {
+                    color:#495057;
+                }
+
+                .ttformlink, .ttdialoglink, .ttwindowtablelink
+                {
+                    color:#0077cc;
+                }
+                .ttformlink:hover, .ttdialoglink:hover, .ttwindowtablelink:hover
+                {
+                    color:purple;
+                }
+                .ttfooterlink:hover
+                {
+                    color:purple;
+                }
+
+                .ttfooterlink
+                {
+                    color:#0077cc;
+                }
+
+                .ttfooter
+                {
+                    color:#495057;
+                }
+
+                .ttfooterdiv
+                {
+                }
+
+                body .ui-commandlink
+                {
+                    color: #0077cc;
+                }
+
+
+                .ttformtextli::marker
+                {
+                    color: #495057;
+                }
+
                 @media(min-width: 821px)
                 {
                     .pageinnerdivwidth
@@ -148,6 +233,7 @@
                                 </ui:fragment>
 
                             </div>
+                            <div class="headerclearbreak mobileheadertopdiv" style="clear:both;height:0px"/>
                         </ui:insert>
                     </header>
                     <!-- END HEADER TABLE -->
@@ -176,10 +262,10 @@
                                         <ui:insert name="footerhelplink"><p:commandLink tabindex="0" id="pmtemplatehelplink" styleClass="pflinktext textmedium anylink ttfooterlink" pt:aria-keyshortcuts="F1" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText styleClass="pflinktext textmedium anylink ttfooterlink" value="#{stMessages[ 'g.HavingTrouble' ]}"/></p:commandLink></ui:insert>
 
                                         <ui:insert name="previousresultslink">
-                                        <ui:fragment rendered="#{refUtils.showPrevResultLink}">
-                                            &#160;
-                                            <p:commandLink tabindex="0" id="prevresultsfooterlink" styleClass="pflinktext textmedium anylink ttfooterlink" action="#{refUtils.processViewPreviousResultsTable}" ajax="false" title="#{stMessages[ 'g.PrevResViewTableAlt' ]}"><h:outputText styleClass="pflinktext textmedium anylink ttfooterlink" value="#{stMessages[ 'g.PrevResViewTable' ]}"/></p:commandLink>
-                                        </ui:fragment>
+                                            <ui:fragment rendered="#{refUtils.showPrevResultLink}">
+                                                &#160;
+                                                <p:commandLink tabindex="0" id="prevresultsfooterlink" styleClass="pflinktext textmedium anylink ttfooterlink" action="#{refUtils.processViewPreviousResultsTable}" ajax="false" title="#{stMessages[ 'g.PrevResViewTableAlt' ]}"><h:outputText styleClass="pflinktext textmedium anylink ttfooterlink" value="#{stMessages[ 'g.PrevResViewTable' ]}"/></p:commandLink>
+                                            </ui:fragment>
                                         </ui:insert>
                                     </div>
                                 </ui:fragment>

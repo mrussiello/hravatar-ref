@@ -78,21 +78,21 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Name']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext" value="#{referral.user.fullname}"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{referral.user.fullname}"/>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Email']}"/>
                                 </f:facet>
-                                <h:outputText rendered="#{referral.user.hasValidEmail}" styleClass="ttwindowformtext" value="#{referral.user.email}"/>
+                                <h:outputText rendered="#{referral.user.hasValidEmail}" styleClass="ttwindowtabletext" value="#{referral.user.email}"/>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.MobilePhone']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext" value="#{referral.user.mobilePhone}"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{referral.user.mobilePhone}"/>
                             </p:column>
 
                         </p:dataTable>

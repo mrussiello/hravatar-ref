@@ -26,7 +26,8 @@
                     {
                         background-color:white;
                         /* box-shadow: 0 0 15px 4px #a0c2de; */
-                        border: 1px solid #dddddd;
+                        /* border: 1px solid #dddddd; */
+                        border-radius:10px;
                     }
                 </style>    
             </ui:define>
@@ -50,7 +51,7 @@
                         <div class="textmedsmall whitecontentshadowdiv" style="max-width:650px;max-height:800px;overflow-y: scroll;padding:5px;margin:15px auto;border-radius:10px">
                             <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="width:100%">
 
-                                <h:outputText styleClass="ttwindowformtext" value="#{refUtils.specialInstructionsXhtml}" escape="false"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{refUtils.specialInstructionsXhtml}" escape="false"/>
 
                             </h:panelGrid>                
                         </div>

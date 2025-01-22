@@ -86,8 +86,9 @@
                 <f:setPropertyActionListener target="#{raterRefBean.selectedRadioIndex}" value="10"/>
             </p:commandButton>
 
-            <p:commandLink tabindex="0" styleClass="pflinktext textmedium anylink ttformlink" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.Back']}">
+            <p:commandLink tabindex="0" styleClass="pflinktext textmedium anylink ttformlink" rendered="#{raterRefBean.itemDisplayOrder gt 1}" ajax="false" immediate="true" action="#{raterRefUtils.processSaveItemResp}">
                 <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="true"/>
+                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.Back']}"/>
             </p:commandLink>
             
             <ref:item-skipbutton />

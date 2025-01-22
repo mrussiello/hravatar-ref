@@ -165,14 +165,14 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Name']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.fullname}"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.fullname}"/>
                             </p:column>
 
                             <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall hide-600" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Status']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/>
+                                <h:outputText styleClass="ttwindowtabletext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/>
 
                                 <ui:fragment rendered="#{rater.percentComplete gt 0 and rater.percentComplete lt 100}">
                                     <br /><h:outputFormat value="#{stMessages['g.RCXPercentComplete']}">
@@ -185,10 +185,10 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.ContactInfo']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext" value="#{rater.user.email}"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.email}"/>
                                 <ui:fragment rendered="#{fn:length(rater.user.mobilePhone) gt 0}">
                                     <br />
-                                    <h:outputText styleClass="ttwindowformtext" value="#{rater.user.mobilePhone}"/>
+                                    <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.mobilePhone}"/>
                                 </ui:fragment>
                             </p:column>
 
@@ -196,7 +196,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Role']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowformtext" value="#{rater.rcRaterRoleTypeName}"/>
+                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.rcRaterRoleTypeName}"/>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:14%;white-space: normal;text-align:center">
@@ -204,22 +204,22 @@
                                     <h:outputText value="#{stMessages['g.Actions']}"/>
                                 </f:facet>
 
-                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
-                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
+                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanEdit}" ajax="false" styleClass="ttwindowtabletext ttwindowtablelink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processEditRater}" title="#{stMessages['g.XCChangeRaterInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowtabletext ttwindowtablelink texttiny" value="#{stMessages['g.XCChangeRater']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
                                 </p:commandLink>
                                 &#160;
-                                <p:commandLink tabindex="0" rendered="#{not refBean.hasUnconvertedAvMediaForReview and rater.candidateCanSend}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
-                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCSend']}"/>
+                                <p:commandLink tabindex="0" rendered="#{not refBean.hasUnconvertedAvMediaForReview and rater.candidateCanSend}" ajax="false" styleClass="ttwindowtabletext ttwindowtablelink textsmall" onclick="beaconOn = false;" action="#{candidateRefUtils.processSendToRater}" title="#{stMessages['g.XCSendInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowtabletext ttwindowtablelink texttiny" value="#{stMessages['g.XCSend']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater2}" value="#{rater}"/>
                                 </p:commandLink>
                                 &#160;                
-                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowformtext ttwindowformlink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
-                                    <h:outputText styleClass="pflinktext anylink ttwindowformtext ttwindowformlink texttiny" value="#{stMessages['g.XCCancel']}"/>
+                                <p:commandLink tabindex="0" rendered="#{rater.candidateCanCancel}" ajax="false" styleClass="ttwindowtabletext ttwindowtablelink textsmall" onclick="setRcRaterIdVal(#{rater.rcRaterId}); PF('cancelraterconfirm').show(); return false;" title="#{stMessages['g.XCCancelInfo']}">
+                                    <h:outputText styleClass="pflinktext anylink ttwindowtabletext ttwindowtablelink texttiny" value="#{stMessages['g.XCCancel']}"/>
                                     <f:setPropertyActionListener target="#{candidateRefBean.rcRater}" value="#{rater}"/>
                                 </p:commandLink>
 
-                                <h:outputText rendered="#{rater.isAccountUserSource}" styleClass="ttwindowformtext texttiny" value="#{stMessages['g.XCRaterIsAdminSrc']}"/>
+                                <h:outputText rendered="#{rater.isAccountUserSource}" styleClass="ttwindowtabletext texttiny" value="#{stMessages['g.XCRaterIsAdminSrc']}"/>
 
                             </p:column>
 
