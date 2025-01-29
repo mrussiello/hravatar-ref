@@ -649,7 +649,7 @@ public class BaseFormatter {
             rcCheckUtils = new RcCheckUtils();  
         
         List<RcItemWrapper> rcl = high ? rcCheckUtils.getHighScoringRcItems(rc, q ) : rcCheckUtils.getLowScoringRcItems(rc, q );
-        LogService.logIt( "BaseFormatter.getStandardTopItemsTable() competencies to list=" + rcl.size() );
+        // LogService.logIt( "BaseFormatter.getStandardTopItemsTable() competencies to list=" + rcl.size() );
             
         if( rcl.isEmpty() )
         {

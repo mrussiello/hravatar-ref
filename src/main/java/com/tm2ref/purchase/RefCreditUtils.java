@@ -251,7 +251,7 @@ public class RefCreditUtils {
                 if( getTotalRemainingCredits( o.getOrgId(), 0, credits, creditType.getCreditTypeId() ) >= credits )
                     ok = true;
 
-                LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() CCC.1 OK=" + ok );
+                // LogService.logIt( "RefCreditUtils.chargeCreditsIfNeeded() CCC.1 OK=" + ok );
                 
                 if( !ok )
                     throw new STException( "g.OrgCreditUsgResultNone", new String[]{rc.getRcCheckName()} );
@@ -283,7 +283,7 @@ public class RefCreditUtils {
                     
                 }
 
-                LogService.logIt("RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );                
+                // LogService.logIt("RefCreditUtils.chargeCreditsIfNeeded() DDD.1 rcCheckId=" + rc.getRcCheckId() + ", rcRaterId=" + (rater==null ? "null" : rater.getRcRaterId()) +", CreditId=" + credit.getCreditId() + ", creditIndex=" + rc.getCreditIndex() + ", creditTypeId=" + creditType.getCreditTypeId() );                
             }
         }
         catch( STException e )

@@ -14,7 +14,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.PhotoId']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.PhotoId']}"/></title>
-            </ui:define>      
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -36,37 +36,60 @@
 
                     <h:panelGrid columns="1" cellpadding="5" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
 
-                        <h:outputText rendered="#{proctorUtils.photosOptional}" styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPT.candid.titleoptional']}"/>
-                        <h:outputText rendered="#{not proctorUtils.photosOptional}" styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPT.candid.title']}"/>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText rendered="#{proctorUtils.photosOptional}" styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPT.candid.titleoptional']}"/>
+                                <h:outputText rendered="#{not proctorUtils.photosOptional}" styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPT.candid.title']}"/>
+                            </span>
+                        </h:panelGroup>
 
-                        <h:outputFormat rendered="#{proctorUtils.photosOptional}" styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P0.optional']}">
-                            <f:param value="#{refUtils.rcCheckTypeName}"/>
-                        </h:outputFormat>
-                        <h:outputFormat rendered="#{not proctorUtils.photosOptional}" styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P0']}">
-                            <f:param value="#{refUtils.rcCheckTypeName}"/>
-                        </h:outputFormat>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputFormat rendered="#{proctorUtils.photosOptional}" styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P0.optional']}">
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                </h:outputFormat>
+                                <h:outputFormat rendered="#{not proctorUtils.photosOptional}" styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P0']}">
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                </h:outputFormat>
+                            </span>
+                        </h:panelGroup>
 
 
-                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P1']}" escape="false"/>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P1']}" escape="false"/>
+                            </span>
+                        </h:panelGroup>
 
-                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P2']}" escape="false"/>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P2']}" escape="false"/>
+                            </span>
+                        </h:panelGroup>
 
-                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P3']}" escape="false"/>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P3']}" escape="false"/>
+                            </span>
+                        </h:panelGroup>
 
-                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P4']}" escape="false"/>
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPT.candid.P4']}" escape="false"/>
+                            </span>
+                        </h:panelGroup>
 
                         <h:panelGrid columns="1" cellpadding="5" style="margin-left: auto;margin-right:auto;margin-top:10px" columnClasses="imgcapturecola,imgcapturecolb">
 
                             <h:panelGroup>
-
                                 <div id="ppthumbdiv" onclick="doImageSnap();" style="cursor:pointer;max-width:400px;max-height:300px">
-                                    <!-- Video element inserted here by proctor-img.js -->                    
+                                    <!-- Video element inserted here by proctor-img.js -->
                                 </div>
                             </h:panelGroup>
 
                             <h:panelGroup>
                                 <div style="text-align:center">
-                                    <div style="inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">                            
+                                    <div style="inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">
                                         <span id="capturebut">
                                             <p:button value="#{stMessages['g.CapturePhoto']}" pt:aria-keyshortcuts="F3" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                                         </span>
@@ -74,7 +97,7 @@
                                         <a tabindex="0" class="ttformlink" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
                                             <h:outputText styleClass="pflinktext anylink ttformlink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
                                         </a>
-                                        <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>                        
+                                        <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>
                                     </div>
                                 </div>
                             </h:panelGroup>
@@ -85,17 +108,17 @@
                             <div style="text-align:center;padding-top:10px">
                                 <div style="display:inline-block">
                                     <div id="uploadimagebutton" style="display:none">
-                                        <p:commandButton ajax="true" pt:aria-keyshortcuts="F4" value="#{stMessages['g.PPT.candid.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>                        
+                                        <p:commandButton ajax="true" pt:aria-keyshortcuts="F4" value="#{stMessages['g.PPT.candid.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
                                     </div>
                                     <ui:fragment rendered="#{proctorUtils.photosOptional}">
                                         &#160;
-                                        <p:commandButton ajax="false" value="#{stMessages['g.Skip']}" action="#{proctorUtils.processSkipPhotoUpload}" title="#{stMessages['g.PPT.candphoto.skipinfo']}"/>                                                    
-                                    </ui:fragment>                        
-                                    &#160; 
+                                        <p:commandButton ajax="false" value="#{stMessages['g.Skip']}" action="#{proctorUtils.processSkipPhotoUpload}" title="#{stMessages['g.PPT.candphoto.skipinfo']}"/>
+                                    </ui:fragment>
+                                    &#160;
                                     <p:commandLink tabindex="0"  title="#{stMessages['g.PPT.StopForNowAlt']}" styleClass="ttformlink" onclick="PF('confirmpptexitdialog').show(); return false;">
                                         <h:outputText styleClass="pflinktext textformtext anylink ttformlink" style="text-decoration:underline" value="#{stMessages['g.PPT.StopForNow']}"/>
-                                    </p:commandLink>                                               
-                                </div>                    
+                                    </p:commandLink>
+                                </div>
                             </div>
                         </h:panelGroup>
 
@@ -104,7 +127,7 @@
 
                 <pp:exit-dialog />
 
-                <p:dialog closable="false" header="#{stMessages['g.PPT.candphoto.uploading']}" widgetVar="uploadingfiledialog" style="max-width:500px;margin-left:2px;margin-right:2px">
+                <p:dialog closable="true" header="#{stMessages['g.PPT.candphoto.uploading']}" widgetVar="uploadingfiledialog" style="max-width:500px;margin-left:2px;margin-right:2px">
                     <div role="status">
                         <h:panelGrid columns="1" cellpadding="10" style="width:100%;margin-left:auto;margin-right:auto">
 
@@ -116,7 +139,9 @@
                                 </div>
                             </h:panelGroup>
 
-                            <h:outputText value="#{stMessages['g.PPT.candphoto.uploading.P1']}"/>
+                            <h:panelGroup>
+                                <span tabindex="0" id="uploadingdiatxtspan"><h:outputText value="#{stMessages['g.PPT.candphoto.uploading.P1']}"/></span>
+                            </h:panelGroup>
 
                             <h:panelGroup>
                                 <div style="text-align: center;">
@@ -138,10 +163,10 @@
 
                                 <h:panelGroup>
                                     <div style="width:400px">
-                                        <p><h:outputText value="#{stMessages['g.PPT.candphoto.uperror.P1']}"/></p>
-                                        <p><span id="uploaderrormsgspan"></span></p>
+                                        <p tabindex="0"><h:outputText value="#{stMessages['g.PPT.candphoto.uperror.P1']}"/></p>
+                                        <p tabindex="0"><span id="uploaderrormsgspan"></span></p>
                                     </div>
-                                </h:panelGroup>                
+                                </h:panelGroup>
                                 <h:graphicImage library="images" name="error-64.png" alt=""/>
 
                                 <h:panelGroup>
@@ -158,7 +183,7 @@
                                             <h:panelGroup>
                                                 <div style="text-align: center">
                                                     <div style="display:inline-block">
-                                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{proctorUtils.processChangeDevices}" value="#{stMessages['g.PPT.ChangeDevices']}" title="#{stMessages['g.PPT.ChangeDevices.Info']}"/>                    
+                                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{proctorUtils.processChangeDevices}" value="#{stMessages['g.PPT.ChangeDevices']}" title="#{stMessages['g.PPT.ChangeDevices.Info']}"/>
                                                         &#160;
                                                         <p:commandButton style="margin-bottom:5px" rendered="#{proctorUtils.photosOptional}" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}"/>
                                                     </div>
@@ -174,15 +199,15 @@
                                         <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.AlertTitle']}" widgetVar="alertmessaggedialog" style="max-width:600px;margin-left:2px;margin-right:2px">
                                             <h:form>
                                                 <div role="error">
-                                                    <h:panelGrid columns="1" cellpadding="5">               
+                                                    <h:panelGrid columns="1" cellpadding="5">
 
                                                         <h:panelGroup>
                                                             <img style="float:right;margin-left:10px;margin-right:10px;margin-bottom:10px" src="https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_16x1675891890610.png"  alt=""/>
-                                                            <span id="alertmsgtxtspan"></span>
+                                                            <span id="alertmsgtxtspan" tabindex="0"></span>
                                                         </h:panelGroup>
 
                                                         <h:panelGroup>
-                                                            <span id="alertmsgtxtspan2"></span>
+                                                            <span id="alertmsgtxtspan2" tabindex="0"></span>
                                                         </h:panelGroup>
 
                                                         <h:panelGroup>
@@ -201,12 +226,12 @@
                                                                 <p:commandLink tabindex="0" ajax="false" action="#{proctorUtils.processChangeDevices}" styleClass="ttdialoglink" title="#{stMessages['g.PPT.ChangeDevices.Info']}">
                                                                     <h:outputText styleClass="anylink ttdialoglink" value="#{stMessages['g.PPT.ChangeDevicesOrCloseAndRestart']}"/>
                                                                 </p:commandLink>
-                                                                <ui:fragment rendered="#{proctorUtils.photosOptional}">                   
+                                                                <ui:fragment rendered="#{proctorUtils.photosOptional}">
                                                                     <br />
                                                                     <p:commandLink tabindex="0" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" styleClass="ttdialoglink" title="#{stMessages['g.PPT.ProceedWithoutPhotos.Info']}">
-                                                                        <h:outputText styleClass="anylink ttdialoglink" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>                    
+                                                                        <h:outputText styleClass="anylink ttdialoglink" value="#{stMessages['g.PPT.ProceedWithoutPhotos']}"/>
                                                                     </p:commandLink>
-                                                                </ui:fragment>     
+                                                                </ui:fragment>
                                                             </div>
                                                         </h:panelGroup>
 

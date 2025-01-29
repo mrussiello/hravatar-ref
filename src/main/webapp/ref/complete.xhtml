@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Complete']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Complete']}"/></title>
-            </ui:define>      
+            </ui:define>
 
             <ui:define name="headspec">
                 <style>
@@ -20,7 +20,7 @@
                     {
                         vertical-align: middle;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -36,26 +36,32 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.XCComplete']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1.TK']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
-                            <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1.TK']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                    <h:outputFormat rendered="#{refBean.rcCheck.testKeyId le 0}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                             <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.minRatersCandidate gt 0}">
-                                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCComplete.P2']}" escape="false">
-                                    <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
-                                    <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
-                                </h:outputFormat>&#160;
-                                <h:outputText rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext"  value="#{stMessages['g.XCComplete.P2.TK']}"/>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCComplete.P2']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                        <f:param value="#{refUtils.rcCheckExpDateFormatted}"/>
+                                    </h:outputFormat>&#160;
+                                    <h:outputText rendered="#{refBean.rcCheck.testKeyId gt 0}" styleClass="ttformtext"  value="#{stMessages['g.XCComplete.P2.TK']}"/>
+                                </span>
                             </h:panelGroup>
 
                         </h:panelGrid>
@@ -66,8 +72,8 @@
                                     <div style="display:inline-block">
                                         <p:commandButton style="margin-bottom:5px" ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackToReferencesTitle']}"/>                
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and not refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.collectRatingsFmCandidate}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.BackToQuestions']}" title="#{stMessages['g.BackToQuestionsTitle']}"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and refBean.rcCheck.candidateCanAddRaters}" ajax="false" action="#{candidateRefUtils.processBackToViewRaters}" value="#{stMessages['g.Back']}" title="#{stMessages['g.BackToReferencesTitle']}"/>
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{refBean.candidateCanReenter and not refBean.rcCheck.candidateCanAddRaters and refBean.rcCheck.collectRatingsFmCandidate}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.BackToQuestions']}" title="#{stMessages['g.BackToQuestionsTitle']}"/>
                                     </div>
                                 </div>
                             </h:panelGroup>

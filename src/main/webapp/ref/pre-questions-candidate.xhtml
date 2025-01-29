@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Introduction']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Introduction']}"/></title>
-            </ui:define>    
+            </ui:define>
 
             <ui:define name="headspec">
                 <style>
@@ -26,7 +26,7 @@
                         /* box-shadow: 0 0 15px 4px #a0c2de; */
                         border: 1px solid #dddddd;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -41,27 +41,55 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.XCPreQuestions.title']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputText rendered="#{refBean.rcCheck.candidateCanAddRaters}" styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ReferencesAfter.P1']}"/>
+                            <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ReferencesAfter.P1']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions']}" escape="false">
-                                <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions']}" escape="false">
+                                        <f:param value="#{refBean.rcCheck.candidateQuestionsAndSelfRatingCount}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText rendered="#{refBean.rcCheck.rcScript.hasAnyCandidateInput and not refBean.rcCheck.collectRatingsFmCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.QOnly']}"/>
+                            <h:panelGroup rendered="#{refBean.rcCheck.rcScript.hasAnyCandidateInput and not refBean.rcCheck.collectRatingsFmCandidate}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.QOnly']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText rendered="#{not refBean.rcCheck.rcScript.hasAnyCandidateInput and refBean.rcCheck.collectRatingsFmCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.ROnly']}"/>
+                            <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.hasAnyCandidateInput and refBean.rcCheck.collectRatingsFmCandidate}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.ROnly']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText rendered="#{refBean.rcCheck.rcScript.hasAnyCandidateInput and refBean.rcCheck.collectRatingsFmCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.Both']}"/>
+                            <h:panelGroup rendered="#{refBean.rcCheck.rcScript.hasAnyCandidateInput and refBean.rcCheck.collectRatingsFmCandidate}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ScriptQuestions.Both']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.AnswerTruthfully']}"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.AnswerTruthfully']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText rendered="#{refBean.rcCheck.candidateCanAddRaters}" styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ReferencesAfter']}"/>
+                            <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCPreQuestions.ReferencesAfter']}"/>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 

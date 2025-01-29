@@ -128,7 +128,7 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputFormat rendered="#{candidateRefBean.rcRater.rcRaterId gt 0}" value="#{stMessages['g.XCEditReference']}">
                                 <f:param value="#{refUtils.rcCheckRaterName}"/>
                             </h:outputFormat>
@@ -270,7 +270,6 @@
                                     <misc:infobubble theDivId="randrolerespinfo" theText="#{stMessages['g.XCRoleResp4RaterInfo']}"/>
                                 </div>
                             </h:panelGroup>
-
 
 
                             <h:panelGroup></h:panelGroup>  

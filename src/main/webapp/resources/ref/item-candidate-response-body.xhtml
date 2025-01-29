@@ -21,27 +21,27 @@
                 <h:panelGrid columns="2" cellpadding="3" styleClass="visiborder ttvisiborder" style="margin-left:auto;margin-right:auto;padding:10px" columnClasses="candrespcola,candrespcolb">
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile ne null}">
-                        <div style="padding-top:11px">
+                        <div style="padding-top:11px" tabindex="0">
                             <h:outputFormat styleClass="textmedium ttformtext" value="#{stMessages['g.CandUploadedFile']}:">
                                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                 <f:param value="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileTypeName}"/>
                             </h:outputFormat>
                             <div style="padding-top:2px;text-align:right;padding-right:10px">
                                 <h:outputText  styleClass="textmedium ttformtext" style="font-size:0.95rem" value="(#{stMessages['g.ClickToDownloadCandFile']})" />
-                            </div>    
+                            </div>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile ne null}">
                         <a tabindex="0" target="_blank" href="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileUrl}" title="#{stMessages['g.ClickToDownloadCandFile'] }">
                             <h:graphicImage library="images" name="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.candidateRcUploadedUserFile.uploadedFileIconFilename}" style="max-width: 50px" alt="#{stMessages['g.ClickToDownloadCandFile'] }"/>
-                        </a>                            
+                        </a>
                     </h:panelGroup>
 
 
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.hasRecordingReadyForPlayback}">
-                        <div style="padding-top:11px">
+                        <div style="padding-top:11px" tabindex="0">
                             <h:outputFormat rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.video}" styleClass="textmedium ttformtext" value="#{stMessages['g.CandUploadedAv']}:">
                                 <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                 <f:param value="#{stMessages['g.Video']}"/>
@@ -51,9 +51,9 @@
                                 <f:param value="#{stMessages['g.Audio']}"/>
                             </h:outputFormat>
                         </div>
-                        <div style="padding-top:2px;text-align:right;padding-right:10px">
+                        <div style="padding-top:2px;text-align:right;padding-right:10px" tabindex="0">
                             <h:outputText  styleClass="textmedium ttformtext" style="font-size:0.95rem" value="(#{stMessages['g.ClickToPlayCandFile']})" />
-                        </div>    
+                        </div>
                     </h:panelGroup>
 
 
@@ -64,14 +64,14 @@
                             <h:outputLink tabindex="0" value="#" title="#{stMessages['g.UploadedCandAvPlayTitle']}" styleClass="ttformlink" onclick="PF('candmo').show(); return false">
                                 <h:graphicImage rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.video}" library="images" name="video_icon_ta2_70.png" alt="#{stMessages['g.UploadedCandAudioPlayTitle']}" style="max-width:50px"/>
                                 <h:graphicImage rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.audio}" library="images" name="audio_icon_ta_70.png" alt="#{stMessages['g.UploadedCandVideoPlayTitle']}" style="max-width:50px"/>
-                            </h:outputLink>                            
+                            </h:outputLink>
                         </div>
 
                         <p:dialog responsive="true" onShow="document.getElementById('candmo').play()" onHide="document.getElementById('candmo').pause()" modal="false" widgetVar="candmo" style="max-width:600px" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
 
                             <div style="text-align:center">
 
-                                <div style="color:black;text-align:center;font-size:1.05rem;text-decoration:none;padding:3px">
+                                <div style="color:black;text-align:center;font-size:1.05rem;text-decoration:none;padding:3px" tabindex="0">
                                     <h:outputFormat rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.video}" value="#{stMessages['g.CandUploadedAv']}:">
                                         <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                         <f:param value="#{stMessages['g.Video']}"/>
@@ -80,7 +80,7 @@
                                         <f:param value="#{refBean.rcCheck.user.fullname}"/>
                                         <f:param value="#{stMessages['g.Audio']}"/>
                                     </h:outputFormat>
-                                </div>                                
+                                </div>
 
                                 <ui:fragment rendered="#{raterRefBean.rcItemWrapper.rcRating.candidateRcRating.rcUploadedUserFile.fileContentType.audio}">
                                     <div style="display:inline-block;padding:10px;">
@@ -100,7 +100,7 @@
 
                             <div style="text-align:center">
                                 <div style="display:inline-block;padding:10px;clear:both">
-                                    <p:button value="#{stMessages['g.Close']}" style="margin-bottom: 3px" onclick="document.getElementById('candmo').pause(); return PF('candmo').hide()"/> 
+                                    <p:button value="#{stMessages['g.Close']}" style="margin-bottom: 3px" onclick="document.getElementById('candmo').pause(); return PF('candmo').hide()"/>
                                 </div>
                             </div>
 
@@ -109,23 +109,31 @@
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.hasCandidateSelectionToShow}">
-                        <h:outputFormat styleClass="textmedium ttformtext" value="#{stMessages['g.CandResponse']}:">
-                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                        </h:outputFormat>
+                        <span tabindex="0">
+                            <h:outputFormat styleClass="textmedium ttformtext" value="#{stMessages['g.CandResponse']}:">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                            </h:outputFormat>
+                        </span>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.hasCandidateSelectionToShow}">
-                        <h:outputText styleClass="textmedium ttformtext" value="#{raterRefUtils.candidateResponseValueXhtml}" escape="false"/>
+                        <span tabindex="0">
+                            <h:outputText styleClass="textmedium ttformtext" value="#{raterRefUtils.candidateResponseValueXhtml}" escape="false"/>
+                        </span>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.hasCandidateCommentsToShow}">
-                        <h:outputFormat styleClass="textmedium ttformtext" value="#{stMessages['g.CandComments']}:">
-                            <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                        </h:outputFormat>
+                        <span tabindex="0">
+                            <h:outputFormat styleClass="textmedium ttformtext" value="#{stMessages['g.CandComments']}:">
+                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                            </h:outputFormat>
+                        </span>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.hasCandidateCommentsToShow}">
-                        <h:outputText styleClass="textmedium ttformtext" value="#{raterRefBean.rcItemWrapper.candidateCommentsValueXhtml}" escape="false"/>
+                        <span tabindex="0">
+                            <h:outputText styleClass="textmedium ttformtext" value="#{raterRefBean.rcItemWrapper.candidateCommentsValueXhtml}" escape="false"/>
+                        </span>
                     </h:panelGroup>
 
                 </h:panelGrid>

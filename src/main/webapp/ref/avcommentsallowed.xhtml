@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.AVAllowed']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.AVAllowed']}"/></title>
-            </ui:define>      
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -27,7 +27,7 @@
                         /* box-shadow: 0 0 15px 4px #a0c2de; */
                         border: 1px solid #dddddd;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -42,22 +42,38 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText rendered="#{refBean.rcCheck.rcAvType.audio}" value="#{stMessages['g.AudioCommentsAllowed']}"/>
                             <h:outputText rendered="#{not refBean.rcCheck.rcAvType.audio}" value="#{stMessages['g.AudioOrVideoCommentsAllowed']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" cellpadding="6" style="width:100%;margin-top:8px;margin-bottom:6px">
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P1']}" escape="false"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P1']}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P2']}" escape="false"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P2']}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P3']}" escape="false"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P3']}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P4']}" escape="false"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.AvCommentsAllowed.P4']}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
-                        </h:panelGrid>                
+                        </h:panelGrid>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
 

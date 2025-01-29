@@ -89,7 +89,7 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputFormat value="#{stMessages['g.XCAddReferences']}">
                                 <f:param value="#{refUtils.rcCheckRatersName}"/>
                             </h:outputFormat>
@@ -98,21 +98,31 @@
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
 
-                            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate gt 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.mins']}">
+                            <h:panelGroup rendered="#{refBean.rcCheck.minSupervisorsCandidate gt 0}">
+                                <span tabindex="0">
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.mins']}">
                                 <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
                                 <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
                                 <f:param value="#{refUtils.rcCheckTypeName}"/>                
                                 <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
                             </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputFormat rendered="#{refBean.rcCheck.minSupervisorsCandidate le 0}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.minsnosups']}">
+                            <h:panelGroup rendered="#{refBean.rcCheck.minSupervisorsCandidate le 0}">
+                                <span tabindex="0">
+                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.minsnosups']}">
                                 <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
                                 <f:param value="#{refBean.rcCheck.minRatersCandidate}"/>
                                 <f:param value="#{refUtils.rcCheckTypeName}"/>                
                                 <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
                             </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                             <h:outputFormat styleClass="ttformtext" value="#{stMessages[candidateRefUtils.referencesKeyToShow]}">
                                 <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
                                 <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
@@ -124,27 +134,21 @@
                                 <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidateSupers)}"/>
                                 <f:param value="#{refBean.rcCheck.minSupervisorsCandidate}"/>
                             </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                             <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount le 0}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesAllowed']}"/>
                             <h:outputText rendered="#{refBean.rcCheck.candidateOneRaterNoSendB and refBean.rcCheck.noSendRaterCount ge 1}" styleClass="ttformtext" value="#{stMessages['g.XCNoSendReferencesUsed']}"/>
+                                </span>
+                            </h:panelGroup>
 
-                            <!--
-                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire and refBean.rcCheck.needsSupervisors}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.lowsupers']}">
-                                <f:param value="#{refBean.rcCheck.raterRoleTypeCountsCandidate[1]}"/>
-                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                                <f:param value="#{refBean.rcCheck.minSupervisorsNeeded}"/>
-                            </h:outputFormat>
-                            -->
-
-                            <!--
-                            <h:outputFormat rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.maxRatersDefault}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.atmax']}">
-                                <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
-                                <f:param value="#{refUtils.rcCheckRatersNameLc}"/>            
-                            </h:outputFormat>
-                            -->
-
-                            <h:outputText rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.minRatersCandidate and fn:length(refBean.rcCheck.rcRaterListCandidateSupers) ge refBean.rcCheck.minSupervisorsCandidate}" styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalize']}"/>                
+                            <h:panelGroup rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) ge refBean.rcCheck.minRatersCandidate and fn:length(refBean.rcCheck.rcRaterListCandidateSupers) ge refBean.rcCheck.minSupervisorsCandidate}">
+                                <span tabindex="0">
+                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCAddReferences.finalize']}"/>                
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 
@@ -152,32 +156,23 @@
                         <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRaterListCandidate) gt 0}" value="#{refBean.rcCheck.rcRaterListCandidate}" var="rater" resizableColumns="true" resizeMode="expand" 
                                      style="background-color:white;width:100%;margin:10px auto;padding-right:5px;padding-left:5px;border-radius:10px">
 
-                            <!--
-                            <f:facet name="header">
-                                <h:outputFormat value="#{stMessages['g.XCCurrentReferences']}">
-                                    <f:param value="#{refUtils.rcCheckRatersName}"/>
-                                    <f:param value="#{fn:length(refBean.rcCheck.rcRaterListCandidate)}"/>
-                                </h:outputFormat>
-                            </f:facet>
-                            -->
-
                             <p:column sortBy="#{rater.user.lastName}" styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Name']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.fullname}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{rater.user.fullname}"/></span>
                             </p:column>
 
                             <p:column sortBy="#{rater.rcRaterStatusTypeName}" styleClass="textsmall hide-600" style="vertical-align:middle;width:10%;white-space:normal;text-align:center">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Status']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext textmedsmall" style="font-style:italic" value="#{rater.rcRaterStatusTypeName}"/></span>
 
                                 <ui:fragment rendered="#{rater.percentComplete gt 0 and rater.percentComplete lt 100}">
-                                    <br /><h:outputFormat value="#{stMessages['g.RCXPercentComplete']}">
+                                    <br /><span tabindex="0"><h:outputFormat value="#{stMessages['g.RCXPercentComplete']}">
                                         <f:param value="#{rater.percentCompleteRounded}"/>
-                                    </h:outputFormat>
+                                    </h:outputFormat></span>
                                 </ui:fragment>
                             </p:column>
 
@@ -185,10 +180,10 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.ContactInfo']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.email}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{rater.user.email}"/></span>
                                 <ui:fragment rendered="#{fn:length(rater.user.mobilePhone) gt 0}">
                                     <br />
-                                    <h:outputText styleClass="ttwindowtabletext" value="#{rater.user.mobilePhone}"/>
+                                    <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{rater.user.mobilePhone}"/></span>
                                 </ui:fragment>
                             </p:column>
 
@@ -196,7 +191,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Role']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext" value="#{rater.rcRaterRoleTypeName}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{rater.rcRaterRoleTypeName}"/></span>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:14%;white-space: normal;text-align:center">

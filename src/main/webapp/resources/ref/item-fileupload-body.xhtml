@@ -17,7 +17,7 @@
 
                 <div style="text-align:center;padding-bottom:10px;padding-top:10px">
                     
-                    <div id="candidatefileuploadstatusdiv" class="textmedium ttformtext" style="padding:5px;font-weight:normal;text-align:center">
+                    <div id="candidatefileuploadstatusdiv" class="textmedium ttformtext" style="padding:5px;font-weight:normal;text-align:center" tabindex="0">
                         <h:outputFormat rendered="#{raterRefBean.rcItem.hasNonAvCandidateFileUpload and raterRefBean.rcItemWrapper.rcRating.candidateRcUploadedUserFile ne null}" styleClass="textmedium ttformtext" value="#{stMessages['g.UploadedCandFilePrevNameDate']}">
                             <f:param value="#{raterRefBean.rcItemWrapper.rcRating.candidateRcUploadedUserFile.initialFilename}" />
                             <f:param value="#{raterRefBean.rcItemWrapper.rcRating.candidateRcUploadedUserFile.lastUpload}" />
@@ -34,7 +34,7 @@
                     </div>
                     
                     <ui:fragment rendered="#{not raterRefBean.rcItem.rcCandidateUploadType.anyAudioVideo}">
-                        <p>
+                        <p tabindex="0">
                             <h:outputText styleClass="textmedium ttformtext" value="#{stMessages['g.UploadSelect']}"/>
                         </p>
                         <div id="startrecbutdiv" style="display:inline-block">

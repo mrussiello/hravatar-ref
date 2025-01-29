@@ -5,102 +5,108 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
-<!-- INTERFACE -->
-<cc:interface>
-    <!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-    
-    <p:dialog rendered="#{not facesUtils.isMsie and (refBean.audioVideoCommentsOk or refBean.audioVideoCandidateUpload)}" modal="true" positionType="absolute" header="#{stMessages['g.RecordComments']}" style="max-width:700px;margin-left:2px;margin-right:2px;padding-left:8px;padding-right:8px;font-size:1.3rem" widgetVar="avcommentsdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            
-        <h:panelGrid columns="1" cellpadding="5" style="margin-left:0;margin-right:auto;" columnClasses="reftdcenter">
-            
-            <h:panelGroup>
-                <div id="avcommentstopinstdiv" style="text-align: left">
-                <span id="avcommentdialogheader" style="font-weight:bold"></span>
-                &#160;-&#160;
-                <h:outputText value="#{stMessages['g.RecordClickButToRecord']}" />                    
-                </div>
-            </h:panelGroup>
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
 
-            <h:panelGroup>
-                <div style="text-align: left">
-                    <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
-                    <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
-                </div>
-            </h:panelGroup>
+        <p:dialog rendered="#{not facesUtils.isMsie and (refBean.audioVideoCommentsOk or refBean.audioVideoCandidateUpload)}" modal="true" positionType="absolute" header="#{stMessages['g.RecordComments']}" style="max-width:700px;margin-left:2px;margin-right:2px;padding-left:8px;padding-right:8px;font-size:1.3rem" widgetVar="avcommentsdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
 
-            <!--
-            <h:outputText style="font-weight:bold" value="#{stMessages['g.RecordAfterStop']}" /> 
-            -->            
-            
-        </h:panelGrid>
+            <h:panelGrid columns="1" cellpadding="5" style="margin-left:0;margin-right:auto;" columnClasses="reftdcenter">
+
+                <h:panelGroup>
+                    <div id="avcommentstopinstdiv" style="text-align: left" tabindex="0">
+                        <span id="avcommentdialogheader" style="font-weight:bold"></span>
+                        &#160;-&#160;
+                        <h:outputText value="#{stMessages['g.RecordClickButToRecord']}" />
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <div style="text-align: left" tabindex="0">
+                        <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
+                        <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" style="font-weight:bold;text-align:left" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
+                    </div>
+                </h:panelGroup>
+
+                <!--
+                <h:outputText style="font-weight:bold" value="#{stMessages['g.RecordAfterStop']}" />
+                -->
+
+            </h:panelGrid>
 
             <h:panelGrid columns="1" cellpadding="4" style="margin-left:auto;margin-right:auto;margin-top:4px">
 
                 <h:panelGroup>
                     <div id="avcommentmediacommentdivouter" style="text-align:center">
-                    <div id="mediacommentdiv" style="display:inline-block;">
-                    </div>
+                        <div id="mediacommentdiv" style="display:inline-block;" tabindex="0">
+                        </div>
                     </div>
                 </h:panelGroup>
-                
+
                 <h:panelGroup>
                     <div id="recordinginprogressdiv" style="text-align:center;color:#e30000;font-size:1.2rem"></div>
-                    
+
                     <div id="visualizerouterdiv" style="text-align:center;display:none">
                         <table id="visualizertable" class="visualizertable" style="margin-left:auto;margin-right:auto">
                             <tr>
                                 <td style="padding-right:10px;vertical-align: top;padding-bottom:5px"><h:outputText style="font-size:1rem" value="#{stMessages['g.SoundLevel']}:"/></td>
                                 <td style="vertical-align: middle">
-                                    <div id="visualizerouter" class="visualizerouter">                    
+                                    <div id="visualizerouter" class="visualizerouter">
                                         <div class="audiobar" id="volume-visualizer"></div>
                                     </div>
 
                                 </td>
                             </tr>
                         </table>
-                    </div>   
-                    
+                    </div>
+
                 </h:panelGroup>
 
                 <h:panelGroup>
-                <div style="text-align:center">
-                    <div style="display:inline-block">                        
-                        <span id="startrecbut" style="display:none">
-                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                        </span>                        
-                        <span id="startrecbutaudio" style="display:none">
-                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                        </span>                        
-                        <span id="stoprecbut" style="display:none">
-                            <p:button pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                        </span>
-                        
-                        <span id="playbut" style="display:none;margin-left:15px">
-                            <p:button pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />                                
-                        </span>
-                        
-                        <span id="pausebut" style="display:none;margin-left:15px">
-                            <p:button pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />                                
-                        </span>
-                        <!-- Need stop/start button here. -->
-                        <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->                            
-                    </div><!--  -->
-                </div>
+                    <div style="text-align:center">
+                        <div style="display:inline-block">
+                            <span id="startrecbut" style="display:none">
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']} (F3)" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            </span>
+                            <span id="startrecbutaudio" style="display:none">
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']} (F3)" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            </span>
+                            <span id="stoprecbut" style="display:none">
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']} (F3)" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                            </span>
+
+                            <span id="playbut" style="display:none;margin-left:15px">
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']} (F5)" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
+                            </span>
+
+                            <span id="pausebut" style="display:none;margin-left:15px">
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']} (F5)" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
+                            </span>
+                            <!-- Need stop/start button here. -->
+                            <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->
+                        </div><!--  -->
+                    </div>
                 </h:panelGroup>
-                        
+
                 <h:panelGroup>
                     <div style="text-align:center">
                         <div style="display:inline-block">
                             <span id="uploadbuttondiv" style="display:none">
-                                <p:button pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>                                            
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']} (F4)" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
                             </span>
                             &#160;
                             <span id="dialogclosebut">
-                            <p:button value="#{stMessages['g.Cancel']}" title="#{stMessages['g.CancelEscapeAlt']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return PF( 'avcommentsdialog' ).hide()"/> 
+                                <p:button value="#{stMessages['g.Cancel']}" title="#{stMessages['g.CancelEscapeAlt']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return PF('avcommentsdialog').hide()"/>
                             </span>
                         </div>
                     </div>
@@ -108,33 +114,41 @@
 
                 <h:panelGroup>
                 </h:panelGroup>
-                                
+
             </h:panelGrid>
 
 
         </p:dialog>
-    
-    <p:dialog rendered="#{not facesUtils.isMsie and (refBean.audioVideoCommentsOk or refBean.audioVideoCandidateUpload)}" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <div role="status">
-            <h:panelGrid columns="1" cellpadding="4">
-                
-                <h:outputText value="#{stMessages['g.RecordComments.Uploading.P1']}" />
-                                
-                <h:outputText rendered="#{refBean.audioCommentsOnly}" value="#{stMessages['g.RecordComments.Uploading.P2']}" />
-                
-                <h:panelGroup>
-                    <div style="text-align:center;margin:30px">
-                        <div style="display:inline-block">
-                            <h:graphicImage library="images" name="loading-6.gif" alt=""/>
-                        </div>
-                    </div>
-                </h:panelGroup>
 
-            </h:panelGrid>
+        <p:dialog rendered="#{not facesUtils.isMsie and (refBean.audioVideoCommentsOk or refBean.audioVideoCandidateUpload)}" modal="true" header="#{stMessages['g.RecordComments.Uploading']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="avcommentsuploadingdialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+            <div role="status">
+                <h:panelGrid columns="1" cellpadding="4">
+
+                    <h:panelGroup>
+                        <span tabindex="0">
+                            <h:outputText value="#{stMessages['g.RecordComments.Uploading.P1']}" />
+                        </span>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{refBean.audioCommentsOnly}">
+                        <span tabindex="0">
+                            <h:outputText value="#{stMessages['g.RecordComments.Uploading.P2']}" />
+                        </span>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <div style="text-align:center;margin:30px">
+                            <div style="display:inline-block">
+                                <h:graphicImage library="images" name="loading-6.gif" alt=""/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                </h:panelGrid>
             </div>
 
         </p:dialog>
-    
-            
-</cc:implementation>
+
+
+    </cc:implementation>
 </html>

@@ -14,13 +14,13 @@
     <cc:implementation>
 
         <h:panelGroup rendered="#{raterRefBean.rcItem.hasInfoText}">
-            <h2 class="refinfosection" role="region" aria-label="#{stMessages['g.InfoRegion']}">
+            <h2 class="refinfosection" role="region" aria-label="#{stMessages['g.InfoRegion']}" tabindex="0">
                 <h:outputText styleClass="textmedium ttformtext" value="#{raterRefUtils.itemInfoTextXhtml}" escape="false"/>
             </h2>
         </h:panelGroup>
 
         <h:panelGroup>
-            <h2 class="refquestionsection" role="region" aria-label="#{stMessages['g.QuestionRegion']}">
+            <h2 class="refquestionsection" role="region" aria-label="#{stMessages['g.QuestionRegion']}" tabindex="0">
                 <h:outputText rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" value="#{raterRefUtils.itemQuestionXhtml}" escape="false"/>
                 <h:outputText rendered="#{refBean.rcCheck.rcRater.isCandidateOrEmployee}" styleClass="textmedium ttformtext" value="#{raterRefUtils.itemQuestionCandidateXhtml}" escape="false"/>
             </h2>

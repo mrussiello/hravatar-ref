@@ -78,7 +78,28 @@ public enum BrowserType
         return isMsie() || isSamsung();
     }
     
+    public static boolean getIsMobile( String u )
+    {
+        if (u==null || u.isBlank()) 
+            return false;
+        u = u.toLowerCase();
+        return u.contains("mobile") || 
+               u.contains("android") ||
+               u.contains("iphone") ||
+               u.contains("ipad") ||
+               u.contains("ipod") ||
+               u.contains("webos") ||
+               u.contains("blackberry") ||
+               u.contains("iemobile") ||
+               u.contains("opera mini");        
+        //if( u==null || u.isBlank() )
+        //    return false;
+        //u = u.toLowerCase();        
+        //return u.contains("mobile") || u.contains("iphone;") || u.contains("ipad;") || u.contains("ipod;");
+    }
 
+    
+    
     
     public static BrowserType getFmUserAgent( String u )
     {

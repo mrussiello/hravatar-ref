@@ -207,7 +207,7 @@ public class CorpBean extends FacesBean implements Serializable
 
     public synchronized void loadDefaultCorp()
     {
-        LogService.logIt( "CorpBean.loadDefaultCorp() " + (defaultCorp==null ? "Default corp is null" : "default corp is not null " + defaultCorp.toString() ) );
+        // LogService.logIt( "CorpBean.loadDefaultCorp() " + (defaultCorp==null ? "Default corp is null" : "default corp is not null " + defaultCorp.toString() ) );
 
         if( defaultCorp == null )
         {
@@ -215,7 +215,7 @@ public class CorpBean extends FacesBean implements Serializable
             {
                 defaultCorp = CorpFacade.getInstance().getCorp( RuntimeConstants.getIntValue( "defaultcorpid" ), true );
 
-                LogService.logIt( "CorpBean.loadDefaultCorp() Default corp loaded defaultcorpid=" + RuntimeConstants.getIntValue( "defaultcorpid" ) + ", null=" + (defaultCorp==null) );
+                // LogService.logIt( "CorpBean.loadDefaultCorp() Default corp loaded defaultcorpid=" + RuntimeConstants.getIntValue( "defaultcorpid" ) + ", null=" + (defaultCorp==null) );
             }
 
             catch( Exception e )

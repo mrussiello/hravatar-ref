@@ -7,14 +7,14 @@
       xmlns:pp="http://xmlns.jcp.org/jsf/composite/pp">
 
 
-<!-- INTERFACE -->
-<cc:interface>
-    <!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-    <!-- cc.attrs.value -->
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
 
 
         <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.PPT.ConfirmExit']}" widgetVar="confirmpptexitdialog" style="max-width:600px;margin-left:2px;margin-right:2px">
@@ -24,7 +24,12 @@
                 <pp:pp-forminputs />
 
                 <h:panelGrid columns="1" cellpadding="4">
-                   <h:outputText value="#{stMessages['g.PPT.ConfirmExit.P1']}"/>
+
+                    <h:panelGroup>
+                        <span tabindex="0">
+                            <h:outputText value="#{stMessages['g.PPT.ConfirmExit.P1']}"/>
+                        </span>
+                    </h:panelGroup>
 
                     <h:panelGroup>
                         <p:commandButton style="margin-bottom:5px" id="confirmexit2dialogstopbut" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}"/>                        
@@ -36,7 +41,7 @@
         </p:dialog>
 
 
-</cc:implementation>
+    </cc:implementation>
 
 
 </html>

@@ -22,15 +22,15 @@
             <ui:repeat value="#{refBean.rcCheck.previousResultList}" var="pr">
                 <tr>
                     <td class="prevresulttypetd">
-                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultTypeName}"/>
+                        <span tabindex="0"><h:outputText styleClass="ttformtext" value="#{pr.previousResultTypeName}"/></span>
                     </td>
                     <td>
-                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultName}"/>
+                        <span tabindex="0"><h:outputText styleClass="ttformtext" value="#{pr.previousResultName}"/></span>
                     </td>
                     <td>
-                        <h:outputText styleClass="ttformtext" value="#{pr.previousResultDate}">
+                        <span tabindex="0"><h:outputText styleClass="ttformtext" value="#{pr.previousResultDate}">
                             <f:convertDateTime type="date" dateStyle="short"/>
-                        </h:outputText>
+                        </h:outputText></span>
                     </td>                    
                     <td>
                         <h:outputLink tabindex="0" styleClass="ttformlink" value="#" onclick="doPrShowPrevResult('#{pr.previousResultViewUrl}'); return false;" title="#{stMessages['g.PrevResViewAlt']}">

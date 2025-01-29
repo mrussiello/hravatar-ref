@@ -73,20 +73,28 @@
 
                     <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                         <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.TempStop']}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                         <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.TempStop.P1']}">
                             <f:param value="#{refBean.strParam2}"/>
                         </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                         <h:panelGroup>
-                            <div style="padding-top:10px">
+                            <div style="padding-top:10px" tabindex="0">
                                 <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPUseThisUrlC']}"/>
                             </div>
                         </h:panelGroup>
 
                         <h:panelGroup>
-                            <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard('#{refBean.strParam1}');">
+                            <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard('#{refBean.strParam1}');" tabindex="0">
                                 <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer" value="#{refBean.strParam1}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
                                 &#160;&#160;
                                 <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
@@ -99,7 +107,7 @@
 
                     <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;margin-left:2px;margin-right:2px">
                         <div role="status">
-                            <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
+                            <p style="text-align:left" tabindex="0"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
                                     <f:param value="#{refBean.strParam2}"/>
                                 </h:outputFormat></p>
 

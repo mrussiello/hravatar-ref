@@ -1,12 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
-      xmlns:ref="jakarta.faces.composite/ref">
+      xmlns:ref="jakarta.faces.composite/ref"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -37,11 +36,10 @@
                     </h:outputFormat>
                 </h1>
 
-                <ui:fragment rendered="#{raterRefBean.rcItem.includeNumRatingB and refBean.accessibleActive and not facesUtils.isMsieOrSamsungAndroid}">
-                    <ref:item-accessible />
-                </ui:fragment>
+                <ref:item-accessible />
 
-                <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:0px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
+                <h:panelGrid columns="1" cellpadding="6" columnClasses="pincolclass,pincolclass,pincolclass" style="padding-top:5px;padding-bottom:0px;margin-top:20px;margin-right:auto;margin-left:auto;margin-bottom:0">
+
 
                     <ui:fragment rendered="#{not refBean.refUserType.isCandidate and raterRefBean.rcItem.showCandRespToRater eq 1 and raterRefBean.rcItemWrapper.rcRating ne null and raterRefBean.rcItemWrapper.rcRating.candidateRcRating ne null}">
                         <ref:item-candidate-response-body />
@@ -61,9 +59,8 @@
 
                     <ref:item-fileupload-body />
 
-
                     <h:panelGroup rendered="#{not refBean.rcCheck.rcScript.noCommentsRatingItemsB or not raterRefBean.rcItem.includeNumRatingB}">
-                        <ref:item-comments avCommentsOk="false" />
+                        <ref:item-comments avCommentsOk="#{not facesUtils.isMsie}"/>
                     </h:panelGroup>
 
                     <h:panelGroup rendered="#{raterRefBean.rcItem.includeComments le 0 or (refBean.rcCheck.rcScript.noCommentsRatingItemsB and raterRefBean.rcItem.includeNumRatingB)}">
@@ -72,13 +69,12 @@
                         </div>
                     </h:panelGroup>
 
+
+
                     <h:panelGroup>
                         <div style="text-align: center">
                             <div style="display:inline-block;">
-                                <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" onclick="if (doValidateRating()) {
-                                            PF('ratingrequireddialog').show();
-                                            return false;
-                                        }" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
+                                <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processSaveItemResp}" value="#{stMessages['g.RecordAnswer']}" title="#{stMessages['g.RecordAnswerInfo']}">
                                     <f:setPropertyActionListener target="#{raterRefUtils.booleanParam1}" value="false"/>
                                 </p:commandButton>
                                 &#160;
@@ -96,7 +92,7 @@
 
                 </h:panelGrid>
 
-                <p:dialog modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                <p:dialog width="550" modal="true" header="#{stMessages['g.XRPlsSelectARtg']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="ratingrequireddialog" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
                     <div role="error">
                         <h:panelGrid columns="1" cellpadding="4">
                             <h:outputText value="#{stMessages['g.XRPlsSelectARtg.P1']}" />
@@ -107,6 +103,8 @@
                         </h:panelGrid>
                     </div>
                 </p:dialog>
+
+                <ref:avcomments-dialog />
 
             </h:form>
 

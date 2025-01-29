@@ -9,69 +9,77 @@
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
 
 
-<!-- INTERFACE -->
-<cc:interface>
-<!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-<!-- cc.attrs.value -->
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
 
         <h:form>
-        <h:panelGrid cellpadding="6" columns="1" style="padding-left:10px;padding-right:10px;max-width:800px;margin:0 auto;padding-top:22px">
+            <h:panelGrid cellpadding="6" columns="1" style="padding-left:10px;padding-right:10px;max-width:800px;margin:0 auto;padding-top:22px">
 
-        <ref:messages-embedded />
+                <ref:messages-embedded />
 
-        <h:outputText styleClass="textverylarge textbold  ttboldtitle" value="#{stMessages[ 'g.InitErrorTop' ]}"/>
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="textverylarge textbold  ttboldtitle" value="#{stMessages[ 'g.InitErrorTop' ]}"/>
+                    </span>
+                </h:panelGroup>
 
 
-        <h:panelGroup rendered="#{fn:length(refBean.errorMessage) gt 0}">
-            <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-right:10px;margin-bottom:8px" alt=""/>
-            <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{stMessages[ 'g.InitErrorMessageIsC' ]}"/>&#160;
-            <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{refBean.errorMessage}"/>
-        </h:panelGroup>
+                <h:panelGroup rendered="#{fn:length(refBean.errorMessage) gt 0}">
+                    <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-right:10px;margin-bottom:8px" alt=""/>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{stMessages[ 'g.InitErrorMessageIsC' ]}"/>&#160;
+                        <h:outputText styleClass="ttformtext" style="font-size: 14pt" value="#{refBean.errorMessage}"/>
+                    </span>
+                </h:panelGroup>
 
-        <h:panelGroup>
+                <h:panelGroup>
 
-            <div style="text-align:center;margin-top:10px">
-            <ui:fragment rendered="#{facesUtils.startOverOk}">
-            <p:commandLink tabindex="0" styleClass="textmedium ttformlink" ajax="false" action="#{refUtils.processStartOver}">
-                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.StartOver']}"/>
-            </p:commandLink>
-            &#160;
-            </ui:fragment>
+                    <div style="text-align:center;margin-top:10px">
+                        <ui:fragment rendered="#{facesUtils.startOverOk}">
+                            <p:commandLink tabindex="0" styleClass="textmedium ttformlink" ajax="false" action="#{refUtils.processStartOver}">
+                                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.StartOver']}"/>
+                            </p:commandLink>
+                            &#160;
+                        </ui:fragment>
 
-            <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) gt 0}" value="#{refBean.errorReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
-            </h:outputLink>
+                        <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) gt 0}" value="#{refBean.errorReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
+                            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+                        </h:outputLink>
 
-            <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) le 0 and fn:length(corpBean.corp.defaultReturnUrl) gt 0}" value="#{corpBean.corp.defaultReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
-                <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
-            </h:outputLink>
+                        <h:outputLink tabindex="0" styleClass="textmedium ttformlink" rendered="#{fn:length(refBean.errorReturnUrl) le 0 and fn:length(corpBean.corp.defaultReturnUrl) gt 0}" value="#{corpBean.corp.defaultReturnUrl}" title="#{stMessages[ 'g.Exit' ]}">
+                            <h:outputText styleClass="pflinktext textmedium anylink ttformlink" style="font-size:1.3rem;font-weight:bold;text-decoration:underline" value="#{stMessages[ 'g.Exit' ]}"/>
+                        </h:outputLink>
 
-            <ui:fragment rendered="#{refBean.errorAutoForward}">
-                &#160;
-                <h:outputText styleClass="ttformtext" value=" (#{stMessages['g.InitErrorWillAutoforward30Sec']})"/>
-            </ui:fragment>
-            </div>
+                        <ui:fragment rendered="#{refBean.errorAutoForward}">
+                            &#160;
+                            <h:outputText styleClass="ttformtext" value=" (#{stMessages['g.InitErrorWillAutoforward30Sec']})"/>
+                        </ui:fragment>
+                    </div>
 
-        </h:panelGroup>
+                </h:panelGroup>
 
-        </h:panelGrid>
+            </h:panelGrid>
 
             <ui:fragment rendered="#{refBean.errorAutoForward}">
 
                 <script type="text/javascript">
 
-                    setTimeout( function() { location.href='#{refBean.errorReturnUrl}'; }, 30000 );
+                    setTimeout(function () {
+                        location.href = '#{refBean.errorReturnUrl}';
+                    }, 30000);
 
                 </script>
             </ui:fragment>
 
-            </h:form>
+        </h:form>
 
-</cc:implementation>
+    </cc:implementation>
 
 
 </html>

@@ -117,6 +117,13 @@ public class FacesUtils
         return dateFormatter.format( date );
     }
 
+    public boolean getIsMobile()
+    {
+        return BrowserType.getIsMobile( getUserAgent() );
+    }
+
+    
+    
     public String getToday()
     {
         return getDateStr( new Date() );
@@ -353,6 +360,11 @@ public class FacesUtils
         return httpServletRequest==null ? null : httpServletRequest.getHeader( "User-Agent" );
     }
     
+    public boolean getHasMessages()
+    {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        return fc==null ? false : fc.getMessages( null).hasNext();
+    }
     
     protected HttpServletRequest getHttpServletRequest()
     {

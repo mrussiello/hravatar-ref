@@ -81,6 +81,22 @@ function showAlertMsg( msg, msg2, showClose, showRetry, showCameraHelp )
 }
 
 
+    function ppOnDialogShow(eleId)
+    {
+        logIt( '/tr/resources/pp/pp-core.js.ppOnDialogShow() eleId=' + eleId );
+
+        if( !(eleId) )
+            return;
+
+        var ele = document.getElementById(eleId);
+        if( (ele) )
+        {
+            ele.tabindex=0;
+            ele.focus();
+        }
+    }
+
+
 function ppShowReloadDialog()
 {
     PF( 'reloadrequireddialog' ).show();

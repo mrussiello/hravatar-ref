@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Expired']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Expired']}"/></title>
-            </ui:define>         
+            </ui:define>
 
             <ui:define name="headspec">
                 <style>
@@ -20,7 +20,7 @@
                     {
                         vertical-align: middle;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -36,27 +36,35 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText  rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" value="#{stMessages['g.XCExpired']}"/>
                             <h:outputText  rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" value="#{stMessages['g.XRExpired']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCExpired.P1']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCExpired.P1']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCExpired.P2']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCExpired.P2']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
                             <h:panelGroup>
-                                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>                              
+                                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
                             </h:panelGroup>
 
                         </h:panelGrid>

@@ -13,7 +13,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Referrals']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Referrals']}"/></title>
-            </ui:define>      
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -36,7 +36,7 @@
                         doLocalPageOnUnload();
                     });
 
-                    // ]]>        
+                    // ]]>
                 </script>
 
             </ui:define>
@@ -53,21 +53,25 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.XRAddReferrals']}"/>
                         </h1>
 
 
                         <h:panelGrid columns="1" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P1']}">
-                                <f:param value="#{refBean.rcCheck.user.fullname}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P1']}">
+                                        <f:param value="#{refBean.rcCheck.user.fullname}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 
 
-                        <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" value="#{refBean.rcCheck.rcRater.rcReferralListNoSame}" var="referral" resizableColumns="true" resizeMode="expand" 
+                        <p:dataTable rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" value="#{refBean.rcCheck.rcRater.rcReferralListNoSame}" var="referral" resizableColumns="true" resizeMode="expand"
                                      style="background-color:white;width:100%;margin:10px auto">
 
                             <f:facet name="header">
@@ -78,40 +82,44 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Name']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext" value="#{referral.user.fullname}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{referral.user.fullname}"/></span>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.Email']}"/>
                                 </f:facet>
-                                <h:outputText rendered="#{referral.user.hasValidEmail}" styleClass="ttwindowtabletext" value="#{referral.user.email}"/>
+                                <span tabindex="0"><h:outputText rendered="#{referral.user.hasValidEmail}" styleClass="ttwindowtabletext" value="#{referral.user.email}"/></span>
                             </p:column>
 
                             <p:column styleClass="textsmall" style="vertical-align:middle;width:20%;white-space:normal">
                                 <f:facet name="header">
                                     <h:outputText value="#{stMessages['g.MobilePhone']}"/>
                                 </f:facet>
-                                <h:outputText styleClass="ttwindowtabletext" value="#{referral.user.mobilePhone}"/>
+                                <span tabindex="0"><h:outputText styleClass="ttwindowtabletext" value="#{referral.user.mobilePhone}"/></span>
                             </p:column>
 
                         </p:dataTable>
 
 
-                        <h:panelGrid columns="1" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P2']}"/>
+                        <h:panelGrid columns="1" cellpadding="6" style="padding-top:10px;padding-bottom:10px;margin:0 auto">                            
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XRAddReferrals.P2']}"/>
+                                </span>
+                            </h:panelGroup>
                         </h:panelGrid>
 
 
-                        <h:panelGrid columns="1" cellpadding="3" style="padding-top:2px;padding-bottom:10px;margin-left:20px">
+                        <h:panelGrid columns="1" cellpadding="3" style="padding-top:2px;padding-bottom:10px;margin-left:auto;margin-right:auto">
 
                             <h:panelGroup>
-	                            <p:inputText id="referralformfn" size="18" value="#{raterRefBean.referralUser.firstName}" placeholder="#{stMessages['g.FirstName']}"/>
-			                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.XRCreateReferral']} #{stMessages['g.FirstName']}" for="referralformfn"/>
-			                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="referralformln"/>
-			                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="referralformem"/>
-			                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="referralformmbl"/>
-			                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.NoteToEmployer']}" for="referralformnote"/>
+                                <p:inputText id="referralformfn" size="18" value="#{raterRefBean.referralUser.firstName}" placeholder="#{stMessages['g.FirstName']}"/>
+                                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.XRCreateReferral']} #{stMessages['g.FirstName']}" for="referralformfn"/>
+                                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="referralformln"/>
+                                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="referralformem"/>
+                                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="referralformmbl"/>
+                                <p:outputLabel styleClass="sr-only" value="#{stMessages['g.NoteToEmployer']}" for="referralformnote"/>
                             </h:panelGroup>
 
                             <p:inputText id="referralformln" size="18" value="#{raterRefBean.referralUser.lastName}" placeholder="#{stMessages['g.LastName']}"/>
@@ -133,10 +141,10 @@
                             <h:panelGroup>
                                 <div style="text-align:center;margin-top:10px;margin-bottom:10px">
                                     <div style="display:inline-block">
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRExitReferrals']}"/>                
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) le 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRSkipReferrals']}"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRExitReferrals']}"/>
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) le 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRSkipReferrals']}"/>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>                
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>
                                     </div>
                                 </div>
                             </h:panelGroup>

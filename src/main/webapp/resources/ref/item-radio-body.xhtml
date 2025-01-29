@@ -34,7 +34,7 @@
 
                 <ref:messages-embedded />
 
-                <h1 class="pagetitle ttboldtitle">
+                <h1 class="pagetitle ttboldtitle" tabindex="0">
                     <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
                         <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
                         <f:param value="#{raterRefUtils.raterQuestionCount}"/>
@@ -55,7 +55,12 @@
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}">
 
-                        <div role="group" aria-label="#{raterRefUtils.itemQuestionForRaterPlain}">
+                        <div>
+                            <h:selectOneRadio id="itemradio1" value="#{raterRefBean.selectedRadioIndex}" layout="pageDirection" styleClass="prottext stdformlabel ttformlabel hrarbgroup" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">
+                                <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
+                            </h:selectOneRadio>
+
+                            <!--
                             <p:selectOneRadio id="itemradio1" value="#{raterRefBean.selectedRadioIndex}" styleClass="textmedium ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">
                                 <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
                             </p:selectOneRadio>
@@ -93,6 +98,7 @@
                                 <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
 
                             </h:panelGrid>
+                            -->
                         </div>
 
                         <!--

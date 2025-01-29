@@ -52,7 +52,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
             ExceptionQueuedEventContext errCtxt = (ExceptionQueuedEventContext)item.getSource();
 
             String nextViewId = null;  
-            
+            String viewId = "unset";
             try 
             {
                 Throwable t = errCtxt.getException();
@@ -65,7 +65,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 if( fc==null  )
                     throw new Exception( "FacesContext was null" );
 
-                String viewId = fc.getViewRoot()!=null ? fc.getViewRoot().getViewId() : "ViewRoot unavailable (FacesContext or FacesContext.viewRoot is null) fc=" + (fc==null ? "null" : "not null");
+                viewId = fc.getViewRoot()!=null ? fc.getViewRoot().getViewId() : "ViewRoot unavailable (FacesContext or FacesContext.viewRoot is null) fc=" + (fc==null ? "null" : "not null");
                 
                 LogService.logIt( "RefExceptionHandler.handle() AAA.2.0 viewId=" + viewId + ", Exception: " + t.toString() + ", message=" + t.getMessage() );
                 
@@ -83,13 +83,12 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                             rootCause instanceof ELException || 
                             rootCause instanceof PropertyNotFoundException || 
                             rootCause instanceof IOException )
-                        LogService.logIt( "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
+                        LogService.logIt( "RefExceptionHandler.handle() AAA.2A Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString() + ", viewId=" + viewId);
     
                     else
-                        LogService.logIt( rootCause, "RefExceptionHandler.handle() AAA.2B Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString());
+                        LogService.logIt( rootCause, "RefExceptionHandler.handle() AAA.2B Top-level Exception: " + t.toString() + " root Cause Exception=" + rootCause.toString() + ", viewId=" + viewId);
                 }
-                
-                
+                                
                 RefBean rb = (RefBean) fc.getApplication().getELResolver().getValue( fc.getELContext(), null, "refBean" );
                 
                 Map<String, Object> rm = fc.getExternalContext().getRequestMap();
@@ -117,7 +116,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                 {
                     String acidx = rb!=null ? rb.getActiveAccessCodeX(): null;
                     
-                    LogService.logIt( "RefExceptionHandler.handle() DDD.1 Attempting to recover from error: " + rootCause.toString() + ", refBean.acidx=" + acidx );
+                    LogService.logIt( "RefExceptionHandler.handle() DDD.1 Attempting to recover from error: " + rootCause.toString() + ", refBean.acidx=" + acidx + ", viewId=" + viewId );
                     
                     if( acidx==null || acidx.isBlank() )
                         acidx = HttpReqUtils.getStringReqParam("acidx", req);
@@ -127,7 +126,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
 
                     String refpagex = rb!=null ? rb.getActiveRefPageTypeIdX() : null;
                     
-                    LogService.logIt( "RefExceptionHandler.handle() DDD.2 Attempting to recover from error: " + t.toString() + ", acidx=" + acidx + ", refBean.refpagex=" + refpagex );
+                    LogService.logIt( "RefExceptionHandler.handle() DDD.2 Attempting to recover from error: " + t.toString() + ", acidx=" + acidx + ", refBean.refpagex=" + refpagex + ", viewId=" + viewId );
                     
                     if( refpagex==null || refpagex.isBlank() )
                         refpagex = HttpReqUtils.getStringReqParam("refpagex", req);
@@ -140,7 +139,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                         }
                         catch( NumberFormatException e )
                         {
-                            LogService.logIt( "RefExceptionHandler.handle() DDD.2b Unable to parse refpagex from request or refBean, so erasing and ignoring. refpagex=" + refpagex + ", " + t.toString() + ", acidx=" + acidx + ", refBean.refpagex=" + (rb==null ? "null" : rb.getActiveRefPageTypeIdX()) );
+                            LogService.logIt( "RefExceptionHandler.handle() DDD.2b Unable to parse refpagex from request or refBean, so erasing and ignoring. refpagex=" + refpagex + ", " + t.toString() + ", acidx=" + acidx + ", refBean.refpagex=" + (rb==null ? "null" : rb.getActiveRefPageTypeIdX()) + ", viewId=" + viewId );
                             refpagex = "";
                         }
                         
@@ -150,7 +149,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                     if( refpagex==null )
                         refpagex="";
 
-                    LogService.logIt( "RefExceptionHandler.handle() DDD.3 Attempting to recover from error: " + t.toString() + ", acidx=" + acidx + ", refpagex=" + refpagex );
+                    LogService.logIt( "RefExceptionHandler.handle() DDD.3 Attempting to recover from error: " + t.toString() + ", acidx=" + acidx + ", refpagex=" + refpagex + ", viewId=" + viewId );
                     
                     // boolean preview = (rb!=null && rb.getAdminOverride());
                                         
@@ -173,12 +172,12 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                                 nextViewId = tu.checkRepairSession(502, true);
                                 
                                 // nextViewId = tu.performLoadForwardEntry();
-                                LogService.logIt("RefExceptionHandler.handle() EEE.1 Recovering session. After calling TestUtils.checkRepairSession. acidx=" + acidx + ", refpagex=" + refpagex + ", nextViewId=" + nextViewId );
+                                LogService.logIt("RefExceptionHandler.handle() EEE.1 Recovering session. After calling TestUtils.checkRepairSession. acidx=" + acidx + ", refpagex=" + refpagex + ", nextViewId=" + nextViewId + ", viewId=" + viewId );
                             }
                         }
                         catch( Exception e )
                         {
-                            LogService.logIt( e, "RefExceptionHandler.handle() FFF.2 Unexpected exception recovering from a ViewExpired or ProtectedView exception. acidx=" + acidx );
+                            LogService.logIt( e, "RefExceptionHandler.handle() FFF.2 Unexpected exception recovering from a ViewExpired or ProtectedView exception. acidx=" + acidx + ", viewId=" + viewId );
                         }
                     }
                 }
@@ -203,7 +202,7 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
                     }
                     catch( IllegalStateException e )
                     {
-                        LogService.logIt( "RefExceptionHandler.handle() WWW.3 redirecting to home page. " + e.toString() + " Returning without redirect or navigation." );                        
+                        LogService.logIt( "RefExceptionHandler.handle() WWW.3 redirecting to home page. " + e.toString() + " Returning without redirect or navigation. viewId=" + viewId );                        
                     }
                     // response.sendRedirect("/tr/ref/index.html");
                     return;                    
@@ -213,13 +212,13 @@ public class RefExceptionHandler extends ExceptionHandlerWrapper {
 
                 // CorpBean cb = (CorpBean) fc.getApplication().getELResolver().getValue( fc.getELContext(), null, "corpBean" );
                 
-                LogService.logIt( "RefExceptionHandler.handle() GGG.1 Navigating to nextViewId=" + nextViewId );
+                LogService.logIt( "RefExceptionHandler.handle() GGG.1 Navigating to nextViewId=" + nextViewId + ", viewId=" + viewId );
                 nav.handleNavigation(fc, null, nextViewId);
                 fc.renderResponse();
             } 
             catch( Exception e )
             {
-                LogService.logIt(e, "RefExceptionHandler.handle() XXx.1 Unexpected exception handling errors. nextViewId=" + nextViewId );                
+                LogService.logIt(e, "RefExceptionHandler.handle() XXx.1 Unexpected exception handling errors. nextViewId=" + nextViewId + ", viewId=" + viewId );                
             }
             finally {
                 queue.remove();

@@ -44,6 +44,7 @@ import jakarta.faces.model.SelectItem;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.InputStream;
+import java.util.Locale;
 import org.primefaces.model.file.UploadedFile;
 
 /**
@@ -609,6 +610,36 @@ public class RaterRefUtils extends BaseRefUtils
                     raterRefBean.setSelectedCheckboxesStr(ia);
                 }
             }
+
+            
+            // Adjust score to discret value if showing discrete.
+            else if( rcItemFormatType.getIsRating() && rciw.getRcItem().getIncludeNumRatingB() && rating.getRcRatingStatusType().getIsComplete() && rating.getScore()>1 )
+            {
+                boolean discrete = refBean!=null && refBean.getRcCheck().getRcScript()!=null && refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB();
+                
+                boolean msie = this.getIsMsieOrSamsungAndroid() || refBean.getAccessibleActive();
+                
+                if( discrete || msie )
+                {
+                    RcRatingScaleType ratingScale = refBean.getRcCheck().getRcScript().getRcRatingScaleType();
+
+                    float score = rating.getScore();
+
+                    int buttons = !discrete && ratingScale.getIsDefault() ? 10 : 5;
+                    float increment = (ratingScale.getMaxScore()-ratingScale.getMinScore())/((float)(buttons-1));
+
+                    // set to closest discrete value.
+                    for( int i=1;i<=buttons;i++ )
+                    {
+                        if( Math.abs(1 + i*increment - score)<increment/2f )
+                        {
+                            rating.setScore(1 + i*increment);
+                            break;
+                        }
+                    }                
+                }
+            }
+
         }
         catch( Exception e )
         {
@@ -617,12 +648,26 @@ public class RaterRefUtils extends BaseRefUtils
         }
     }
 
-
     public List<SelectItem> getRcItemRadioSelectItemListForRating()
+    {
+        return genRcItemRadioSelectItemListForRating( true );
+    }
+    public List<SelectItem> getRcItemRadioSelectItemListForRatingNoLabels()
+    {
+        return genRcItemRadioSelectItemListForRating( false );
+    }
+    public List<SelectItem> getRcItemRadioSelectItemListForRatingFullLabels()
+    {
+        return genRcItemRadioSelectItemListForRating( true );
+    }
+
+
+    public List<SelectItem> genRcItemRadioSelectItemListForRating( boolean labelText )
     {
         getRefBean();
 
         boolean discrete = refBean!=null && refBean.getRcCheck().getRcScript()!=null && refBean.getRcCheck().getRcScript().getUseDiscreteRatingsB();
+        boolean msie = this.getIsMsieOrSamsungAndroid() || refBean.getAccessibleActive();
 
         List<SelectItem> out = new ArrayList<>();
 
@@ -632,9 +677,89 @@ public class RaterRefUtils extends BaseRefUtils
 
         boolean noMiddle = rciw.getRcItem().getDenyMiddleB();
 
-        SelectItem ss;
+        RcItem itm = rciw.getRcItem();
 
         RcRatingScaleType ratingScale = refBean.getRcCheck().getRcScript().getRcRatingScaleType();
+        
+        SelectItem ss;
+        
+        String[] anchors = new String[10];
+        Locale locale = getLocale();
+        
+        // discrete is always 5, not 10.
+        // default is always a 1 - 10 scale, but when accessible or 
+        // 10 radio buttons
+        if( labelText && !discrete && ratingScale.getIsDefault() )
+        {
+            anchors = new String[]{itm.getChoice2(),"","",itm.getChoice4(),itm.getChoice3(),itm.getChoice3(),itm.getChoice5(),"","",itm.getChoice1()};
+
+            if( anchors[0]==null || anchors[0].isBlank() )
+                anchors[0] = MessageFactory.getStringMessage(locale, "g.AnchorLowest" );
+            
+            if( anchors[3]==null || anchors[3].isBlank() )
+            {
+                if( anchors[4]==null || anchors[4].isBlank() )
+                    anchors[3] = MessageFactory.getStringMessage(locale, "g.AnchorLower" );
+                else
+                    anchors[3] = MessageFactory.getStringMessage(locale, "g.AnchorBelowX", new String[]{anchors[4]});
+            }
+
+            // Must come before you set anchor[4]
+            if( anchors[6]==null || anchors[6].isBlank() )
+            {
+                if( anchors[4]==null || anchors[4].isBlank() )
+                    anchors[6] = MessageFactory.getStringMessage(locale, "g.AnchorHigher" );
+                else
+                    anchors[6] = MessageFactory.getStringMessage(locale, "g.AnchorAboveX", new String[]{anchors[4]});
+            }
+            
+            if( anchors[4]==null || anchors[4].isBlank() )
+                anchors[4] = MessageFactory.getStringMessage(locale, "g.AnchorMiddle" );
+            anchors[5] = anchors[4];
+            
+            if( anchors[9]==null || anchors[9].isBlank() )
+                anchors[9] = MessageFactory.getStringMessage(locale, "g.AnchorHighest" );
+            
+            for( int i=0;i<anchors.length;i++ )
+            {
+                if( anchors[i]==null || anchors[i].isBlank() )
+                    anchors[i]=MessageFactory.getStringMessage(locale, "g.AnchorWithLevel", new String[]{Integer.toString((i+1))} );
+                else
+                    anchors[i]=MessageFactory.getStringMessage(locale, "g.AnchorWithLevelX", new String[]{Integer.toString((i+1)),anchors[i] } );
+            }        
+        }
+        
+        // discrete is always 5.  Non-default is also 5 choices.
+        else if( labelText )
+        {
+            anchors = new String[]{itm.getChoice2(),itm.getChoice4(),itm.getChoice3(),itm.getChoice5(),itm.getChoice1()};
+            
+            if( anchors[0]==null || anchors[0].isBlank() )
+                anchors[0] = MessageFactory.getStringMessage(locale, "g.AnchorLowest" );
+            
+            if( anchors[1]==null || anchors[1].isBlank() )
+            {
+                if( anchors[2]==null || anchors[2].isBlank() )
+                    anchors[1] = MessageFactory.getStringMessage(locale, "g.AnchorLower" );
+                else
+                    anchors[1] = MessageFactory.getStringMessage(locale, "g.AnchorBelowX", new String[]{anchors[2]});
+            }
+
+            // Must come before you set anchor[2]
+            if( anchors[3]==null || anchors[3].isBlank() )
+            {
+                if( anchors[2]==null || anchors[2].isBlank() )
+                    anchors[3] = MessageFactory.getStringMessage(locale, "g.AnchorHigher" );
+                else
+                    anchors[3] = MessageFactory.getStringMessage(locale, "g.AnchorAboveX", new String[]{anchors[2]});
+            }
+            
+            if( anchors[2]==null || anchors[2].isBlank() )
+                anchors[2] = MessageFactory.getStringMessage(locale, "g.AnchorMiddle" );
+            
+            if( anchors[4]==null || anchors[4].isBlank() )
+                anchors[4] = MessageFactory.getStringMessage(locale, "g.AnchorHighest" );
+        }   
 
         // If Discrete, use five choices.
         if(discrete )
@@ -643,22 +768,12 @@ public class RaterRefUtils extends BaseRefUtils
             SelectItem si;
             for( int i=0;i<5;i++ )
             {
-                si= new SelectItem( ((float)(vals[i])), "   " );
+                si= new SelectItem( ((float)(vals[i])), anchors[i] );
                 if( i==2 && noMiddle )
                     si.setDisabled(true);
 
                 out.add( si );
             }
-            //out.add( new SelectItem( ((float)(1.0)), "   " ) );
-            //out.add( new SelectItem( ((float)(3.25)), "   " ) );
-
-            //ss = new SelectItem( ((float)(5.5)), "   " );
-            //if( noMiddle )
-            //    ss.setDisabled(true);
-            //out.add( ss );
-
-            //out.add( new SelectItem( ((float)(7.75)), "   " ) );
-            //out.add( new SelectItem( ((float)(10.0)), "   " ) );
         }
 
         // Not discrete, this must be MSIE or Accessible
@@ -668,7 +783,7 @@ public class RaterRefUtils extends BaseRefUtils
             SelectItem si;
             for( int i=0;i<vals.length;i++ )
             {
-                si= new SelectItem( ((float)(vals[i])), " " );
+                si= new SelectItem( ((float)(vals[i])), anchors[i] );
 
                 if( noMiddle && ratingScale.getIsDefault() && (i==4 || i==5) )
                     si.setDisabled(true);
@@ -903,7 +1018,7 @@ public class RaterRefUtils extends BaseRefUtils
             return false;
 
         if( refBean.getRefUserType().getIsRater() )
-            return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
+            return refBean.getRcCheck().getRcCheckType().getIsPrehire() && refBean.getRcCheck().getAskForReferrals()==1 && refBean.getRefUserType().getIsRater() && refBean.getRcCheck().getRcRater()!=null; //  && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
         
         // Candidate
         else

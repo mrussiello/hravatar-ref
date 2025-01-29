@@ -5,188 +5,203 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
-<body>
+    <body>
 
-<ui:composition template="#{corpBean.template}">
+        <ui:composition template="#{corpBean.template}">
 
-<ui:define name="headspec">
-    
-    <script type="text/javascript">
-                
-        function copyUrltoClipboard( txt )
-        {
-            if( txt )
-            {
-                var ele = document.createElement( 'textarea' );
-                var es = ele.style;
-                es.rows=1;
-                es.cols=1;
-                es.opacity=0.1;
-                ele.value=txt;
-                var par = document.getElementById('thetextspan');
-                par.appendChild(ele);
+            <ui:define name="headspec">
 
-                if( cf5_isIos() )
-                {
-                    var range = document.createRange();
-                    range.selectNodeContents(ele);
-                    selection = window.getSelection();
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    ele.setSelectionRange(0, 999999);
-                }
-                
-                else
-                    ele.select();    
+                <script type="text/javascript">
 
-                document.execCommand('Copy');            
-                ele.blur();
-                par.removeChild( ele );
-                
-                PF('urlcopied').show();               
-            }
-            
-        }
-        
-        function cf5_isIos()
-        {
-            return /iP(hone|od|ad)/.test(navigator.platform);
-        }
-        
-    </script>
-    
-</ui:define>
-    
-    
-<ui:define name="coreinnersection">
+                    function copyUrltoClipboard(txt)
+                    {
+                        if (txt)
+                        {
+                            var ele = document.createElement('textarea');
+                            var es = ele.style;
+                            es.rows = 1;
+                            es.cols = 1;
+                            es.opacity = 0.1;
+                            ele.value = txt;
+                            var par = document.getElementById('thetextspan');
+                            par.appendChild(ele);
 
-    <ref:messages-embedded />
+                            if (cf5_isIos())
+                            {
+                                var range = document.createRange();
+                                range.selectNodeContents(ele);
+                                selection = window.getSelection();
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                                ele.setSelectionRange(0, 999999);
+                            } else
+                                ele.select();
 
-    <h:form prependId="false" >
+                            document.execCommand('Copy');
+                            ele.blur();
+                            par.removeChild(ele);
 
-        <ref:stdforminputs />
-        <ref:noncoreforminputs />
+                            PF('urlcopied').show();
+                        }
 
-        <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-top:2px;padding-bottom:8px">
-            
-            <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPMicrophoneOptional']}" escape="false"/>
-                        
-            <h:panelGroup>
-                <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" alt=""/>
-                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P1']}">
-                    <f:param value="#{refUtils.rcCheckTypeName}"/>
-                </h:outputFormat>
-            </h:panelGroup>
+                    }
 
-            
-            <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P2']}" />
-            
+                    function cf5_isIos()
+                    {
+                        return /iP(hone|od|ad)/.test(navigator.platform);
+                    }
 
-             <h:panelGroup>
-                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P3']}"/>
-                &#160;
-                <h:outputLink tabindex="0" value="https://www.hravatar.com/ta/help/check-camera.xhtml" styleClass="ttformlink" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
-                    <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
-                </h:outputLink>
-             </h:panelGroup>
-             
-             
-            <h:panelGroup>
-                <div style="padding-top:10px">
-                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPUseThisUrlC']}"/>
-                </div>
-            </h:panelGroup>
-            
-            <h:panelGroup>
-                <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard( '#{proctorUtils.fullRestartUrl}' ); ">
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer;word-break:break-all" value="#{proctorUtils.fullRestartUrl}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
-                    &#160;&#160;
-                    <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
-                </div>
-            </h:panelGroup>
+                </script>
 
-            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P2']}">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>           
-            
-            <h:panelGroup>
-                <table style="margin-left:auto;margin-left:auto;padding:4px;padding-top:15px">
-                    <tr>
-                        <td><p:inputText id="cdemailbox" size="24" value="#{proctorBean.email}" placeholder="#{stMessages['g.Email']}"/> 
-                            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="cdemailbox"/>
-                        </td>
-                        <td><p:commandButton ajax="false" action="#{proctorUtils.processEmailDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlEmail']}"/>
-                        </td>
-                    </tr> 
-                    <tr>
-                        <td><p:inputText id="cdmobilebox" size="24" value="#{proctorBean.mobileNum}" placeholder="#{stMessages['g.MobilePhone']}"/>                            
-                            <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="cdmobilebox"/>
-                        </td>
-                        <td><p:commandButton ajax="false" action="#{proctorUtils.processSmsDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlText']}"/>
-                        </td>
-                    </tr> 
-                </table>
-            </h:panelGroup>
-            
-
-            <h:panelGroup>
-                <div style="text-align:center;padding-top:40px">
-                    <div style="display:inline-block">
-                        <p:commandButton ajax="false" action="#{proctorUtils.processContinueWithoutMicrophone}" value="#{stMessages['g.PPT.ContinueNoMicrophone']}" title="#{stMessages['g.PPT.ContinueNoMicrophoneAlt']}"/>
-                        &#160;
-                        <p:button value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}" onclick="PF('exitcheckconfirm').show(); return false"/>
-                    </div>                    
-                </div>
-            </h:panelGroup>
-            
-            <h:panelGroup>
-                <div style="text-align:center;padding-top:10px">
-                    <h:commandLink tabindex="0" action="#{proctorUtils.processCheckForCameraAgain}" styleClass="ttformlink" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
-                        <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
-                    </h:commandLink>
-                </div>                
-            </h:panelGroup>
-            
-
-        </h:panelGrid>
-
-    <div id="thetextspan"></div>
-    
-    <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;margin-left:2px;margin-right:2px">
-        <div role="status">
-        <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
-                <f:param value="#{refUtils.rcCheckTypeName}"/>
-            </h:outputFormat>
-        </p>
-        
-        <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
-        </div>
-    </p:dialog>
-    
-        <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
-            <h:panelGrid columns="1" cellpadding="4">
-                <h:outputFormat value="#{stMessages['g.ExitConfirm.P1.camerachange']}" >
-                    <f:param value="#{refUtils.rcCheckTypeName}" />
-                </h:outputFormat>
-                
-                <h:outputText value="#{stMessages['g.ExitConfirm.P2.camerachange']}" />
-
-                <h:panelGroup>
-                    <p:commandButton style="margin-bottom:5px" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
-                        &#160;
-                        <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF( 'exitcheckconfirm' ).hide()" title="#{stMessages['g.CancelInfo']}"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-        </p:dialog>
-    
-    
-    </h:form>
+            </ui:define>
 
 
+            <ui:define name="coreinnersection">
 
-</ui:define>
+                <ref:messages-embedded />
 
-</ui:composition>
+                <h:form prependId="false" >
 
-</body>
+                    <ref:stdforminputs />
+                    <ref:noncoreforminputs />
+
+                    <h:panelGrid columns="1" cellpadding="6" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left:auto;margin-right:auto;padding-top:2px;padding-bottom:8px">
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="textverylarge textbold ttboldtitle" value="#{stMessages['g.PPMicrophoneOptional']}" escape="false"/>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <h:graphicImage library="images" name="error-64.png" style="float:right;margin-left:15px;margin-bottom:15px;margin-right:20px" alt=""/>
+                            <span tabindex="0">
+                                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P1']}">
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                </h:outputFormat>
+                            </span>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P2']}" />
+                            </span>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPMicrophoneOptional.P3']}"/>
+                            </span>
+                            &#160;
+                            <h:outputLink tabindex="0" value="https://www.hravatar.com/ta/help/check-camera.xhtml" styleClass="ttformlink" target="_blank" title="#{stMessages['g.PPCameraTroubleshootAlt']}">
+                                <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" value="#{stMessages['g.PPCameraTroubleshoot']}"/>
+                            </h:outputLink>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup>
+                            <div style="padding-top:10px" tabindex="0">
+                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.PPUseThisUrlC']}"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <div style="text-align:center;padding-top:10px;padding-bottom:10px" onclick="copyUrltoClipboard('#{proctorUtils.fullRestartUrl}');" tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold;text-decoration: underline;cursor:pointer;word-break:break-all" value="#{proctorUtils.fullRestartUrl}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                                &#160;&#160;
+                                <h:outputText styleClass="ttformtext" style="text-decoration: underline;cursor:pointer" value="#{stMessages['g.ClickToCopy']}" title="#{stMessages['g.ClickToCopy']}" escape="false"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.PPCameraRequired.P2']}">
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                </h:outputFormat>
+                            </span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <table style="margin-left:auto;margin-left:auto;padding:4px;padding-top:15px">
+                                <tr>
+                                    <td><p:inputText id="cdemailbox" size="24" value="#{proctorBean.email}" placeholder="#{stMessages['g.Email']}"/>
+                                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.Email']}" for="cdemailbox"/>
+                                    </td>
+                                    <td><p:commandButton ajax="false" action="#{proctorUtils.processEmailDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlEmail']}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><p:inputText id="cdmobilebox" size="24" value="#{proctorBean.mobileNum}" placeholder="#{stMessages['g.MobilePhone']}"/>
+                                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.MobilePhone']}" for="cdmobilebox"/>
+                                    </td>
+                                    <td><p:commandButton ajax="false" action="#{proctorUtils.processSmsDeviceChangeRestartUrl}" value="#{stMessages['g.PPSendUrlText']}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </h:panelGroup>
+
+
+                        <h:panelGroup>
+                            <div style="text-align:center;padding-top:40px">
+                                <div style="display:inline-block">
+                                    <p:commandButton ajax="false" action="#{proctorUtils.processContinueWithoutMicrophone}" value="#{stMessages['g.PPT.ContinueNoMicrophone']}" title="#{stMessages['g.PPT.ContinueNoMicrophoneAlt']}"/>
+                                    &#160;
+                                    <p:button value="#{stMessages['g.PPT.StopForNow']}" title="#{stMessages['g.PPT.StopForNowAlt']}" onclick="PF('exitcheckconfirm').show();
+                                return false"/>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <div style="text-align:center;padding-top:10px">
+                                <h:commandLink tabindex="0" action="#{proctorUtils.processCheckForCameraAgain}" styleClass="ttformlink" title="#{stMessages['g.PPT.CheckCameraAgainInfo']}">
+                                    <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" value="#{stMessages['g.PPT.CheckCameraAgain']}"/>
+                                </h:commandLink>
+                            </div>
+                        </h:panelGroup>
+
+
+                    </h:panelGrid>
+
+                    <div id="thetextspan"></div>
+
+                    <p:dialog closable="true" closeOnEscape="true" header="#{stMessages['g.MulUrlCopiedToClpbd']}" widgetVar="urlcopied" minHeight="100" style="max-width:550px;margin-left:2px;margin-right:2px">
+                        <div role="status">
+                            <p style="text-align:left"><h:outputFormat value="#{stMessages['g.PPUrlCopiedToClpbdP1']}">
+                                    <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                </h:outputFormat>
+                            </p>
+
+                            <p:commandButton value="#{stMessages['g.Close']}" type="button" onclick="PF('urlcopied').hide()"/>
+                        </div>
+                    </p:dialog>
+
+                    <p:dialog modal="true" header="#{stMessages['g.ExitConfirm']}" style="max-width:550px;font-size:1.3rem;margin-left:2px;margin-right:2px" widgetVar="exitcheckconfirm" closeOnEscape="true" closable="true" showEffect="fade" hideEffect="fade">
+                        <h:panelGrid columns="1" cellpadding="4">
+                            <h:outputFormat value="#{stMessages['g.ExitConfirm.P1.camerachange']}" >
+                                <f:param value="#{refUtils.rcCheckTypeName}" />
+                            </h:outputFormat>
+
+                            <h:outputText value="#{stMessages['g.ExitConfirm.P2.camerachange']}" />
+
+                            <h:panelGroup>
+                                <p:commandButton style="margin-bottom:5px" ajax="false" action="#{proctorUtils.processStopProcessForNow}" value="#{stMessages['g.ExitConfirmYes']}" title="#{stMessages['g.ExitConfirmYesInfo']}"/>
+                                &#160;
+                                <p:button style="margin-bottom:5px" value="#{stMessages['g.Cancel']}" onclick="return PF('exitcheckconfirm').hide()" title="#{stMessages['g.CancelInfo']}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:dialog>
+
+
+                </h:form>
+
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
 </html>

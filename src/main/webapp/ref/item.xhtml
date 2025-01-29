@@ -10,7 +10,7 @@
         <ui:define name="titletag">
             <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.RatingQ']}"/>
                 <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.RatingQ']}"/></title>
-        </ui:define>      
+        </ui:define>
 
         <ui:define name="headspec">
 
@@ -24,62 +24,62 @@
                     text-align:left;
                 }
             </style>
-            
+
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isButton}">
-                <ref:item-button-head />    
+                <ref:item-button-head />
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRadio}">
-                <ref:item-radio-head />    
+                <ref:item-radio-head />
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRating and not raterRefBean.rcItem.rcItemFormatType.isCommentsOnly}">
                 <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB or facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive}">
-                    <ref:item-rating-head-msie />    
+                    <ref:item-rating-head-msie />
                 </ui:fragment>
                 <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
-                    <ref:item-rating-head /> 
-                </ui:fragment>    
+                    <ref:item-rating-head />
+                </ui:fragment>
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isCheckbox}">
-                <ref:item-checkbox-head />    
-            </ui:fragment>    
+                <ref:item-checkbox-head />
+            </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isCommentsOnly}">
                 <ref:item-commentsonly-head />
-            </ui:fragment> 
+            </ui:fragment>
 
         </ui:define>
 
-        <ui:define name="coreinnersection">            
-            
+        <ui:define name="coreinnersection">
+
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isButton}">
-                <ref:item-button-body />    
+                <ref:item-button-body />
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRadio}">
-                <ref:item-radio-body />    
+                <ref:item-radio-body />
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isRating}">
-                <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and (facesUtils.isMsieOrSamsungAndroid or refBean.accessibleActive)}">
-                    <ref:item-rating-body-msie />    
+                <ui:fragment rendered="#{refBean.accessibleActive or facesUtils.isMsieOrSamsungAndroid}">
+                    <ref:item-rating-body-msie />
                 </ui:fragment>
-                <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">            
-                    <ref:item-rating-body />    
+                <ui:fragment rendered="#{not refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
+                    <ref:item-rating-body />
                 </ui:fragment>
-                <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB}">
-                    <ref:item-rating-body-discrete />    
+                <ui:fragment rendered="#{refBean.rcCheck.rcScript.useDiscreteRatingsB and not facesUtils.isMsieOrSamsungAndroid and not refBean.accessibleActive}">
+                    <ref:item-rating-body-discrete />
                 </ui:fragment>
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isCheckbox}">
-                <ref:item-checkbox-body />    
+                <ref:item-checkbox-body />
             </ui:fragment>
 
             <ui:fragment rendered="#{raterRefBean.rcItem.rcItemFormatType.isCommentsOnly}">
-                <ref:item-commentsonly-body />    
+                <ref:item-commentsonly-body />
             </ui:fragment>
 
         </ui:define>

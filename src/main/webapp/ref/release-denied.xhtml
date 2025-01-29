@@ -35,15 +35,19 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.ReleaseDenied']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:0px;margin:0 auto">
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ReleaseDenied.P1']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ReleaseDenied.P1']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                             <p:outputLabel styleClass="ttformtext" value="#{stMessages['g.ReleaseDenied.P2']}" escape="false" for="rfreldenreason"/>
 

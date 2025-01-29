@@ -36,14 +36,14 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.XCThankYou']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
                             <h:panelGroup>
-                                <div style="margin-top:20px">
+                                <div style="margin-top:20px" tabindex="0">
                                     <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCThankYou.P1']}" escape="false">
                                         <f:param value="#{refUtils.rcCheckTypeName}"/>
                                     </h:outputFormat>

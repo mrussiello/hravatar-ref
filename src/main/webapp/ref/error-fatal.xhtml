@@ -13,7 +13,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Error']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Error']}"/></title>
-            </ui:define>      
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -22,7 +22,7 @@
                     {
                         vertical-align: middle;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -38,30 +38,42 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText  value="#{stMessages['g.ErrorFatal']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P1']}">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P1']}">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P2']}">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P2']}">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
-                            <h:outputFormat rendered="#{fn:length(refBean.strParam1) gt 0}" styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P3']}">
-                                <f:param value="#{refBean.strParam1}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat rendered="#{fn:length(refBean.strParam1) gt 0}" styleClass="ttformtext" value="#{stMessages['g.ErrorFatal.P3']}">
+                                        <f:param value="#{refBean.strParam1}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
 
                         </h:panelGrid>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:10px;margin:0 auto">
                             <h:panelGroup>
-                                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>                              
+                                <p:commandButton ajax="false" action="#{refUtils.processExitCheck}" value="#{stMessages['g.Exit']}"/>
                             </h:panelGroup>
 
                         </h:panelGrid>

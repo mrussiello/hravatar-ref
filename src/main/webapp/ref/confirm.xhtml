@@ -30,7 +30,7 @@
                         font-weight:normal;
                     }
 
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -45,26 +45,31 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.Welcome']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 
                             <h:panelGroup rendered="#{refBean.rcCheck.testKeyId gt 0 and refUtils.booleanParam1}">
-                                <h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.XCFmTestMsg.P0']}"/>&#160;    
-                                <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCFmTestMsg.P1']}"/>                
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.XCFmTestMsg.P0']}"/>&#160;
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCFmTestMsg.P1']}"/>
+                                </span>
                             </h:panelGroup>
 
-                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCConfirm.P1']}" escape="false">
-                                <f:param value="#{refBean.refUser.fullname}"/>
-                                <f:param value="#{refBean.rcCheck.org.name}"/>
-                            </h:outputFormat>
-                            <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XCConfirm.P1.employee']}" escape="false">
-                                <f:param value="#{refBean.refUser.fullname}"/>
-                                <f:param value="#{refBean.rcCheck.org.name}"/>
-                            </h:outputFormat>
-
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isPrehire}" styleClass="ttformtext" value="#{stMessages['g.XCConfirm.P1']}" escape="false">
+                                        <f:param value="#{refBean.refUser.fullname}"/>
+                                        <f:param value="#{refBean.rcCheck.org.name}"/>
+                                    </h:outputFormat>
+                                    <h:outputFormat rendered="#{refBean.rcCheck.rcCheckType.isEmployeeFeedback}" styleClass="ttformtext" value="#{stMessages['g.XCConfirm.P1.employee']}" escape="false">
+                                        <f:param value="#{refBean.refUser.fullname}"/>
+                                        <f:param value="#{refBean.rcCheck.org.name}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 

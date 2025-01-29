@@ -22,7 +22,7 @@
 
         <div style="padding-right:10px;padding-top:5px;padding-left:20px;max-width:800px;margin-left: auto;margin-right: auto;padding-bottom:6px">
 
-            <p>
+            <p tabindex="0">
                 <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.title']}"/>
             </p>
 
@@ -38,9 +38,17 @@
 
             <h:panelGrid columns="1" cellpadding="10" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:8px;padding-bottom:8px">
 
-                <h:outputText styleClass="ttformtext" value="#{stMessages['g.CamCheck.P1']}" />
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.CamCheck.P1']}" />
+                    </span>
+                </h:panelGroup>
 
-                <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P0.title']}" />
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P0.title']}" />
+                    </span>
+                </h:panelGroup>
 
                 <h:panelGroup>
                     <div style="text-align:center">
@@ -60,7 +68,7 @@
                         </div>
 
                         <div style="clear:both;text-align:left">
-                            <span class="ttformtext" id="tex"></span>
+                            <span class="ttformtext" id="tex" tabindex="0"></span>
                         </div>
                     </div>
                 </h:panelGroup>
@@ -69,12 +77,20 @@
 
             <h:panelGrid columns="1" cellspacing="3"  style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
 
-                <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P3.title']}" />
-
-                <h:outputText styleClass="ttformtext" value="#{stMessages['g.CamCheck.P3']}" />
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P3.title']}" />
+                    </span>
+                </h:panelGroup>
 
                 <h:panelGroup>
-                    <ol>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.CamCheck.P3']}" />
+                    </span>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <ol tabindex="0">
                         <li class="ttformtext">
                             <h:outputText styleClass="ttformtext" value="#{stMessages['g.CamCheck.P3.a']}" escape="false"/>
                         </li>
@@ -97,84 +113,128 @@
                     </ol>
                 </h:panelGroup>
 
-                <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P2.title']}" />
-
-                <h:panelGrid columns="2" cellspacing="0" cellpadding="1" style="margin-left: 0;margin-right: auto;padding-bottom:30px" columnClasses="devinfocola,devinfocolb">
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.a']}:" />
-                    <h:panelGroup>
-                        <span id="camerasupported" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.b']}:" />
-                    <h:panelGroup>
-                        <span id="videocapturesupported" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.c']}:" />
-                    <h:panelGroup>
-                        <span id="useragent" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.d']}:" />
-                    <h:panelGroup>
-                        <span id="platform" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.e']}:" />
-                    <h:panelGroup>
-                        <span id="getusermedia" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.f']}:" />
-                    <h:panelGroup>
-                        <span id="mediarecorder" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.g']}:" />
-                    <h:panelGroup>
-                        <span id="mediasource" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.h']}:" />
-                    <h:panelGroup>
-                        <span id="windoworientation" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                </h:panelGrid>
-
                 <h:panelGroup>
-                    <div style="padding-top:12px;padding-bottom:8px">
-                        <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold" value="#{stMessages['g.CamCheck.P2.selecttitle']}" />
-                    </div>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:1.5rem" value="#{stMessages['g.CamCheck.P2.title']}" />
+                    </span>
                 </h:panelGroup>
 
-                <h:panelGrid columns="2" cellspacing="0" cellpadding="1" style="margin-left: 0;margin-right: auto;padding-bottom:30px" columnClasses="devinfocola,devinfocolb">
+                    <h:panelGrid columns="2" cellspacing="0" cellpadding="1" style="margin-left: 0;margin-right: auto;padding-bottom:30px" columnClasses="devinfocola,devinfocolb">
 
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.i']}:" />
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.a']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="camerasupported" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.b']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="videocapturesupported" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.c']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="useragent" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.d']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="platform" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.e']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="getusermedia" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.f']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="mediarecorder" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.g']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="mediasource" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.h']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="windoworientation" style="font-size:1.2rem" class="ttformtext" tabindex="0"></span>
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+
                     <h:panelGroup>
-                        <span id="cameradevices" style="font-size:1.2rem" class="ttformtext"></span>
-                    </h:panelGroup>
-
-                    <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.j']}:" />
-                    <h:panelGroup>
-                        <div id="microphonedevices" style="font-size:1.2rem" class="ttformtext"></div>
-                    </h:panelGroup>
-
-                </h:panelGrid>
-
-                <h:panelGroup>
-                    <div style="text-align: center">
-                        <div style="display:inline-block">
-                            <h:panelGroup>
-                                <p:commandButton rendered="#{proctorUtils.photosOptional}" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.CrpHlp.6.s.p2optional.link']}" value="#{stMessages['g.CrpHlp.6.s.p2optional.link']}"/>
-                            </h:panelGroup>
-                            &#160;&#160;
-                            <p:commandButton rendered="#{not corpBean.directCameraHelp}" pt:aria-keyshortcuts="Escape" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlpExitAlt' ]}" value="#{stMessages[ 'g.Exit' ]}"/>
-                            <p:commandButton rendered="#{corpBean.directCameraHelp}" pt:aria-keyshortcuts="Escape" action="#{corpUtils.processHelpExit}" ajax="false" title="#{stMessages[ 'g.CrpHlpExitAlt' ]}" value="#{stMessages[ 'g.Exit' ]}"/>
+                        <div style="padding-top:12px;padding-bottom:8px" tabindex="0">
+                            <h:outputText styleClass="ttformtext" style="font-size:1.2rem;font-weight:bold" value="#{stMessages['g.CamCheck.P2.selecttitle']}" />
                         </div>
-                    </div>
-                </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:panelGrid columns="2" cellspacing="0" cellpadding="1" style="margin-left: 0;margin-right: auto;padding-bottom:30px" columnClasses="devinfocola,devinfocolb">
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.i']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <span id="cameradevices" style="font-size:1.2rem" class="ttformtext"></span>
+                        </h:panelGroup>
+
+                        <h:panelGroup>
+                            <span tabindex="0">
+                                <h:outputText styleClass="ttformtext" style="font-size:1.2rem" value="#{stMessages['g.CamCheck.P2.j']}:" />
+                            </span>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <div id="microphonedevices" style="font-size:1.2rem" class="ttformtext"></div>
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+
+                    <h:panelGroup>
+                        <div style="text-align: center">
+                            <div style="display:inline-block">
+                                <h:panelGroup>
+                                    <p:commandButton rendered="#{proctorUtils.photosOptional}" ajax="false" action="#{proctorUtils.processContinueWithoutCamera}" title="#{stMessages['g.CrpHlp.6.s.p2optional.link']}" value="#{stMessages['g.CrpHlp.6.s.p2optional.link']}"/>
+                                </h:panelGroup>
+                                &#160;&#160;
+                                <p:commandButton rendered="#{not corpBean.directCameraHelp}" pt:aria-keyshortcuts="Escape" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlpExitAlt' ]}" value="#{stMessages[ 'g.Exit' ]}"/>
+                                <p:commandButton rendered="#{corpBean.directCameraHelp}" pt:aria-keyshortcuts="Escape" action="#{corpUtils.processHelpExit}" ajax="false" title="#{stMessages[ 'g.CrpHlpExitAlt' ]}" value="#{stMessages[ 'g.Exit' ]}"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
 
             </h:panelGrid>
 

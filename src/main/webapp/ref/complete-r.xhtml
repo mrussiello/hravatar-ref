@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Complete']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Complete']}"/></title>
-            </ui:define>    
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -21,7 +21,7 @@
                     {
                         vertical-align: middle;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -36,19 +36,23 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" value="#{stMessages['g.XCComplete']}"/>
                             <h:outputText rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" value="#{stMessages['g.XRQuestionsComplete']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputFormat rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
-                            <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XRQuestionsComplete.P1']}" escape="false">
-                                <f:param value="#{refUtils.rcCheckTypeName}"/>
-                            </h:outputFormat>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputFormat rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XCComplete.P1']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                    <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}" styleClass="ttformtext" value="#{stMessages['g.XRQuestionsComplete.P1']}" escape="false">
+                                        <f:param value="#{refUtils.rcCheckTypeName}"/>
+                                    </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 

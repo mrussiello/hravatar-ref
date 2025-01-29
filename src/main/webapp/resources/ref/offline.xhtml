@@ -8,48 +8,58 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 
-<!-- INTERFACE -->
-<cc:interface>
-<!-- <cc:attribute name="value" required="false"/> -->
-</cc:interface>
+    <!-- INTERFACE -->
+    <cc:interface>
+        <!-- <cc:attribute name="value" required="false"/> -->
+    </cc:interface>
 
-<!-- IMPLEMENTATION -->
-<cc:implementation>
-<!-- cc.attrs.value -->
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- cc.attrs.value -->
 
 
-       
+
 
         <h:panelGrid cellpadding="6" columns="1" style="padding-left:10px;padding-right:10px;max-width:800px;padding-top:5px;margin-top:20px;margin-left:auto;margin-right:auto">
 
-            <h:panelGroup>
-                <p:messages showDetail="false"><p:autoUpdate /></p:messages>
+            <h:panelGroup rendered="#{facesUtils.hasMessages}">
+                <div tabindex="0">
+                    <p:messages showDetail="false"><p:autoUpdate /></p:messages>
+                </div>
             </h:panelGroup>
 
             <h:panelGroup>
                 <div style="text-align: center;padding-bottom:12px">
-                <div style="display:inline-block;margin-left:auto;margin-right:auto">
-                <h:graphicImage library="images" name="maintenance.png" alt=""/>                
-                </div>
+                    <div style="display:inline-block;margin-left:auto;margin-right:auto">
+                        <h:graphicImage library="images" name="maintenance.png" alt=""/>
+                    </div>
                 </div>
             </h:panelGroup>
-            
-            <h:outputText styleClass="textverylarge textbold  ttboldtitle" value="#{stMessages[ 'g.SystemTempOffline' ]}"/>
 
-            <h:outputText styleClass="textmedium ttformtext"  value="#{stMessages[ 'g.TryAgainFewMins' ]}"/>
+            <h:panelGroup>
+                <span tabindex="0">
+                    <h:outputText styleClass="textverylarge textbold  ttboldtitle" value="#{stMessages[ 'g.SystemTempOffline' ]}"/>
+                </span>
+            </h:panelGroup>
+
+            <h:panelGroup>
+                <span tabindex="0">
+                    <h:outputText styleClass="textmedium ttformtext"  value="#{stMessages[ 'g.TryAgainFewMins' ]}"/>
+                </span>
+            </h:panelGroup>
 
             <h:panelGroup>
                 <div style="text-align: center">
-                <h:outputLink tabindex="0" styleClass="textmedium ttformlink" value="javascript:window.location.reload()" title="#{stMessages['g.TryAgain']}">
-                    <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.TryAgain']}"/>
-                </h:outputLink>
+                    <h:outputLink tabindex="0" styleClass="textmedium ttformlink" value="javascript:window.location.reload()" title="#{stMessages['g.TryAgain']}">
+                        <h:outputText styleClass="pflinktext textmedium anylink ttformlink" value="#{stMessages['g.TryAgain']}"/>
+                    </h:outputLink>
                 </div>
             </h:panelGroup>
 
-            </h:panelGrid>
+        </h:panelGrid>
 
 
-</cc:implementation>
+    </cc:implementation>
 
 
 </html>

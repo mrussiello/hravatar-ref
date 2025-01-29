@@ -144,7 +144,7 @@ public class FileXferUtils
             // LogService.logIt( "FileXferUtils.fileExistsAws " + targetKey + ", bucket=" + bucketType.getBucket() + ", baseKey=" + bucketType.getBaseKey() );
             HeadObjectResponse result = getS3Client(bucketType.getBucketRegion(), true).headObject(hor);
             
-            LogService.logIt( "FileXferUtils.fileExistsAws " + targetKey + ", bucket=" + bucketType.getBucket() + ", baseKey=" + bucketType.getBaseKey() + ", result=" + result.toString() );
+            // LogService.logIt( "FileXferUtils.fileExistsAws " + targetKey + ", bucket=" + bucketType.getBucket() + ", baseKey=" + bucketType.getBaseKey() + ", result=" + result.toString() );
             return true;
         } 
         catch (S3Exception e) 
@@ -242,47 +242,6 @@ public class FileXferUtils
             LogService.logIt(e, "FileXferUtils.getPresignedUrlAws() " + key);
             throw new STException(e);
         }
-
-        /*
-        BucketType bucketType = BucketType.getValue(bucketTypeId);
-
-        // initAwsTransferManager();
-
-        String targetKey = null;
-
-        try
-        {
-            if( targetDirectory.startsWith( "/" ) )
-                targetDirectory = targetDirectory.substring( 1, targetDirectory.length() );
-
-            targetKey = ( frcBaseKey==null || frcBaseKey.isBlank() ? bucketType.getBaseKey() : frcBaseKey) + targetDirectory  + "/" + targetFilename;
-
-            LogService.logIt( "FileXferUtils.getPresignedUrlAws() " + bucketType.getBucket() + "/" + targetKey );
-
-            // LogService.logIt( "FileXferUtils.fileExistsAws " + targetKey + ", bucket=" + bucketType.getBucket() + ", baseKey=" + bucketType.getBaseKey() );
-
-            S3Client amazonS3 = getS3Client(bucketType.getBucketRegion(), true ); // getAmazonS3Client(bucketType, bucketType.getBucketRegion());
-
-            Calendar cal = new GregorianCalendar();
-            cal.add( Calendar.MINUTE, minutes );
-            java.util.Date expiration = cal.getTime();
-
-            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest( bucketType.getBucket(), targetKey)
-                            .withMethod(HttpMethod.GET)
-                            .withExpiration(expiration);
-            URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-
-            LogService.logIt("FileXferUtils.getPresignedUrlAws() " + targetKey + ", minutes=" + minutes + ", " + url.toString() );
-            return url.toString();
-        }
-        catch( Exception e )
-        {
-            LogService.logIt( e, "FileXferUtils.getPresignedUrlAws() " + targetKey );
-            throw new STException(e);
-        }
-        */
-
     }
 
 

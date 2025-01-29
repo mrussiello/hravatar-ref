@@ -20,7 +20,7 @@
 
         <div style="padding-left:10px;padding-right:10px;max-width:800px;padding-top:5px;margin-left: auto;margin-right: auto;padding-bottom:0px">
 
-            <p>
+            <p tabindex="0">
                 <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:20pt" value="#{stMessages['g.IfHavingTrouble']}"/>
             </p>
 
@@ -36,15 +36,25 @@
 
             <h:panelGrid columns="1" cellpadding="10" style="padding-left:10px;padding-right:10px;max-width:800px;margin-left: auto;margin-right: auto;padding-top:2px;padding-bottom:8px">
 
-                <h:outputText styleClass="ttformtext" value="#{stMessages[ 'g.IfHavingTroubleP1' ]}"/>
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttformtext" value="#{stMessages[ 'g.IfHavingTroubleP1' ]}"/>
+                    </span>
+                </h:panelGroup>
 
-                <h:outputText styleClass="textverylarge textbold ttboldtitle" style="font-weight:bold;font-size:18pt" value="#{stMessages['g.CommonIssues']}"/>
+                <h:panelGroup>
+                    <span tabindex="0">
+                        <h:outputText styleClass="textverylarge textbold ttboldtitle" style="font-weight:bold;font-size:18pt" value="#{stMessages['g.CommonIssues']}"/>
+                    </span>
+                </h:panelGroup>
 
 
                 <h:panelGroup rendered="#{refBean.usesCameraOrMicrophone}" >
-                    <div style="padding-bottom: 8px"><h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.CrpHlp.6.p']}"/>
+                    <div tabindex="0">
+                        <div style="padding-bottom: 8px"><h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.CrpHlp.6.p']}"/>
+                        </div>
+                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.CrpHlp.6.s']}" escape="false"/>
                     </div>
-                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.CrpHlp.6.s']}" escape="false"/>
                     <br />
                     <div style="text-align: center;margin-top:18px;margin-bottom:2px">
                         <p:commandButton pt:aria-keyshortcuts="F2" action="#{corpUtils.processViewCameraHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlp.6.s.linktitle' ]}" value="#{stMessages[ 'g.CrpHlp.6.s.linktext' ]}"/>
@@ -54,15 +64,19 @@
 
 
                 <h:panelGroup>
-                    <div style="padding-bottom: 8px"><h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.CrpHlp.1.p']}"/>
+                    <div tabindex="0">
+                        <div style="padding-bottom: 8px"><h:outputText styleClass="ttformtext" style="font-weight:bold" value="#{stMessages['g.CrpHlp.1.p']}"/>
+                        </div>
+                        <h:outputText styleClass="ttformtext" value="#{stMessages['g.CrpHlp.1.s']}" escape="false"/>
                     </div>
-                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.CrpHlp.1.s']}" escape="false"/>
                 </h:panelGroup>
 
 
                 <h:panelGroup>
                     <br />
-                    <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:18pt" value="#{stMessages['g.ContactUs']}"/>
+                    <span tabindex="0">
+                        <h:outputText styleClass="ttboldtitle" style="font-weight:bold;font-size:18pt" value="#{stMessages['g.ContactUs']}"/>
+                    </span>
                 </h:panelGroup>
 
                 <h:outputLink tabindex="0" styleClass="ttformlink" title="#{stMessages['g.ContactUsInfo']}" value="#{corpBean.contactUsUrl}" target="_blank">

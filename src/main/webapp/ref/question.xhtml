@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Question']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Question']}"/></title>
-            </ui:define>      
+            </ui:define>
 
 
             <ui:define name="headspec">
@@ -21,7 +21,7 @@
                     {
                         vertical-align: middle;
                     }
-                </style> 
+                </style>
                 <script type="text/javascript">
                     //<![CDATA[
 
@@ -41,7 +41,7 @@
                         doLocalPageOnUnload();
                     });
 
-                    // ]]>        
+                    // ]]>
                 </script>
             </ui:define>
 
@@ -56,7 +56,7 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputFormat value="#{stMessages['g.XCQuestionXofY']}">
                                 <f:param value="#{candidateRefUtils.candidateQuestionNumber}"/>
                                 <f:param value="#{candidateRefUtils.candidateTotalQuestionCount}"/>
@@ -65,7 +65,11 @@
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputText styleClass="ttformtext" value="#{candidateRefUtils.candidateInputQuestionXhtml}" escape="false"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{candidateRefUtils.candidateInputQuestionXhtml}" escape="false"/>
+                                </span>
+                            </h:panelGroup>
 
                             <h:panelGroup>
                                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">

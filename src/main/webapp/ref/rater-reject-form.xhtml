@@ -40,21 +40,33 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.RaterReject']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass" cellpadding="3" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                             <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.RaterReject.P1']}">
                                 <f:param value="#{refUtils.rcCheckTypeName}" />
                             </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                             <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.RaterReject.P2']}">
                                 <f:param value="#{refUtils.rcCheckTypeName}" />
                             </h:outputFormat>
+                                </span>
+                            </h:panelGroup>
 
+                            <h:panelGroup>
+                                <span tabindex="0">
                             <h:outputText styleClass="ttformtext" value="#{stMessages['g.RaterReject.P3']}"/>
+                                </span>
+                            </h:panelGroup>
 
                             <h:panelGroup>
                                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">

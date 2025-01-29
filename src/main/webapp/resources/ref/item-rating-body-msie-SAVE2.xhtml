@@ -52,9 +52,55 @@
                     <h:panelGroup rendered="#{raterRefBean.rcItem.includeNumRatingB}">
                         <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                             <div style="display:inline-block;">
-                                <h:selectOneRadio id="customRadio" value="#{raterRefBean.rcItemWrapper.rcRating.score}" styleClass="prottext stdformlabel ttformlabel hrarbgroup" layout="pageDirection" required="false">
-                                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRatingFullLabels}"/>
-                                </h:selectOneRadio>
+
+                                <div>
+                                    <table id="discreterbtable" style="border-spacing:0px;">
+
+                                        <!-- First Row Anchors -->
+                                        <tr>
+                                            <td class="rpnlcolthumbdown">&#160;
+                                            </td>
+                                            <td class="rplleftside rpnlcol1">
+                                                <h:outputText styleClass="ttformtext " value="#{raterRefBean.rcItem.choice2}"/>
+                                            </td>
+                                            <td class="rpnlcol2">
+                                                <h:outputText styleClass="ttformtext" value="#{raterRefBean.rcItem.choice4}"/>
+                                            </td>
+                                            <td class="rpnlcol3">
+                                                <h:outputText styleClass="ttformtext" value="#{raterRefBean.rcItem.choice3}"/>
+                                            </td>
+                                            <td class="rpnlcol4">
+                                                <h:outputText styleClass="ttformtext" value="#{raterRefBean.rcItem.choice5}"/>
+                                            </td>
+                                            <td class="rplrightside rpnlcol5">
+                                                <h:outputText styleClass="ttformtext" value="#{raterRefBean.rcItem.choice1}"/>
+                                            </td>
+                                            <td class="rpnlcolthumbup">&#160;</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="rpnlcolthumbdown">
+                                                <div style="position:absolute">
+                                                    <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:-5px" alt=""/>
+                                                </div>
+                                            </td>
+                                            <td colspan="5">
+                                                <div style="background-color:#e0e0e0;padding-top:6px;padding-bottom:8px;padding-left:10px;padding-right:10px;border-radius:10px;margin-top:5px">
+                                                    <h:selectOneRadio value="#{raterRefBean.rcItemWrapper.rcRating.score}" layout="lineDirection" required="false" style="width:100%">
+                                                        <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRatingNoLabels}"/>
+                                                    </h:selectOneRadio>
+                                                </div>
+                                            </td>
+                                            <td class="rpnlcolthumbup">
+                                                <div style="position:absolute;width:80px">
+                                                    <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:-5px" alt=""/>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+
+                                </div>
                             </div>
                         </div>
                     </h:panelGroup>

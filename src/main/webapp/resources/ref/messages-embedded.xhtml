@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui">
 
@@ -13,9 +14,11 @@
     <cc:implementation>
         
         <!-- cc.attrs.value -->
-        <div style="padding-left:10px;padding-right:10px;min-width:340px;max-width:800px;width:auto;margin-left: auto;margin-right: auto">
+        <ui:fragment rendered="#{facesUtils.hasMessages}">
+        <div style="padding-left:10px;padding-right:10px;min-width:340px;max-width:800px;width:auto;margin-left: auto;margin-right: auto" tabindex="0">
              <p:messages showDetail="false"><p:autoUpdate /></p:messages>
         </div>
+        </ui:fragment>
             
 
     </cc:implementation>

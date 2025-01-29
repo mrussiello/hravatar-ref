@@ -25,7 +25,7 @@
 
         <ref:messages-embedded />
 
-        <h1 class="pagetitle ttboldtitle">
+        <h1 class="pagetitle ttboldtitle" tabindex="0">
             <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
                 <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
                 <f:param value="#{raterRefUtils.raterQuestionCount}"/>
@@ -51,13 +51,13 @@
 
                 <div role="group" aria-label="#{raterRefUtils.itemQuestionForRaterPlain}">
                 <p:selectOneRadio id="customRadio" value="#{raterRefBean.rcItemWrapper.rcRating.score}" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">
-                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRating}"/>
+                    <f:selectItems value="#{raterRefUtils.rcItemRadioSelectItemListForRatingNoLabels}"/>
                 </p:selectOneRadio>
 
 
                 <div style="text-align: center;padding-top:10px;padding-bottom:10px">
                     <div style="display:inline-block;">
-                    <h:panelGrid columns="7" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown,rplleftside rpnlcol1,rpnlcol2,rpnlcol3,rpnlcol4,rplrightside rpnlcol5,rpnlcolthumbup">
+                    <h:panelGrid columns="7" style="border-spacing:0px;" columnClasses="rpnlcolthumbdown anchthum,rplleftside rpnlcol1 rpnlanchtd,rpnlcol2 rpnlanchtd,rpnlcol3 rpnlanchtd,rpnlcol4 rpnlanchtd,rplrightside rpnlcol5 rpnlanchtd,rpnlcolthumbup anchthum">
 
                     <!-- First Row Anchors -->
                     <h:panelGroup>
@@ -88,19 +88,20 @@
                         <!-- EMPTY -->&#160;
                     </h:panelGroup>
 
+                    </h:panelGrid>
 
-
+                    <h:panelGrid columns="7" style="border-spacing:0px;margin-top:20px" columnClasses="rpnlcolthumbdown,rplleftside rpnlcol1 rpnlcolx5,rpnlcol2 rpnlcolx5,rpnlcol3 rpnlcolx5,rpnlcol4 rpnlcolx5,rplrightside rpnlcol5 rpnlcolx5,rpnlcolthumbup">
 
                     <!-- Second Row -->
                     <h:panelGroup>
-                        <div style="position:absolute">
+                        <div style="position:absolute;height:80px">
                         <img src="/tr/images/thumbsdown-trans.png" style="float:left;width:60px;height:60px;margin-top:-5px" alt=""/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup>
                         <div style="background-color:#e0e0e0;min-width:#{raterRefUtils.discreteRadioDivMinWidth}px">
-                        <p:radioButton  for="customRadio" itemIndex="0"/>
+                        <p:radioButton for="customRadio" itemIndex="0"/>
                         </div>
                     </h:panelGroup>
 
@@ -135,7 +136,7 @@
                     </h:panelGroup>
 
                     <h:panelGroup>
-                        <div style="position:absolute;width:80px">
+                        <div style="position:absolute;width:80px;height:80px">
                         <img src="/tr/images/thumbsup-trans.png" style="float:right;width:60px;height:60px;margin-top:-5px" alt=""/>
                         </div>
                     </h:panelGroup>

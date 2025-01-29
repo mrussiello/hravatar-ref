@@ -12,7 +12,7 @@
             <ui:define name="titletag">
                 <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.ConfirmFailure']}"/>
                     <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.ConfirmFailure']}"/></title>
-            </ui:define>      
+            </ui:define>
 
             <ui:define name="headspec">
                 <style>
@@ -24,7 +24,7 @@
                     {
                         vertical-align: top;
                     }
-                </style>    
+                </style>
             </ui:define>
 
             <ui:define name="coreinnersection">
@@ -39,25 +39,33 @@
 
                         <ref:messages-embedded />
 
-                        <h1 class="pagetitle ttboldtitle">
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
                             <h:outputText value="#{stMessages['g.ConfFail']}"/>
                         </h1>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.P1']}"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.P1']}"/>
+                                </span>
+                            </h:panelGroup>
 
                         </h:panelGrid>
 
                         <h:panelGrid columns="2" columnClasses="topcolclass,pincolclass,pincolclass" cellpadding="3" style="padding-top:25px;padding-bottom:20px;margin:0 auto">
 
-                            <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourName']}:"/>
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.ConfFailForm.YourName']}:"/>
+                                </span>
+                            </h:panelGroup>
 
                             <h:panelGroup>
                                 <p:inputText id="cffirstname" size="15" value="#{refBean.strParam1}" placeholder="#{stMessages['g.FirstName']}"/>
                                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.FirstName']}" for="cffirstname"/>
                                 &#160;
-                                <p:inputText id="cflastname" size="15" value="#{refBean.strParam2}" placeholder="#{stMessages['g.LastName']}"/>                
+                                <p:inputText id="cflastname" size="15" value="#{refBean.strParam2}" placeholder="#{stMessages['g.LastName']}"/>
                                 <p:outputLabel styleClass="sr-only" value="#{stMessages['g.LastName']}" for="cflastname"/>
                             </h:panelGroup>
 

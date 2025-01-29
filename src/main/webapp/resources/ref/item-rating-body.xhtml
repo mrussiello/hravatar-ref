@@ -26,7 +26,7 @@
 
         <ref:messages-embedded />
 
-        <h1 class="pagetitle ttboldtitle">
+        <h1 class="pagetitle ttboldtitle" tabindex="0">
             <h:outputFormat rendered="#{not refBean.rcCheck.rcRater.isCandidateOrEmployee}" value="#{stMessages['g.XCQuestionXofY']}">
                 <f:param value="#{raterRefUtils.raterQuestionNumber}"/>
                 <f:param value="#{raterRefUtils.raterQuestionCount}"/>
@@ -55,25 +55,25 @@
                     <div style="display:inline-block;">
                                       
                     <div id="anchordivouter" class="anchordivouter customanchordivouter">
-                        <div id="lowanchordiv" class="lowanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
+                        <div id="lowanchordiv" class="lowanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px" tabindex="0">
                             <h:outputText value="#{raterRefBean.rcItem.choice2}"/>
                         </div>
                         <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice4) gt 0}">
-                        <div id="lowmedanchordiv" class="lowmedanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
+                        <div id="lowmedanchordiv" class="lowmedanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px" tabindex="0">
                             <h:outputText value="#{raterRefBean.rcItem.choice4}"/>
                         </div>
                         </ui:fragment>
                         <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice3) gt 0}">
-                        <div id="medanchordiv" class="medanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
+                        <div id="medanchordiv" class="medanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px" tabindex="0">
                             <h:outputText value="#{raterRefBean.rcItem.choice3}"/>
                         </div>
                         </ui:fragment>
                         <ui:fragment rendered="#{fn:length(raterRefBean.rcItem.choice5) gt 0}">
-                        <div id="medhighanchordiv" class="medhighanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
+                        <div id="medhighanchordiv" class="medhighanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px" tabindex="0">
                             <h:outputText value="#{raterRefBean.rcItem.choice5}"/>
                         </div>
                         </ui:fragment>
-                        <div id="highanchordiv" class="highanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px">
+                        <div id="highanchordiv" class="highanchordiv prottext ttformtext customanchordiv" style="width:#{raterRefBean.rcItem.anchorwidthPix}px" tabindex="0">
                             <h:outputText value="#{raterRefBean.rcItem.choice1}"/>
                         </div>
                     </div>

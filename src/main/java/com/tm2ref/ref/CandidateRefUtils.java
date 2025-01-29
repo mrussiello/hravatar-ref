@@ -837,7 +837,7 @@ public class CandidateRefUtils extends BaseRefUtils
 
             refBean.setRefPageType( RefPageType.CORE3 );
             RefPageType rpt = getPreviousPageTypeForRefProcess();
-            LogService.logIt( "CandidateRefUtils.processReferencesGoBack() BBB new RefPageType=" + rpt.getName() + ", rcCheck "  + (rc==null ? "null" : rc.toStringShort() ));
+            // LogService.logIt( "CandidateRefUtils.processReferencesGoBack() BBB new RefPageType=" + rpt.getName() + ", rcCheck "  + (rc==null ? "null" : rc.toStringShort() ));
             refBean.setRefPageType(rpt);
 
             if( rpt.getIsCore() && rc.getRcScript().getHasAnyCandidateInput() )
