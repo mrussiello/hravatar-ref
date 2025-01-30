@@ -67,7 +67,7 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
         else
             itemDisplayOrderInUse=0;
         
-        LogService.logIt( "RaterRefBean.setRcItemWrapper() itemDisplayOrderInUse="  + itemDisplayOrderInUse);
+        // LogService.logIt( "RaterRefBean.setRcItemWrapper() itemDisplayOrderInUse="  + itemDisplayOrderInUse);
         
     }
 

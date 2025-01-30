@@ -2213,7 +2213,7 @@ public class RaterRefUtils extends BaseRefUtils
                 }
             }
 
-            LogService.logIt( "RaterRefUtils.doSaveItemResp()  EEE.1 BEFORE MOVE ON itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
+            // LogService.logIt( "RaterRefUtils.doSaveItemResp()  EEE.1 BEFORE MOVE ON itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
             
             RcItemWrapper rciwNew;
 
@@ -2224,7 +2224,7 @@ public class RaterRefUtils extends BaseRefUtils
                 rciwNew = getNextRcItemWrapper();
             }
 
-            LogService.logIt( "RaterRefUtils.doSaveItemResp() EEE.2 goBack=" + goBack + ", rciwNew=" + (rciwNew==null ? "null" : "not null, rcItemId=" + rciwNew.getRcItemId()) + ", itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse() );
+            // LogService.logIt( "RaterRefUtils.doSaveItemResp() EEE.2 goBack=" + goBack + ", rciwNew=" + (rciwNew==null ? "null" : "not null, rcItemId=" + rciwNew.getRcItemId()) + ", itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse() );
 
             if( goBack && (rciwNew==null || rciwNew.getRcItemId()==itm.getRcItemId() ) )
             {
@@ -2290,9 +2290,9 @@ public class RaterRefUtils extends BaseRefUtils
                
             }
 
-            LogService.logIt( "RaterRefUtils.doSaveItemResp() GGG.1 AFTER MOVE ON. rciwNew=" + (rciwNew==null ? "null" : rciwNew.getRcItemId() +", do=" + rciwNew.getCandidateDisplayOrder()) + ", itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
+            // LogService.logIt( "RaterRefUtils.doSaveItemResp() GGG.1 AFTER MOVE ON. rciwNew=" + (rciwNew==null ? "null" : rciwNew.getRcItemId() +", do=" + rciwNew.getCandidateDisplayOrder()) + ", itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
             raterRefBean.setRcItemWrapper(rciwNew, rc.getRcRater().getIsCandidateOrEmployee() );
-            LogService.logIt( "RaterRefUtils.doSaveItemResp() GGG.2 AFTER MOVE ON itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
+            // LogService.logIt( "RaterRefUtils.doSaveItemResp() GGG.2 AFTER MOVE ON itemDisplayOrderInUse="  + raterRefBean.getItemDisplayOrderInUse());
 
             return getNextViewFromRatings();
         }
