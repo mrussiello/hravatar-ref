@@ -152,6 +152,12 @@ public class RcOrgPrefs implements Serializable, Cloneable
     @Column(name="topbottomsrctypeid")
     private int topBottomSrcTypeId=3;
    
+    @Column(name="askforreferrals")
+    private int askForReferrals=-1;
+        
+    
+    @Column(name="disallowreentry")
+    private int disallowReentry;
     
     
     @Temporal(TemporalType.TIMESTAMP)
@@ -500,8 +506,28 @@ public class RcOrgPrefs implements Serializable, Cloneable
         this.candidateOneRaterNoSend = candidateOneRaterNoSend;
     }
 
+    public int getDisallowReentry() {
+        return disallowReentry;
+    }
 
-    
+    public void setDisallowReentry(int disallowReentry) {
+        this.disallowReentry = disallowReentry;
+    }
 
+    public int getAskForReferrals() {
+        return askForReferrals;
+    }
+
+    public void setAskForReferrals(int askForReferrals) {
+        this.askForReferrals = askForReferrals;
+    }
+
+    public int getAudioVideoOk() {
+        return audioVideoOk;
+    }
+
+    public void setAudioVideoOk(int audioVideoOk) {
+        this.audioVideoOk = audioVideoOk;
+    }
     
 }

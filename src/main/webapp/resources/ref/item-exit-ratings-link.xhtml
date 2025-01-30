@@ -12,12 +12,15 @@
 <!-- IMPLEMENTATION -->
 <cc:implementation>
     
-                        <ui:fragment rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}">
-                        &#160;
-                        <p:commandLink tabindex="0" ajax="false" action="#{raterRefUtils.processExitCore2}" styleClass="ttformlink" title="#{stMessages['g.ExitRatingsTitle']}">
-                            <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;" value="#{stMessages['g.ExitRatings']}"/>
-                        </p:commandLink>
-                        </ui:fragment>
+    <ui:fragment rendered="#{refBean.rcCheck.rcRater.rcRaterStatusType.isCompleteOrHigher}">
+    &#160;
+    <p:commandLink rendered="#{refBean.refUserType.isCandidate}" tabindex="0" ajax="false" action="#{raterRefUtils.processExitCore2}" styleClass="ttformlink" title="#{stMessages['g.ExitRatingsTitle']}">
+        <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;" value="#{stMessages['g.ExitRatings']}"/>
+    </p:commandLink>
+    <p:commandLink rendered="#{refBean.refUserType.isRater}" tabindex="0" ajax="false" action="#{raterRefUtils.processExitCore}" styleClass="ttformlink" title="#{stMessages['g.ExitRatingsTitle']}">
+        <h:outputText styleClass="pflinktext ttformtext anylink ttformlink" style="font-weight:normal;" value="#{stMessages['g.ExitRatings']}"/>
+    </p:commandLink>
+    </ui:fragment>
 
 </cc:implementation>
 </html>

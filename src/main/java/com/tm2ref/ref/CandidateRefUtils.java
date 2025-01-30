@@ -342,6 +342,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
             }
             
+            // LogService.logIt( "CandidateRefUtils.doCompleteSelfRatings() DDD needsCore3()=" + getNeedsCore3() + " rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
 
             // needs references.
             if( getNeedsCore3() )
@@ -554,18 +555,13 @@ public class CandidateRefUtils extends BaseRefUtils
 
         // Not complete, or no expiration, or not expired.
         return !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher() || refBean.getRcCheck().getExpireDate()==null || refBean.getRcCheck().getExpireDate().after(new Date());
-        
-        
-        // return refBean.getRcCheck().getCollectRatingsFmCandidate() && refBean.getRcCheck().getRcRater()!=null && !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher();
     }
     
     
     public boolean getStartAtEndOfCore2() throws Exception
     {
         return getNeedsCore2() && !getNeedsCore3();
-    }
-    
-    
+    }    
     
     public boolean getNeedsCore3() throws Exception
     {
@@ -577,7 +573,7 @@ public class CandidateRefUtils extends BaseRefUtils
     public int getRaterQuestionNumberForCandidate()
     {
         getRefBean();
-        RcCheck rc = refBean.getRcCheck();
+        // RcCheck rc = refBean.getRcCheck();
         RaterRefUtils rrb = RaterRefUtils.getInstance();
         int n = rrb.getRaterQuestionNumber();
         n += getCandidateQuestionCount();

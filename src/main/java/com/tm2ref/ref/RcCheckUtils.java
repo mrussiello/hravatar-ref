@@ -467,10 +467,10 @@ public class RcCheckUtils {
         if( accessCode==null || accessCode.isBlank() )
             return accessCode;
         
-        if( accessCode.indexOf("?")>=0 )
+        if( accessCode.contains("?") )
             accessCode = accessCode.substring(0, accessCode.indexOf("?") );
         
-        if( accessCode.indexOf("/")>=0 )
+        if( accessCode.contains("/") )
             accessCode = accessCode.substring(accessCode.lastIndexOf("/")+1, accessCode.length() );
         
         return accessCode;
@@ -1397,7 +1397,7 @@ public class RcCheckUtils {
             if( !adminOverride &&  (rc.getCollectRatingsFmCandidate() || rc.getRcScript().getHasAnyCandidateInput()) )
                 chargeCreditIfNeeded(rc, null );
 
-            performRcCheckCompletionIfReady(rc, false, adminOverride );
+            performRcCheckCompletionIfReady(rc, RcCheckUtils.getIsRaterOrCandidateCompleteButBeforeExpireDateAndCanReenter(rc, null, RefUserType.CANDIDATE), adminOverride );
         }
         catch( Exception e )
         {
@@ -1478,7 +1478,7 @@ public class RcCheckUtils {
             
             // Check for RcCheck completion if not already complete and candidate is complete.
             if( !rc.getRcCheckStatusType().getCompleteOrHigher() || rater.getInGracePeriod() )
-                performRcCheckCompletionIfReady(rc, rater.getInGracePeriod(), adminOverride);
+                performRcCheckCompletionIfReady(rc, rater.getInGracePeriod() || RcCheckUtils.getIsRaterOrCandidateCompleteButBeforeExpireDateAndCanReenter(rc, rater, rater.getIsCandidateOrEmployee() ? RefUserType.CANDIDATE : RefUserType.RATER), adminOverride);
             
             return true;
         }
@@ -2079,11 +2079,36 @@ public class RcCheckUtils {
         {
             if( s.isBlank() )
                 continue;
-            out.add( Long.parseLong(s) );
+            out.add(Long.valueOf(s) );
         }
         return out;
     }
 
+    public static boolean getIsRaterOrCandidateCompleteOrLowerButBeforeExpireDateAndCanAccess( RcCheck rc, RcRater rater, RefUserType refUserType )
+    {
+        if( rc==null || rc.getExpireDate()==null || rc.getExpireDate().before( new Date() ) )
+            return false;
+        
+        if( refUserType.getIsCandidate() )
+        {
+            return rc.getRcCandidateStatusTypeId()<RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() || (rc.getDisallowReentry()==0 && rc.getRcCandidateStatusType().getIsComplete());
+        }
+        
+        return rater==null ? false : rater.getRcRaterStatusTypeId()<RcRaterStatusType.COMPLETED.getRcRaterStatusTypeId() || (rc.getDisallowReentry()==0 && rater.getRcRaterStatusType().getIsComplete());
+    }
+    
+    
+    public static boolean getIsRaterOrCandidateCompleteButBeforeExpireDateAndCanReenter( RcCheck rc, RcRater rater, RefUserType refUserType )
+    {
+        if( rc==null || rc.getExpireDate()==null || rc.getExpireDate().before( new Date() ) || rc.getDisallowReentry()==1 )
+            return false;
+        
+        if( refUserType.getIsCandidate() )
+            return rc.getRcCandidateStatusType().getIsComplete();
+        
+        return rater==null ? false : rater.getRcRaterStatusType().getIsComplete();
+    }
+    
     
     public void doExpireOrCompleteRcCheck( RcCheck rc, boolean adminOverride ) throws Exception
     {

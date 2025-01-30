@@ -7,6 +7,7 @@ package com.tm2ref.ref;
 
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.service.LogService;
 import java.io.Serializable;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
@@ -57,13 +58,17 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
         return rcItemWrapper;
     }
 
-    public void setRcItemWrapper(RcItemWrapper rcItemWrapper, boolean isCandidateOrEmployee) {
+    public void setRcItemWrapper(RcItemWrapper rcItemWrapper, boolean isCandidateOrEmployee) 
+    {
         this.rcItemWrapper = rcItemWrapper;
         
         if( rcItemWrapper!=null )
             itemDisplayOrderInUse=isCandidateOrEmployee ? rcItemWrapper.getCandidateDisplayOrder() : rcItemWrapper.getRaterDisplayOrder();
         else
             itemDisplayOrderInUse=0;
+        
+        LogService.logIt( "RaterRefBean.setRcItemWrapper() itemDisplayOrderInUse="  + itemDisplayOrderInUse);
+        
     }
 
     public int getSelectedRadioIndex() {
@@ -77,9 +82,6 @@ public class RaterRefBean  extends BaseRefBean implements Serializable {
     public int getItemDisplayOrder() {
         
         return itemDisplayOrderInUse;
-        //if( rcItemWrapper!=null )
-        //    return rcItemWrapper.getDisplayOrder();
-        //return 0;
     }
     
     public RcItem getRcItem()

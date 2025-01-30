@@ -252,6 +252,7 @@ public class RefEntry
             rcx.setCorpId( rsop!=null && rsop.getCorpId()>=0 ? rsop.getCorpId() : rcop.getCorpId() );
             rcx.setCandidateCannotAddRaters( rsop!=null && rsop.getCandidateCannotAddRaters()>=0 ? rsop.getCandidateCannotAddRaters() : rcop.getCandidateCannotAddRaters() );
             rcx.setCollectCandidateRatings( rsop!=null && rsop.getCollectCandidateRatings()>=0 ? rsop.getCollectCandidateRatings() : rcop.getCollectCandidateRatings() );
+            rcx.setCandidateOneRaterNoSend( rcx.getCandidateCannotAddRaters()==1 ? 0 : rcop.getCandidateOneRaterNoSend() );
             
             // LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() rsop=" + (rsop==null ? "null" : "not null, distid=" + rsop.getDistributionTypeId() ) + ", rcop.distid=" + rcop.getDistributionTypeId() );
             
@@ -260,12 +261,20 @@ public class RefEntry
             rcx.setCandidatePhotoCaptureTypeId(rsop!=null && rsop.getCandidatePhotoCaptureTypeId()>=0 ? rsop.getCandidatePhotoCaptureTypeId() : rcop.getCandidatePhotoCaptureTypeId() );
             rcx.setRaterPhotoCaptureTypeId(rsop!=null && rsop.getRaterPhotoCaptureTypeId()>=0 ? rsop.getRaterPhotoCaptureTypeId() : rcop.getRaterPhotoCaptureTypeId() );
             rcx.setAvCommentsTypeId( rcop.getAvCommentsTypeId() );
+            rcx.setDisallowReentry( rcop.getDisallowReentry() );
+            rcx.setAskForReferrals( rsop!=null && rsop.getAskForReferrals()>=0 ? rsop.getAskForReferrals() :  rcop.getAskForReferrals() );
+
             rcx.setMinSupervisors( rsop!=null && rsop.getMinSupervisors()>=0 ? rsop.getMinSupervisors() : rcop.getMinSupervisors());
             rcx.setMaxRaters( rsop!=null && rsop.getMaxRaters()>0 ? rsop.getMaxRaters() : rcop.getMaxRaters() );
             rcx.setMinRaters( rsop!=null && rsop.getMinRaters()>0 ? rsop.getMinRaters() : rcop.getMinRaters() );
             
             if( rcx.getMinRaters()<=0 )
                 rcx.setMinRaters(1);
+            
+            rcx.setEnforceRaterLimits( rcop.getEnforceRaterLimits() );
+
+            rcx.setTopBottomCount(rcop.getTopBottomCount() );
+            rcx.setTopBottomSrcTypeId(rcop.getTopBottomSrcTypeId() );
             
             rcx.setSendDate( new Date() );
             rcx.setFirstCandidateSendDate( new Date() );

@@ -124,6 +124,9 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult
     @Column(name="askforreferrals")
     private int askForReferrals;
     
+    @Column(name="disallowreentry")
+    private int disallowReentry;
+    
     /*
      0 = no delay
      1 = Delay until candidate completion.
@@ -1804,5 +1807,12 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult
         this.previousResultList = previousResultList;
     }
 
+    public int getDisallowReentry() {
+        return disallowReentry;
+    }
+
+    public void setDisallowReentry(int disallowReentry) {
+        this.disallowReentry = disallowReentry;
+    }
     
 }

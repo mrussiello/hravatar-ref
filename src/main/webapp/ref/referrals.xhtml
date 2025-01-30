@@ -144,7 +144,7 @@
                                         <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) gt 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRExitReferrals']}"/>
                                         <p:commandButton style="margin-bottom:5px" rendered="#{fn:length(refBean.rcCheck.rcRater.rcReferralListNoSame) le 0}" ajax="false" action="#{raterRefUtils.processExitCore2}" value="#{stMessages['g.XRSkipReferrals']}"/>
                                         &#160;
-                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{raterRefUtils.processGoBackToLastItem}" value="#{stMessages['g.Back2Ratings']}" onclick="beaconOn = false;"/>
                                     </div>
                                 </div>
                             </h:panelGroup>

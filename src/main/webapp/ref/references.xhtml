@@ -230,7 +230,8 @@
                                         &#160;
                                         <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.canExitReferences}" ajax="false" action="#{candidateRefUtils.processExitAllCore}" value="#{stMessages['g.XCExitAndSave']}"/>                
                                         &#160;
-                                        <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.showReferencesGoBack}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back']}" onclick="beaconOn = false;"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.showReferencesGoBack and refBean.rcCheck.collectRatingsFmCandidate}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back2Ratings']}" onclick="beaconOn = false;"/>                
+                                        <p:commandButton style="margin-bottom:5px" rendered="#{candidateRefUtils.showReferencesGoBack and not refBean.rcCheck.collectRatingsFmCandidate}" ajax="false" action="#{candidateRefUtils.processReferencesGoBack}" value="#{stMessages['g.Back2Questions']}" onclick="beaconOn = false;"/>                
                                     </div>
                                 </div>
                             </h:panelGroup>

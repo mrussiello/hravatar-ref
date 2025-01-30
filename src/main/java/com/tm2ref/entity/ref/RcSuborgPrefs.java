@@ -66,6 +66,9 @@ public class RcSuborgPrefs implements Serializable, Cloneable
     @Column(name="collectcandidateratings")
     private int collectCandidateRatings = -1;
 
+    @Column(name="askforreferrals")
+    private int askForReferrals=-1;
+    
     
     @Column(name="invitationsubj")
     private String invitationSubj;
@@ -348,6 +351,14 @@ public class RcSuborgPrefs implements Serializable, Cloneable
 
     public void setRaterPhotoCaptureTypeId(int raterPhotoCaptureTypeId) {
         this.raterPhotoCaptureTypeId = raterPhotoCaptureTypeId;
+    }
+
+    public int getAskForReferrals() {
+        return askForReferrals;
+    }
+
+    public void setAskForReferrals(int askForReferrals) {
+        this.askForReferrals = askForReferrals;
     }
 
 

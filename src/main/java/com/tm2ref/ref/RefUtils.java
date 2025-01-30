@@ -13,7 +13,6 @@ import com.tm2ref.faces.HttpReqUtils;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
-import com.tm2ref.previousresult.PreviousResult;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.user.UserFacade;
@@ -979,20 +978,6 @@ public class RefUtils extends BaseRefUtils
             if( booleanParam1 )
             {
                 // Now move to next page.
-
-
-
-                // set to skip release if we already have it.
-                //if( refBean.getRefUserType().getIsCandidate() && rc.getCandidateReleaseDate()!=null )
-                //    refBean.setRefPageType( RefPageType.RELEASE );
-                //else if( refBean.getRefUserType().getIsRater()&& rc.getRcRater().getReleaseDate()!=null )
-                //    refBean.setRefPageType( RefPageType.RELEASE );
-
-                // do not skip release.
-                //else
-                //    refBean.setRefPageType( RefPageType.CONFIRM );
-
-                // Now move to next page.
                 RefPageType rpt = getNextPageTypeForRefProcess();
                 refBean.setRefPageType(rpt);
 
@@ -1628,7 +1613,7 @@ public class RefUtils extends BaseRefUtils
             {
                 if( rcCheckUtils==null )
                     rcCheckUtils=new RcCheckUtils();
-                rcCheckUtils.performRcCheckCompletionIfReady(rc, rtr.getInGracePeriod(), false );
+                rcCheckUtils.performRcCheckCompletionIfReady(rc, rtr.getInGracePeriod() || RcCheckUtils.getIsRaterOrCandidateCompleteButBeforeExpireDateAndCanReenter(rc, rtr, refBean.getRefUserType()), false );
 
                 if( rc.getRcCheckStatusType().getIsComplete() )
                     rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, null, false);
@@ -1805,7 +1790,8 @@ public class RefUtils extends BaseRefUtils
 
             if( booleanParam1 )
             {
-                if( refBean.getRefUserType().getIsCandidate() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
+                // if( refBean.getRefUserType().getIsCandidate() && (!rc.getRcCandidateStatusType().getIsCompletedOrHigher() || RcCheckUtils.getIsCompleteButBeforeExpireDate(rc, null, refBean.getRefUserType())) )
+                if( refBean.getRefUserType().getIsCandidate() && RcCheckUtils.getIsRaterOrCandidateCompleteOrLowerButBeforeExpireDateAndCanAccess(rc, null, refBean.getRefUserType()))
                 {
                     if( rc.getCandidateReleaseDate()==null )
                     {
@@ -1823,7 +1809,7 @@ public class RefUtils extends BaseRefUtils
                     }
                 }
 
-                else if( refBean.getRefUserType().getIsRater() && !rc.getRcRater().getRcRaterStatusType().getCompleteOrHigher() )
+                else if( refBean.getRefUserType().getIsRater() && RcCheckUtils.getIsRaterOrCandidateCompleteOrLowerButBeforeExpireDateAndCanAccess(rc, rc.getRcRater(), refBean.getRefUserType()) )
                 {
                     if( rc.getRcRater().getReleaseDate()==null )
                         rc.getRcRater().setReleaseDate( new Date() );
