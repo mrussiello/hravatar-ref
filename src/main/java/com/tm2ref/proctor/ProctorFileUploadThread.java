@@ -211,6 +211,7 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
         RcUploadedUserFile uuf = null;
         // FileUploadFacade fuf = null;
         int originalMaxThumbIndex = 0;
+        
         try
         {
             if( rcCheckId<=0 || initialFileSize <= 200 )
@@ -355,6 +356,9 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
             if( bytes==null || bytes.length<=0 )
                 throw new Exception( "bytes appears missing. bytes.len=" + (bytes==null ? "null" : bytes.length ) );
             
+            // remove temp file.
+            strm.close();
+            
             strm = new ByteArrayInputStream( bytes );
 
             BucketType bt = RuntimeConstants.getBooleanValue( "useAwsTestFoldersForProctoring" ) ? BucketType.REFRECORDING_TEST : BucketType.REFRECORDING;
@@ -471,6 +475,21 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
             if( rcCheckId>0 )
                 RcCheckLogUtils.createRcCheckLogEntry(rcCheckId, rcRaterId, 0, msg, null, null );
         }
+        finally
+        {
+            if( strm!=null )
+            {
+                try
+                {
+                    strm.close();
+                    strm=null;
+                }
+                catch( Exception ee )
+                {
+                    LogService.logIt( ee, "ProctorFileUploadThread.doFileUpload() XXX.3BB Error closing file upload input stream. uuf=" + (uuf==null ? "null" : uuf.toString()) );
+                }
+            }
+        }
     }
 
     
@@ -581,8 +600,22 @@ public class ProctorFileUploadThread extends BaseFileUploadThread
             msg += ", " + e.toString();
             
             if( rcCheckId>0 )
-                RcCheckLogUtils.createRcCheckLogEntry(rcCheckId, rcRaterId, 0, msg, null, null );
-            
+                RcCheckLogUtils.createRcCheckLogEntry(rcCheckId, rcRaterId, 0, msg, null, null );            
+        }
+        finally
+        {
+            if( strm!=null )
+            {
+                try
+                {
+                    strm.close();
+                    strm=null;
+                }
+                catch( Exception ee )
+                {
+                    LogService.logIt( ee, "ProctorFileUploadThread.doUploadRcComment() XXX.3BB Error closing file upload input stream. uuf=" + (uuf==null ? "null" : uuf.toString()) );
+                }
+            }
         }
     }
 

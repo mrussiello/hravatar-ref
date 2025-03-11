@@ -202,7 +202,7 @@ public class IpUtils {
 
             return out;
         }
-        catch( JsonParsingException e )
+        catch( JsonParsingException | IOException e )
         {
             LogService.logIt( "IpUtils.getIPLocationData( " + ipAddress + " ) " + e.toString() + ", uri=" + uri + ", resultStr=" + resultStr );
             return out;            

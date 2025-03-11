@@ -359,7 +359,7 @@
                     }
 
                     if (!(mrOptions))
-                        mrOptions = {mimeType: 'video/webm'};
+                        mrOptions = {mimeType: 'video/webm', videoBitsPerSecond: 1000000};
 
                     swapMed = true;
                 }
@@ -415,24 +415,26 @@
                             mrOptions = {mimeType: 'audio/webm'};
                         else
                             mrOptions = {mimeType: 'audio/mp4'};
-                    } else if (!(MediaRecorder))
-                        mrOptions = {mimeType: 'video/mp4'};
+                        
+                    } 
+                    else if (!(MediaRecorder))
+                        mrOptions = {mimeType: 'video/mp4', videoBitsPerSecond: 1000000};
 
                     else if (!(MediaRecorder.isTypeSupported))
-                        mrOptions = {mimeType: 'video/mp4'};
+                        mrOptions = {mimeType: 'video/mp4', videoBitsPerSecond: 1000000};
 
                     else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9'))
-                        mrOptions = {mimeType: 'video/webm'};
+                        mrOptions = {mimeType: 'video/webm', videoBitsPerSecond: 1000000};
                     // mrOptions = {mimeType: 'video/webm; codecs=vp9'};
 
                     else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8'))
-                        mrOptions = {mimeType: 'video/webm'};
+                        mrOptions = {mimeType: 'video/webm', videoBitsPerSecond: 1000000};
 
                     else if (MediaRecorder.isTypeSupported('video/mp4'))
-                        mrOptions = {mimeType: 'video/mp4'};
+                        mrOptions = {mimeType: 'video/mp4', videoBitsPerSecond: 1000000};
 
                     else
-                        mrOptions = {mimeType: 'video/webm; codecs=vp8'};
+                        mrOptions = {mimeType: 'video/webm; codecs=vp8', videoBitsPerSecond: 1000000};
 
                     // Audio on IOS or Mac Safari
                     if (recordingIsAudioOnly && useLocalAudioRecording)

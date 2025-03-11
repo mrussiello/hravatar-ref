@@ -2311,6 +2311,8 @@ public class RaterRefUtils extends BaseRefUtils
 
     private RcUploadedUserFile saveUploadedUserFile( RcCheck rc, RcRater rater, RcRating rating, FileContentType fct, FileUploadFacade fuf ) throws Exception
     {
+        RcUploadedUserFile uuf = null;
+        InputStream strm = null;
         try
         {
             if( rc==null )
@@ -2334,7 +2336,7 @@ public class RaterRefUtils extends BaseRefUtils
             if( fct==null )
                 throw new Exception( "FileContentType is null" );
 
-            InputStream strm = uploadedFile.getInputStream();
+            strm = uploadedFile.getInputStream();
             if( strm==null )
                 throw new Exception( "UploadedFile.inputStream is null. File size=" + uploadedFile.getSize() );
 
@@ -2343,7 +2345,7 @@ public class RaterRefUtils extends BaseRefUtils
 
             FileXferUtils xfer = new FileXferUtils(); //  FileXferUtils.getInstance();
 
-            RcUploadedUserFile uuf = rating.getCandidateRcUploadedUserFile();
+            uuf = rating.getCandidateRcUploadedUserFile();
             if( uuf==null && rating.getCandidateUploadedUserFileId()>0 )
             {
                 rating.setCandidateRcUploadedUserFile( fuf.getRcUploadedUserFile(rating.getCandidateUploadedUserFileId()));
@@ -2410,6 +2412,22 @@ public class RaterRefUtils extends BaseRefUtils
             LogService.logIt(e, "RaterRefUtils.saveUploadedUserFile() " + (rating==null ? "RcRating is null" : "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId()) );
             throw e;
         }
+        finally
+        {
+            if( strm!=null )
+            {
+                try
+                {
+                    strm.close();
+                    strm=null;
+                }
+                catch( Exception ee )
+                {
+                    LogService.logIt( ee, "RaterRefUtils.saveUploadedUserFile() XXX.3BB Error closing file upload input stream. uuf=" + (uuf==null ? "null" : uuf.toString()) );
+                }
+            }
+        }
+        
     }
 
     public RcRating saveRcRatingWithCheck( RcRating r ) throws Exception

@@ -1196,7 +1196,12 @@ public class CandidateRefUtils extends BaseRefUtils
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
-                throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
+            {
+                LogService.logIt("CandidateRefUtils.processEditRater() RcCheckId in request does not match. Calling RefUtils.processReturnToRefCheckProcess() Value in request=" + rcChkReq + ", rc.rcCheckId=" + rc.getRcCheckId() );                
+                RefUtils ru = RefUtils.getInstance();
+                return ru.processReturnToRefCheckProcess();
+                // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.rcCheckId=" + rc.getRcCheckId() );
+            }
 
             RefPageType refPageType = refBean.getRefPageType();
             if( !refPageType.getIsCore3() )
