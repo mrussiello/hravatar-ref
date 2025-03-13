@@ -1482,7 +1482,7 @@ public class RaterRefUtils extends BaseRefUtils
         RcCheck rc = refBean.getRcCheck();
         try
         {
-            LogService.logIt( "RaterRefUtils.processExitCore2() START rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            // LogService.logIt( "RaterRefUtils.processExitCore2() START rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
             if( rc==null )
             {
                 LogService.logIt( "RaterRefUtils.processExitCore2() Fatal Error refBean.rcCheck is null." );
@@ -1514,7 +1514,7 @@ public class RaterRefUtils extends BaseRefUtils
             refBean.setRefPageType(RefPageType.CORE2 );
             RefPageType pt = getNextPageTypeForRefProcess();
 
-            LogService.logIt( "RaterRefUtils.processExitCore2() going to pageType=" + pt.getName() );
+            // LogService.logIt( "RaterRefUtils.processExitCore2() going to pageType=" + pt.getName() );
             
             refBean.setRefPageType(pt);
             return conditionUrlForSessionLossGet(getViewFromPageType(pt), true);

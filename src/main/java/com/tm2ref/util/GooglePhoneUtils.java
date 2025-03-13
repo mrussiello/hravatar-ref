@@ -196,12 +196,12 @@ public class GooglePhoneUtils {
             if( !isPossible )
             {
                 LogService.logIt( "GooglePhoneUtils.getFormattedPhoneNumber() AA.1A NOT POSSIBLE numberIn=" + numberIn + ", countryCode=" + countryCode + ", isPossible=" + isPossible );
-                if( countryCode.equalsIgnoreCase("US") && ( numberIn.startsWith("0") || numberIn.startsWith("+0") ) )
+                if( countryCode.equalsIgnoreCase("US") && (numberIn.startsWith("0") || numberIn.startsWith("+0") ) )
                 {
                     numberIn = numberIn.substring( numberIn.indexOf("0")+1, numberIn.length() );
                     number = phoneUtil.parseAndKeepRawInput(numberIn, countryCode);            
                     isPossible = phoneUtil.isPossibleNumber(number);
-                    LogService.logIt( "GooglePhoneUtils.getFormattedPhoneNumber() AA.1B NOT POSSIBLE numberIn corrected to " + numberIn + ", countryCode=" + countryCode + ", isPossible=" + isPossible );                    
+                    LogService.logIt( "GooglePhoneUtils.getFormattedPhoneNumber() AA.1B NOT POSSIBLE numberIn CHANGED to " + numberIn + ", countryCode=" + countryCode + ", isPossible=" + isPossible );                    
                 }                
             }
             
