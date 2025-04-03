@@ -1102,7 +1102,11 @@ public class CandidateRefUtils extends BaseRefUtils
 
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
-                throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
+            {
+                LogService.logIt( "CandidateRefUtils.processSendToRater() rcCheckId=RcCheckId in request does not match rcCheck in RcBean. RcBean.rcCheck.rcCheckId=" + rc.getRcCheckId() + " Value in request=" + rcChkReq );
+                setErrorMessage("g.XCCannotSendInvite.unknown", new String[]{"rcCheckId mismatch from request."} );
+                return processViewRaters();
+            }
 
             RefPageType refPageType = refBean.getRefPageType();
             if( !refPageType.getIsCore3() )
@@ -1110,7 +1114,11 @@ public class CandidateRefUtils extends BaseRefUtils
 
             rcRater = candidateRefBean.getRcRater2();
             if( rcRater==null )
-                throw new Exception( "RcRater is null!" );
+            {
+                LogService.logIt( "CandidateRefUtils.processSendToRater() RcRater is null! RcBean.rcCheck.rcCheckId=" + rc.getRcCheckId() );
+                setErrorMessage("g.XCCannotSendInvite.unknown", new String[]{"No Rater found in request."} );
+                return processViewRaters();
+            }
 
             if( !rcRater.getCandidateCanSend() )
                 throw new STException( rcRater.getRcRaterStatusType().getCompleteOrHigher() ? "g.XCCannotSendToRater.complete" : "g.XCCannotSendToRater", new String[]{rcRater.getUser().getFullname()} );
