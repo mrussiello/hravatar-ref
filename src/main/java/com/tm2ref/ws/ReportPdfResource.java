@@ -16,6 +16,7 @@ import com.tm2ref.ref.RefUserType;
 import com.tm2ref.report.ReportManager;
 import com.tm2ref.service.EncryptUtils;
 import com.tm2ref.service.LogService;
+import com.tm2ref.service.Tracker;
 import com.tm2ref.util.JsonUtils;
 import java.util.List;
 import java.util.Locale;
@@ -140,12 +141,14 @@ public class ReportPdfResource extends BaseApiResource {
                 
             
             JsonObject jo2 = outJob.build();            
-            String out = JsonUtils.convertJsonObjecttoString(jo2);            
+            String out = JsonUtils.convertJsonObjecttoString(jo2);     
+            Tracker.addApiReportPdfRequest();
             // LogService.logIt( "ReportPdfResource.doPost() COMPLETE. output=" + out );
             return Response.ok( out, MediaType.APPLICATION_JSON).status( Response.Status.OK.getStatusCode() ).build();            
         }        
         catch( ApiException e )
         {
+            Tracker.addApiError();
             LogService.logIt( "ReportPdfResource.doPost() API ERROR " + e.toString() + ", rcCheckId=" + rcCheckId + ", tran=" + tran + ", orgId=" + getOrgId() );
             String subj = "ScoreResource Exception rcCheckId=" + rcCheckId;     
             sendErrorEmail( subj, "rcCheckId=" + rcCheckId + ", API Exception=" + e.toString() );            
@@ -153,6 +156,7 @@ public class ReportPdfResource extends BaseApiResource {
         }                
         catch( Exception e )
         {
+            Tracker.addApiError();
             LogService.logIt( e, "ReportPdfResource.doPost() jsonContent=" + jsonContent );
             return Response.status( Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), "ReportPdfResource.ScoreResource() Unknown Exception rcCheckId=" + rcCheckId + ", tran=" + tran + ", authUserId=" + (authUser==null ? "null" : authUser.getUserId()) + ", " + e.toString() + ", jsonContent=" + jsonContent ).build();            
             // return getGeneralErrorJson( e, "ReportPdfResource.doPost() tran=" + tran + ", rcid=" + rcid + ", jsonContent=" + jsonContent );

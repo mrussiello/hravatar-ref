@@ -229,7 +229,7 @@ public class RuntimeConstants
 
         cache.put( "tm2ref_rest_api_username", "" );
         cache.put( "tm2ref_rest_api_password", "" );
-        
+                        
         
 
         // ////////////////////////////////////////////////////////////////////////////
@@ -341,6 +341,7 @@ public class RuntimeConstants
             substituteStringWithSealedObject( "awsSecretKeyRekognition", ecipher );
             substituteStringWithSealedObject( "twilio.auhtoken", ecipher );
             substituteStringWithSealedObject( "IpStackAccessKey", ecipher );
+            substituteStringWithSealedObject( "tm2ref_rest_api_password", ecipher );            
         }
         catch( Exception e )
         {

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<xs:schema xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+
+    <xs:element name="AssessmentStatusRequest">
+      <xs:complexType>
+        <xs:sequence>
+          <xs:element name="ClientId" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  <!-- OrgId - (required) this is the HR Avatar Org Id  for this customer, encrypted. -->
+                  <!-- Username - (required) username of the authorizing user -->
+                  <!-- Password - (required)  of the authorizing user. -->
+                  <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+          <xs:element name="ClientOrderId" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                  <!-- OrderId - this is a unique identifier for this assessment event (order). Must be unique for the third party organization. -->
+                  <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+
+          <!-- These are proprietary fields used by the HR Avatar System -->
+          <xs:element name="UserArea" minOccurs="0">
+              <xs:complexType>
+                  <xs:sequence>
+                    <!-- The Test Key id is a permenant unique identifier for this testing event on the the HR Avatar system.
+                         In general, you can reference a Test Key either by including this value or by using the ClientOrderId.IdValue (name=orderId)
+                    -->
+                    <xs:element name="TestKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                    <!-- reportLangStr - (Optional) Only used when includeScoreCode=1,2, or 3. This is the language of the report and information - ex: es_MX, iw_IL
+                         Notice that the includeScoreCode must be set to 1, 2, or 3 if you are requesting a new copy of the report in this language. If not provided, en_US will be used.
+                    -->
+                    <!-- reportId - (Optional) Only used when includeScoreCode=3. This is encoded report identifier on the HR Avatar system for the requested report. If not provided, the default report for the sim is used.
+                    -->
+                    <!-- ClientUniqueCustomerOrganizationId - (Required if used during AssessmentOrderRequest)  A Unique Identifier for the Customer Organization on the Client System - In order to obtain the correct results, this must be provided when requesting status. -->
+                    <!-- includeEnglishReport - (Optional) Only used when includeScoreCode=3 and when the primary PDF report is not produced in English. Values: 0=Default (inclusion of report determined by Client Account record on HR Avatar System or the AssessmentOrderRequest. 1=Do include a copy of the PDF report in english, if the primary report is in a different language and if an English version
+                                      is available. 2=Do not include a copy of the english report. Note that if this is set to 1, the system will return all PDF reports for this test, not just the one created by this request.)
+                    -->
+                    <xs:element name="IdValue" type="IdValue" minOccurs="0" maxOccurs="unbounded"/>
+                  </xs:sequence>
+
+                  <!-- Indicates the score information to include by default when reporting status                       
+                       0 - Do not include score information in response.
+                       1 - Include score information except PDF
+                       2 - Include score information including any PDF reports
+                       3 - Produce PDF report in provided language (ONLY)
+                  -->
+                  <xs:attribute name="includeScoreCode" type="xs:int" />
+
+              </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="IdValue">
+                <xs:simpleContent msdata:ColumnName="idvalue_text" msdata:Ordinal="1">
+                <xs:extension base="xs:string">
+                    <xs:attribute name="name" type="xs:string" />
+                </xs:extension>
+                </xs:simpleContent>
+    </xs:complexType>
+
+
+</xs:schema>

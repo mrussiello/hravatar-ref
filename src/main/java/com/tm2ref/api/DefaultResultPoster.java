@@ -77,7 +77,7 @@ public class DefaultResultPoster implements ResultPoster {
             arr = new AssessmentResult();
             // aoas = new AssessmentResult.AssessmentStatus();
 
-            AssessmentStatusCreator asc = new AssessmentStatusCreator();
+            ReferenceCheckStatusCreator asc = new ReferenceCheckStatusCreator();
 
             payload = asc.getAssessmentResultFromTestKey(arr, testKey, rc, Locale.US.getLanguage(), null, null );
 

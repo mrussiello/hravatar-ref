@@ -18,19 +18,7 @@ import com.tm2ref.event.ResultPostType;
 public class ResultPosterFactory {
 
     public static ResultPoster getResultPosterInstance( TestKey tk, RcCheck rc )
-    {
-        //if( tk.getResultPostTypeId()==0 )
-        //    return new DefaultResultPoster( tk );
-        //if( tk.getTestKeySourceTypeId()==TestKeySourceType.API.getTestKeySourceTypeId() && tk.getApiTypeId()==ApiType.ICIMS.getApiTypeId() )
-        //{
-        //    return new IcimsResultPoster( tk );
-        //}
-        
-        //if( tk.getTestKeySourceTypeId()==TestKeySourceType.API.getTestKeySourceTypeId() && tk.getApiTypeId()==ApiType.ADP_WFN.getApiTypeId() )
-        //{
-        //    return new AdpWfnResultPoster( tk );
-        //}
-        
+    {        
         if( tk.getResultPostUrl()!= null && !tk.getResultPostUrl().isEmpty() )
             return tk.getResultPostTypeId()==ResultPostType.DEFAULT.getResultPostTypeId() ? new DefaultResultPoster( tk, rc ) : new DefaultResultPoster( tk, rc );
         

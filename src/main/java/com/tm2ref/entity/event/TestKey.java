@@ -24,7 +24,8 @@ import java.util.Map;
 @Entity
 @Table( name = "testkey" )
 @NamedQueries( {
-        @NamedQuery( name = "TestKey.findByTestKeyId", query = "SELECT o FROM TestKey AS o WHERE o.testKeyId=:testKeyId" )
+        @NamedQuery( name = "TestKey.findByTestKeyId", query = "SELECT o FROM TestKey AS o WHERE o.testKeyId=:testKeyId" ),
+        @NamedQuery ( name="TestKey.findByOrgAndExtRef", query="SELECT o FROM TestKey AS o  WHERE o.orgId=:orgId AND o.extRef=:extRef" )
 })
 public class TestKey implements Serializable
 {

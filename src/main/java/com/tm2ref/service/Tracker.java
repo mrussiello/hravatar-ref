@@ -7,6 +7,11 @@ import java.util.TreeMap;
 
 public class Tracker
 {
+    public static int apiRequests;
+    public static int apiAssessmentStatusRequests;
+    public static int apiReportPdfRequests;
+    public static int apiErrors;
+    
     public static Date startDate = null;
 
     private static int errors = 0;
@@ -54,6 +59,23 @@ public class Tracker
     private static int candidateFileUploadErrors = 0;
     private static int candidateFileUploads = 0;
 
+    
+    public static void addApiReportPdfRequest()
+    {
+        apiRequests++;
+        apiReportPdfRequests++;
+    }
+    
+    public static void addApiError()
+    {
+        apiErrors++;
+    }
+    
+    public static void addApiAssessmentStatusRequest()
+    {
+        apiRequests++;
+        apiAssessmentStatusRequests++;
+    }
     
     public static void addSelfReferral()
     {
@@ -237,6 +259,11 @@ public class Tracker
         Map<String, Object> outMap = new TreeMap<>();
 
         outMap.put( "AA NEW STARTS: ", RuntimeConstants.getBooleanValue("newRefStartsOK") ? "ON" : "OFF" );
+
+        outMap.put("API: Requests", ((int) apiRequests ) );
+        outMap.put( "API: RefCheck Status Requests", ((int) apiAssessmentStatusRequests ) );
+        outMap.put( "API: Report PDF Requests", ((int) apiReportPdfRequests ) );
+        outMap.put( "API: Errors", ((int) apiErrors ) );
         
         outMap.put( "ERRORS: ", ((int) errors ) );
         outMap.put( "ERRORS: Faces", ((int) facesErrors ) );

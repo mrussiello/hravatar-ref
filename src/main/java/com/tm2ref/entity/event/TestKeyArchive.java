@@ -22,7 +22,8 @@ import jakarta.persistence.Transient;
 @Entity
 @Table( name = "testkeyarchive" )
 @NamedQueries( {
-        @NamedQuery( name = "TestKeyArchive.findByTestKeyId", query = "SELECT o FROM TestKeyArchive AS o WHERE o.testKeyId=:testKeyId" )
+        @NamedQuery( name = "TestKeyArchive.findByTestKeyId", query = "SELECT o FROM TestKeyArchive AS o WHERE o.testKeyId=:testKeyId" ),
+        @NamedQuery ( name="TestKeyArchive.findByOrgAndExtRef", query="SELECT o FROM TestKeyArchive AS o  WHERE o.orgId=:orgId AND o.extRef=:extRef" )
 } )
 public class TestKeyArchive implements Serializable
 {

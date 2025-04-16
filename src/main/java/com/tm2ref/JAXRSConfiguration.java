@@ -24,6 +24,7 @@ public class JAXRSConfiguration extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.tm2ref.api.result.ReferenceCheckStatusResource.class);
         resources.add(com.tm2ref.ws.ReportPdfResource.class);
     }    
     

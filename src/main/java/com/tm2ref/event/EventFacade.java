@@ -16,6 +16,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -95,6 +96,57 @@ public class EventFacade
         }
     }
 
+    public TestKey getTestKeyForOrgAndEventRef( int orgId, String extRef ) throws Exception
+    {
+        try
+        {
+            if( orgId <= 0 || extRef == null || extRef.isBlank() )
+                return null;
+
+            TypedQuery<TestKey> q = em.createNamedQuery( "TestKey.findByOrgAndExtRef", TestKey.class );
+
+            q.setParameter( "orgId", orgId );
+            q.setParameter( "extRef", extRef );
+
+            q.setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+
+            List<TestKey> ul = q.getResultList();
+
+            if( ul.isEmpty() )
+            {
+                TypedQuery<TestKeyArchive> qq = em.createNamedQuery( "TestKeyArchive.findByOrgAndExtRef", TestKeyArchive.class );
+
+                qq.setParameter( "orgId", orgId );
+
+                qq.setParameter( "extRef", extRef );
+
+                qq.setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+
+                List<TestKeyArchive> ula = qq.getResultList();
+
+                if( ula.isEmpty() )
+                    return null;
+
+                if( ula.size()> 1 )
+                    throw new Exception( "ERROR: there is more than one row with this orgId/eventRef combination." );
+
+                return ula.get( 0 ).getTestKey();
+            }
+
+            if( ul.size()> 1 )
+                throw new Exception( "ERROR: there is more than one row with this orgId/eventRef combination." );
+
+            return ul.get( 0 );
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.getTestKeyForOrgAndEventRef( orgId=" + orgId + " , extRef=" +  extRef + " )" );
+            return null;
+        }
+    }
+    
+    
 
     public TestKey getTestKey( long testKeyId ) throws Exception
     {

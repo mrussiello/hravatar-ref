@@ -308,6 +308,20 @@
                         </configuration>
                         <id>jaxb-generate-AssessmentResult</id>
                     </execution>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaIncludes>
+                                <include>jaxb/AssessmentStatusRequest/*.xsd</include>
+                            </schemaIncludes>
+                            <episodeFile>${project.build.directory}/generated-sources/xjc-AssessmentStatusRequest/META-INF/jaxb-AssessmentStatusRequest.episode</episodeFile>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-AssessmentStatusRequest</generateDirectory>
+                            <generatePackage>com.tm2ref.api.result</generatePackage>
+                        </configuration>
+                        <id>jaxb-generate-AssessmentStatusRequest</id>
+                    </execution>
                 </executions>
                 <configuration>
                     <verbose>true</verbose>

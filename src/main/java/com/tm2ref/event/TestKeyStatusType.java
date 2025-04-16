@@ -41,6 +41,21 @@ public enum TestKeyStatusType
         return equals( SCORED );
     }
 
+    public boolean getIsDeactivated()
+    {
+        return equals( DEACTIVATED );
+    }
+
+    public boolean getIsExpired()
+    {
+        return equals( EXPIRED );
+    }
+
+    public boolean getIsSuspended()
+    {
+        return equals( STOPPED_PROCTOR );
+    }
+
     public boolean getIsScoredOrHigher()
     {
         return  testKeyStatusTypeId>=SCORED.testKeyStatusTypeId && testKeyStatusTypeId<=DISTRIBUTION_COMPLETE.testKeyStatusTypeId;
