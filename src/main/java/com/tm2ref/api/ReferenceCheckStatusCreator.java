@@ -298,6 +298,9 @@ public class ReferenceCheckStatusCreator {
 
                 resultsViewUrl = rc.getResultsViewUrl(); // RuntimeConstants.getStringValue( "baseprotocol" ) + "://" + RuntimeConstants.getStringValue( "baseadmindomain" ) + "/ta/r.xhtml?t=" + te.getTestEventIdEncrypted();
 
+                if( !resultsViewUrl.contains("&c=1") )
+                    resultsViewUrl += "&c=1";
+                
                 userAgent = rc.getUserAgent();
 
                 if( rcFacade==null )
