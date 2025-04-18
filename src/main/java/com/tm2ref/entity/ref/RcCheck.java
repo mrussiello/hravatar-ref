@@ -843,7 +843,7 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult
 
     public String getResultsViewUrl()
     {
-        return RuntimeConstants.getStringValue( "RefCheckResultsBaseUrl" ) + "?rci=" + this.getRcCheckIdEncrypted() + "&am=SR";
+        return RuntimeConstants.getStringValue( "RefCheckResultsBaseUrl" ) + "?rci=" + this.getRcCheckIdEncrypted() + "&am=SR&c=1";
     }
     
 
