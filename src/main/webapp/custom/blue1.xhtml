@@ -175,7 +175,7 @@
                                 <h:outputText rendered="#{corpBean.corp.hasFooter}" value="#{corpBean.corp.footer}" escape="false"/>
                                 <ui:fragment rendered="#{not corpBean.corp.hasFooter}">
                                     <div id="ttfooterdiv" style="max-width:800px;margin-left:auto;margin-right:auto;text-align:center;padding-top:15px;margin-bottom:20px">
-                                        <ui:insert name="footerhelplink"><p:commandLink tabindex="0" id="pmtemplatehelplink" styleClass="textmedium ttfooterlink"  pt:aria-keyshortcuts="F1" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText styleClass="pflinktext anylink ttfooterlink" value="#{stMessages[ 'g.HavingTrouble' ]}"/><h:outputText rendered="#{not facesUtils.isMobile}" styleClass="pflinktext anylink ttfooterlink" style="text-decoration: underline" value=" (F1)"/></p:commandLink></ui:insert>
+                                        <ui:insert name="footerhelplink"><p:commandLink tabindex="0" id="pmtemplatehelplink" styleClass="textmedium ttfooterlink"  pt:aria-keyshortcuts="Control+F1" action="#{corpUtils.processViewHelp}" ajax="false" title="#{stMessages[ 'g.HavingTroubleAlt' ]}"><h:outputText styleClass="pflinktext anylink ttfooterlink" value="#{stMessages[ 'g.HavingTrouble' ]}"/><h:outputText rendered="#{not facesUtils.isMobile}" styleClass="pflinktext anylink ttfooterlink" style="text-decoration: underline" value=" (CTRL+F1)"/></p:commandLink></ui:insert>
                                         <ui:insert name="previousresultslink">
                                             <ui:fragment rendered="#{refUtils.showPrevResultLink}">
                                                 &#160;

@@ -206,7 +206,7 @@
 
             logIt( 'ref/resources/ref/standardhdrjs.xhtml.doRefGenKeydownEvent() key=' + evt.key );
 
-            if( evt.key==='F1')
+            if( evt.key==='F1' && evt.ctrlKey)
             {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -214,7 +214,7 @@
                 return;
             }
 
-            if( evt.key==='F2')
+            if( evt.key==='F2' && evt.ctrlKey)
             {
                 evt.preventDefault();
                 evt.stopPropagation();

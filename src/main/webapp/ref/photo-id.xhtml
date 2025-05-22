@@ -91,10 +91,10 @@
                                 <div style="text-align:center">
                                     <div style="inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">
                                         <span id="capturebut">
-                                            <p:button value="#{stMessages['g.CapturePhoto']}" pt:aria-keyshortcuts="F3" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
+                                            <p:button value="#{stMessages['g.CapturePhoto']}" pt:aria-keyshortcuts="Control+F6" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                                         </span>
 
-                                        <a tabindex="0" class="ttformlink" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="F3" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
+                                        <a tabindex="0" class="ttformlink" id="snapshotretrylink" href="#" style="display:none" pt:aria-keyshortcuts="Control+F6" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
                                             <h:outputText styleClass="pflinktext anylink ttformlink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/>
                                         </a>
                                         <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>
@@ -108,7 +108,7 @@
                             <div style="text-align:center;padding-top:10px">
                                 <div style="display:inline-block">
                                     <div id="uploadimagebutton" style="display:none">
-                                        <p:commandButton ajax="true" pt:aria-keyshortcuts="F4" value="#{stMessages['g.PPT.candid.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
+                                        <p:commandButton ajax="true" pt:aria-keyshortcuts="Control+F7" value="#{stMessages['g.PPT.candid.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
                                     </div>
                                     <ui:fragment rendered="#{proctorUtils.photosOptional}">
                                         &#160;

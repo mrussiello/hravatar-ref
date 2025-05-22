@@ -70,26 +70,26 @@
                     <div style="text-align:center">
                         <div style="display:inline-block">
                             <span id="startrecbut" style="display:none">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartRecording']} (F3)" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StartRecording']}" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StartRecording']} (CTRL+F6)" style="margin-bottom: 3px"  onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                             </span>
                             <span id="startrecbutaudio" style="display:none">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StartAudioRecording']} (F3)" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StartAudioRecording']}" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StartAudioRecording']} (CTRL+F6)" style="margin-bottom: 3px" onclick="doStartMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                             </span>
                             <span id="stoprecbut" style="display:none">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F3" value="#{stMessages['g.StopRecording']} (F3)" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StopRecording']}" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.StopRecording']} (CTRL+F6)" style="margin-bottom: 3px"  onclick="doStopMediaRecording(); return false;" title="#{stMessages['g.StartRecordingInfo']}" />
                             </span>
 
                             <span id="playbut" style="display:none;margin-left:15px">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Play']} (F5)" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F8" value="#{stMessages['g.Play']}" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F8" value="#{stMessages['g.Play']} (CTRL+F8)" style="margin-bottom: 3px" onclick="doStartPlayback(); return false;" title="#{stMessages['g.PlayInfo']}" />
                             </span>
 
                             <span id="pausebut" style="display:none;margin-left:15px">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F5" value="#{stMessages['g.Pause']} (F5)" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F8" value="#{stMessages['g.Pause']}" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F8" value="#{stMessages['g.Pause']} (CTRL+F8)" style="margin-bottom: 3px" onclick="doStopPlayback(); return false;" title="#{stMessages['g.PauseInfo']}" />
                             </span>
                             <!-- Need stop/start button here. -->
                             <!-- <img src="/tr/images/startrecbut1.png" id="startstoprecbut" style="border:0;cursor:pointer" onclick="doStartStopRecClick()" title="#{stMessages['g.RecordButInfo']}" /> -->
@@ -101,8 +101,8 @@
                     <div style="text-align:center">
                         <div style="display:inline-block">
                             <span id="uploadbuttondiv" style="display:none">
-                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
-                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="F4" value="#{stMessages['g.RecordingUpload']} (F4)" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
+                                <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F7" value="#{stMessages['g.RecordingUpload']}" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
+                                <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F7" value="#{stMessages['g.RecordingUpload']} (CTRL+F7)" style="margin-bottom: 3px" title="#{stMessages['g.RecordingUploadInfo']}" onclick="doStopPlayback(); doUploadAvRecording(); return false;"/>
                             </span>
                             &#160;
                             <span id="dialogclosebut">

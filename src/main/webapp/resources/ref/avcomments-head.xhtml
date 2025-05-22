@@ -1668,7 +1668,7 @@
                     logIt( 'ref/resources/ref/avcomments-head.xhtml.doAvMediaKeyDown() key=' + evt.key );
 
 
-                    if( evt.key==='F3')
+                    if( evt.key==='F6' && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();
@@ -1676,7 +1676,7 @@
                         return;
                     }
 
-                    else if( evt.key==='F4')
+                    else if( evt.key==='F7' && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();
@@ -1690,12 +1690,12 @@
                         }
                         else
                         {
-                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F4 - Upload. The upload button is not visible. Ignoring.' );
+                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F7 - Upload. The upload button is not visible. Ignoring.' );
                         }
                         return;
                     }
                     
-                    else if( evt.key==='F5')
+                    else if( evt.key==='F8' && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();
@@ -1711,7 +1711,7 @@
 
                         if( !okToPlay )
                         {
-                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F5 - play/pause Neither the playbutton or the pausebutton appears to be visible. Ignoring. playing=' + playing);
+                            logIt('avcomments-head.xhtml.doAvMediaKeyDown() F8 - play/pause Neither the playbutton or the pausebutton appears to be visible. Ignoring. playing=' + playing);
                             return;
                         }
                                                 
