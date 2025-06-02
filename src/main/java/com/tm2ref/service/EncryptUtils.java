@@ -155,7 +155,9 @@ public class EncryptUtils
 
             if( s != null )
             {
-                s = s.replace( '-', '=');
+                if( s.endsWith("-") )
+                    s = s.substring( 0,s.length()-1) + "=";
+                // s = s.replace( '-', '=');
                 s = s.replace('_', '+');
                 s = decryptString(s , init( true ) );
             }
