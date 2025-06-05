@@ -1,5 +1,6 @@
 package com.tm2ref.entity.user;
 
+import com.tm2ref.global.Constants;
 import com.tm2ref.report.ReportUtils;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.user.CandidateImageViewType;
@@ -173,6 +174,9 @@ public class Org implements Serializable
     private String reportFlags;
 
 
+    @Column(name="customstringvals")
+    private String customStringVals;
+
 
     
     
@@ -302,6 +306,19 @@ public class Org implements Serializable
         return !reportFlags.contains( "|allsmsoff|1" ) && !reportFlags.startsWith( "allsmsoff|1" );
     }
     
+    public String getCustomStringValue( String tagName )
+    {
+        String s = StringUtils.getBracketedArtifactFromString(customStringVals, tagName);
+        // String s =  IvrStringUtils.getTagValue( customStringVals,  tagName );
+        s = StringUtils.replaceStr(s, "{{", "[" );
+        return StringUtils.replaceStr(s, "}}", "]" );
+    }
+    
+    
+    public String getPostTestContactStr()
+    {
+        return getCustomStringValue(Constants.CSVPOSTTESTCONTACTSTR );
+    }
     
     
     
@@ -545,6 +562,14 @@ public class Org implements Serializable
 
     public void setCcOnCandEmails(int ccOnCandEmails) {
         this.ccOnCandEmails = ccOnCandEmails;
+    }
+
+    public String getCustomStringVals() {
+        return customStringVals;
+    }
+
+    public void setCustomStringVals(String customStringVals) {
+        this.customStringVals = customStringVals;
     }
 
 

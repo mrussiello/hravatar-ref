@@ -206,7 +206,8 @@ public class RcMessageUtils {
                 rc.getRcCheckType().getName(locale), 
                 completeDate, 
                 filename,
-                getContactUsUrl( rc, null ) 
+                getContactUsUrl( rc, null ),
+                getPostCandidateContactStr( rc.getOrg() )
             };
             
             String subject = MessageFactory.getStringMessage( rc.getLocale(), "g.RCCandFbkRptSubj", params );
@@ -462,6 +463,20 @@ public class RcMessageUtils {
         }
         
     }
+
+    public String getPostCandidateContactStr( Org org )
+    {
+        if( org==null )
+            return "";
+        String cs = org.getPostTestContactStr();
+        if( cs==null || cs.isBlank() )
+            return "";
+        String ss = cs.toLowerCase();
+        if( !ss.startsWith("<div") && !ss.startsWith("<p") )
+            cs = "<p>" + cs + "</p>";
+        return cs;
+    }
+
     
     
     public String performMessageSubstitutions( String inStr, RcCheck rc, User raterUser, Org org, Locale locale, TimeZone timeZone, String url )

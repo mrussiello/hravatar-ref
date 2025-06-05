@@ -73,6 +73,9 @@ public class Constants
     public static String HIGH_COMP_RGBCOLOR_SELF = "#8FBC8F";
     
     public static long MAX_FILE_UPLOAD_SIZE = 100000000l;
+    
+    public static final String CSVPOSTTESTCONTACTSTR="CSVPOSTTESTCONTACTSTR";
+    
 
 }
 
