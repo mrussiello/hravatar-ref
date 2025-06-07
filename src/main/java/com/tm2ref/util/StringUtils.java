@@ -45,14 +45,14 @@ public class StringUtils
     public static String removeNonPrintable(String str){ // All Control Char
         if( str==null )
             return str;        
-        return str.replaceAll("[\\p{C}]", "");
+        return str.replaceAll("[\\p{Cntrl}&&[^\\r\\n\\t]]", "");
     }
 
     public static String removeAllControlChars(String str)
     {
         if( str==null )
             return str;        
-        return removeNonPrintable(str).replaceAll("[\\r\\n\\t]", "").trim();
+        return removeNonPrintable(str).replaceAll("[\\t]", "   ").trim();
     }    
     
     public static String capitalizeFirstChar( String inStr )

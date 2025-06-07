@@ -108,7 +108,23 @@ public class Report implements Serializable, Cloneable
     @Column(name="includeitemscores")
     private int includeItemScores = 0;
 
+    /*
+     0=No
+     1=Summary Only
+     2=Full
+    */
+    @Column(name="includeresume")
+    private int includeResume = 0;
+    
+    /*
+     0=No
+     1=Summary Only
+     2=Full
+    */
+    @Column(name="includejobdescrip")
+    private int includeJobDescrip = 0;
 
+    
     /**
      * packed string ruleid1|value1|ruleid2|value2;
      */
@@ -539,6 +555,22 @@ public class Report implements Serializable, Cloneable
 
     public void setIncludeScoreText(int includeScoreText) {
         this.includeScoreText = includeScoreText;
+    }
+
+    public int getIncludeResume() {
+        return includeResume;
+    }
+
+    public void setIncludeResume(int includeResume) {
+        this.includeResume = includeResume;
+    }
+
+    public int getIncludeJobDescrip() {
+        return includeJobDescrip;
+    }
+
+    public void setIncludeJobDescrip(int includeJobDescrip) {
+        this.includeJobDescrip = includeJobDescrip;
     }
 
 
