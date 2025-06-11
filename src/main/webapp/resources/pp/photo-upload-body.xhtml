@@ -81,12 +81,12 @@
                             <div style="display:inline-block" role="region" aria-label="#{stMessages['g.PPPhotoControlsRegion']}" aria-describedby="cameracontrolsregioninfo">
 
                                 <span id="capturebut">
-                                    <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.CapturePhoto']}" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
-                                    <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F6" value="#{stMessages['g.CapturePhoto']} (CTRL+F6)" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
+                                    <p:button rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}6" value="#{stMessages['g.CapturePhoto']}" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
+                                    <p:button rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}6" value="#{stMessages['g.CapturePhoto']} (CTRL+#{userBean.ctrlHotKeyPrefix}6)" title="#{stMessages['g.CapturePhotoInfo']}"  onclick="doImageSnap();  return false;"/>
                                 </span>
 
-                                <a tabindex="0" id="snapshotretrylink" class="ttformlink" href="#" style="display:none" pt:aria-keyshortcuts="Control+F6" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
-                                    <h:outputText styleClass="pflinktext anylink ttformlink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/><h:outputText rendered="#{not facesUtils.isMobile}" styleClass="pflinktext anylink ttformlink" style="font-size:16px" value=" (CTRL+F6)"/>
+                                <a tabindex="0" id="snapshotretrylink" class="ttformlink" href="#" style="display:none" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}6" title="#{stMessages['g.PPT.candphoto.retryinfo']}" onclick="doImageCaptureRetry(); return false;">
+                                    <h:outputText styleClass="pflinktext anylink ttformlink" style="font-size:16px" value="#{stMessages['g.PPT.candphoto.retry']}"/><h:outputText rendered="#{not facesUtils.isMobile}" styleClass="pflinktext anylink ttformlink" style="font-size:16px" value=" (CTRL+#{userBean.ctrlHotKeyPrefix}6)"/>
                                 </a>
                                 <span id="cameracontrolsregioninfo" class="sr-only"><h:outputText value="#{stMessages['g.PPPhotoControlsRegion.desc']}"/></span>
                             </div>
@@ -99,8 +99,8 @@
                     <div style="text-align:center;padding-top:10px">
                         <div style="display:inline-block">
                             <div id="uploadimagebutton" style="display:none">
-                                <p:commandButton rendered="#{facesUtils.isMobile}" ajax="true" value="#{stMessages['g.PPT.candphoto.upload']}" pt:aria-keyshortcuts="Control+F7" title="#{stMessages['g.PPT.candphoto.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
-                                <p:commandButton rendered="#{not facesUtils.isMobile}" ajax="true" value="#{stMessages['g.PPT.candphoto.upload']} (CTRL+F7)" pt:aria-keyshortcuts="Control+F7" title="#{stMessages['g.PPT.candphoto.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
+                                <p:commandButton rendered="#{facesUtils.isMobile}" ajax="true" value="#{stMessages['g.PPT.candphoto.upload']}" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}7" title="#{stMessages['g.PPT.candphoto.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
+                                <p:commandButton rendered="#{not facesUtils.isMobile}" ajax="true" value="#{stMessages['g.PPT.candphoto.upload']} (CTRL+#{userBean.ctrlHotKeyPrefix}7)" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}7" title="#{stMessages['g.PPT.candphoto.upload.alt']}" onclick="showHideImageUploadDialog(true); doImageUpload(); return false;"/>
                             </div>
                             <ui:fragment rendered="#{proctorUtils.photosOptional}">
                                 &#160;

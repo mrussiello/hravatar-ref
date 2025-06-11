@@ -61,6 +61,8 @@ public class UserBean implements Serializable
     private String selMicrophone;
     
     private Boolean msieOrSamsungAndroid;
+    private Boolean nonMobileMacintosh;
+    
 
 
     /** Creates a new instance of UserBean */
@@ -84,6 +86,7 @@ public class UserBean implements Serializable
         timeZoneOffset = -999999;
         timeZoneIdFmBrowser = null;
         msieOrSamsungAndroid=null;
+        nonMobileMacintosh=null;
     }
 
 
@@ -110,6 +113,20 @@ public class UserBean implements Serializable
         return "UserBean{" + "locale=" + locale + ", user=" + ( user==null ? "null" : user.toString() ) + '}';
     }
 
+    public String getCtrlHotKeyPrefix()
+    {
+        return  getIsNonMobileMac() ? "" : "F";
+    }
+    
+    public boolean getIsNonMobileMac()
+    {
+        if(nonMobileMacintosh==null)
+           return false;
+        
+        return nonMobileMacintosh;
+    }
+    
+    
 
     public String getBaseLogoUrl()
     {
@@ -434,6 +451,14 @@ public class UserBean implements Serializable
 
     public void setSelMicrophone(String selMicrophone) {
         this.selMicrophone = selMicrophone;
+    }
+
+    public Boolean getNonMobileMacintosh() {
+        return nonMobileMacintosh;
+    }
+
+    public void setNonMobileMacintosh(Boolean nonMobileMacintosh) {
+        this.nonMobileMacintosh = nonMobileMacintosh;
     }
 
     

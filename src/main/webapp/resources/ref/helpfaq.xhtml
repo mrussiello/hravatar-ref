@@ -57,8 +57,8 @@
                     </div>
                     <br />
                     <div style="text-align: center;margin-top:18px;margin-bottom:2px">
-                        <p:commandButton rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F2" action="#{corpUtils.processViewCameraHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlp.6.s.linktitle' ]}" value="#{stMessages[ 'g.CrpHlp.6.s.linktext' ]}"/>
-                        <p:commandButton rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+F2" action="#{corpUtils.processViewCameraHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlp.6.s.linktitle' ]}" value="#{stMessages[ 'g.CrpHlp.6.s.linktext' ]} (CTRL+F2)"/>
+                        <p:commandButton rendered="#{facesUtils.isMobile}" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}2" action="#{corpUtils.processViewCameraHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlp.6.s.linktitle' ]}" value="#{stMessages[ 'g.CrpHlp.6.s.linktext' ]}"/>
+                        <p:commandButton rendered="#{not facesUtils.isMobile}" pt:aria-keyshortcuts="Control+#{userBean.ctrlHotKeyPrefix}2" action="#{corpUtils.processViewCameraHelp}" ajax="false" title="#{stMessages[ 'g.CrpHlp.6.s.linktitle' ]}" value="#{stMessages[ 'g.CrpHlp.6.s.linktext' ]} (CTRL+#{userBean.ctrlHotKeyPrefix}2)"/>
                     </div>
                 </h:panelGroup>
 

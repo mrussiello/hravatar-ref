@@ -284,7 +284,7 @@ public class GooglePhoneUtils {
     
     public static String cleanPhoneNumberBasic( String inStr )
     {
-        LogService.logIt( "GooglePhoneUtils.cleanPhoneNumberBasic() Start " + inStr );
+        // LogService.logIt( "GooglePhoneUtils.cleanPhoneNumberBasic() Start " + inStr );
         if( inStr == null || inStr.isEmpty() )
             return "";
 

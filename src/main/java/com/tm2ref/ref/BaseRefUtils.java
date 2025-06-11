@@ -16,9 +16,9 @@ import com.tm2ref.entity.user.Suborg;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.event.EventFacade;
 import com.tm2ref.event.TestKeyStatusType;
+import com.tm2ref.faces.BrowserType;
 import com.tm2ref.faces.FacesUtils;
 import com.tm2ref.faces.HttpReqUtils;
-import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
 import com.tm2ref.proctor.ProctorBean;
 import com.tm2ref.purchase.ProductType;
@@ -1428,6 +1428,11 @@ public class BaseRefUtils  extends FacesUtils
                 }
             }
 
+            getUserBean();
+            if( userBean!=null && userBean.getNonMobileMacintosh()==null && getHttpServletRequest()!=null)
+                userBean.setNonMobileMacintosh( BrowserType.getIsNonMobileMac(getHttpServletRequest().getHeader("User-Agent")));
+            
+            
             if( getSessionListener() != null )
                 getSessionListener().updateStatus( getHttpSession().getId(), "Confirm Page",null, null, null, null, null);
             refBean.setRefPageType(RefPageType.CONFIRM);

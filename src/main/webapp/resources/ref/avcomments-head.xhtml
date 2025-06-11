@@ -1668,7 +1668,7 @@
                     logIt( 'ref/resources/ref/avcomments-head.xhtml.doAvMediaKeyDown() key=' + evt.key );
 
 
-                    if( evt.key==='F6' && evt.ctrlKey)
+                    if( (evt.key==='F6' || evt.key==='6') && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();
@@ -1676,7 +1676,7 @@
                         return;
                     }
 
-                    else if( evt.key==='F7' && evt.ctrlKey)
+                    else if( (evt.key==='F7' || evt.key==='7') && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();
@@ -1695,7 +1695,7 @@
                         return;
                     }
                     
-                    else if( evt.key==='F8' && evt.ctrlKey)
+                    else if( (evt.key==='F8' || evt.key==='8') && evt.ctrlKey)
                     {
                         evt.preventDefault();
                         evt.stopPropagation();

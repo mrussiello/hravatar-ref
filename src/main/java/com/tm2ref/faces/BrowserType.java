@@ -78,6 +78,20 @@ public enum BrowserType
         return isMsie() || isSamsung();
     }
     
+    public static boolean getIsNonMobileMac( String u)
+    {
+        if( getIsMobile( u) )
+            return false;
+        
+        if( u==null || u.isBlank() )
+            return false;
+        u=u.toLowerCase();
+        return u.contains("mac");
+    }
+    
+    
+    
+    
     public static boolean getIsMobile( String u )
     {
         if (u==null || u.isBlank()) 

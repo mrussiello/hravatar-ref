@@ -80,7 +80,7 @@
         logIt( 'ref/pp/photo-upload-head.xhtml.doPhotoKeyDown() key=' + evt.key );
 
 
-        if( evt.key==='F6' && evt.ctrlKey)
+        if( (evt.key==='F6' || evt.key==='6') && evt.ctrlKey)
         {
             evt.preventDefault();
             evt.stopPropagation();
@@ -88,7 +88,7 @@
             return;
         }
 
-        else if( evt.key==='F7' && evt.ctrlKey)
+        else if( (evt.key==='F7' || evt.key==='7') && evt.ctrlKey)
         {
             var submitEle = document.getElementById( 'uploadimagebutton' );
             if( (submitEle) && submitEle.style.display!=='none')
