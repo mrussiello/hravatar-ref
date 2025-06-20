@@ -96,7 +96,7 @@ public class JsonUtils {
     
     
     
-    public static JsonObject convertJsonStringtoObject(String jsonStr) throws Exception
+    public static JsonObject convertJsonStringToObject(String jsonStr) throws Exception
     {
         try
         {
@@ -114,7 +114,7 @@ public class JsonUtils {
     }
 
 
-    public static String convertJsonObjecttoString( JsonObject jo ) throws Exception
+    public static String convertJsonObjectToString( JsonObject jo ) throws Exception
     {
         try
         {

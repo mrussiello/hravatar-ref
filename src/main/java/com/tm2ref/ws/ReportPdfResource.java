@@ -141,7 +141,7 @@ public class ReportPdfResource extends BaseApiResource {
                 
             
             JsonObject jo2 = outJob.build();            
-            String out = JsonUtils.convertJsonObjecttoString(jo2);     
+            String out = JsonUtils.convertJsonObjectToString(jo2);     
             Tracker.addApiReportPdfRequest();
             // LogService.logIt( "ReportPdfResource.doPost() COMPLETE. output=" + out );
             return Response.ok( out, MediaType.APPLICATION_JSON).status( Response.Status.OK.getStatusCode() ).build();            

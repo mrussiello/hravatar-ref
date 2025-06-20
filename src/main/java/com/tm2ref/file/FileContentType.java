@@ -136,6 +136,15 @@ public enum FileContentType
         return equals(ARCHIVE_ZIP); 
     }
 
+    public boolean getIsWord()
+    {
+        return equals(DOCUMENT_DOCX) || equals(DOCUMENT_DOC);
+    }
+    
+    public boolean getIsPdf()
+    {
+        return equals(DOCUMENT_PDF);
+    }
     
 
     

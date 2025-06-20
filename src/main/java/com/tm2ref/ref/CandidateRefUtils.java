@@ -10,7 +10,10 @@ import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcScript;
+import com.tm2ref.entity.user.Resume;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.file.FileContentType;
+import com.tm2ref.global.Constants;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.EmailUtils;
 import com.tm2ref.service.LogService;
@@ -21,6 +24,8 @@ import com.tm2ref.user.UserFacade;
 import com.tm2ref.user.UserType;
 import com.tm2ref.util.CookieUtils;
 import com.tm2ref.util.GooglePhoneUtils;
+import com.tm2ref.util.MsWordUtils;
+import com.tm2ref.util.PdfUtils;
 import com.tm2ref.util.StringUtils;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +36,11 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.model.SelectItem;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ListIterator;
+import java.util.Scanner;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *
@@ -42,6 +51,7 @@ import java.util.ListIterator;
 @RequestScoped
 public class CandidateRefUtils extends BaseRefUtils
 {
+    UploadedFile uploadedFile;
 
     @Inject
     CandidateRefBean candidateRefBean;
@@ -133,6 +143,206 @@ public class CandidateRefUtils extends BaseRefUtils
 
     }
 
+    public void doResumeCollectionPrep()
+    {
+        candidateRefBean.setCandidateInputStr(null);
+
+        getRefBean();
+
+        RcCheck rc = refBean.getRcCheck();
+        if( rc==null || rc.getUser()==null )
+            return;
+        try
+        {
+            if( rc.getUser().getResume()==null )
+            {
+                if( userFacade==null )
+                    userFacade=UserFacade.getInstance();
+                rc.getUser().setResume( userFacade.getResumeForUser(rc.getUserId()));
+            }
+            
+            if( rc.getUser().getResume()==null )
+                return;
+            
+            //String text = rc.getUser().getResume().getUploadedText();
+            //if( (text==null || text.isBlank()) && rc.getUser().getResume().getPlainText()!=null  && !rc.getUser().getResume().getPlainText().isBlank())
+            //    text = rc.getUser().getResume().getPlainText();
+
+            String text = rc.getUser().getResume().getPlainText();
+            
+            // Use uploaded text if no PlainText
+            if( (text==null || text.isBlank()) && rc.getUser().getResume().getUploadedText()!=null  && !rc.getUser().getResume().getUploadedText().isBlank())
+                text = rc.getUser().getResume().getUploadedText();
+
+            
+            candidateRefBean.setCandidateInputStr(text);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "CandidateRefUtils.doResumeCollectionPrep() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));            
+        }
+
+    }
+    
+    public String processSaveOrUploadResume()
+    {
+        getCorpBean();
+        getRefBean();
+
+        RcCheck rc = null;
+        try
+        {
+            rc = refBean.getRcCheck();
+            if( rc == null )
+                rc = repairRefBeanForCurrentAction(refBean, true, 15 );
+            if( rc == null )
+            {
+                if( corpUtils==null )
+                    corpUtils = CorpUtils.getInstance();
+                return corpUtils.processCorpHome();
+            }
+
+            long rcChkReq = getRcCheckIdFmRequest();
+            if( rcChkReq>0 && rcChkReq!=rc.getRcCheckId() )
+            {
+                String msg = "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.getRcCheckId()=" + rc.getRcCheckId();
+                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() " + msg );
+                return systemError(rc.getOrg(), CorpBean.getInstance().getCorp(), msg , null, null, rc, rc.getRcRater(), true );
+            }
+
+            // LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            refBean.setRefPageType( RefPageType.RESUME );
+
+            String textStr = candidateRefBean.getCandidateInputStr();
+
+            String uploadedText = null;
+            String uploadFilename = null;
+
+            if( uploadedFile!=null )
+            {
+                // LogService.logIt( "Wait a few seconds for upload
+                Thread.sleep(1500);
+                FileContentType fct = uploadedFile==null ? null : FileContentType.getFileContentTypeFromContentType( uploadedFile.getContentType(), uploadedFile.getFileName() );
+
+                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.1 have uploaded file. fct=" + (fct==null ? "null" : fct.getBaseContentType()) + ", size=" + uploadedFile.getSize() + ", filename=" + uploadedFile.getFileName() );
+
+                if( uploadedFile.getSize()<=1 )
+                    throw new STException( "g.ResumeFileTooSmall" );
+                else if( uploadedFile.getSize()>Constants.MAX_FILE_UPLOAD_SIZE )
+                    throw new STException( "g.ResumeFileTooBig" );
+
+
+                InputStream fis = uploadedFile.getInputStream();
+
+                if( fct.getIsPdf() )
+                {
+                    uploadedText = PdfUtils.convertPdfToText(fis);
+                }
+                else if( fct.getIsWord() )
+                {
+                    uploadedText = MsWordUtils.convertWordToText(fis, uploadedFile.getFileName());
+                    if( (uploadedText==null || uploadedText.isBlank()) && fct.getBaseExtension().equalsIgnoreCase("docx") )
+                        LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() unable to parse Word document. It may be an old .doc version. uploadedFilename=" + uploadedFile.getFileName() );
+                }
+                else
+                {
+                    try (Scanner scanner = new Scanner(fis, StandardCharsets.UTF_8))
+                    {
+                        uploadedText = scanner.useDelimiter("\\A").next();
+                    }
+                }
+
+                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.2 uploadedText.length=" + (uploadedText==null ? "null" : uploadedText.length() ) );
+
+                if( uploadedText==null || uploadedText.isBlank() )
+                    throw new STException( "g.ResumeFileNoText" );
+                uploadFilename = uploadedFile.getFileName();
+            }
+
+            if( rc.getRcScript().getCollectResume()==2 && (textStr==null || textStr.isBlank()) && (uploadedText==null || uploadedText.isBlank()) )
+                throw new STException( "g.ResumeRqdButNoInput" );
+            
+            if( (textStr!=null && !textStr.isBlank()) || (uploadedText!=null && !uploadedText.isBlank()) )
+            {
+                if( userFacade==null )
+                    userFacade=UserFacade.getInstance();
+
+                Resume resume = rc.getUser().getResume();
+                if( resume==null )
+                    resume = userFacade.getResumeForUser(rc.getUserId() );
+                if( resume==null )
+                {
+                    resume = new Resume();
+                    resume.setUserId( rc.getUserId());
+                    resume.setOrgId( rc.getOrgId());
+                    resume.setCreateDate(new Date());
+                }
+                
+                boolean isChange=false;
+                if( uploadedText!=null && !uploadedText.isBlank() )
+                {
+                    uploadedText = uploadedText.trim();
+                    isChange = resume.getUploadedText()==null || !resume.getUploadedText().equalsIgnoreCase(uploadedText);
+
+                    if( isChange && resume.getPlainText()!=null && resume.getPlainText().equalsIgnoreCase(textStr))
+                        isChange=false;
+                        
+                    resume.setUploadedText(uploadedText); 
+                    resume.setUploadFilename(uploadFilename);
+                    resume.setLastInputDate( new Date() );
+                }
+                else if( textStr!=null && !textStr.isBlank() )
+                {
+                    textStr = textStr.trim();
+                    isChange = resume.getUploadedText()==null || (!resume.getUploadedText().equalsIgnoreCase(textStr));
+                    
+                    if( isChange && resume.getPlainText()!=null && resume.getPlainText().equalsIgnoreCase(textStr))
+                        isChange=false;
+                        
+                    resume.setUploadedText(textStr); 
+
+                    // clear upload
+                    resume.setUploadFilename(null);
+                    resume.setLastInputDate( new Date() );
+                }
+
+
+                if( isChange )
+                    resume.setLastInputDate(new Date());
+                userFacade.saveResume(resume);
+
+                boolean needsParse = isChange; // || (resume.getLastInputDate()!=null && (resume.getLastParseDate()==null || resume.getLastParseDate().before( resume.getLastInputDate())) );
+                if( needsParse )
+                {
+                    ResumeParseThread rpt = new ResumeParseThread( rc.getRcCheckId(), rc.getUser(), resume );
+                    (new Thread(rpt)).start();
+                }
+                
+                rc.getUser().setResume(resume);
+            }
+
+            rc.setResumeComplete(1);
+            if( rcFacade==null )
+                rcFacade=RcFacade.getInstance();
+            rcFacade.saveRcCheck(rc, true );
+            
+            candidateRefBean.setCandidateInputStr(null);
+            RefPageType rpt = getNextPageTypeForRefProcess();
+            refBean.setRefPageType(rpt);
+            return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true);
+        }
+        catch( STException e )
+        {
+            setMessage(e);
+            return "StayInSamePlace";
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "CandidateRefUtils.processSaveOrUploadResume() rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ));
+            setMessage( e );
+            return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
+        }
+    }
 
     /**
      * Question responses are a CORE1 process.
@@ -310,7 +520,7 @@ public class CandidateRefUtils extends BaseRefUtils
             //rcCheckUtils.performRcCandidateCompletionIfReady(rc);
             if( !refBean.getAdminOverride() )
             {
-                // Need to check that all ratings are done. 
+                // Need to check that all ratings are done.
 
                 // update the Rc Check
                 if( rc.getCandidateRatingsCompleteDate()==null )
@@ -327,21 +537,21 @@ public class CandidateRefUtils extends BaseRefUtils
                     LogService.logIt( "CandidateRefUtils.doCompleteSelfRatings() rcCheck is complete but there is unconverted media for review. rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
                     // indicates must wait and check media.
                     rc.setRaterSendDelayTypeId(10);
-                    rcFacade.saveRcCheck( rc, true );                                                    
-                }                    
+                    rcFacade.saveRcCheck( rc, true );
+                }
 
                 // initial ratings completed, so send Rater Invitations
                 if( rc.getRaterSendDelayTypeId()==1 ) //  || rc.getRaterSendDelayTypeId()==10 )
                 {
                     if( rcCheckUtils==null )
-                        rcCheckUtils = new RcCheckUtils();                    
+                        rcCheckUtils = new RcCheckUtils();
                     rcCheckUtils.sendDelayedRaterInvitations(rc, refBean.getHasUnconvertedAvMediaForReview(), refBean.getAdminOverride() );
                 }
-             
-                
+
+
                 updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
             }
-            
+
             // LogService.logIt( "CandidateRefUtils.doCompleteSelfRatings() DDD needsCore3()=" + getNeedsCore3() + " rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() ) );
 
             // needs references.
@@ -365,7 +575,7 @@ public class CandidateRefUtils extends BaseRefUtils
         }
     }
 
-    
+
     protected void updateRcCheckAndCandidateStatusAndSendProgressMsgs( RcCheck rc ) throws Exception
     {
         if( rcCheckUtils==null )
@@ -374,7 +584,7 @@ public class CandidateRefUtils extends BaseRefUtils
         getRefBean();
 
         rcCheckUtils.performRcCandidateCompletionIfReady(rc, refBean.getAdminOverride() );
-        
+
         if( (rc.getRcRaterList().size()>=1 || rc.getRcCandidateStatusType().getIsCompletedOrHigher()) && !rc.getRcCheckStatusType().getIsStartedOrHigher() )
         {
             rc.setRcCheckStatusTypeId( RcCheckStatusType.STARTED.getRcCheckStatusTypeId() );
@@ -394,7 +604,7 @@ public class CandidateRefUtils extends BaseRefUtils
         }
     }
 
-        
+
     public String getCandidateInputQuestion()
     {
         getRefBean();
@@ -546,23 +756,23 @@ public class CandidateRefUtils extends BaseRefUtils
     public boolean getNeedsCore2() throws Exception
     {
         getRefBean();
-        
+
         if( !refBean.getRcCheck().getCollectRatingsFmCandidate() )
             return false;
-        
+
         if( refBean.getRcCheck().getRcRater()==null || !refBean.getRcCheck().getRcRater().getIsCandidateOrEmployee() )
             return false;
 
         // Not complete, or no expiration, or not expired.
         return !refBean.getRcCheck().getRcRater().getRcRaterStatusType().getCompleteOrHigher() || refBean.getRcCheck().getExpireDate()==null || refBean.getRcCheck().getExpireDate().after(new Date());
     }
-    
-    
+
+
     public boolean getStartAtEndOfCore2() throws Exception
     {
         return getNeedsCore2() && !getNeedsCore3();
-    }    
-    
+    }
+
     public boolean getNeedsCore3() throws Exception
     {
         getRefBean();
@@ -704,7 +914,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 LogService.logIt( "CandidateRefUtils.processViewRaters() Candidate cannot add raters. Should not be here. Processing Go Back from here.  rcCheck: "  + rc.toStringShort());
                 return processReferencesGoBack();
             }
-            
+
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
                 throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq );
@@ -875,17 +1085,17 @@ public class CandidateRefUtils extends BaseRefUtils
 
             if( refBean.getHasUnconvertedAvMediaForReview()==null )
                 refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-            
+
             if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
             {
                 if( rcCheckUtils==null )
-                    rcCheckUtils = new RcCheckUtils();                    
+                    rcCheckUtils = new RcCheckUtils();
                 rcCheckUtils.sendUnsentRcRaters(rc, true, refBean.getAdminOverride() );
             }
 
             if( !refBean.getAdminOverride() )
             {
-                updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );                
+                updateRcCheckAndCandidateStatusAndSendProgressMsgs( rc );
             }
         }
         catch( Exception e )
@@ -932,12 +1142,12 @@ public class CandidateRefUtils extends BaseRefUtils
 
                 if( refBean.getHasUnconvertedAvMediaForReview()==null )
                     refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-            
-                
+
+
                 if( !refBean.getAdminOverride() && (rc.getRaterSendDelayTypeId()<=0 || !refBean.getHasUnconvertedAvMediaForReview()) )
                 {
                     if( rcCheckUtils==null )
-                        rcCheckUtils = new RcCheckUtils();                    
+                        rcCheckUtils = new RcCheckUtils();
                     rcCheckUtils.sendUnsentRcRaters(rc, true, refBean.getAdminOverride() );
                 }
             }
@@ -1136,37 +1346,37 @@ public class CandidateRefUtils extends BaseRefUtils
             }
 
             boolean reminder = rcRater.getSendDate()!=null && rcRater.getRcRaterStatusType().getSentOrHigher();
-            
+
             if( refBean.getHasUnconvertedAvMediaForReview()==null )
                 refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-                                    
+
             if( !reminder && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
             {
                 LogService.logIt( "CandidateRefUtils.processSendToRater() CCC.1 Did not send invitation because RcCheck is set to not send to raters until Candidate Ratings are completed." );
-                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );                
+                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );
             }
 
             else if( !reminder && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
             {
                 LogService.logIt( "CandidateRefUtils.processSendToRater() CCC.2 Did not send invitation because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
-                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );                
+                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );
             }
-                
+
             else
             {
                 if( rcCheckUtils==null )
-                    rcCheckUtils = new RcCheckUtils();                    
+                    rcCheckUtils = new RcCheckUtils();
                 int[] out = refBean.getAdminOverride() ? new int[2] : rcCheckUtils.sendRcCheckToRater(  rc, rcRater, false, reminder, true); //    sendToRater( rc, rcRater, true, true );
-                
+
                 if( out[1]>0 )
                     setInfoMessage( reminder ? "g.RCReminderTextSent" : "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
-                
+
                 if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
                     setInfoMessage( reminder ? "g.RCReminderEmailSent" : "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
-                                
+
                 // LogService.logIt( "CandidateRefUtils.processSendToRater() emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) + " reminder=" + reminder );
             }
-            
+
             // OK we can edit.
             return "StayInSamePlace";
         }
@@ -1205,7 +1415,7 @@ public class CandidateRefUtils extends BaseRefUtils
             long rcChkReq = this.getRcCheckIdFmRequest();
             if( rcChkReq!=rc.getRcCheckId() )
             {
-                LogService.logIt("CandidateRefUtils.processEditRater() RcCheckId in request does not match. Calling RefUtils.processReturnToRefCheckProcess() Value in request=" + rcChkReq + ", rc.rcCheckId=" + rc.getRcCheckId() );                
+                LogService.logIt("CandidateRefUtils.processEditRater() RcCheckId in request does not match. Calling RefUtils.processReturnToRefCheckProcess() Value in request=" + rcChkReq + ", rc.rcCheckId=" + rc.getRcCheckId() );
                 RefUtils ru = RefUtils.getInstance();
                 return ru.processReturnToRefCheckProcess();
                 // throw new Exception( "RcCheckId in request does not match. Value in request=" + rcChkReq + ", rc.rcCheckId=" + rc.getRcCheckId() );
@@ -1385,7 +1595,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 LogService.logIt( "CandidateRefUtils.processSaveRater() Candidate cannot add raters!  Should not be here. Processing Go Back from here.  rcCheck: "  + rc.toStringShort());
                 return processReferencesGoBack();
             }
-            
+
             rcRater = candidateRefBean.getRcRater();
             if( rcRater==null )
                 throw new Exception( "RcRater is null!" );
@@ -1397,7 +1607,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 return processViewRaters();
                 // throw new Exception( "RcRaterId in request does not match. Value in request=" + rcRtrReq );
             }
-            
+
             if( rcRater.getRcRaterRoleType().equals( RcRaterRoleType.UNKNOWN ) )
                 throw new STException( rc.getRcCheckType().getIsPrehire() ? "g.XCErrSelectRoleType" : "g.XCErrSelectRoleType.reviewer" );
 
@@ -1414,10 +1624,10 @@ public class CandidateRefUtils extends BaseRefUtils
             user.setFirstName( user.getFirstName().trim());
             user.setLastName( user.getLastName().trim());
             user.setEmail( user.getEmail().trim());
-            
+
             if( user.getFirstName().equalsIgnoreCase( rc.getUser().getFirstName().trim()) && user.getLastName().equalsIgnoreCase( rc.getUser().getLastName().trim()) )
                 throw new STException( "g.XCErrSameEmailOrPhoneAsCand" );
-           
+
             if( user.getEmail().trim().equalsIgnoreCase( rc.getUser().getEmail().trim() ) )
                 throw new STException( "g.XCErrSameEmailOrPhoneAsCand" );
 
@@ -1476,11 +1686,11 @@ public class CandidateRefUtils extends BaseRefUtils
                 if( r2==null )
                 {
                     Thread.sleep( (long) (Math.random()*1000f) );
-                    
+
                     if( rcFacade==null )
                         rcFacade=RcFacade.getInstance();
 
-                    // check database to try to catch double clicks. 
+                    // check database to try to catch double clicks.
                     List<RcRater> rcl = rcFacade.getRcRaterList( rc.getRcCheckId() );
                     for( RcRater rx : rcl )
                     {
@@ -1496,13 +1706,13 @@ public class CandidateRefUtils extends BaseRefUtils
                         {
                             rx.setUser( userFacade.getUser( rx.getUserId() ));
                             rx.setRcCheck(rc );
-                            rx.setLocale( rc.getLocale());                            
+                            rx.setLocale( rc.getLocale());
                         }
                         rc.setRcRaterList(rcl);
-                    }                                        
+                    }
                 }
-                
-                
+
+
                 // Found a different rater.
                 if( r2!=null && r2.getRcRaterId()!=rcRater.getRcRaterId() )
                 {
@@ -1611,33 +1821,33 @@ public class CandidateRefUtils extends BaseRefUtils
                     rcRater.setNeedsResendMobile(true);
                 else if( rcRater.getTempMobile()==null  && user.getHasMobilePhone() && GooglePhoneUtils.isNumberValid(user.getMobilePhone(), user.getCountryCode()) )
                     rcRater.setNeedsResendMobile(true);
-                
-                
+
+
                 if( refBean.getHasUnconvertedAvMediaForReview()==null )
                     refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-                
+
                 if( exit && rcRater.getSendDate()==null && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
                     LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.1 Did not send invitation because RcCheck is set to not send to raters until Candidate Ratings are completed." );
 
                 else if( exit && rcRater.getSendDate()==null && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
                     LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.2 Did not send invitation because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
-                                
+
                 else if( !refBean.getAdminOverride() && exit )
                 {
                     if( rcCheckUtils==null )
-                        rcCheckUtils = new RcCheckUtils();                    
+                        rcCheckUtils = new RcCheckUtils();
                     int[] out = rcCheckUtils.sendRcCheckToRater(rc, rcRater, true, false, true);
-                    
+
                     if( out[1]>0 )
                         setInfoMessage( "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
 
                     if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
                         setInfoMessage( "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
-                                
-                    
+
+
                     LogService.logIt( "CandidateRefUtils.processSaveRater() CCC.1 sending because not create and exit is true emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
                 }
-                
+
                 else if( refBean.getAdminOverride() && exit )
                     this.setStringInfoMessage( "Did not send to Rater because of AdminOverride." );
             }
@@ -1650,7 +1860,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 // this could return a new copy of this rater if it already exists.
                 rcRater = rcFacade.saveRcRater( rcRater , false);
 
-                // replace if existin. Note that event if this is not a 'create' the system will return a matching RcRater if one already exists. 
+                // replace if existin. Note that event if this is not a 'create' the system will return a matching RcRater if one already exists.
                 //if( create )
                 //{
                 ListIterator<RcRater> iter = rc.getRcRaterList().listIterator();
@@ -1683,31 +1893,31 @@ public class CandidateRefUtils extends BaseRefUtils
 
             if( refBean.getHasUnconvertedAvMediaForReview()==null )
                 refBean.setHasUnconvertedAvMediaForReview( RcCheckUtils.hasUnconvertedCandidateMediaForRaterReview(rc, rcFacade));
-            
+
             if( send && rc.getRaterSendDelayTypeId()>0 && rc.getCandidateRatingsCompleteDate()==null )
             {
                 LogService.logIt( "CandidateRefUtils.processSaveRater() Did not send because RcCheck is set to not send to raters until Candidate Ratings are completed." );
-                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );                
+                setInfoMessage( "g.XCNotSentCandRatingsNotComplete", new String[]{rcRater.getUser().getFullname()} );
             }
 
             else if( send && rc.getRaterSendDelayTypeId()>0 && refBean.getHasUnconvertedAvMediaForReview() )
             {
                 LogService.logIt( "CandidateRefUtils.processSaveRater() Did not send because RcCheck is set to not send to raters until Candidate Media for review has been converted." );
-                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );                
+                setInfoMessage( "g.XCNotSentCandRatingsNotCompleteAvConvert", new String[]{rcRater.getUser().getFullname()} );
             }
-            
+
             else if( !refBean.getAdminOverride() && send && rcRater.getRaterNoSend()!=1 )
             {
                 if( rcCheckUtils==null )
-                    rcCheckUtils = new RcCheckUtils();                    
+                    rcCheckUtils = new RcCheckUtils();
                 int[] out = rcCheckUtils.sendRcCheckToRater(rc, rcRater, false, false, true);
 
                 if( out[1]>0 )
                     setInfoMessage( "g.RCTextSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getMobilePhone()} );
-                
+
                 if( rcRater.getUser().getEmail()!=null && !rcRater.getUser().getEmail().isBlank() && out[0]>0 )
                     setInfoMessage( "g.RCEmailSent" , new String[]{rcRater.getUser().getFullname(), rcRater.getUser().getEmail()} );
-                                
+
                 // LogService.logIt( "CandidateRefUtils.processSaveRater() DDD.1 emails sent=" + out[0] + ", text messages sent=" + out[1] + ", rcCheckId="  + (rc==null ? "null" : rc.toStringShort() ) + ", rcRaterId=" + ( rcRater==null ? "null" : rcRater.getRcRaterId() ) );
             }
 
@@ -1836,6 +2046,16 @@ public class CandidateRefUtils extends BaseRefUtils
             setMessage( e );
             return systemError(rc==null ? null : rc.getOrg(), CorpBean.getInstance().getCorp(), e.toString() , null, null, rc, rc==null ? null : rc.getRcRater(), true );
         }
+    }
+
+    public UploadedFile getUploadedFile()
+    {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile)
+    {
+        this.uploadedFile = uploadedFile;
     }
 
 

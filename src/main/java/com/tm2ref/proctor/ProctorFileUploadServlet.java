@@ -370,7 +370,7 @@ public class ProctorFileUploadServlet extends BaseFileUploadServlet
             RcFacade ef = RcFacade.getInstance();
 
             // OK, everything valid, let's lookup the ActHistory.
-            LogService.logIt( "ProctorFileUploadServlet.processRequest() BBB filename=" + filename + ", size=" + fileSize + ", rcRaterId=" + rcRaterId + ", Source=" + src + ", uploadedUserFileTypeId=" + uploadedUserFileTypeId );
+            // LogService.logIt( "ProctorFileUploadServlet.processRequest() BBB filename=" + filename + ", size=" + fileSize + ", rcRaterId=" + rcRaterId + ", Source=" + src + ", uploadedUserFileTypeId=" + uploadedUserFileTypeId );
 
             RcCheck tk = null;
             

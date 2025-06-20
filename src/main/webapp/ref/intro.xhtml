@@ -119,7 +119,7 @@
                                 </span>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{not refBean.rcCheck.requiresAnyCandidateInputOrSelfRating}">
+                            <h:panelGroup rendered="#{refBean.rcCheck.candidateCanAddRaters and not refBean.rcCheck.requiresAnyCandidateInputOrSelfRating}">
                                 <span tabindex="0">
                                     <h:outputFormat styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3']}">
                                         <f:param value="#{refUtils.rcCheckRaterNameLc}"/>
@@ -127,6 +127,18 @@
                                 </span>
                             </h:panelGroup>
 
+                            <h:panelGroup rendered="#{refBean.rcCheck.rcScript.collectResumeB and not refBean.rcCheck.candidateCanAddRaters and not refBean.rcCheck.requiresAnyCandidateInputOrSelfRating}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.resumeonly']}"/>
+                                </span>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{refBean.rcCheck.rcScript.collectResumeB and (refBean.rcCheck.candidateCanAddRaters or refBean.rcCheck.requiresAnyCandidateInputOrSelfRating)}">
+                                <span tabindex="0">
+                                    <h:outputText styleClass="ttformtext" value="#{stMessages['g.XCIntro.P3.resumeaddit']}"/>
+                                </span>
+                            </h:panelGroup>
+                            
                         </h:panelGrid>
 
                         <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:10px;margin:0 auto">

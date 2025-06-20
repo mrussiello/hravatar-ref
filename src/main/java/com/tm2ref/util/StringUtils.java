@@ -29,6 +29,33 @@ public class StringUtils
     private static final char[] alphaDigits = { '2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z' };
 
 
+    public static List<Integer> getIntegerList( String inStr )
+    {
+        List<Integer> l = new ArrayList<>();
+
+        if( inStr==null || inStr.isBlank() )
+            return l;
+
+        String[] ids = inStr.split( "," );
+        for (String id : ids) 
+        {
+            if (id.isBlank()) 
+            {
+                continue;
+            }
+            try 
+            {
+                l.add(Integer.valueOf(id));
+            }
+            catch( Exception e )
+            {
+                LogService.logIt( e, "StringUtils.getIntegerList() " + inStr );
+            }
+        }
+        return l;
+    }
+    
+    
     public static String removeWhitespaceAndControlCharsPlusLowercase(String str )
     {
         if( str==null )

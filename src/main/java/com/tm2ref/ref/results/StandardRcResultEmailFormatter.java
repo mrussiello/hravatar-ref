@@ -76,7 +76,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
 
@@ -85,7 +85,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
 
@@ -94,7 +94,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
 
@@ -103,7 +103,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
             }
@@ -113,17 +113,32 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
+            // AI Section
+            if( !getReportRuleAsBoolean( "skipaiscoressection" ) &&  report.getIncludeAiScores()==1 )
+            {
+                out = getStandardGenAISection(tog );
+                temp = (String) out[0];
+                if( !temp.isEmpty() )
+                {
+                    sb.append( temp );
+                    tog = ( (Boolean) out[1]);
+                    // if( !isBatt )
+                    sb.append( getTableSpacer() );
+                }
+            }
+
+            
 
             out = getStandardRatersSection( tog );
             temp = (String) out[0];
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
@@ -132,7 +147,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
@@ -142,7 +157,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
@@ -154,7 +169,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
 
@@ -163,7 +178,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
                 
@@ -172,7 +187,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }
 
@@ -181,7 +196,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
                 if( !temp.isEmpty() )
                 {
                     sb.append( temp );
-                    tog = ( (Boolean) out[1]).booleanValue();
+                    tog = ( (Boolean) out[1]);
                     sb.append( getTableSpacer() );
                 }                
             }
@@ -193,7 +208,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
@@ -202,7 +217,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
 
@@ -213,7 +228,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
             

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ref="http://xmlns.jcp.org/jsf/composite/ref">
+    <body>
+
+        <ui:composition template="#{corpBean.template}">
+
+            <ui:define name="titletag">
+                <title><h:outputText rendered="#{not refBean.isMrf}" value="#{stMessages['ttl.RcChk']} #{stMessages['ttl.Resume']}"/>
+                    <h:outputText rendered="#{refBean.isMrf}" value="#{stMessages['ttl.Mrf']} #{stMessages['ttl.Resume']}"/></title>
+            </ui:define>
+
+
+            <ui:define name="headspec">
+                <style>
+                    .pincolclass
+                    {
+                        vertical-align: middle;
+                    }
+                </style>
+
+
+                <script type="text/javascript">
+                    //<![CDATA[
+
+                    function doLocalPageOnload()
+                    {
+
+                    }
+
+                    function doLocalPageOnUnload()
+                    {
+                    }
+
+                    window.addEventListener('load', function () {
+                        doLocalPageOnload();
+                    });
+                    window.addEventListener('beforeunload', function () {
+                        doLocalPageOnUnload();
+                    });
+
+                    // ]]>
+                </script>
+            </ui:define>
+
+            <ui:define name="coreinnersection">
+
+                <br style="clear:both"/>
+
+                <div style="padding-left:10px;padding-right:10px;max-width:800px;margin:0px auto;text-align:center">
+                    <h:form prependId="false" enctype="multipart/form-data">
+                        <ref:stdforminputs />
+                        <ref:candidateforminputs />
+
+                        <ref:messages-embedded />
+
+                        <h1 class="pagetitle ttboldtitle" tabindex="0">
+                            <h:outputText value="#{stMessages['g.ResumeRequested']}"/>
+                        </h1>
+
+                        <h:panelGrid columns="1" columnClasses="pincolclass,pincolclass,pincolclass" cellpadding="6" style="padding-top:5px;padding-bottom:20px;margin:0 auto">
+
+                            <h:panelGroup>
+                                <span tabindex="0">
+                                    <p><h:outputText styleClass="ttformtext" value="#{stMessages['g.ResumeInfo']}" escape="false"/></p>
+                                    <p><h:outputText styleClass="ttformtext" value="#{stMessages['g.ResumeQ']}" escape="false"/></p>
+                                </span>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <div style="text-align: center;padding-top:10px;padding-bottom:10px">
+                                    <div style="display:inline-block;">
+                                        <p:inputTextarea id="candinptquestiontb" styleClass="commenttextarea" style="width:100%;max-width:550px" cols="50" rows="4" autoResize="true" value="#{candidateRefBean.candidateInputStr}" placeholder="#{stMessages['g.ResumeTboxPH']}"/>
+                                        <p:outputLabel styleClass="sr-only" value="#{stMessages['g.ResumeTboxLabel']}" for="candinptquestiontb"/>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <div style="text-align:center;padding-bottom:10px;padding-top:10px">
+                                    <p tabindex="0">
+                                        <h:outputText styleClass="textmedium ttformtext" value="#{stMessages['g.ResumeUploadSelect']}:"/>
+                                    </p>
+                                    <div id="startrecbutdiv" style="display:inline-block">
+                                        <p:fileUpload value="#{candidateRefUtils.uploadedFile}" styleClass="textmedium ttformtext" mode="simple" skinSimple="true" chooseButtonTitle="#{stMessages['g.ResumeSelectFileTitle']}">
+                                            <p:validateFile allowTypes="/.+(\.doc|\.docx|\.pdf|\.txt)$/i"/>
+                                        </p:fileUpload>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <div style="text-align: center">
+                                    <div style="display:inline-block;">
+                                        <p:commandButton style="margin-bottom:5px" ajax="false" action="#{candidateRefUtils.processSaveOrUploadResume}" value="#{stMessages['g.SubmitInfo']}" title="#{stMessages['g.ResumeSubmitInfo']}">
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                    </h:form>
+                </div>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

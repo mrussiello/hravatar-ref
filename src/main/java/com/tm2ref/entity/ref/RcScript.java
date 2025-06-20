@@ -87,6 +87,8 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
     @Column(name="ratingscaletypeid")
     private int ratingScaleTypeId;
     
+    @Column(name = "collectresume")
+    private int collectResume;
     
     @Column(name="nocommentsratingitems")
     private int noCommentsRatingItems;
@@ -673,6 +675,11 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
         return getItemCount( true )>0;        
     }
     
+    public boolean getCollectResumeB()
+    {
+        return collectResume>0;
+    }
+    
     public boolean getHasAnyCandidateInput()
     {
         return getHasCandidateInput1() || getHasCandidateInput2() || getHasCandidateInput3() || getHasCandidateInput4() || getHasCandidateInput5();
@@ -1027,6 +1034,16 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
 
     public void setSharePrevResultsWithRater(int sharePrevResultsWithRater) {
         this.sharePrevResultsWithRater = sharePrevResultsWithRater;
+    }
+
+    public int getCollectResume()
+    {
+        return collectResume;
+    }
+
+    public void setCollectResume(int collectResume)
+    {
+        this.collectResume = collectResume;
     }
     
 }

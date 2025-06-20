@@ -5,6 +5,8 @@
  */
 package com.tm2ref.ref.results;
 
+import com.tm2ref.ai.MetaScoreType;
+import com.tm2ref.entity.ai.MetaScore;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.report.Report;
 import com.tm2ref.entity.ref.RcCheck;
@@ -1242,6 +1244,86 @@ public class BaseFormatter {
     }    
 
     
+    public Object[] getStandardGenAISection(boolean tog) throws Exception
+    {
+        Object[] out = new Object[2];
+
+        StringBuilder sb = new StringBuilder();
+        tog = true;
+        out[0] = "";
+        out[1] = tog;
+
+        if( report.getIncludeAiScores()<=0 || getReportRuleAsBoolean( "skipaiscoressection") || rc.getMetaScoreList()==null || rc.getMetaScoreList().isEmpty() )
+            return out;
+
+        // LogService.logIt(  "BaseScoreFormatter.getStandardGenAISection() BBB.1 " );
+
+        int valCount = 0;
+        for( MetaScore ms : rc.getMetaScoreList() )
+        {
+            if( ms.getMetaScoreTypeId()>0 && ms.getScore()>0 && ms.getConfidence()>= Constants.MIN_METASCORE_CONFIDENCE )
+                valCount++;
+        }
+        
+        if( valCount<=0 )
+            return out;
+
+        tog = true;
+        String style; // = rowStyle1;
+        scrDigits = report.getIntParam2() >= 0 ? report.getIntParam2() : Constants.DEFAULT_SCORE_PRECISION_DIGITS;
+        String scr;
+        String confScr;
+        String scoreText;
+        int count = 0;
+        MetaScoreType metaScoreType;
+        String lastUpdate;
+
+        // String tt = lmsg( "g.AiGenScoresSubtitle" );
+        //String subtitle = "<span style=\"font-weight:normal\">" + tt + "</span>";
+        // sb.append( getRowTitleSubtitle( rowStyleHdr, lmsg(  "g.AiGenScoresSht", null ), subtitle ) );
+        // sb.append( getRowTitle( rowStyleHdr, lmsg("g.AiGenScoresSht", null ), lmsg( "g.Score" ), lmsg( "g.Interpretation" ) + " " + lmsg("g.AiGenScoresSubtitleSht"), null ) );
+
+        // title Row
+        sb.append( getRowTitle( rowStyleHdr, lmsg("g.AiGenScoresSht", null ), null, null, null ) );
+        
+        // header row        
+        sb.append( "<tr " + rowStyleSubHdr + "><td>" + lmsg("g.Name") + "</td><td style=\"text-align:center\">" + lmsg( "g.Score" ) + "</td><td style=\"text-align:center\">" + lmsg( "g.Confidence" ) + "</td><td style=\"text-align:left\">" + lmsg("g.Interpretation") + "</td></tr>\n" );
+        
+        
+        for( MetaScore metaScore : rc.getMetaScoreList() )
+        {
+            if( metaScore.getMetaScoreTypeId()<=0 || metaScore.getScore()<=0 || metaScore.getConfidence()<Constants.MIN_METASCORE_CONFIDENCE )
+                continue;
+            count++;
+
+            metaScoreType = MetaScoreType.getValue(metaScore.getMetaScoreTypeId() );
+
+            scr = I18nUtils.getFormattedNumber( locale, metaScore.getScore(), scrDigits );
+            
+            confScr = I18nUtils.getFormattedNumber( locale, metaScore.getConfidence(), 1);                
+
+            metaScore.setLocale(locale);
+            
+            scoreText=metaScoreType.getDescription(locale) + " " + lmsg("g.AiMetaScrInputTypesUsed", new String[]{metaScore.getMetaScoreInputTypesStr()});
+            
+            if( metaScore.getScoreText()!=null && !metaScore.getScoreText().isBlank() )                
+                scoreText += "<br /><br />" + metaScore.getScoreTextXhtml();
+
+            lastUpdate = I18nUtils.getFormattedDateTime(locale, metaScore.getLastUpdate(), rc.getUser().getTimeZone());
+            scoreText += "<br /><br />" + lmsg("g.AiMetaScrCalcDateX", new String[]{lastUpdate}); 
+            
+            tog = !tog;
+            style = tog ? rowStyle1 : rowStyle2;
+            sb.append( "<tr " + style + "><td style=\"vertical-align:top\">" + metaScoreType.getName(locale) + "</td><td style=\"text-align:center\">" + scr + "</td><td style=\"text-align:center\">" + confScr + "</td><td style=\"text-align:left\">" + scoreText + "</td></tr>\n" );            
+            // sb.append( this.getRow(style, metaScoreType.getName(locale), scr, scoreText , false) );            
+        }        
+
+        out[0] = getHtmlTableStart( locale ) + sb.toString() + getHtmlTableEnd( locale );
+        out[1] = tog;
+        return out;
+    }
+    
+    
     
     public Object[] getStandardCompetencySummarySection( boolean tog )
     {
@@ -1772,7 +1854,7 @@ public class BaseFormatter {
         if( rc.getAdminUser()==null && rc.getAdminUserId()>0 )
             rc.setAdminUser( userFacade.getUser( rc.getAdminUserId() ));
         
-        // rc.setLocale( getLocale() );
+        // rc.setLocale( locale );
         
         if( rcFacade==null )
             rcFacade = RcFacade.getInstance();
@@ -1803,7 +1885,7 @@ public class BaseFormatter {
             //r.setNeedsResendEmail(false);
             //r.setNeedsResendMobile(false);
 
-            // r.setLocale( getLocale() );                
+            // r.setLocale( locale );                
             r.setRcRaterSourceType( RcRaterSourceType.getForRcRater(rc, r));
             
             r.setRcRatingList( rcFacade.getRcRatingList( rc.getRcCheckId(), rc.getRcRater().getRcRaterId() ) );

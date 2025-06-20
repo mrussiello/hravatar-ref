@@ -58,6 +58,9 @@ public class TestKey implements Serializable
     @Column( name = "userid" )
     private long userId = 0;
 
+    @Column( name = "jobid" )
+    private int jobId;
+    
     @Column( name = "productid" )
     private int productId;
 
@@ -370,6 +373,13 @@ public class TestKey implements Serializable
 
     public void setProductTypeId(int productTypeId) {
         this.productTypeId = productTypeId;
+    }
+    public int getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
     }
 
 

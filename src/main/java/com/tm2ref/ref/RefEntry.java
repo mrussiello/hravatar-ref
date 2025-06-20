@@ -161,8 +161,8 @@ public class RefEntry
             
             if( rcc==null )
                 throw new Exception( "RefEntry.doTestKeyRefEntry() AAA.0 No RcCheck either found or created for TestKeyId=" + testKeyId + ", userId=" + userId + ", rcScriptId=" + rcScriptId );
-            else
-                LogService.logIt("RefEntry.doTestKeyRefEntry() AAA.1 RcCheck matching TestKeyId=" + testKeyId + ", userId=" + userId + ", rcScriptId=" + rcScriptId + " is rcCheckId=" + rcc.getRcCheckId() );
+            //else
+            //    LogService.logIt("RefEntry.doTestKeyRefEntry() AAA.1 RcCheck matching TestKeyId=" + testKeyId + ", userId=" + userId + ", rcScriptId=" + rcScriptId + " is rcCheckId=" + rcc.getRcCheckId() );
              
             nextViewId = refUtils.performSimpleEntry(rcc.getCorpId(), rcc.getRcCheckId(), 0, null, false );
             
@@ -197,7 +197,7 @@ public class RefEntry
                 return rcx;
             }
             
-            LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() AAA Creating a new RcCheck. testKeyId=" + testKeyId );
+            // LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() AAA Creating a new RcCheck. testKeyId=" + testKeyId );
             // get the test key
             EventFacade eventFacade = EventFacade.getInstance();
             TestKey tkx = eventFacade.getTestKey(testKeyId);
@@ -296,7 +296,7 @@ public class RefEntry
             rcx.setUser(user);
             rcx.setOrg(org);
             rcFacade.saveRcCheck( rcx, false );
-            LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() BBB Created new RcCheck for testKeyId=" + testKeyId + ", with rcCheckId=" + rcx.getRcCheckId() );            
+            // LogService.logIt( "RefEntry.findOrCreateRcCheckFromTestKey() BBB Created new RcCheck for testKeyId=" + testKeyId + ", with rcCheckId=" + rcx.getRcCheckId() );            
             return rcx;
          }
          catch( Exception e )

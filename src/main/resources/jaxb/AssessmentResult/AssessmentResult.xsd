@@ -127,6 +127,29 @@
                   <!-- The percentage of completion for this Test Event. 0-100 -->
                   <xs:element name="PercentComplete" type="xs:float" minOccurs="0" maxOccurs="1"/>
                   
+                  <!-- MetaScores are AI-generated scoring values, such as match vs a job description, or alignment with organizational traits and values. -->
+                  <xs:element name="MetaScores" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:sequence>
+
+                              <!-- A numeric value between 0 and 100 -->
+                              <xs:element name="ScoreNumeric" type="xs:float" minOccurs="0" maxOccurs="1"/>
+
+                              <!-- A fraction between 0 and 1 -->
+                              <xs:element name="Confidence" type="xs:float" minOccurs="0" maxOccurs="1"/>
+                                                            
+                              <xs:element name="ScoreText" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                              
+                              <!-- Values:
+                                    1 = Organizational Traits and Culture Alignment Score
+                                    2 = Employee Core Competencies Match Score
+                                    3 = Job Description Match Score
+                              -->
+                              <xs:element name="Type" type="xs:int" minOccurs="0" maxOccurs="1"/>
+                          
+                     </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
                   
               </xs:sequence>
             </xs:complexType>

@@ -196,6 +196,8 @@ public class User implements Serializable
     private Date passwordStartDate;
 
     
+    @Transient
+    private Resume resume;
     
     @Transient
     private String password;
@@ -1015,6 +1017,14 @@ public class User implements Serializable
 
     public void setPasswordStartDate(Date passwordStartDate) {
         this.passwordStartDate = passwordStartDate;
+    }
+
+    public Resume getResume() {
+        return resume;
+    }
+
+    public void setResume(Resume resume) {
+        this.resume = resume;
     }
 
 

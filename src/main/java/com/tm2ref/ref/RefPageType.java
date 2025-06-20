@@ -18,7 +18,8 @@ public enum RefPageType
     AVCOMMENTS(42,"AvComments Allowed", "avcommentsallowed.xhtml", "avcommentsallowed.xhtml" ),
     PHOTO(45,"Photo", "photo.xhtml", "photo.xhtml" ),
     ID_PHOTO(46,"Id Photo", "photo-id.xhtml", "photo-id.xhtml" ),
-    PRE_QUESTIONS(47,"Pre-Questions", "pre-questions-candidate.xhtml", null ),
+    RESUME(47,"Resume", "candidate-resume.xhtml", null ),
+    PRE_QUESTIONS(48,"Pre-Questions", "pre-questions-candidate.xhtml", null ),
     CORE(50,"Core", "question.xhtml" , "item.xhtml" ),
     CORE2(60,"Core2", "item.xhtml", "referrals.xhtml" ),
     CORE3(70,"Core3", "references.xhtml", null ),
@@ -61,6 +62,11 @@ public enum RefPageType
         return equals(CORE ) || equals(CORE2 ) || equals(CORE3 );
     }
 
+    public boolean getIsResume()
+    {
+        return equals(RESUME ) ;
+    }
+
     
     public boolean getIsAnyPhotoCapture()
     {
@@ -79,7 +85,7 @@ public enum RefPageType
         return (rcUserType==null || rcUserType.getIsCandidate()) ? candidatePage : raterPage;
     }
 
-    public RefPageType getNextPageTypeNoNull( RefUserType rcUserType )
+    public RefPageType getNextPageTypeNoNull( RefUserType rcUserType, RcCheck rc)
     {
         RefPageType pt = getNextPageType( this );
         
@@ -87,6 +93,10 @@ public enum RefPageType
         {
             pt = getNextPageType(pt );
         } 
+        
+        if( getIsResume() && (!rcUserType.getIsCandidate() || !rc.getRcScript().getCollectResumeB()) )
+            pt = pt.getNextPageTypeNoNull(rcUserType, rc);
+        
         return pt;
     }
     
@@ -99,6 +109,9 @@ public enum RefPageType
         {
             pt = getPreviousPageType( pt );
         } 
+
+        if( getIsResume() && (!rcUserType.getIsCandidate() || !rc.getRcScript().getCollectResumeB()) )
+            pt = pt.getPreviousPageTypeNoNull(rcUserType, rc);
         
         if( pt.getIsCore2() && rcUserType.getIsCandidate() && ( !rc.getCollectRatingsFmCandidate() || !rc.getRcScript().getHasAnyCandidateRatings()) )
             pt = pt.getPreviousPageTypeNoNull(rcUserType, rc);
@@ -132,7 +145,9 @@ public enum RefPageType
             case PHOTO:
                 return ID_PHOTO;
             case ID_PHOTO:
-                return PRE_QUESTIONS;
+                return RESUME;
+            case RESUME:
+                 return PRE_QUESTIONS;
             case PRE_QUESTIONS:
                  return CORE;
             case CORE:
@@ -167,8 +182,10 @@ public enum RefPageType
                 return SPECIAL;
             case AVCOMMENTS:
                 return PREVIOUSRESULTS;
-            case PRE_QUESTIONS:
+            case RESUME:
                 return AVCOMMENTS;
+            case PRE_QUESTIONS:
+                return RESUME;
             case CORE:
                 return PRE_QUESTIONS;
             case CORE2:

@@ -6,7 +6,7 @@
     <version>1.0</version>
     <packaging>war</packaging>
     <name>tm2ref2</name>
-    
+
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -14,23 +14,23 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>10.0.0</jakartaee>
     </properties>
-    
+
     <!-- AWS SDK V2 -->
     <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <groupId>software.amazon.awssdk</groupId>
-          <artifactId>bom</artifactId>
-          <version>2.29.17</version>
-          <type>pom</type>
-          <scope>import</scope>
-        </dependency>
-      </dependencies>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.29.17</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
-    
-    
+
+
     <dependencies>
-        
+
         <!-- IMPORTANT - THIS dependency is here to account for Payara BUG FISH 7644 to support file downloads. Once this bug is corrected remove the jakarta.faces dependency! -->
         <!-- https://mvnrepository.com/artifact/org.glassfish/jakarta.faces -->
         <dependency>
@@ -38,8 +38,8 @@
             <artifactId>jakarta.faces</artifactId>
             <version>4.0.5</version>
         </dependency>
-        
-        
+
+
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
@@ -52,21 +52,21 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <version>6.0.0</version>
             <scope>provided</scope>
-        </dependency>        
-                
-                
+        </dependency>
+
+
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
             <version>10.0.0</version>
             <scope>provided</scope>
-        </dependency>                
-            
+        </dependency>
+
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <version>4.0.2</version>
-        </dependency>   
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -79,41 +79,41 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
-        </dependency>        
-        
+        </dependency>
+
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
             <version>2.1.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
             <version>2.1.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>jakarta.jms</groupId>
             <artifactId>jakarta.jms-api</artifactId>
             <version>3.1.0</version>
         </dependency>
 
-          
-          <dependency>
-              <groupId>org.primefaces</groupId>
-              <artifactId>primefaces</artifactId>
-              <version>15.0.4</version>
 
-              <type>jar</type>
-              <classifier>jakarta</classifier>
-          </dependency>
-        
-         <dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>15.0.4</version>
+
+            <type>jar</type>
+            <classifier>jakarta</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>4.0.1</version>
-        </dependency>   
+        </dependency>
 
         <!--
         <dependency>
@@ -121,14 +121,14 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.402</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-rekognition</artifactId>
             <version>1.12.401</version>
         </dependency>
-        -->        
-                
+        -->
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
@@ -139,27 +139,27 @@
             <artifactId>rekognition</artifactId>
         </dependency>
 
-                
-                
+
+
         <dependency>
-          <groupId>com.twilio.sdk</groupId>
-          <artifactId>twilio</artifactId>
-          <version>8.29.1</version>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>8.29.1</version>
         </dependency>
-        
-     
+
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.5.13.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itext-asian</artifactId>
             <version>5.2.0</version>
-        </dependency>     
-     
+        </dependency>
+
         <!--
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -173,57 +173,63 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.8.0-beta4</version>
         </dependency>
-     
-     
+
+
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
             <artifactId>libphonenumber</artifactId>
             <version>8.13.5</version>
         </dependency>
-             
+
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.7</version>
+            <version>1.9.0</version>
         </dependency>
-        
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>5.3.1</version>
-        </dependency>        
+        </dependency>
 
-        
-        
-        <!-- 
+
+
+        <!--
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.11</version>
         </dependency>
         -->
-        
-        <!-- 
+
+        <!--
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
             <version>2.7</version>
         </dependency>
         -->
-        
-                                
-          <!-- https://mvnrepository.com/artifact/javax.xml.ws/jaxws-api -->
-            <dependency>
-                <groupId>javax.xml.ws</groupId>
-                <artifactId>jaxws-api</artifactId>
-                <version>2.3.1</version>
-            </dependency> 
-            <!-- https://mvnrepository.com/artifact/javax.jws/javax.jws-api -->
-            <dependency>
-                <groupId>javax.jws</groupId>
-                <artifactId>javax.jws-api</artifactId>
-                <version>1.1</version>
-            </dependency>        
+
+
+        <!-- https://mvnrepository.com/artifact/javax.xml.ws/jaxws-api -->
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.jws/javax.jws-api -->
+        <dependency>
+            <groupId>javax.jws</groupId>
+            <artifactId>javax.jws-api</artifactId>
+            <version>1.1</version>
+        </dependency>
 
 
         <dependency>
@@ -231,22 +237,58 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.0</version>
         </dependency>
-                
-        
+
+
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
             <version>4.0.0</version>
         </dependency>
-                
+
         <dependency>
             <groupId>jakarta.jws</groupId>
             <artifactId>jakarta.jws-api</artifactId>
             <version>3.0.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-excelant -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-excelant</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>

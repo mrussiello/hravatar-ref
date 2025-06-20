@@ -59,6 +59,20 @@ public class Tracker
     private static int candidateFileUploadErrors = 0;
     private static int candidateFileUploads = 0;
 
+    private static int aiCalls = 0;
+    private static int aiCallErrors = 0;
+    
+    
+    public static void addAiCall()
+    {
+        aiCalls++;
+    }
+    
+    public static void addAiCallError()
+    {
+        aiCallErrors++;
+    }
+    
     
     public static void addApiReportPdfRequest()
     {
@@ -260,6 +274,10 @@ public class Tracker
 
         outMap.put( "AA NEW STARTS: ", RuntimeConstants.getBooleanValue("newRefStartsOK") ? "ON" : "OFF" );
 
+        
+        outMap.put("AI: Calls", ((int) aiCalls ) );
+        outMap.put("AI: CallErrors", ((int) aiCallErrors ) );
+        
         outMap.put("API: Requests", ((int) apiRequests ) );
         outMap.put( "API: RefCheck Status Requests", ((int) apiAssessmentStatusRequests ) );
         outMap.put( "API: Report PDF Requests", ((int) apiReportPdfRequests ) );

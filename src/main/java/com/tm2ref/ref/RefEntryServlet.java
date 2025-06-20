@@ -118,7 +118,7 @@ public class RefEntryServlet  extends AbstractFacesServlet {
 
             if( 1==1 )
             {
-                LogService.logIt( "RefEntryServlet.processRequest() Redirecting to " + nextViewId );
+                // LogService.logIt( "RefEntryServlet.processRequest() Redirecting to " + nextViewId );
                 response.sendRedirect( "/tr" + nextViewId );
                 return;
             }

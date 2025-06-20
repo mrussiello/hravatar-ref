@@ -57,6 +57,9 @@ public class TestKeyArchive implements Serializable
     @Column( name = "userid" )
     private long userId = 0;
 
+    @Column( name = "jobid" )
+    private int jobId;
+
     @Column( name = "productid" )
     private int productId;
 
@@ -113,6 +116,7 @@ public class TestKeyArchive implements Serializable
         tk.setCreditId(creditId);
         tk.setSuborgId(suborgId);
         tk.setUserId(userId);
+        tk.setJobId(jobId);
         tk.setExtRef(extRef);
         tk.setEmailResultsTo(emailResultsTo);
         tk.setTextResultsTo(textResultsTo);
@@ -296,5 +300,12 @@ public class TestKeyArchive implements Serializable
         this.productTypeId = productTypeId;
     }
 
+    public int getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
+    }
 
 }

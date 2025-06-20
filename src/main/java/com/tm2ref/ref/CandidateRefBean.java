@@ -25,6 +25,7 @@ public class CandidateRefBean  extends BaseRefBean implements Serializable {
     RcRater rcRater;
     RcRater rcRater2;
     
+    boolean needsResume;
     int candidateInputNumber = 1;
     String candidateInputStr = null;
     Date lastObsStartDate = null;
@@ -112,6 +113,16 @@ public class CandidateRefBean  extends BaseRefBean implements Serializable {
 
     public void setRcRater2(RcRater rcRater2) {
         this.rcRater2 = rcRater2;
+    }
+
+    public boolean getNeedsResume()
+    {
+        return needsResume;
+    }
+
+    public void setNeedsResume(boolean needsResume)
+    {
+        this.needsResume = needsResume;
     }
     
     

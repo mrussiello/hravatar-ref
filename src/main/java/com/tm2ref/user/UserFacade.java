@@ -5,9 +5,9 @@
 package com.tm2ref.user;
 
 import com.tm2ref.affiliate.AffiliateAccountType;
-import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.LogonHistory;
 import com.tm2ref.entity.user.Org;
+import com.tm2ref.entity.user.Resume;
 import com.tm2ref.entity.user.Suborg;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.entity.user.UserAction;
@@ -43,6 +43,9 @@ public class UserFacade
 {
     @PersistenceContext( name = "persistence/tm2", unitName = "tm2" )
     EntityManager em;
+    
+    @PersistenceContext( name = "persistence/tm2mirror", unitName = "tm2mirror" )
+    EntityManager emmirror;
 
     public static UserFacade getInstance()
     {
@@ -53,8 +56,7 @@ public class UserFacade
 
         catch( Exception e )
         {
-            LogService.logIt( e, "getInstance() " );
-
+            LogService.logIt( e, "UserFacade.getInstance() " );
             return null;
         }
     }
@@ -64,6 +66,7 @@ public class UserFacade
         try
         {
             em.getEntityManagerFactory().getCache().evictAll();
+            emmirror.getEntityManagerFactory().getCache().evictAll();
         }
 
         catch( Exception e )
@@ -129,10 +132,9 @@ public class UserFacade
     {
         try
         {
-            Query q = em.createNamedQuery( "Org.findByAffiliateIdAndExtRef" );
+            Query q = emmirror.createNamedQuery( "Org.findByAffiliateIdAndExtRef" );
 
             q.setParameter( "affiliateId", affiliateId );
-
             q.setParameter( "affiliateExtRef", affiliateExtRef );
 
             return q.getResultList();
@@ -493,7 +495,7 @@ public class UserFacade
     {
         try
         {
-            LogonHistory logonHistory = em.find( LogonHistory.class, new Long( logonHistoryId ) );
+            LogonHistory logonHistory = em.find(LogonHistory.class, logonHistoryId);
 
             if( logonHistory != null )
             {
@@ -625,7 +627,7 @@ public class UserFacade
 
     /**
      * Returns null if none found.
-     */
+     *
     public List<User> getUserByEmail( String email ) throws Exception
     {
         try
@@ -647,8 +649,8 @@ public class UserFacade
             LogService.logIt( e, "UserFacade.getUserByEmail() " + email );
             return new ArrayList<>();
         }
-
     }
+    */
 
 
 
@@ -824,7 +826,7 @@ public class UserFacade
     {
         try
         {
-            Query q = em.createNamedQuery( "User.findByMinRoleAndOrgId" );
+            Query q = emmirror.createNamedQuery( "User.findByMinRoleAndOrgId" );
 
             q.setParameter( "orgId", orgId );
             q.setParameter( "roleId", RoleType.ACCOUNT_LEVEL3 );
@@ -851,7 +853,7 @@ public class UserFacade
             if( affiliateId==null || affiliateId.isEmpty() )
                 return null;
 
-            Query q = em.createNamedQuery( "Org.findByAffiliateIdAndAffiliateAccountTypeId" );
+            Query q = emmirror.createNamedQuery( "Org.findByAffiliateIdAndAffiliateAccountTypeId" );
 
             q.setParameter( "affiliateId", affiliateId );
 
@@ -938,4 +940,70 @@ public class UserFacade
 
         return out;
     }
+    
+    // Changed to always use the latest without cache because people update!
+    public Resume getResumeForUser( long userId ) throws Exception
+    {
+        try
+        {
+            // if( tm2Factory == null )
+            //     tm2Factory = PersistenceManager.getInstance().getEntityManagerFactory();
+
+            // EntityManager em = tm2Factory.createEntityManager();
+
+            Query q = em.createNamedQuery( "Resume.findByUserId" );
+
+            q.setParameter( "userId", userId );
+
+            q.setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+
+            return (Resume) q.getSingleResult();
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "UserFacade.getResumeForUser( " + userId + " ) " );
+            throw new STException( e );
+        }
+    }
+    
+    public Resume saveResume( Resume resume ) throws Exception
+    {
+        try
+        {
+            if( resume.getUserId()<=0 )
+                throw new Exception( "Resume.userId is invalid: " + resume.getUserId() );
+            
+            if( resume.getLocaleStr() == null || resume.getLocaleStr().isEmpty() )
+                resume.setLocaleStr( "en_US" );
+
+            if( resume.getCreateDate()==null )
+                resume.setCreateDate( new Date() );
+            
+            resume.setLastUpdate(new Date());
+            
+            if( resume.getResumeId() > 0 )
+            {
+                em.merge(resume );
+            }
+
+            else
+            {
+                em.detach(resume );
+                em.persist(resume );
+            }
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "UserFacade.saveResume() " + resume.toString() );
+            throw new STException( e );
+        }
+
+        return resume;
+    }
+    
+    
 }

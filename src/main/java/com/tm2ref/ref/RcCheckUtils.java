@@ -36,6 +36,7 @@ import com.tm2ref.purchase.ProductType;
 import com.tm2ref.purchase.RefCreditUtils;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
+import com.tm2ref.user.ResumeHelpUtils;
 import com.tm2ref.user.UserFacade;
 import com.tm2ref.util.MessageFactory;
 import com.tm2ref.util.StringUtils;
@@ -572,6 +573,12 @@ public class RcCheckUtils {
                 rcScriptFacade.loadScriptObjects(rc.getRcScript(), true);
             }
             
+            // load existing resume if needed.
+            if( rc.getRcScript()!=null && rc.getRcScript().getCollectResume()==1 && rc.getUser().getResume()==null )
+            {
+                rc.getUser().setResume( userFacade.getResumeForUser(rc.getUserId()));
+            }
+            
             if( rc.getRcRaterList()==null )
             {
                 rc.setRcRaterList( rcFacade.getRcRaterList( rc.getRcCheckId() ));
@@ -945,6 +952,22 @@ public class RcCheckUtils {
         if( rc.getUser()==null )
             rc.setUser( userFacade.getUser( rc.getUserId() ));
         
+        if( rc.getUser()!=null && rc.getUser().getResume()==null )
+        {
+            rc.getUser().setResume( userFacade.getResumeForUser( rc.getUserId() ));
+        }
+
+        if( rc.getUser()!=null && rc.getUser().getResume()!=null && rc.getUser().getResume().getNeedsParse()==1 )
+        {
+            boolean success = ResumeHelpUtils.parseResumeByAiNoErrors( rc.getRcCheckId(), rc.getUser(), rc.getUser().getResume());
+            if( success )
+            {
+                Thread.sleep(100);
+                rc.getUser().setResume( userFacade.getResumeForUser(rc.getUserId()));
+            }
+        }
+        
+        
         if( rc.getOrg()==null )
             rc.setOrg( userFacade.getOrg( rc.getOrgId() ));
         
@@ -1079,6 +1102,9 @@ public class RcCheckUtils {
             }
         }
         
+        if( rc.getMetaScoreList()==null )
+            rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck( rc.getRcCheckId()));
+        
     }
     
     public static void addAnonymousNames(RcCheck rc, Locale locale )
@@ -1200,8 +1226,8 @@ public class RcCheckUtils {
         if( missingRtrs>0 )
             ct += missingRtrs;
         
-        // adjust if still need a candidate to complete and there is no candidate rater.
-        if( rc.getCollectCandidateRatings()!=1 && rc.getRequiresAnyCandidateInputOrSelfRating() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
+        // adjust if still need a candidate to complete something and there is no candidate rater.
+        if( rc.getCollectCandidateRatings()!=1 && rc.getRequiresResumeOrAnyCandidateInputOrSelfRating() && !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
             ct++;
         
         total = total/ct;
@@ -1254,7 +1280,7 @@ public class RcCheckUtils {
                 return;
             
             // Needs nothing.
-            if( !rc.getRequiresAnyCandidateInputOrSelfRating() )
+            if( !rc.getRequiresResumeOrAnyCandidateInputOrSelfRating() )
             {
                 rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
                 rc.setCandidateCompleteDate( new Date() );
@@ -1355,6 +1381,14 @@ public class RcCheckUtils {
                 rc.setRcScript( (RcScript) rcScriptFacade.getRcScript(rc.getRcScriptId(), true ).clone() );
             }
             
+            if( rc.getRcScript().getCollectResumeB() )
+            {
+                // has not done the resume.
+                if( rc.getResumeComplete()<=0 )
+                    return;
+                // else, completed.
+            }
+            
             // needs questions answered
             if( rc.getRcScript().getHasAnyCandidateInput() )
             {
@@ -1394,7 +1428,7 @@ public class RcCheckUtils {
             }
             
             // useful data from candidate - charge credit.
-            if( !adminOverride &&  (rc.getCollectRatingsFmCandidate() || rc.getRcScript().getHasAnyCandidateInput()) )
+            if( !adminOverride &&  (rc.getCollectRatingsFmCandidate() || rc.getRcScript().getHasAnyCandidateInput() || rc.getRcScript().getCollectResumeB()) )
                 chargeCreditIfNeeded(rc, null );
 
             performRcCheckCompletionIfReady(rc, RcCheckUtils.getIsRaterOrCandidateCompleteButBeforeExpireDateAndCanReenter(rc, null, RefUserType.CANDIDATE), adminOverride );
@@ -1729,10 +1763,13 @@ public class RcCheckUtils {
 
             if( !pastExpireDate && !candComplete )
             {
-                boolean skipCandidate = !rc.getRequiresAnyCandidateInputOrSelfRating();
+                boolean skipCandidate = !rc.getRequiresResumeOrAnyCandidateInputOrSelfRating();
                 
-                // need input but it's only raters. So check to see if there are enough raters.
-                if( !skipCandidate && rc.getMinRaters()>0 && rc.getRcScript()!=null && !rc.getRcScript().getHasAnyCandidateInput() && !rc.getCollectRatingsFmCandidate()  )
+                // need input but it's only raters (no resume and no candidate input and no candidate self-ratings). So check to see if there are enough raters.
+                if( !skipCandidate && rc.getMinRaters()>0 && 
+                        rc.getRcScript()!=null && !rc.getRcScript().getHasAnyCandidateInput() && 
+                        (!rc.getRcScript().getCollectResumeB() || rc.getResumeComplete()>0) &&
+                        !rc.getCollectRatingsFmCandidate()  )
                 {
                     if( rcFacade==null )
                         rcFacade=RcFacade.getInstance(); 
@@ -1752,7 +1789,7 @@ public class RcCheckUtils {
                     }
                     if( raterCt>=rc.getMinRaters() && superCt>=rc.getMinSupervisors() )
                         skipCandidate = true;                    
-                }
+                }                                
                 
                 if( skipCandidate )
                 {

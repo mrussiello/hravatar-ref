@@ -47,6 +47,8 @@ public class CT2RcReport extends BaseRcReportTemplate implements ReportTemplate
             }
 
             addCompetencySummaryTable();
+               
+            addAiScoresSection();
                         
             addReferencesTable();
             
@@ -66,6 +68,8 @@ public class CT2RcReport extends BaseRcReportTemplate implements ReportTemplate
             
             if( !devel )
                 addInterviewGuide();
+            
+            addResumeSection();
             
             addPreparationNotesSection();
 

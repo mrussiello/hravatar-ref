@@ -354,41 +354,41 @@ public class BaseRefUtils  extends FacesUtils
 
             RefPageType currentRefPageType = refBean.getRefPageType();
             RefUserType refUserType = refBean.getRefUserType();
-            RefPageType nextRefPageType = currentRefPageType.getNextPageTypeNoNull(refUserType);
+            RefPageType nextRefPageType = currentRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
-            
-            
+
+
             // LogService.logIt( "BaseRefUtils.getNextPageTypeForRefProcess() currentRefPageType=" + currentRefPageType.getName() + ", nextPageType=" + nextRefPageType.getName() +", refUserType=" + refUserType.getName() );
 
             if( nextRefPageType.equals( RefPageType.RELEASE) && corpBean.getCorp().getReleaseRqd()<=0 )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             else if( nextRefPageType.equals( RefPageType.RELEASE)  )
             {
                 if( refUserType.getIsCandidate() && rc.getCandidateReleaseDate()!=null )
-                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
                 if( refUserType.getIsRater() && rc.getRcRater().getReleaseDate()!=null )
-                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
             }
 
             if( nextRefPageType.equals( RefPageType.SPECIAL) && !getHasSpecialInstructions() )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             if( nextRefPageType.equals( RefPageType.PREVIOUSRESULTS) && !getHasPreviousResults() )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             if( nextRefPageType.equals( RefPageType.AVCOMMENTS) && !getHasAvComments() )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             if( nextRefPageType.equals( RefPageType.PHOTO) && !getNeedsPhoto() )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             if( nextRefPageType.equals( RefPageType.ID_PHOTO) && !getNeedsIdPhoto() )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
-            // Prequestions are only for candidtes that have questions or ratings
+            // Prequestions are only for candidates that have questions or ratings
             if( nextRefPageType.equals( RefPageType.PRE_QUESTIONS) && (refUserType.getIsRater() || !rc.getRequiresAnyCandidateInputOrSelfRating() ) )
-                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
             // skip pre-questions if they are all answered.
             if( nextRefPageType.equals( RefPageType.PRE_QUESTIONS) && refUserType.getIsCandidate() )
@@ -396,7 +396,16 @@ public class BaseRefUtils  extends FacesUtils
                 CandidateRefUtils cru = CandidateRefUtils.getInstance();
                 cru.doEnterCore();
                 if( !cru.getNeedsCore() )
-                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                    nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
+            }
+
+            if( nextRefPageType.equals( RefPageType.RESUME) && !refUserType.getIsCandidate() )
+                nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
+
+            if( nextRefPageType.equals( RefPageType.RESUME) && refUserType.getIsCandidate() )
+            {
+                CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                cru.doResumeCollectionPrep();
             }
 
             // LogService.logIt( "BaseRefUtils.getNextPageTypeForRefProcess() NNN.1 nextRefPageType=" + nextRefPageType.getName() +", refUserType=" + refUserType.getName() );
@@ -450,7 +459,7 @@ public class BaseRefUtils  extends FacesUtils
                     if( !rru.getNeedsCore() )
                     {
                         // this will advance until a non-null page is found.
-                        nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType);
+                        nextRefPageType = nextRefPageType.getNextPageTypeNoNull(refUserType, rc);
 
                         // core 2
                         if( nextRefPageType.getIsCore2() )
@@ -517,7 +526,7 @@ public class BaseRefUtils  extends FacesUtils
                         refBean.setRefPageType(nextRefPageType);
                         nextRefPageType = getNextPageTypeForRefProcess();
                     }
-                    
+
                     else
                         throw new Exception( "nextRefPageType is Core 3 but refUserType is Rater AND the rcRater is not set to Complete. rcCheckId=" + rc.getRcCheckId() +", rcRaterId=" + rc.getRcRater().getRcRaterId() );
                 }
@@ -536,7 +545,7 @@ public class BaseRefUtils  extends FacesUtils
                     }
                 }
             }
-            
+
             if( getSessionListener() != null )
                 getSessionListener().updateStatus( getHttpSession().getId(), nextRefPageType.getName(),null, null, null, null, null);
             return nextRefPageType;
@@ -650,6 +659,15 @@ public class BaseRefUtils  extends FacesUtils
             RefPageType currentRefPageType = refBean.getRefPageType();
             RefUserType refUserType = refBean.getRefUserType();
             RefPageType pt = currentRefPageType.getPreviousPageTypeNoNull(refUserType, rc);
+
+            if( pt.equals( RefPageType.RESUME) && !refUserType.getIsCandidate() )
+                pt = pt.getPreviousPageTypeNoNull(refUserType, rc);
+
+            if( pt.equals( RefPageType.RESUME) && refUserType.getIsCandidate() )
+            {
+                CandidateRefUtils cru = CandidateRefUtils.getInstance();
+                cru.doResumeCollectionPrep();
+            }
 
             if( pt.getIsCore2() && refUserType.getIsCandidate() && !rc.getCollectRatingsFmCandidate() )
                 pt = RefPageType.CORE;
@@ -1063,14 +1081,14 @@ public class BaseRefUtils  extends FacesUtils
                 if( userFacade==null )
                     userFacade=UserFacade.getInstance();
 
-                if( rc!=null && rc.getRcRater()!=null )
+                if( rc.getRcRater()!=null )
                 {
                     User rUser = userFacade.getUser( rc.getRcRater().getUserId() );
                     if( rUser!=null && rUser.getOrgId()==rc.getOrgId() )
                         ok=true;
                 }
 
-                else if( rc!=null )
+                else
                 {
                     User srcUser = userFacade.getUser( rc.getAdminUserId() );
                     if( srcUser!=null && srcUser.getOrgId()==rc.getOrgId() )
@@ -1148,8 +1166,7 @@ public class BaseRefUtils  extends FacesUtils
                 corpUtils.loadCorpIfNeeded(rc.getCorpId(), true, getHttpServletResponse() );
             }
 
-
-            if( rc.getRcScript().getActiveItemCount() <=0 )
+            if( rc.getRcScript().getActiveItemCount()<=0 )
             {
                 LogService.logIt("RefUtils.performRcCheckStart() RcScript does not have any active items. Cannot conduct check. rcCheckId=" + rc.getRcCheckId() + ", rcScriptId=" + rc.getRcScriptId() + ", returning " + RefPageType.ERROR.getPageFull(refUserType) );
                 refBean.setStrParam1( MessageFactory.getStringMessage(getLocale(), "g.RCScriptNoItems", new String[]{rc.getRcScript().getName(), Integer.toString(rc.getRcScriptId())} ));
@@ -1201,7 +1218,7 @@ public class BaseRefUtils  extends FacesUtils
                 CookieUtils.setRcCheckCookie( getHttpServletResponse(), refBean.getAccessCode() );
 
             // if no input needed, set CandidateStatusTypeId to Completed.
-            if( rc.getRcCandidateStatusType().getIsNotStarted() && !rc.getRequiresAnyCandidateInputOrSelfRating() )
+            if( rc.getRcCandidateStatusType().getIsNotStarted() && !rc.getRequiresResumeOrAnyCandidateInputOrSelfRating() )
             {
                 rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
                 rc.setLastUpdate(new Date() );
@@ -1236,7 +1253,7 @@ public class BaseRefUtils  extends FacesUtils
                 rc.setCandidateLastUpdate( new Date() );
                 if( rc.getRcCandidateStatusType().getIsNotStarted() )
                 {
-                    if( rc.getRequiresAnyCandidateInputOrSelfRating() || rc.getCandidateCanAddRaters() )
+                    if( rc.getRequiresResumeOrAnyCandidateInputOrSelfRating() || rc.getCandidateCanAddRaters() )
                         rc.setRcCandidateStatusTypeId( RcCandidateStatusType.STARTED.getRcCandidateStatusTypeId() );
                     else
                         rc.setRcCandidateStatusTypeId( RcCandidateStatusType.COMPLETED.getRcCandidateStatusTypeId() );
@@ -1370,7 +1387,7 @@ public class BaseRefUtils  extends FacesUtils
             }
 
             // Candidate but no input needed.
-            if( refUserType.getIsCandidate() && !rc.getRequiresAnyCandidateInputOrSelfRating() && !rc.getCandidateCanAddRaters() )
+            if( refUserType.getIsCandidate() && !rc.getRequiresResumeOrAnyCandidateInputOrSelfRating() && !rc.getCandidateCanAddRaters() )
             {
                     LogService.logIt("RefUtils.performRcCheckStart() AAA.3 Candidate is Entering an RC Check that is configured to disable direct candidate input (or add raters). Showing complete page. rcCheckId=" + rc.getRcCheckId() + " moving to Confirm stage." );
                     if( getSessionListener() != null )
@@ -1431,8 +1448,8 @@ public class BaseRefUtils  extends FacesUtils
             getUserBean();
             if( userBean!=null && userBean.getNonMobileMacintosh()==null && getHttpServletRequest()!=null)
                 userBean.setNonMobileMacintosh( BrowserType.getIsNonMobileMac(getHttpServletRequest().getHeader("User-Agent")));
-            
-            
+
+
             if( getSessionListener() != null )
                 getSessionListener().updateStatus( getHttpSession().getId(), "Confirm Page",null, null, null, null, null);
             refBean.setRefPageType(RefPageType.CONFIRM);

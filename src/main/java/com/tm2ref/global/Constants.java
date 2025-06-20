@@ -76,6 +76,7 @@ public class Constants
     
     public static final String CSVPOSTTESTCONTACTSTR="CSVPOSTTESTCONTACTSTR";
     
+    public static final float MIN_METASCORE_CONFIDENCE = 0.4f;
 
 }
 
