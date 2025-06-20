@@ -311,7 +311,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     resume.setLastInputDate(new Date());
                 userFacade.saveResume(resume);
 
-                boolean needsParse = isChange; // || (resume.getLastInputDate()!=null && (resume.getLastParseDate()==null || resume.getLastParseDate().before( resume.getLastInputDate())) );
+                boolean needsParse = isChange || resume.getNeedsParse()==1; // || (resume.getLastInputDate()!=null && (resume.getLastParseDate()==null || resume.getLastParseDate().before( resume.getLastInputDate())) );
                 if( needsParse )
                 {
                     ResumeParseThread rpt = new ResumeParseThread( rc.getRcCheckId(), rc.getUser(), resume );
