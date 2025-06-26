@@ -482,7 +482,7 @@ public class RefEntry
      
      public void doRefReturnEntry()
      {
-        LogService.logIt( "RefEntry.doRefReturnEntry() acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
+        // LogService.logIt( "RefEntry.doRefReturnEntry() acidx=" + ac + ", refPageTypeId=" + orgAutoTestId );
          
         FacesContext fc = FacesContext.getCurrentInstance();
         try
@@ -501,7 +501,7 @@ public class RefEntry
             
             Tracker.addSimpleEntry();
 
-            LogService.logIt( "RefEntry.doRefReturnEntry() AAA.1 after refUtils.processReturnToRefCheckProcess() nextViewId=" + nextViewId );
+            // LogService.logIt( "RefEntry.doRefReturnEntry() AAA.1 after refUtils.processReturnToRefCheckProcess() nextViewId=" + nextViewId );
 
             if( fc!=null )
             {

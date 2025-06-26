@@ -202,7 +202,7 @@ public class ProctorUtils extends FacesUtils {
                 refUserType = refBean.getRefUserType();
                 refPageType = refBean.getRefPageType();  
                 
-                LogService.logIt( "ProctorUtils.doPhotoUpload() nextViewId after calling repair is: "  + nextViewId + ", refBean.rcCheck.rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId())  );
+                // LogService.logIt( "ProctorUtils.doPhotoUpload() nextViewId after calling repair is: "  + nextViewId + ", refBean.rcCheck.rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId())  );
                 
                 if( rc==null )
                 {

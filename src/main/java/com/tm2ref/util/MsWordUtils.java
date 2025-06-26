@@ -7,6 +7,7 @@ package com.tm2ref.util;
 import com.tm2ref.service.LogService;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -20,7 +21,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 public class MsWordUtils 
 {
     
-public static String convertWordToText(File wordFile) 
+public static String convertWordToTextFile(File wordFile) 
 {
         String text = "";
         try (FileInputStream fis = new FileInputStream(wordFile))
@@ -42,9 +43,14 @@ public static String convertWordToText(File wordFile)
             }
             fis.close();
         } 
+        catch(IOException e) 
+        {
+            LogService.logIt( "MsWordUtils.convertWordToTextFile() " + e.toString() +", " + (wordFile==null ? "null" : wordFile.getName() + ", " + wordFile.getAbsolutePath()) );
+            return null;
+        }
         catch(Exception e) 
         {
-            LogService.logIt( e, "PdfUtils.convertPdfToText() " + (wordFile==null ? "null" : wordFile.getName() + ", " + wordFile.getAbsolutePath()) );
+            LogService.logIt( e, "MsWordUtils.convertWordToTextFile() " + (wordFile==null ? "null" : wordFile.getName() + ", " + wordFile.getAbsolutePath()) );
             return null;
         }
         return text;
@@ -73,9 +79,14 @@ public static String convertWordToText(File wordFile)
             }
             fis.close();
         } 
+        catch(IOException e) 
+        {
+            LogService.logIt( "MsWordUtils.convertWordToText() " + e.toString() +", " + (filename==null ? "null" : filename) );
+            return null;
+        }
         catch(Exception e) 
         {
-            LogService.logIt( e, "PdfUtils.convertPdfToText() " + (filename==null ? "null" : filename) );
+            LogService.logIt( e, "MsWordUtils.convertWordToText() " + (filename==null ? "null" : filename) );
             return null;
         }
         return text;

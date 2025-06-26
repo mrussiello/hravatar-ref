@@ -158,6 +158,13 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
     @Column( name = "fileprocessingtypeid" )
     private int fileProcessingTypeId;
     
+    /**
+     *  This is used only for General File Uploads to hold the text content in the uploaded file for AI Processing.
+     */
+    @Column( name = "uploadedtext" )
+    private String uploadedText;
+        
+    
     
     @Column( name = "initialfilesize" )
     private int initialFileSize;
@@ -945,6 +952,19 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
 
     public void setUploadedFileTypeName(String uploadedFileTypeName) {
         this.uploadedFileTypeName = uploadedFileTypeName;
+    }
+
+    public String getUploadedText()
+    {
+        return uploadedText;
+    }
+
+    public void setUploadedText(String uploadedText)
+    {
+        if( uploadedText!=null && uploadedText.isBlank() )
+            uploadedText=null;
+        
+        this.uploadedText = uploadedText;
     }
 
 }

@@ -224,7 +224,7 @@ public class CandidateRefUtils extends BaseRefUtils
                 Thread.sleep(1500);
                 FileContentType fct = uploadedFile==null ? null : FileContentType.getFileContentTypeFromContentType( uploadedFile.getContentType(), uploadedFile.getFileName() );
 
-                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.1 have uploaded file. fct=" + (fct==null ? "null" : fct.getBaseContentType()) + ", size=" + uploadedFile.getSize() + ", filename=" + uploadedFile.getFileName() );
+                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.1 have uploaded file. fct=" + (fct==null ? "null" : fct.getBaseContentType()) + ", size=" + uploadedFile.getSize() + ", filename=" + uploadedFile.getFileName() + ", rcCheckId=" + rc.getRcCheckId() );
 
                 if( uploadedFile.getSize()<=1 )
                     throw new STException( "g.ResumeFileTooSmall" );
@@ -252,7 +252,7 @@ public class CandidateRefUtils extends BaseRefUtils
                     }
                 }
 
-                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.2 uploadedText.length=" + (uploadedText==null ? "null" : uploadedText.length() ) );
+                LogService.logIt( "CandidateRefUtils.processSaveOrUploadResume() CCC.2 uploadedText.length=" + (uploadedText==null ? "null" : uploadedText.length() ) + ", rcCheckId=" + rc.getRcCheckId() );
 
                 if( uploadedText==null || uploadedText.isBlank() )
                     throw new STException( "g.ResumeFileNoText" );

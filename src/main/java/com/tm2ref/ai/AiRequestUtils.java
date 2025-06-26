@@ -56,7 +56,7 @@ public class AiRequestUtils
 
             AiRequestClient client = new AiRequestClient();
 
-            JsonObject jo = client.getJsonObjectFromAiCallRequest( joReq );
+            JsonObject jo = client.getJsonObjectFromAiCallRequest( joReq, BaseAiClient.AI_CALL_TIMEOUT_SHORT );
             if( jo==null || !jo.containsKey("status") || jo.isNull("status") )
             {
                 LogService.logIt("AiRequestUtils.getIsAiSystemAvailable() response JO is null. " );
@@ -138,7 +138,7 @@ public class AiRequestUtils
 
             Tracker.addAiCall();
                         
-            return client.getJsonObjectFromAiCallRequest( joReq );
+            return client.getJsonObjectFromAiCallRequest( joReq, BaseAiClient.AI_CALL_TIMEOUT_LONG );
         }
         catch( Exception e )
         {

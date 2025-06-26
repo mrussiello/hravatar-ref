@@ -36,6 +36,7 @@ import static software.amazon.awssdk.services.rekognition.model.OrientationCorre
 import static software.amazon.awssdk.services.rekognition.model.OrientationCorrection.ROTATE_270;
 import static software.amazon.awssdk.services.rekognition.model.OrientationCorrection.ROTATE_90;
 import software.amazon.awssdk.services.rekognition.model.Parent;
+import software.amazon.awssdk.services.rekognition.model.Pose;
 import software.amazon.awssdk.services.rekognition.model.RekognitionException;
 import software.amazon.awssdk.services.rekognition.model.ThrottlingException;
 
@@ -403,9 +404,25 @@ public class AmazonRekognitionUtils {
             DetectFacesResponse  res=rekognitionClient.detectFaces(req);
 
             OrientationCorrection ocor = res.orientationCorrection();
+            String ocorStr = res.orientationCorrectionAsString();
+            
+            FaceDetail faceDetail=null;
+            if( !res.faceDetails().isEmpty() )
+            {
+                faceDetail=res.faceDetails().get(0);                
+            }
+            
+            Float roll = null;
+            if( faceDetail!=null )
+            {
+                Pose pose = faceDetail.pose();
+                if( pose!=null )
+                    roll = pose.roll();                
+            }
+            
+            // LogService.logIt( "AmazonRekognitionUtils.getSingleFaceDetails() orientation String=" + (ocor==null ? "null" : ocor.toString()) + ", uploadedUserFileId=" + (arii.uuf==null ? "null" : arii.uuf.getUploadedUserFileId()) );
             
             int oVal = 0;
-            
             if( ocor!=null )
             {
                 switch (ocor) {
@@ -421,8 +438,27 @@ public class AmazonRekognitionUtils {
                     default:
                         break;
                 }
-            }
+            } 
             
+            if( oVal==0 && roll!=null )
+            {
+                // LogService.logIt( "AmazonRekognitionUtils.getSingleFaceDetails() Using roll=" + roll + " for oVal, uploadedUserFileId=" + (arii.uuf==null ? "null" : arii.uuf.getUploadedUserFileId()) );
+                
+                // Roll is -180 to +180
+                if( roll>=-224 && roll<-135 )
+                    oVal=180;
+                
+                // rotated counter 90 degrees. correct by going clockwise 90.
+                else if( roll>=-135 && roll<-45 )
+                    oVal=90;
+                
+                else if( roll>135 && roll<=225 )
+                    oVal=180;
+                
+                // rotated clockwise 90. Correct by going clockwise 270
+                else if( roll>45 && roll<=135 )
+                    oVal=270;                 
+            }            
             out[2]= oVal;
 
             if( res.faceDetails().size() < 1)

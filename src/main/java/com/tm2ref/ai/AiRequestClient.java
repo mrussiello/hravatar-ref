@@ -12,20 +12,20 @@ import jakarta.json.JsonObject;
 
 public class AiRequestClient extends BaseAiClient 
 {
-    public JsonObject getJsonObjectFromAiCallRequest( JsonObject joReq ) throws Exception
+    public JsonObject getJsonObjectFromAiCallRequest( JsonObject joReq, int timeoutSecs ) throws Exception
     {
         String payload = JsonUtils.convertJsonObjectToString(joReq);
         
-        return getJsonObjectFromAiCallRequest( payload );        
+        return getJsonObjectFromAiCallRequest(payload, timeoutSecs );        
     }
     
-    public JsonObject getJsonObjectFromAiCallRequest( String payload ) throws Exception
+    public JsonObject getJsonObjectFromAiCallRequest( String payload, int timeoutSecs) throws Exception
     {
         try
         {
             init();
             
-            String jsonOut = postAiCallRequest( payload  ); //  sendApiPost(url, payload, paramMap, getBaseCreds() );
+            String jsonOut = postAiCallRequest( payload, timeoutSecs  ); //  sendApiPost(url, payload, paramMap, getBaseCreds() );
             
             if( jsonOut!=null && !jsonOut.isBlank() )
             {
@@ -45,7 +45,7 @@ public class AiRequestClient extends BaseAiClient
     }
 
     
-    public String postAiCallRequest( String jsonStr ) throws Exception
+    public String postAiCallRequest( String jsonStr, int timeoutSecs) throws Exception
     {
         try
         {
@@ -55,7 +55,7 @@ public class AiRequestClient extends BaseAiClient
             
             //Map<String,String> paramMap = new HashMap<>();
             //paramMap.put( "tran", tran );            
-            return sendApiPost(url, jsonStr, getBaseCreds() );
+            return sendApiPost(url, jsonStr, getBaseCreds(), timeoutSecs );
         }
         
         catch( Exception e )

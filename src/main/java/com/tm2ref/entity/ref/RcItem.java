@@ -151,8 +151,6 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     
     @Column(name="skipbuttontext")
     private String skipButtonText;
-    
-    
 
     @Column(name="includenumrating")
     private int includeNumRating;
@@ -198,6 +196,12 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
     @Column(name="candidateuploadtypeid")
     private int candidateUploadTypeId;
 
+    @Column(name="aiscoringok")
+    private int aiScoringOk;
+    
+    @Column(name="idealresponse")
+    private String idealResponse;
+                
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
@@ -901,6 +905,26 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem>
 
     public void setIntParam2(int intParam2) {
         this.intParam2 = intParam2;
+    }
+
+    public int getAiScoringOk()
+    {
+        return aiScoringOk;
+    }
+
+    public void setAiScoringOk(int aiScoringOk)
+    {
+        this.aiScoringOk = aiScoringOk;
+    }
+
+    public String getIdealResponse()
+    {
+        return idealResponse;
+    }
+
+    public void setIdealResponse(String idealResponse)
+    {
+        this.idealResponse = idealResponse;
     }
 
 
