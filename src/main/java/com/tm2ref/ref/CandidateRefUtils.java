@@ -1572,13 +1572,13 @@ public class CandidateRefUtils extends BaseRefUtils
         try
         {
             rc = refBean.getRcCheck();
-            if( rc == null )
+            if( rc==null )
             {
                 rc = repairRefBeanForCurrentAction(refBean, true, 111);
                 if( rc!=null )
                     return conditionUrlForSessionLossGet(getViewFromPageType( refBean.getRefPageType() ), true );
             }
-            if( rc == null )
+            if( rc==null )
                 return CorpUtils.getInstance().processCorpHome();
 
             long rcChkReq = this.getRcCheckIdFmRequest();
@@ -1860,9 +1860,16 @@ public class CandidateRefUtils extends BaseRefUtils
                 // this could return a new copy of this rater if it already exists.
                 rcRater = rcFacade.saveRcRater( rcRater , false);
 
-                // replace if existin. Note that event if this is not a 'create' the system will return a matching RcRater if one already exists.
+                // replace if existing. Note that event if this is not a 'create' the system will return a matching RcRater if one already exists.
                 //if( create )
                 //{
+            
+                if( rc.getRcRaterList()==null )
+                {
+                    LogService.logIt( "CandidateRefUtils.processSaveRater() rc.rcRaterList is null. Unexpected. Reloading. rcCheckId=" + rc.getRcCheckId() + ", rcRater=" + rcRater.toString() );
+                    rc.setRcRaterList( rcFacade.getRcRaterList(rc.getRcCheckId()));
+                }
+                
                 ListIterator<RcRater> iter = rc.getRcRaterList().listIterator();
                 while( iter.hasNext() )
                 {
