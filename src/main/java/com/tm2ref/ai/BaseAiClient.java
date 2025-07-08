@@ -26,7 +26,7 @@ public class BaseAiClient {
 
     public static int AI_CALL_TIMEOUT_SHORT = 10;
     public static int AI_CALL_TIMEOUT = 36;
-    public static int AI_CALL_TIMEOUT_LONG = 80;
+    public static int AI_CALL_TIMEOUT_LONG = 180;
     protected static String BASE_URI = null; // "http://localhost:80/ai/webresources";
 
 
