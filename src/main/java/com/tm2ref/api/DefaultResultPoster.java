@@ -32,7 +32,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
  *
  * @author Mike
  */
-public class DefaultResultPoster implements ResultPoster {
+public class DefaultResultPoster extends BaseResultPoster implements ResultPoster {
 
     TestKey testKey;
     RcCheck rc;
@@ -86,7 +86,7 @@ public class DefaultResultPoster implements ResultPoster {
             if( 1==1 )
                 LogService.logIt( "DefaultResultPoster.postTestResults() payload:\n" + payload+ "\n" );
             
-            Map<String,String> basicAuthCreds = testKey.getBasicAuthParmsForResultsPost();
+            Map<String,String> basicAuthCreds = getBasicAuthCredsFromReportFlags( rc, testKey ); // testKey.getBasicAuthParmsForResultsPost();
             final String payload2 = payload;
 
             try (CloseableHttpClient client = HttpUtils.getHttpClient(30))
