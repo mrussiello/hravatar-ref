@@ -4,6 +4,7 @@
  */
 package com.tm2ref.ai;
 
+import com.tm2ref.entity.essay.UnscoredEssay;
 import com.tm2ref.entity.user.Resume;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.global.RuntimeConstants;
@@ -148,7 +149,126 @@ public class AiRequestUtils
         }
     }
 
+    public static JsonObject doEssayScoringCall( UnscoredEssay unscoredEssay, AiCallType aiCallType, boolean autoUpdate, boolean forceRedo, String forcePromptStr, String idealResponseStr, String aiInstructionsStr) throws Exception
+    {
+        try
+        {
+            if( unscoredEssay==null )
+                throw new Exception( "unscoredEssay is null" );
 
+            if( unscoredEssay.getUnscoredEssayId()<=0 )
+                throw new Exception( "UnscoredEssay.unscoredEssayId is invalid: " + unscoredEssay.getUnscoredEssayId() );
+            
+            if( (unscoredEssay.getEssay()==null || unscoredEssay.getEssay().isBlank()) ) 
+                throw new Exception( "UnscoredEssay does not have an Essay to score." );
+            
+            if( forcePromptStr==null || forcePromptStr.isBlank() )
+                throw new Exception( "forcePromptStr is null or empty. " );
+
+            JsonObjectBuilder job = getBasePayloadJsonObjectBuilder(aiCallType, null );
+            
+            
+            job.add("intparam1", unscoredEssay.getUnscoredEssayId() );
+            job.add( "intparam3", 1 ); // omit grammar
+            job.add("autoupdate", autoUpdate ? 1 : 0 );    
+            
+            if( forceRedo )
+                job.add( "forceredo", 1 );
+            
+            job.add( "strparam1", forcePromptStr );
+
+            if( idealResponseStr!=null && !idealResponseStr.isBlank() )
+                job.add( "strparam2", idealResponseStr );
+            
+            if( aiInstructionsStr!=null && !aiInstructionsStr.isBlank() )
+                job.add( "strparam3", aiInstructionsStr );
+            
+            JsonObject joReq = job.build();
+
+            AiRequestClient client = new AiRequestClient();
+
+            Tracker.addAiCall();
+                        
+            return client.getJsonObjectFromAiCallRequest(joReq, BaseAiClient.AI_CALL_TIMEOUT_LONG );
+        }
+        catch( Exception e )
+        {
+            Tracker.addAiCallError();
+            LogService.logIt(e, "AiRequestUtils.doEssayScoringCall() aiCallType=" +  aiCallType.getName() +", unscoredEssayId=" + (unscoredEssay==null ? "null" : unscoredEssay.getUnscoredEssayId()+ ", userId=" + unscoredEssay.getUserId()) );
+            throw e;
+        }
+    }
+
+    public static JsonObject doEssaySummaryCall(UnscoredEssay unscoredEssay, AiCallType aiCallType, boolean autoUpdate, boolean forceRedo) throws Exception
+    {
+        try
+        {
+            if( unscoredEssay==null )
+                throw new Exception( "unscoredEssay is null" );
+
+            if( unscoredEssay.getUnscoredEssayId()<=0 )
+                throw new Exception( "UnscoredEssay.unscoredEssayId is invalid: " + unscoredEssay.getUnscoredEssayId() );
+            
+            if( (unscoredEssay.getEssay()==null || unscoredEssay.getEssay().isBlank()) ) 
+                throw new Exception( "UnscoredEssay does not have an Essay to score." );
+            
+            JsonObjectBuilder job = getBasePayloadJsonObjectBuilder(aiCallType, null );
+            
+            job.add("intparam1", unscoredEssay.getUnscoredEssayId() );
+            job.add("autoupdate", autoUpdate ? 1 : 0 );
+
+            if( forceRedo )
+                job.add( "forceredo", 1 );
+                        
+            JsonObject joReq = job.build();
+
+            AiRequestClient client = new AiRequestClient();
+            Tracker.addAiCall();                        
+            return client.getJsonObjectFromAiCallRequest(joReq, BaseAiClient.AI_CALL_TIMEOUT_LONG );
+        }
+        catch( Exception e )
+        {
+            Tracker.addAiCallError();
+            LogService.logIt(e, "AiRequestUtils.doEssaySummaryCall() aiCallType=" +  aiCallType.getName() +", unscoredEssayId=" + (unscoredEssay==null ? "null" : unscoredEssay.getUnscoredEssayId()+ ", userId=" + unscoredEssay.getUserId()) );
+            throw e;
+        }
+    }
+
+    
+    public static boolean wasAiCallSuccess( JsonObject responseJo ) throws Exception
+    {
+        if( responseJo==null )
+            return false;
+        
+        if( !responseJo.containsKey("status") || responseJo.isNull("status") )
+        {
+            int aiCallHistoryId = responseJo.containsKey("aicallhistoryid") ? responseJo.getInt("aicallhistoryid") : 0;
+            String msg = "Returned Json has no status field. aiCallHistoryId=" + aiCallHistoryId;
+            LogService.logIt("AiRequestUtils.wasAiCallSuccess() " + msg + ", json returned=" + JsonUtils.convertJsonObjectToString(responseJo) );
+            return false;
+        }
+
+        String status = JsonUtils.getStringFmJson(responseJo, "status");
+        if( status.equals( AiCallStatusType.ERROR.getStatusStr() ) )
+        {
+            int aiCallHistoryId = responseJo.containsKey("aicallhistoryid") ? responseJo.getInt("aicallhistoryid") : 0;
+            String msg = "Error code=" + (responseJo.containsKey("errorcode") ? responseJo.getInt("errorcode") : "none") + ", Error message=" + (responseJo.containsKey("errormessage") ? JsonUtils.getStringFmJson( responseJo, "errormessage") : "none") + ", aiCallHistoryId=" + aiCallHistoryId;
+            LogService.logIt("AiRequestUtils.wasAiCallSuccess() " + msg + ", json returned=" + JsonUtils.convertJsonObjectToString(responseJo) );
+            return false;
+        }
+
+        if( !status.equals( AiCallStatusType.COMPLETED.getStatusStr() ) )
+        {
+            int aiCallHistoryId = responseJo.containsKey("aicallhistoryid") ? responseJo.getInt("aicallhistoryid") : 0;
+            String msg = "Call status is not complete. status=" + status + ", aiCallHistoryId=" + aiCallHistoryId;
+            LogService.logIt("AiRequestUtils.wasAiCallSuccess() " + msg + ", json returned="  + JsonUtils.convertJsonObjectToString(responseJo) );
+            return false;
+        }        
+
+        return true;
+    }
+
+    
 
     private static JsonObjectBuilder getBasePayloadJsonObjectBuilder( AiCallType aiCallType, User user ) throws Exception
     {

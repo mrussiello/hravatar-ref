@@ -34,6 +34,8 @@ import com.tm2ref.previousresult.PreviousResultDateComparator;
 import com.tm2ref.proctor.ProctorUtils;
 import com.tm2ref.purchase.ProductType;
 import com.tm2ref.purchase.RefCreditUtils;
+import com.tm2ref.ref.ai.RcCheckAiScoresUpdater;
+import com.tm2ref.ref.ai.RcRaterAiStatusType;
 import com.tm2ref.service.LogService;
 import com.tm2ref.service.Tracker;
 import com.tm2ref.user.ResumeHelpUtils;
@@ -667,6 +669,7 @@ public class RcCheckUtils {
             }
         }
         
+        // Not the candidate.
         else if( refUserType.getIsRater() )
         {
             if( rc.getRcRater().getUser()==null )
@@ -965,8 +968,7 @@ public class RcCheckUtils {
                 Thread.sleep(100);
                 rc.getUser().setResume( userFacade.getResumeForUser(rc.getUserId()));
             }
-        }
-        
+        }        
         
         if( rc.getOrg()==null )
             rc.setOrg( userFacade.getOrg( rc.getOrgId() ));
@@ -1004,7 +1006,7 @@ public class RcCheckUtils {
         RcRater cRtr = null;
         if( !rc.getRcRaterList().isEmpty() )
         {
-            int count = 0;
+            // int count = 0;
             for( RcRater r : rc.getRcRaterList() )
             {
                 r.setRcCheck(rc);
@@ -1035,17 +1037,19 @@ public class RcCheckUtils {
         FileUploadFacade fileUploadFacade = null;
         
         // Candidate photos and Videos
-        if( rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() || (rc.getRcAvType().getAnyMedia() && rc.getCollectRatingsFmCandidate()) )
+        if( rc.getRcCandidatePhotoCaptureType().getRequiresAnyPhotoCapture() || ((rc.getRcAvType().getAnyMedia() || rc.getRcScript().getHasCandidateFileUploads()) && rc.getCollectRatingsFmCandidate()) )
         {
             if( fileUploadFacade==null )
                 fileUploadFacade = FileUploadFacade.getInstance();
             rc.setRcUploadedUserFileList(fileUploadFacade.getRcUploadedUserFilesForRcCheckAndRater(rc.getRcCheckId(),cRtr==null ? 0 : cRtr.getRcRaterId()));
             if( rc.getRcUploadedUserFileList()!=null && !rc.getRcUploadedUserFileList().isEmpty() )
+            {
                 rc.setFauxRcUploadedUserFileList( ProctorUtils.getFauxRcUploadedUserFileListForReportThumbs(rc.getRcUploadedUserFileList(), true, 20));
+            }
             // rc.setRcUploadedUserFileList(fileUploadFacade.getRcUploadedUserFilesForRcCheckAndRater(rc.getRcCheckId(),cRtr==null ? 0 : cRtr.getRcRaterId()));
 
             // Candidate rating comment videos are stored in the RcCheck
-            if( cRtr!=null && rc.getRcAvType().getAnyMedia() )
+            if( cRtr!=null && (rc.getRcAvType().getAnyMedia() || rc.getRcScript().getHasCandidateFileUploads()) )
                 rc.setRcUploadedUserFilesInCandidateRatings( cRtr.getRcRatingList(), cRtr.getRcRaterId() );
         }
         
@@ -1053,7 +1057,6 @@ public class RcCheckUtils {
         // List<RcUploadedUserFile> rufl = null;
         for( RcRater r : rc.getRcRaterList() )
         {
-
             if( !r.getIsCandidateOrEmployee() && (rc.getRcRaterPhotoCaptureType().getRequiresAnyPhotoCapture() || rc.getRcAvType().getAnyMedia()) )
             {
                 if( fileUploadFacade==null )
@@ -1069,10 +1072,15 @@ public class RcCheckUtils {
                     r.setRcUploadedUserFilesInRatings();
             }
                         
-            rc.setRcRatingsInScript(r.getRcRatingList(), true );
-            
+            rc.setRcRatingsInScript(r.getRcRatingList(), true );              
         }
         
+        if( cRtr!=null && cRtr.getRcRaterAiStatusTypeId()<RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId() && rc.getRcScript().getHasAnyAiProcessing())
+        {
+            RcCheckAiScoresUpdater rcCheckAiScoresUpdater = new RcCheckAiScoresUpdater(rc);
+            rcCheckAiScoresUpdater.updateRcCheckAiScores();
+        }
+                
         rc.setRcSuspiciousActivityList( rcFacade.getRcSuspiciousActivityList( rc.getRcCheckId() ));
         for( RcSuspiciousActivity sa : rc.getRcSuspiciousActivityList() )
         {
@@ -1104,7 +1112,7 @@ public class RcCheckUtils {
         
         if( rc.getMetaScoreList()==null )
             rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck( rc.getRcCheckId()));
-        
+                
     }
     
     public static void addAnonymousNames(RcCheck rc, Locale locale )
@@ -1745,14 +1753,6 @@ public class RcCheckUtils {
                 // LogService.logIt("RcCheckUtils.performRcCheckCompletionIfReady() RcCheck is already complete or higher. status=" + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() );
                 return;                
             }
-            //if( !rc.getRcCandidateStatusType().getIsCompletedOrHigher() )
-            //{
-            //    LogService.logIt( "RcCheckUtils.performRcCheckCompletionIfReady() RcCandidateStatusType is not complete: " + rc.getRcCandidateStatusType().getName() + ", rcCheckId=" + rc.getRcCheckId() );
-            //    return;
-            //}
-
-            //if( rcFacade==null )
-            //    rcFacade=RcFacade.getInstance();
 
             // check for expiration.
             boolean pastExpireDate = rc.getExpireDate()!=null && rc.getExpireDate().before(new Date());
@@ -2192,6 +2192,7 @@ public class RcCheckUtils {
     */
     public int[] sendProgressUpdateForRaterOrCandidateComplete( RcCheck rc, RcRater rater, boolean forceSend) throws Exception
     {
+        // No progress report for candidate completion unless the whole thing is complete.
         if( rater!=null && !rc.getRcCheckStatusType().getIsComplete() && rater.getIsCandidateOrEmployee() )
             return new int[2];
         

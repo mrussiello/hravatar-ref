@@ -300,6 +300,12 @@ public class RcUploadedUserFile implements Serializable, UploadedUserFileFauxSou
     {
         return RuntimeConstants.getStringValue("baseadminurl") + "/rcavpb/" + rcCheckId + "/" + this.rcUploadedUserFileId + "/" + (this.getIsAudio() ? "audio.mp4" : "video.mp4" ); 
     }
+
+    public String getReportingFileDownloadUrl()
+    {
+        return RuntimeConstants.getStringValue("baseadminurl") + "/rcavpb/" + rcCheckId + "/" + this.rcUploadedUserFileId + "/" + initialFilename; 
+    }
+
     
     public String getMediaUrl()
     {

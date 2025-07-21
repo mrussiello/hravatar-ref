@@ -229,7 +229,6 @@ public class User implements Serializable
         {
             return EncryptUtils.urlSafeEncrypt( userId );
         }
-
         catch( Exception e )
         {
             LogService.logIt(e,  "User.getUserIdEncrypted() " + toString() );

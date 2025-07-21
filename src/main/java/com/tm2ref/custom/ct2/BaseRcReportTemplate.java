@@ -17,6 +17,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.tm2ref.ai.MetaScoreType;
@@ -28,6 +29,7 @@ import com.tm2ref.entity.ref.RcSuspiciousActivity;
 import com.tm2ref.format.BaseReportTemplate;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.user.Resume;
+import com.tm2ref.essay.EssayScoreStatusType;
 import com.tm2ref.global.Constants;
 import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.STException;
@@ -41,7 +43,6 @@ import com.tm2ref.ref.RcTopBottomSrcType;
 import com.tm2ref.report.RcHistogram;
 import com.tm2ref.report.RcHistogramRow;
 import com.tm2ref.report.ReportData;
-import com.tm2ref.report.ReportManager;
 import com.tm2ref.report.ReportTemplate;
 import com.tm2ref.report.ReportUtils;
 import com.tm2ref.service.LogService;
@@ -165,7 +166,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             BaseColor shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
             int paddingLeft = 10;
 
-            
+
             if( resume.getSummary()!=null && !resume.getSummary().isBlank() )
             {
                 c = new PdfPCell(new Phrase( resume.getSummary() , textFont));
@@ -174,17 +175,17 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 c.setPadding( 2 );
                 c.setPaddingBottom( 4 );
                 c.setPaddingLeft(paddingLeft);
-                
-                boolean hasAnyOtherData = (resume.getObjective()!=null && !resume.getObjective().isBlank()) || 
-                        (resume.getEducation()!=null && !resume.getEducation().isEmpty()) || 
-                        (resume.getExperience()!=null && !resume.getExperience().isEmpty())|| 
+
+                boolean hasAnyOtherData = (resume.getObjective()!=null && !resume.getObjective().isBlank()) ||
+                        (resume.getEducation()!=null && !resume.getEducation().isEmpty()) ||
+                        (resume.getExperience()!=null && !resume.getExperience().isEmpty())||
                         (resume.getOtherQuals()!=null && !resume.getOtherQuals().isEmpty());
-                
+
                 if( reportData.getR().getIncludeResume()!=2 || !hasAnyOtherData )
                     c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), shade,false, false, true, true) );
                 else
                     c.setBackgroundColor(shade );
-                
+
                 setRunDirection( c );
                 t.addCell(c);
             }
@@ -193,16 +194,16 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             {
 
                 boolean lastSection;
-                
+
                 if( resume.getObjective()!=null && !resume.getObjective().isBlank() )
                 {
                     tog = !tog;
                     shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
-                    
-                    lastSection = (resume.getEducation()==null || resume.getEducation().isEmpty()) && 
-                                  (resume.getExperience()==null || resume.getExperience().isEmpty()) && 
+
+                    lastSection = (resume.getEducation()==null || resume.getEducation().isEmpty()) &&
+                                  (resume.getExperience()==null || resume.getExperience().isEmpty()) &&
                                   (resume.getOtherQuals()==null || resume.getOtherQuals().isEmpty());
-                    
+
                     c = new PdfPCell(new Phrase( lmsg("g.Objective") , boldFont));
                     c.setBorder( Rectangle.NO_BORDER );
                     c.setBorderWidth( 0 );
@@ -232,7 +233,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 {
                     tog = !tog;
                     shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
-                    lastSection = (resume.getExperience()==null || resume.getExperience().isEmpty()) && 
+                    lastSection = (resume.getExperience()==null || resume.getExperience().isEmpty()) &&
                                   (resume.getOtherQuals()==null || resume.getOtherQuals().isEmpty());
 
                     c = new PdfPCell(new Phrase( lmsg("g.Education") , boldFont));
@@ -274,7 +275,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     tog = !tog;
                     shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
                     lastSection = (resume.getOtherQuals()==null || resume.getOtherQuals().isEmpty());
-                    
+
                     c = new PdfPCell(new Phrase( lmsg("g.Experience") , boldFont));
                     c.setBorder( Rectangle.NO_BORDER );
                     c.setBorderWidth( 0 );
@@ -313,7 +314,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 {
                     tog = !tog;
                     shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
-                    
+
                     c = new PdfPCell(new Phrase( lmsg("g.OtherQualifications") , boldFont));
                     c.setBorder( Rectangle.NO_BORDER );
                     c.setBorderWidth( 0 );
@@ -1776,6 +1777,13 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         String subtext;
         String avPlaybackUrl;
         Image avPlaybackIcon;
+        String candidateUploadStr;
+        // String candidateUploadDownloadUrl;
+        Chunk candidateUploadDownloadChk;
+        Paragraph responsePara;
+        PdfPTable aiScoresTable;
+
+
 
         String selectedRespStr;
         String style="";
@@ -1784,7 +1792,10 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         String bottomText;
 
         Font theTextFont = this.font;
+        Font smallTextFontItalic = this.fontSmallItalic;
         Font greenFont = this.fontGreen;
+        Font greenFontBold = this.fontGreenBold;
+        Font blueFont = this.fontBlue;
 
 
         BaseColor shade = ct2Colors.tableShadeGray3;
@@ -1812,16 +1823,66 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
         String lastname;
 
-        Phrase ph;
+        //Phrase ph;
+        boolean hasContent;
         for( RcRating rating : rciw.getRcRatingList() )
         {
-            isCandidate = rating.getRcRaterId()==candidateRcRaterId;
+            if( rating.getRcRater()==null )
+                rating.setRcRater( reportData.getRc().getRcRaterForRcRaterId( rating.getRcRaterId()));
 
+            isCandidate = rating.getRcRaterId()==candidateRcRaterId;
             scoreStr = item.getRcItemFormatType().getIsScoreOk() && rating.getScore()>0 ? I18nUtils.getFormattedNumber(reportData.getLocale(), rating.getFinalScore(), scrDigits ) : "";
             selectedRespStr = rating.getRcRatingStatusType().getIsSkipped() ? lmsg("g.Skipped") : rating.getSelectedChoicesText();
             commentStr = rating.getText()==null || rating.getText().isBlank() ? "" : rating.getText();
-
             subtext = rating.getSubtext()!=null && !rating.getSubtext().isBlank() ? rating.getSubtext() : null;
+
+            responsePara = new Paragraph();
+            aiScoresTable = null;
+
+            if (rating.getAiScoresStatusTypeId()==EssayScoreStatusType.SCORECOMPLETE.getEssayScoreStatusTypeId() && rating.getScore2()>0 && rating.getScore3()>0 )
+                aiScoresTable = getAiScoresTable(rating.getScoresArray(), false, smallTextFontItalic, shade );
+
+            hasContent=false;
+
+            if( selectedRespStr!=null && !selectedRespStr.isBlank() )
+            {
+                responsePara.add( new Chunk(selectedRespStr, isCandidate ? greenFont : theTextFont) );
+                hasContent=true;
+            }
+
+            if( rating.getSummary()!=null && !rating.getSummary().isBlank() )
+            {
+                responsePara.add( new Chunk( (hasContent ? "\n" : "") +  lmsg("g.SummaryAI") + ": ", isCandidate ? fontGreenBold : theTextFont ));
+                responsePara.add( new Chunk( rating.getSummary(), isCandidate ? fontGreen : theTextFont ));
+                if( commentStr!=null && !commentStr.isBlank() )
+                    responsePara.add( new Chunk( "\n\n" + lmsg("g.FullResponse") + ": " + commentStr, isCandidate ? fontGreen : theTextFont ));
+                hasContent=true;
+            }
+
+            else if( commentStr!=null && !commentStr.isBlank() )
+            {
+                responsePara.add( new Chunk((hasContent ? "\n" : "") +  commentStr, isCandidate ? greenFont : theTextFont) );
+                hasContent=true;
+            }
+
+            candidateUploadDownloadChk=null;
+            if( rating.getRcRater().getIsCandidateOrEmployee() && rating.getCandidateRcUploadedUserFile()!=null )
+            {
+                if( hasContent )
+                    responsePara.add( new Chunk("\n\n", theTextFont) );
+
+                String downloadUrl = rating.getCandidateRcUploadedUserFile().getReportingFileDownloadUrl();
+                candidateUploadStr = lmsg("g.UploadedFile") + ": " + rating.getCandidateRcUploadedUserFile().getInitialFilename();
+                LogService.logIt( "BaseRcReportTemplate.getItemResponseTable() CCC.2 Adding a Candidate RcUploadedFile link. downloadUrl=" + downloadUrl + ", candidateUploadStr=" + candidateUploadStr );
+
+                candidateUploadDownloadChk = new Chunk(candidateUploadStr,blueFont);
+                PdfAction pdfa = PdfAction.gotoRemotePage( downloadUrl , lmsg("g.DownloadUploadedFile"), false, true );
+                candidateUploadDownloadChk.setAction( pdfa );
+                responsePara.add( candidateUploadDownloadChk );
+                hasContent = true;
+            }
+
+
             avPlaybackUrl=null;
             avPlaybackIcon=null;
 
@@ -1844,7 +1905,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             }
 
             // need lower border
-            bottomBorder =  selectedRespStr!=null && !selectedRespStr.isBlank() && ((commentStr!=null && !commentStr.isBlank()) || (subtext!=null && !subtext.isBlank()));
+            bottomBorder =  selectedRespStr!=null && !selectedRespStr.isBlank() && ((commentStr!=null && !commentStr.isBlank()) || (subtext!=null && !subtext.isBlank()) || candidateUploadDownloadChk!=null);
 
             bottomText = "";
 
@@ -1894,18 +1955,15 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             setRunDirection( c );
             t.addCell(c);
 
-            ph = new Phrase();
-
-            if( selectedRespStr!=null && !selectedRespStr.isBlank() )
-                ph.add( new Chunk(selectedRespStr, isCandidate ? greenFont : theTextFont) );
-            else if( commentStr!=null && !commentStr.isBlank() )
-                ph.add( new Chunk(commentStr, isCandidate ? greenFont : theTextFont) );
-            //if( subtext!=null && !subtext.isBlank() )
-            //    ph.add( new Chunk( "\n" + subtext, fontItalic) );
-            // selected & comments
-            c = new PdfPCell( ph );
+            if( aiScoresTable!=null )
+            {
+                c = new PdfPCell();
+                c.addElement(responsePara);
+                c.addElement(aiScoresTable);
+            }
+            else
+                c = new PdfPCell( responsePara );
             c.setBorder( bottomBorder ? Rectangle.BOTTOM : Rectangle.NO_BORDER   );
-
             if( avPlaybackIcon==null )
                 c.setColspan(2);
             c.setBorderColor( ct2Colors.darkFontColor );
@@ -1961,6 +2019,91 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
     }
 
 
+    public PdfPTable getAiScoresTable( float[] aiScoresArray, boolean forCompetency, Font theTextFont, BaseColor shade) throws Exception
+    {
+        if( aiScoresArray==null )
+            return null;
+        
+        RcRatingScaleType st = reportData.getRc().getRcScript().getRcRatingScaleType();
+
+        PdfPTable aiScoresTable = new PdfPTable(2);
+        aiScoresTable.setWidths(new float[] {85,15});
+        aiScoresTable.setWidthPercentage(80);
+        aiScoresTable.setHorizontalAlignment(Element.ALIGN_LEFT);
+        
+
+        PdfPCell c = new PdfPCell( new Phrase( lmsg("emst.overallai" + (forCompetency ? ".comp" : "")) + ":", theTextFont ) );
+        c.setBorder( Rectangle.NO_BORDER   );
+        c.setPadding( 2 );
+        c.setHorizontalAlignment( Element.ALIGN_LEFT );
+        c.setBackgroundColor( shade );
+        setRunDirection( c );
+        aiScoresTable.addCell(c);
+        c = new PdfPCell( new Phrase( I18nUtils.getFormattedNumber(reportData.getLocale(), st.convertFrom100Score(aiScoresArray[2]), 1), theTextFont ) ); // + " (" + lmsg("g.ConfidenceX", new String[] {I18nUtils.getFormattedNumber(reportData.getLocale(), aiScoresArray[3]*100, 0)})+")", theTextFont ) );
+        c.setBorder( Rectangle.NO_BORDER   );
+        c.setPadding( 2 );
+        c.setHorizontalAlignment( Element.ALIGN_LEFT );
+        c.setBackgroundColor( shade );
+        setRunDirection( c );
+        aiScoresTable.addCell(c);
+
+        if( aiScoresArray[12]>0 )
+        {
+            c = new PdfPCell( new Phrase( lmsg("emst.clarity" + (forCompetency ? ".comp" : "")) + ":", theTextFont ) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+            c = new PdfPCell( new Phrase( I18nUtils.getFormattedNumber(reportData.getLocale(), st.convertFrom100Score(aiScoresArray[12]), 1), theTextFont) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+        }
+
+        if( aiScoresArray[13]>0 )
+        {
+            c = new PdfPCell( new Phrase( lmsg("emst.argument" + (forCompetency ? ".comp" : "")) + ":", theTextFont ) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+            c = new PdfPCell( new Phrase( I18nUtils.getFormattedNumber(reportData.getLocale(), st.convertFrom100Score(aiScoresArray[13]), 1), theTextFont) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+        }
+
+        if( aiScoresArray[15]>0 )
+        {
+            c = new PdfPCell( new Phrase( lmsg("emst.ideal" + (forCompetency ? ".comp" : "")) + ":", theTextFont ) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+            c = new PdfPCell( new Phrase( I18nUtils.getFormattedNumber(reportData.getLocale(), st.convertFrom100Score(aiScoresArray[15]), 1), theTextFont) );
+            c.setBorder( Rectangle.NO_BORDER   );
+            c.setPadding( 2 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBackgroundColor( shade );
+            setRunDirection( c );
+            aiScoresTable.addCell(c);
+        }
+
+        return aiScoresTable;
+    }
+
     public PdfPTable getDevelCommentTable( RcItemWrapper rciw ) throws Exception
     {
         if( !rciw.getHasCommentsToShow() )
@@ -1988,7 +2131,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         String commentStr;
 
         long candidateRcRaterId = 0;
-        boolean bottom = false;
+        boolean bottom;
 
         Font boldFont = this.fontBold;
         Font theTextFont = this.font;
@@ -2264,16 +2407,16 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         }
     }
 
-    
+
     public void addAiScoresSection() throws Exception
     {
         //LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() AAA.1 reportId=" + reportData.getR().getReportId() );
-        
+
         if( reportData.getReportRuleAsBoolean( "skipaiscoressection" ) )
             return;
 
         //LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() AAA.1B " );
-        
+
         if( reportData.getR().getIncludeAiScores()==0 )
             return;
 
@@ -2283,7 +2426,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             return;
 
         //LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() AAA.1D " );
-        
+
         int valCount = 0;
         for( MetaScore ms : reportData.getRc().getMetaScoreList() )
         {
@@ -2292,16 +2435,16 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         }
 
         LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() AAA.2 valCount=" + valCount );
-        
+
         if( valCount<=0 )
             return;
 
-        
+
         try
         {
             //if( ReportManager.DEBUG_REPORTS )
             //    LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() BBB.1 valCount=" + valCount );
-            
+
             PdfPCell c;
             PdfPTable t;
             float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
@@ -2358,27 +2501,27 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             t.addCell(c);
 
             BaseColor graybg = new BaseColor(0xf4,0xf4,0xf4);
-            
+
             // start with gray for odd counts.
-            boolean useGrayBg = valCount%2!=0;            
-            
+            boolean useGrayBg = valCount%2!=0;
+
             Font fontToUse = font;
             Font smallFontToUse = fontSmall;
             int scrDigits = reportData.getR().getIntParam2() >= 0 ? reportData.getR().getIntParam2() : Constants.DEFAULT_SCORE_PRECISION_DIGITS;
             String scr;
             String scoreText;
-            
+
             int count = 0;
             MetaScoreType metaScoreType;
             String lastUpdate;
             Paragraph par;
-            
+
             for( MetaScore metaScore : reportData.getRc().getMetaScoreList() )
             {
                 if( metaScore.getMetaScoreTypeId()<=0 || metaScore.getScore()<=0 || metaScore.getConfidence()<Constants.MIN_METASCORE_CONFIDENCE )
                     continue;
                 count++;
-                
+
                 metaScoreType = MetaScoreType.getValue(metaScore.getMetaScoreTypeId() );
 
                 c = new PdfPCell(new Phrase( metaScoreType.getName(reportData.getLocale()), fontToUse));
@@ -2393,7 +2536,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 setRunDirection( c );
                 t.addCell(c);
 
-                scr = I18nUtils.getFormattedNumber( reportData.getLocale(), metaScore.getScore(), scrDigits );                
+                scr = I18nUtils.getFormattedNumber( reportData.getLocale(), metaScore.getScore(), scrDigits );
                 c = new PdfPCell(new Phrase( scr, fontToUse));
                 c.setBorder( Rectangle.NO_BORDER );
                 c.setBorderWidth( 0 );
@@ -2405,7 +2548,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 setRunDirection( c );
                 t.addCell(c);
 
-                scr = I18nUtils.getFormattedNumber( reportData.getLocale(), metaScore.getConfidence(), 1 );                
+                scr = I18nUtils.getFormattedNumber( reportData.getLocale(), metaScore.getConfidence(), 1 );
                 c = new PdfPCell(new Phrase( scr, fontToUse));
                 c.setBorder( Rectangle.NO_BORDER );
                 c.setBorderWidth( 0 );
@@ -2416,9 +2559,9 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     c.setBackgroundColor(graybg);
                 setRunDirection( c );
                 t.addCell(c);
-                
+
                 scoreText = metaScore.getScoreText();
-                
+
                 metaScore.setLocale(reportData.getLocale());
                 c = new PdfPCell();
                 par = new Paragraph(metaScoreType.getDescription(reportData.getLocale()) + " " + lmsg("g.AiMetaScrInputTypesUsed", new String[]{metaScore.getMetaScoreInputTypesStr()}), smallFontToUse);
@@ -2429,23 +2572,23 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     par = new Paragraph(scoreText, smallFontToUse);
                     c.addElement(par);
                 }
-                
+
                 lastUpdate = I18nUtils.getFormattedDateTime(reportData.getLocale(), metaScore.getLastUpdate(), reportData.getTimeZone());
                 par = new Paragraph( lmsg("g.AiMetaScrCalcDateX", new String[]{lastUpdate}), smallFontToUse);
-                c.addElement(par);  
-                
+                c.addElement(par);
+
                 c.setBorder( Rectangle.NO_BORDER );
                 c.setBorderWidth( 0 );
                 c.setPadding( 2 );
                 c.setPaddingBottom( 5 );
-                
+
                 if( useGrayBg )
                     c.setBackgroundColor(graybg);
                 if( count==valCount && useGrayBg )
                     c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), graybg,false, false, true, false ) );
                 setRunDirection( c );
                 t.addCell(c);
-                
+
                 // toggle
                 useGrayBg = !useGrayBg;
             }
@@ -2454,7 +2597,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
             previousYLevel =  currentYLevel; // - TPAD;
             float y = previousYLevel - TPAD;
-            
+
             float thgt = t.calculateHeights();
             if( thgt + 80 > y )
             {
@@ -2466,7 +2609,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             y = addTitle( y, lmsg( "g.AiGenScores"), lmsg("g.AiGenScoresSubtitle" ) );
 
             y -= TPAD;
-            
+
             currentYLevel = addTableToDocument(y, t, false );
         }
         catch( Exception e )
@@ -2474,7 +2617,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             LogService.logIt( e, "BaseRcReportTemplate.addAiScoresSection()" );
             throw new STException( e );
         }
-            
+
     }
 
 
@@ -2505,7 +2648,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 colRelWids = hasCandidate ? (reportData.getIsLTR() ?  new int[] { 3,1,1,1 } : new int[] { 1,1,1,3 }) : (reportData.getIsLTR() ?  new int[] { 3,1,1 } : new int[] { 1,1,3 } );
             }
 
-            boolean includeNumScores = true; // reportData.getR().getIncludeSubcategoryNumeric()==1;
+            // boolean includeNumScores = true; // reportData.getR().getIncludeSubcategoryNumeric()==1;
             // LogService.logIt( "BaseRcReportTemplate.addCompetencySummaryTable() AAA" );
 
             boolean isSelfOnly =  reportData.getRc().getIsSelfOnly();
@@ -2611,10 +2754,11 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             Font theTextFont = fontLarge;
             Font boldFont = fontLargeBold;
             Font theTextFontItalic = fontItalic;
+            Font smallTextFontItalic = fontSmallItalic;
             boolean tog = true;
             BaseColor shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
             Chunk chk;
-            Phrase ph;
+            Paragraph ph;
 
             while( iter.hasNext() )
             {
@@ -2625,6 +2769,8 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
             if( rows<=0 )
                 return;
+
+            PdfPTable candidateAiScoresTable;
 
             iter = reportData.getRc().getRcScript().getRcCompetencyWrapperList().listIterator();
             while( iter.hasNext() )
@@ -2642,9 +2788,11 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
                 scoreStr = score>0 ? I18nUtils.getFormattedNumber( reportData.getLocale(), score, scrDigits ) : "-";
                 scoreStrCandidate = scoreCandidate>0 ? I18nUtils.getFormattedNumber( reportData.getLocale(), scoreCandidate, scrDigits ) : "-";
+                candidateAiScoresTable = rcw.getHasCandidateAiScoresToShow(candidateRaterId) ? getAiScoresTable(rcw.getAiScoresCandidate(candidateRaterId), true, smallTextFontItalic, shade) : null;
+
                 idealScoreStr = incIdeal && rcw.getIdealScore()>0 ? I18nUtils.getFormattedNumber( reportData.getLocale(), rcw.getIdealScore(), scrDigits ) : "-";
 
-                ph = new Phrase();
+                ph = new Paragraph();
                 chk = new Chunk( rcw.getRcCompetency().getName(), theTextFont );
                 ph.add(chk);
                 if( rcw.getRcCompetency().getDescription()!=null && !rcw.getRcCompetency().getDescription().isBlank() )
@@ -2652,17 +2800,20 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     chk = new Chunk( "\n" + rcw.getRcCompetency().getDescription(), theTextFontItalic );
                     ph.add(chk);
                 }
-                c = new PdfPCell( ph );
+                
+                if( candidateAiScoresTable==null )
+                    c = new PdfPCell( ph );
+                else
+                {
+                    c = new PdfPCell();
+                    c.addElement(ph);
+                    c.addElement(candidateAiScoresTable);
+                }
                 c.setBorder(Rectangle.NO_BORDER);
-                //if( row==rows )
-                //    c.setBorder( Rectangle.BOTTOM | (reportData.getIsLTR() ? Rectangle.LEFT : Rectangle.RIGHT )  );
-                //else
-                //    c.setBorder( reportData.getIsLTR() ? Rectangle.LEFT : Rectangle.RIGHT   );
-                //c.setBorderColor( ct2Colors.scoreBoxBorderColor );
-                //c.setBorderWidth( scoreBoxBorderWidth );
                 c.setPadding( 4 );
                 c.setPaddingBottom( 5 );
                 c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                // c.setRowspan( candidateAiScoresTable==null ? 1 : 2);
                 if( row!=rows)
                     c.setBackgroundColor( shade );
                 else
@@ -2675,12 +2826,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                 {
                     c = new PdfPCell( new Phrase( idealScoreStr, theTextFont ) );
                     c.setBorder(Rectangle.NO_BORDER);
-                    //if( row==rows )
-                    //    c.setBorder( Rectangle.BOTTOM  );
-                    //else
-                    //    c.setBorder( Rectangle.NO_BORDER );
-                    //c.setBorderColor( ct2Colors.scoreBoxBorderColor );
-                    //c.setBorderWidth( scoreBoxBorderWidth );
+                    // c.setRowspan( candidateAiScoresTable==null ? 1 : 2);
                     c.setPadding( 4 );
                     c.setPaddingBottom( 5 );
                     c.setVerticalAlignment( Element.ALIGN_MIDDLE );
@@ -2693,27 +2839,11 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
                 c = new PdfPCell( new Phrase( hasCandidate ? scoreStrCandidate : scoreStr, theTextFont ) );
                 c.setBorder( Rectangle.NO_BORDER );
-                //if( hasCandidate )
-                //{
-                    //if( row==rows )
-                    //    c.setBorder( Rectangle.BOTTOM  );
-                    //else
-                //        c.setBorder( Rectangle.NO_BORDER );
-                //}
-                //else
-                //{
-                //    if( row==rows )
-                //        c.setBorder( Rectangle.BOTTOM | (reportData.getIsLTR() ? Rectangle.RIGHT : Rectangle.LEFT )  );
-                //    else
-                //        c.setBorder( reportData.getIsLTR() ? Rectangle.RIGHT : Rectangle.LEFT   );
-                //}
-                //c.setBorderColor( ct2Colors.scoreBoxBorderColor );
-                //c.setBorderWidth( scoreBoxBorderWidth );
                 c.setPadding( 4 );
                 c.setPaddingBottom( 5 );
                 c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
-                if( row!=rows)
+                if( row!=rows ) // || candidateAiScoresTable!=null)
                     c.setBackgroundColor( shade );
                 else
                     c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), shade,false, false, true, false) );
@@ -2734,7 +2864,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     c.setPaddingBottom( 5 );
                     c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                     c.setHorizontalAlignment( Element.ALIGN_CENTER );
-                    if( row!=rows)
+                    if( row!=rows ) // || candidateAiScoresTable!=null )
                         c.setBackgroundColor( shade );
                     else
                         c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), shade,false, false, true, false) );
@@ -2742,8 +2872,26 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
                     t.addCell(c);
                 }
 
+                if(1==2 && candidateAiScoresTable!=null)
+                {
+                    c = new PdfPCell( candidateAiScoresTable );
+                    c.setBorder( Rectangle.NO_BORDER );
+                    c.setPadding( 4 );
+                    c.setPaddingBottom( 5 );
+                    c.setColspan(hasCandidate ? 2 : 1);
+                    c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                    c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                    if( row!=rows)
+                        c.setBackgroundColor( shade );
+                    else
+                        c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), shade,false, false, true, false) );
+                    setRunDirection( c );
+                    t.addCell(c);                    
+                }
+                
                 tog = !tog;
                 shade = tog ? ct2Colors.tableShadeGray2 : ct2Colors.tableShadeGray1;
+                
             }
 
             // place back into displayorder order

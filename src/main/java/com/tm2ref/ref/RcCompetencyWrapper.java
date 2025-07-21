@@ -287,6 +287,75 @@ public class RcCompetencyWrapper implements Comparable<RcCompetencyWrapper>, Ser
     }
     
     
+    public boolean getHasCandidateAiScoresToShow( long candidateRaterId )
+    {
+        if( rcItemWrapperList==null || candidateRaterId<=0 )
+            return false;
+
+        for( RcItemWrapper rciw : rcItemWrapperList)
+        {
+            if( rciw.getRcRatingList()==null )
+                continue;
+            
+            for( RcRating rating : rciw.getRcRatingList() )
+            {
+                if( rating.getRcRaterId()==candidateRaterId )
+                {
+                    if( !rating.getRcRatingStatusType().getIsComplete() )
+                        continue;
+                    if( rating.getScore2()>0 && rating.getScore3()>0 )
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public float[] getAiScoresCandidate( long candidateRaterId )
+    {
+        float[] out = new float[16];
+        float[] counts = new float[16];
+        if( rcItemWrapperList==null || candidateRaterId<=0 )
+            return out;
+
+        float ct = 0;
+        // float tot = 0;
+        float[] itemScores;
+        
+        for( RcItemWrapper rciw : rcItemWrapperList)
+        {
+            if( rciw.getRcRatingList()==null )
+                continue;
+            
+            for( RcRating rating : rciw.getRcRatingList() )
+            {
+                if( rating.getRcRaterId()==candidateRaterId )
+                {
+                    if( !rating.getRcRatingStatusType().getIsComplete() )
+                        continue;
+                    
+                    itemScores = rating.getScoresArray();
+                    
+                    for( int i=0;i<itemScores.length;i++ )
+                    {
+                        if( itemScores[i]>0 )
+                        {
+                            out[i] += itemScores[i];
+                            counts[i]++;
+                        }
+                    }
+                    // return rating.getFinalScore();
+                }
+            }            
+        }
+        for( int i=0;i<out.length;i++ )
+        {
+            out[i] = counts[i]>0 ? out[i]/counts[i] : out[i];
+        }
+        return out;        
+    }
+    
+    
     public float getScoreAvgNoCandidate() {
         if( rcItemWrapperList==null )
             return 0;

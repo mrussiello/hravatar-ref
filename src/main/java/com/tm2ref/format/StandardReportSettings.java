@@ -113,7 +113,9 @@ public class StandardReportSettings implements ReportSettings
 
     public Font font;
     public Font fontWhite;
+    public Font fontBlue;
     public Font fontGreen;
+    public Font fontGreenBold;
     public Font fontLight;
     public Font fontLightBold;
     public Font fontLightItalic;
@@ -316,7 +318,9 @@ public class StandardReportSettings implements ReportSettings
 
             font = new Font( baseFontCalibri, FONTSZ );
             fontWhite = new Font( baseFontCalibri, FONTSZ );
+            fontBlue = new Font( baseFontCalibri, FONTSZ );
             fontGreen = new Font( baseFontCalibri, FONTSZ );
+            fontGreenBold = new Font( baseFontCalibriBold, FONTSZ );
             fontLight = new Font( baseFontCalibri, FONTSZ );
             fontLightBold = new Font( baseFontCalibriBold, FONTSZ );
             fontLightItalic = new Font( baseFontCalibriItalic, FONTSZ );
@@ -401,7 +405,9 @@ public class StandardReportSettings implements ReportSettings
             
             font.setColor( baseFontColor  );
             fontWhite.setColor( whiteFontColor  );
+            fontBlue.setColor(BaseColor.BLUE);
             fontGreen.setColor( darkGreenFontColor  );
+            fontGreenBold.setColor( darkGreenFontColor  );
             
             fontLight.setColor( lightFontColor  );
             fontLightBold.setColor( lightFontColor  );

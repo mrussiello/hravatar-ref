@@ -17,7 +17,8 @@ public enum AiCallType
     ORGTRAITS_PARSE_NOCOMPS(32,"OrgTraits Parse No Competencies", "orgtraitsparsenocomps", false),
     ORGTRAITS_PARSE_COMPSONLY(33,"OrgTraits Parse Competencies Only", "orgtraitsparsecompsonly", false),
     EVALPLAN_SCORE(100,"EvalPlan Score", "evalplanscore", false ),
-    ESSAY_SCORE(200,"Essay Score", "essayscore", false );
+    ESSAY_SCORE(200,"Essay Score", "essayscore", false ),
+    ESSAY_SUMMARY(201,"Essay Summary", "essaysummary", false );
 
     private final int aiCallTypeId;
     private final String name;

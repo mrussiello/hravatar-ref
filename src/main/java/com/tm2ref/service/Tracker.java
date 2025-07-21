@@ -276,7 +276,7 @@ public class Tracker
 
         
         outMap.put("AI: Calls", ((int) aiCalls ) );
-        outMap.put("AI: CallErrors", ((int) aiCallErrors ) );
+        outMap.put("AI: Call Errors", ((int) aiCallErrors ) );
         
         outMap.put("API: Requests", ((int) apiRequests ) );
         outMap.put( "API: RefCheck Status Requests", ((int) apiAssessmentStatusRequests ) );

@@ -746,6 +746,7 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
         for (RcRating rtg : rcRatingList)
         {
             rtg.setRcUploadedUserFile(getRcUploadedUserFileForItemComment(rtg.getRcItemId(), rcRaterId));
+            rtg.setCandidateRcUploadedUserFile( getRcUploadedUserFileForCandidateUpload(rtg.getRcItemId(), rcRaterId));
         }
     }
 
@@ -763,6 +764,20 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
         return null;
     }
 
+    public RcUploadedUserFile getRcUploadedUserFileForCandidateUpload(int rcItemId, long rcRaterId)
+    {
+        if (rcUploadedUserFileList == null || rcItemId <= 0 || rcRaterId <= 0)
+            return null;
+
+        for (RcUploadedUserFile u : this.rcUploadedUserFileList)
+        {
+            if (u.getUploadedUserFileType().getIsRcCandidateUpload() && u.getRcRaterId()==rcRaterId && u.getRcItemId() == rcItemId)
+                return u;
+        }
+
+        return null;
+    }
+    
     public void setRcRatingsInScript(List<RcRating> rcrl, boolean forScoringOrReporting) throws Exception
     {
         if (rcrl == null)

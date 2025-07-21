@@ -54,63 +54,11 @@
                     <ref:item-infoquestion />
 
                     <h:panelGroup rendered="#{raterRefBean.rcItemWrapper.showPrimaryItemToCandidate or not refBean.refUserType.isCandidate}">
-
                         <div>
                             <h:selectOneRadio id="itemradio1" value="#{raterRefBean.selectedRadioIndex}" layout="pageDirection" styleClass="prottext stdformlabel ttformlabel hrarbgroup" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">
                                 <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
                             </h:selectOneRadio>
-
-                            <!--
-                            <p:selectOneRadio id="itemradio1" value="#{raterRefBean.selectedRadioIndex}" styleClass="textmedium ttformtext" layout="custom" required="false" requiredMessage="#{stMessages['g.XRSelectRadioReqd']}">
-                                <f:selectItems value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" itemValue="#{cip[0]}" itemLabel="#{cip[1]}"/>
-                            </p:selectOneRadio>
-
-                            <h:panelGrid columns="2" style="margin-left:auto;margin-right:auto">
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" id="itrb1" for="itemradio1" itemIndex="0"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice1}" for="itrb1" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice1}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" id="itrb2" for="itemradio1" itemIndex="1"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice2}" for="itrb2" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice2}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" id="itrb3" for="itemradio1" itemIndex="2"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice3}" for="itrb3" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice3}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" id="itrb4" for="itemradio1" itemIndex="3"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice4}" for="itrb4" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice4}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" id="itrb5" for="itemradio1" itemIndex="4"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice5}" for="itrb5" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice5}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" id="itrb6" for="itemradio1" itemIndex="5"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice6}" for="itrb6" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice6}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" id="itrb7" for="itemradio1" itemIndex="6"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice7}" for="itrb7" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice7}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" id="itrb8" for="itemradio1" itemIndex="7"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice8}" for="itrb8" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice8}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" id="itrb9" for="itemradio1" itemIndex="8"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice9}" for="itrb9" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice9}"/>
-
-                                <p:radioButton rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" id="itrb10" for="itemradio1" itemIndex="9"/>
-                                <p:outputLabel rendered="#{raterRefBean.rcItemWrapper.rcItem.hasChoice10}" for="itrb10" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{raterRefBean.rcItemWrapper.rcItem.choice10}"/>
-
-                            </h:panelGrid>
-                            -->
                         </div>
-
-                        <!--
-                        <h:dataTable cellpadding="3" value="#{raterRefUtils.rcItemRadioInfoArrayList}" var="cip" columnClasses="radcola,radcolb" style="margin-left:20px;margin-right:10px" role="radio">
-                        <h:column>
-                            <span role="radio"><p:radioButton id="itrb" for="itemradio1" itemIndex="#{cip[0]-1}"/></span>
-                        </h:column>
-                        <h:column>
-                            <p:outputLabel for="itrb" styleClass="prottext stdformlabel ttformlabel" style="cursor:pointer" value="#{cip[1]}"/>
-                        </h:column>
-                        </h:dataTable>
-                        -->
                     </h:panelGroup>
 
                     <ref:item-fileupload-body />

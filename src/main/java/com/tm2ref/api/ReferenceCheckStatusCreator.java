@@ -289,23 +289,28 @@ public class ReferenceCheckStatusCreator {
                 aoas.setStatus("Scored");
                 aoas.setStatusCode(TestKeyStatusType.DISTRIBUTION_COMPLETE.getTestKeyStatusTypeId() );
                 aoas.setStatusName("Distribution Complete");
-
-                    if( rc.getMetaScoreList()==null )
-                        rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck(rc.getRcCheckId()) );
-                    // Add meta scores (aI Scores)
-                    if( rc.getMetaScoreList()!=null && !rc.getMetaScoreList().isEmpty() )
+                
+                if( rc.getMetaScoreList()==null )
+                {
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    
+                    rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck(rc.getRcCheckId()) );
+                }
+                // Add meta scores (aI Scores)
+                if( rc.getMetaScoreList()!=null && !rc.getMetaScoreList().isEmpty() )
+                {
+                    AssessmentResult.AssessmentStatus.MetaScores aoasmeta;                    
+                    for( MetaScore metaScore : rc.getMetaScoreList() )
                     {
-                        AssessmentResult.AssessmentStatus.MetaScores aoasmeta;                    
-                        for( MetaScore metaScore : rc.getMetaScoreList() )
-                        {
-                            aoasmeta = new AssessmentResult.AssessmentStatus.MetaScores();
-                            aoasmeta.setType(metaScore.getMetaScoreTypeId());
-                            aoasmeta.setScoreNumeric( metaScore.getScore());
-                            aoasmeta.setConfidence(metaScore.getConfidence());
-                            aoasmeta.setScoreText( metaScore.getScoreText());
-                            aoas.getMetaScores().add( aoasmeta);
-                        }
+                        aoasmeta = new AssessmentResult.AssessmentStatus.MetaScores();
+                        aoasmeta.setType(metaScore.getMetaScoreTypeId());
+                        aoasmeta.setScoreNumeric( metaScore.getScore());
+                        aoasmeta.setConfidence(metaScore.getConfidence());
+                        aoasmeta.setScoreText( metaScore.getScoreText());
+                        aoas.getMetaScores().add( aoasmeta);
                     }
+                }
                 
                 
                 AssessmentResult.Results rslts;

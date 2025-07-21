@@ -101,7 +101,7 @@ public class ReferenceCheckStatusResource {
 
             arr.setAssessmentStatus(aoas);
 
-            // LogService.logIt(  "ReferenceCheckStatusResource.postreferenceCheckStatusRequest() received " + xmlContent );
+            LogService.logIt(  "ReferenceCheckStatusResource.postreferenceCheckStatusRequest() received " + xmlContent );
 
             // AssessmentOrderAcknowledgement.UserArea
             if( !getNewTestStartsOk() )
@@ -185,29 +185,7 @@ public class ReferenceCheckStatusResource {
 
                     if( custOrg == null )
                         throw new Exception( "Cannot find a matching Org for UserArea.idValue(ClientUniqueCustomerOrganizatonId)=" + clientCustomerAccountUniqueId + ", orgId=" + coid );
-                }
-                
-                /*
-                String includeEnglishReport = getRequestIdValueValue( "includeEnglishReport" , aor.getUserArea().getIdValue() );
-                
-                if( includeEnglishReport != null && !includeEnglishReport.isBlank() && !includeEnglishReport.trim().equals( "0" ) )
-                {
-                    try
-                    {
-                        // 1=yes include english. 2=no do not include english.
-                        includeEnglishReportCode = Integer.parseInt( includeEnglishReport );
-                        
-                        if( includeEnglishReportCode <0 || includeEnglishReportCode > 2 )
-                            throw new APIException( 160, "UserArea.idValue(includeEnglishReport) is invalid: " + includeEnglishReport + ", valid values are 0, 1, or 2.");
-                    }
-                    catch( NumberFormatException e )
-                    {
-                        LogService.logIt( e, "ReferenceCheckStatusResource.postreferenceCheckStatusRequest() includeEnglishReport is invalid: " + includeEnglishReport );
-                        
-                        throw new APIException( 160, "UserArea.idValue(includeEnglishReport) is invalid: " + includeEnglishReport + ", valid values are 0, 1, or 2.");
-                    }
-                } 
-                */
+                }               
             }
 
             if( (eventRef == null || eventRef.isBlank()) && (testKeyIdStr==null || testKeyIdStr.isBlank())  )
@@ -331,10 +309,10 @@ public class ReferenceCheckStatusResource {
             else
             {
                 if( testKey.getTestKeyStatusTypeId() < TestKeyStatusType.REPORTS_COMPLETE.getTestKeyStatusTypeId()  )
-                    throw new APIException( 205, "TestKey is not in appropriate status (" +  testKey.getTestKeyStatusTypeId() + ", " + testKey.getTestKeyStatusType().getName() +  "). tkid=" + testKey.getTestKeyId() + ", orgId=" + testKey.getOrgId() );
+                    throw new APIException( 205, "Reference Check is not in appropriate status (" +  testKey.getTestKeyStatusTypeId() + ", " + testKey.getTestKeyStatusType().getName() +  "). tkid=" + testKey.getTestKeyId() + ", orgId=" + testKey.getOrgId() );
 
                 if( testKey.getTestKeyStatusTypeId()==TestKeyStatusType.SCORE_ERROR.getTestKeyStatusTypeId()  )
-                    throw new APIException( 206, "TestKey experienced an error during scoring. tkid=" + testKey.getTestKeyId() + ", status=" + testKey.getTestKeyStatusType().getName() );
+                    throw new APIException( 206, "Reference Check experienced an error during scoring. tkid=" + testKey.getTestKeyId() + ", status=" + testKey.getTestKeyStatusType().getName() );
             }
             
             ReferenceCheckStatusCreator asc = new ReferenceCheckStatusCreator();
@@ -342,7 +320,7 @@ public class ReferenceCheckStatusResource {
             // String outXml = asc.getAssessmentResultFromTestKey(arr, testKey, includeScoreCode,reportTitle, frcRptLangStr, includeEnglishReportCode, rptBytes );
             String outXml = asc.getAssessmentResultFromTestKey(arr, testKey, rc, Locale.US.getLanguage(), null, null );
 
-            // LogService.logIt( "ReferenceCheckStatusResource.postreferenceCheckStatusRequest() Success doc length=" + outXml.length() + ", frcRptLangStr=" + frcRptLangStr );
+            LogService.logIt( "ReferenceCheckStatusResource.postreferenceCheckStatusRequest() Success doc length=" + outXml.length() );
 
             return outXml;
         }

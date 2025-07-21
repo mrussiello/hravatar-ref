@@ -64,7 +64,7 @@ public class StandardRcResultEmailFormatter extends BaseFormatter implements RcR
             if( !temp.isEmpty() )
             {
                 sb.append( temp );
-                tog = ( (Boolean) out[1]).booleanValue();
+                tog = ( (Boolean) out[1]);
                 sb.append( getTableSpacer() );
             }
             

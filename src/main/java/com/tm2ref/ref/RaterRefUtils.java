@@ -5,6 +5,7 @@
  */
 package com.tm2ref.ref;
 
+import com.tm2ref.ref.ai.RcRatingAiProcessorThread;
 import com.tm2ref.corp.CorpBean;
 import com.tm2ref.corp.CorpUtils;
 import com.tm2ref.entity.file.RcUploadedUserFile;
@@ -153,25 +154,6 @@ public class RaterRefUtils extends BaseRefUtils
 
         if( rt.getAreCommentsRequired( refBean.getRefUserType() ) )
             return true;
-
-        /*
-        // Has Thresholds
-        if( refBean.getRcCheck().getRcScript()!=null &&
-            raterRefBean.getRcItemWrapper().getRcRating()!=null &&
-            raterRefBean.getRcItemWrapper().getRcRating().getIsCompleteOrHigher() &&
-            raterRefBean.getRcItemWrapper().getRcRating().getHasNumericScore() &&
-            (raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() || raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() )
-            )
-        {
-            // has low threshold and the score is below or equal to threshold
-            if( raterRefBean.getRcItem().getCommentThresholdLow()>refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMinScore() && raterRefBean.getRcItemWrapper().getRcRating().getScore()<=raterRefBean.getRcItem().getCommentThresholdLow() )
-                return true;
-
-            // has high threshold and the score is above or equal to threshold
-            if( raterRefBean.getRcItem().getCommentThresholdHigh()<refBean.getRcCheck().getRcScript().getRcRatingScaleType().getMaxScore() && raterRefBean.getRcItemWrapper().getRcRating().getScore()>=raterRefBean.getRcItem().getCommentThresholdHigh() )
-                return true;
-        }
-        */
 
         return false;
     }
@@ -489,6 +471,7 @@ public class RaterRefUtils extends BaseRefUtils
                 if( crtg.getCandidateRcUploadedUserFile()!=null && crtg.getCandidateUploadedUserFileId()!=crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId())
                 {
                     crtg.setCandidateUploadedUserFileId( crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                    crtg.setSummary(null);
                     rcFacade.saveRcRating(crtg);
                 }                    
 
@@ -547,15 +530,13 @@ public class RaterRefUtils extends BaseRefUtils
             if( rating.getCandidateRcUploadedUserFile()!=null && rating.getCandidateUploadedUserFileId()!=rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
             {
                 rating.setCandidateUploadedUserFileId( rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                rating.setSummary(null);
                 if( rcFacade==null )
                     rcFacade=RcFacade.getInstance();
                 rcFacade.saveRcRating(rating);
             }                                            
         }
 
-
-        
-        
         // at this point we always have a rating though it may not have been saved.
         try
         {
@@ -1347,6 +1328,7 @@ public class RaterRefUtils extends BaseRefUtils
                 if( crtg.getCandidateRcUploadedUserFile()!=null && crtg.getCandidateUploadedUserFileId()!=crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
                 {
                     crtg.setCandidateUploadedUserFileId( crtg.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                    crtg.setSummary(null);
                     rcFacade.saveRcRating(crtg);
                 }                    
 
@@ -1407,6 +1389,7 @@ public class RaterRefUtils extends BaseRefUtils
             if( rating.getCandidateRcUploadedUserFile()!=null && rating.getCandidateUploadedUserFileId()!=rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() )
             {
                 rating.setCandidateUploadedUserFileId( rating.getCandidateRcUploadedUserFile().getRcUploadedUserFileId() );
+                rating.setSummary(null);
                 if( rcFacade==null )
                     rcFacade=RcFacade.getInstance();
                 rcFacade.saveRcRating(rating);
@@ -1751,6 +1734,7 @@ public class RaterRefUtils extends BaseRefUtils
             RcRatingScaleType ratingScale = rc.getRcScript().getRcRatingScaleType();
             FileUploadFacade fileUploadFacade = null;
 
+            // Check for uploaded comment.
             if( !refBean.getAdminOverride() && (refBean.getAudioVideoCommentsOk() || refBean.getAudioVideoCandidateUpload()) && !getIsMsie() )
             {
                 if( fileUploadFacade==null )
@@ -1839,7 +1823,7 @@ public class RaterRefUtils extends BaseRefUtils
                         // OK to save.
                         if( uploadedFile!=null )
                         {
-                            RcUploadedUserFile uuf = saveUploadedUserFile( rc, rc.getRcRater(), rating, fct, fileUploadFacade );
+                            RcUploadedUserFile uuf = saveCandidateUploadedUserFile( rc, rc.getRcRater(), rating, fct, fileUploadFacade );
                             if( uuf!=null )
                                 setInfoMessage("g.UploadedCandFileSaved", new String[]{uploadedFile.getFileName(), Long.toString(uploadedFile.getSize())});
                         }
@@ -1870,11 +1854,9 @@ public class RaterRefUtils extends BaseRefUtils
                         }
                     }
                     else
-                        LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.2 itm.getHideSkip()=" + itm.getHideSkip() + ", proctorBean.getCameraOptOut()=" + proctorBean.getCameraOptOut() );
-                    
+                        LogService.logIt( "RaterRefUtils.doSaveItemResp() DDD.2 itm.getHideSkip()=" + itm.getHideSkip() + ", proctorBean.getCameraOptOut()=" + proctorBean.getCameraOptOut() );                    
                 }
-            }
-
+            } // candidate upload.
 
             if( skip )
             {
@@ -2158,8 +2140,8 @@ public class RaterRefUtils extends BaseRefUtils
             {
                 if( complete || skip )
                 {
-                    if( rating.getCompleteDate()==null )
-                        rating.setCompleteDate(new Date() );
+                    //if( rating.getCompleteDate()==null )
+                    rating.setCompleteDate(new Date() );
 
                     rating.setRcRatingStatusTypeId( skip ? RcRatingStatusType.SKIPPED.getRcRatingStatusTypeId() : RcRatingStatusType.COMPLETE.getRcRatingStatusTypeId() );
                 }
@@ -2173,8 +2155,19 @@ public class RaterRefUtils extends BaseRefUtils
                 if( !refBean.getAdminOverride() )
                 {
                     saveRcRatingWithCheck(rating);
-                }
+                                
+                    if( complete && (itm.getAiScoringOk()==1 || itm.getAiSummaryOk()==1) )
+                    {
+                        RcRatingAiProcessorThread proc = new RcRatingAiProcessorThread( rc, rc.getRcRater(), rating, itm );
 
+                        // if needs processing, do it in a thread.
+                        if( proc.getReadyForAiProcessing() )
+                        {
+                            (new Thread(proc)).start();
+                        }
+                    }
+                }
+                
                 // Update if moving on
                 if( complete || skip )
                 {
@@ -2309,7 +2302,7 @@ public class RaterRefUtils extends BaseRefUtils
         }
     }
 
-    private RcUploadedUserFile saveUploadedUserFile( RcCheck rc, RcRater rater, RcRating rating, FileContentType fct, FileUploadFacade fuf ) throws Exception
+    private RcUploadedUserFile saveCandidateUploadedUserFile( RcCheck rc, RcRater rater, RcRating rating, FileContentType fct, FileUploadFacade fuf ) throws Exception
     {
         RcUploadedUserFile uuf = null;
         InputStream strm = null;
@@ -2394,6 +2387,7 @@ public class RaterRefUtils extends BaseRefUtils
 
             rating.setCandidateUploadedUserFileId( uuf.getRcUploadedUserFileId() );
             rating.setCandidateRcUploadedUserFile(uuf);
+            rating.setSummary(null);
             
             if( rating.getRcRatingId()>0 )
             {
@@ -2402,14 +2396,14 @@ public class RaterRefUtils extends BaseRefUtils
                 rcFacade.saveRcRating(rating);
             }
 
-            LogService.logIt("RaterRefUtils.saveUploadedUserFile() Successfully saved Candidate Uploaded File initial filename=" + uploadedFile.getFileName() + ", mime=" + fct.getBaseContentType() +", size=" + uuf.getFileSize() + ", saved filename=" + uuf.getFilename() +", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId() );
+            LogService.logIt("RaterRefUtils.saveCandidateUploadedUserFile() Successfully saved Candidate Uploaded File initial filename=" + uploadedFile.getFileName() + ", mime=" + fct.getBaseContentType() +", size=" + uuf.getFileSize() + ", saved filename=" + uuf.getFilename() +", rcUploadedUserFileId=" + uuf.getRcUploadedUserFileId() + "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId() );
             Tracker.addCandidateFileUpload();
             return uuf;
         }
         catch( Exception e )
         {
             Tracker.addCandidateFileUploadError();
-            LogService.logIt(e, "RaterRefUtils.saveUploadedUserFile() " + (rating==null ? "RcRating is null" : "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId()) );
+            LogService.logIt(e, "RaterRefUtils.saveCandidateUploadedUserFile() " + (rating==null ? "RcRating is null" : "rcItemId=" + rating.getRcItemId() + ", rcRaterId=" + rating.getRcRaterId() + ", rcCheckId=" + rating.getRcCheckId()) );
             throw e;
         }
         finally
@@ -2423,7 +2417,7 @@ public class RaterRefUtils extends BaseRefUtils
                 }
                 catch( Exception ee )
                 {
-                    LogService.logIt( ee, "RaterRefUtils.saveUploadedUserFile() XXX.3BB Error closing file upload input stream. uuf=" + (uuf==null ? "null" : uuf.toString()) );
+                    LogService.logIt( ee, "RaterRefUtils.saveCandidateUploadedUserFile() XXX.3BB Error closing file upload input stream. uuf=" + (uuf==null ? "null" : uuf.toString()) );
                 }
             }
         }

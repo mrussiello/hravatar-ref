@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
@@ -1505,5 +1506,69 @@ public class StringUtils
 
 
 
+    /**
+     * Calculates number of words where empty lines are treated as zero words. A word is a contiguous series of alphanumeric characters.
+     *
+     * @param s
+     * @return
+     */
+    public static int numWords( String s )
+    {
+        if( s==null || s.isBlank() )
+            return 0;
+
+        if( 1==1 )
+            return s.trim().split("\\s+").length;        
+        
+        Scanner scnr = new Scanner( s );
+
+         String words[];
+
+         int alphaNumWords=0;         
+         int alphaWords =0;
+
+         while( scnr.hasNextLine() )
+         {
+             words= scnr.nextLine().trim().split(" ");
+
+            for(String word : words) 
+            {
+                if (!StringUtils.alphaNumCharsOnly(word).isBlank()) 
+                {
+                    alphaNumWords++;
+                }
+                if (!StringUtils.alphaCharsOnly(word).isBlank()) 
+                {
+                    alphaWords++;
+                }
+            }
+         }
+         
+        // if( alphaWords<=0 || alphaWords<alphaNumWords/4 )
+        //     return alphaWords<=0 ? 0 : alphaWords; 
+         
+        //if( alphaWords<=0 || alphaWords<alphaNumWords/4 )
+        //    return 0; 
+
+        return alphaNumWords;
+    }
+
+    public static String alphaNumCharsOnly( String inStr )
+    {
+        if( inStr == null || inStr.length() == 0 )
+            return inStr;
+
+        String outStr = "";
+
+        for( int i=0 ; i<inStr.length() ; i++ )
+        {
+            if( Character.isLetterOrDigit(inStr.charAt( i ) ) )
+                outStr += inStr.charAt( i );
+        }
+
+        return outStr;
+    }
+    
+    
 
 }

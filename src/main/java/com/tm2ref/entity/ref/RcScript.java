@@ -361,6 +361,16 @@ public class RcScript implements Serializable, Cloneable, Comparable<RcScript>
         
     }
     
+    public boolean getHasAnyAiProcessing()
+    {
+        for( RcItemWrapper rciw : getAllItemWrapperList() )
+        {
+            if( rciw.getRcItem().getAiScoringOk()>0 || rciw.getRcItem().getAiSummaryOk()>0 )
+                return true;
+        }
+        return false;
+    }
+    
     public boolean getHasCandidateFileUploads()
     {
         for( RcItemWrapper rciw : getAllItemWrapperList() )

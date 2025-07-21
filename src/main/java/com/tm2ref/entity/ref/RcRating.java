@@ -1,6 +1,7 @@
 package com.tm2ref.entity.ref;
 
 
+import com.tm2ref.entity.essay.UnscoredEssay;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.user.User;
 import com.tm2ref.ref.RcCheckUtils;
@@ -66,6 +67,55 @@ public class RcRating implements Serializable, Cloneable
 
     @Column(name="score")
     private float score;
+
+    @Column(name="score2")
+    private float score2;
+
+    @Column(name="score3")
+    private float score3;
+    
+    @Column(name="score4")
+    private float score4;
+
+    @Column(name="score5")
+    private float score5;
+
+    @Column(name="score6")
+    private float score6;
+
+    @Column(name="score7")
+    private float score7;
+
+    @Column(name="score8")
+    private float score8;
+
+    @Column(name="score9")
+    private float score9;
+
+    @Column(name="score10")
+    private float score10;
+
+    @Column(name="score11")
+    private float score11;
+
+    @Column(name="score12")
+    private float score12;
+
+    @Column(name="score13")
+    private float score13;
+
+    @Column(name="score14")
+    private float score14;
+
+    @Column(name="score15")
+    private float score15;
+    
+    @Column(name="aiscoresstatustypeid")
+    private int aiScoresStatusTypeId;
+    
+    @Column(name="aisummarystatustypeid")
+    private int aiSummaryStatusTypeId;
+    
     
     @Column(name="uploadeduserfileid")
     private long uploadedUserFileId;
@@ -75,6 +125,9 @@ public class RcRating implements Serializable, Cloneable
 
     @Column(name="text")
     private String text;
+    
+    @Column(name="summary")
+    private String summary;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
@@ -87,6 +140,14 @@ public class RcRating implements Serializable, Cloneable
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="completedate")
     private Date completeDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="aiscoredate")
+    private Date aiScoreDate;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="aisummarydate")
+    private Date aiSummaryDate;
     
     @Transient
     private RcRater rcRater;
@@ -110,6 +171,8 @@ public class RcRating implements Serializable, Cloneable
     @Transient
     private RcRating candidateRcRating;
     
+    @Transient
+    private UnscoredEssay unscoredEssay;
     
     
     
@@ -148,6 +211,29 @@ public class RcRating implements Serializable, Cloneable
         }
         return true;
     }
+    
+    public float[] getScoresArray()
+    {
+        float[] out = new float[16];
+        out[0]=score;
+        out[1]=score;
+        out[2]=score2;  // ai score
+        out[3]=score3;  // ai confidence
+        out[4]=score4;  
+        out[5]=score5;
+        out[6]=score6;  // total words
+        out[7]=score7;
+        out[8]=score8;
+        out[9]=score9;
+        out[10]=score10;
+        out[11]=score11;
+        out[12]=score12; // clarity
+        out[13]=score13; // argument
+        out[14]=score14; // mechanics
+        out[15]=score15; // ideal match
+        return out;
+    }
+    
 
     //public boolean getHasValidRecording()
     //{
@@ -210,6 +296,32 @@ public class RcRating implements Serializable, Cloneable
         return sb.toString();
     }
     
+    public void clearAiScores()
+    {
+        score2=0;
+        score3=0;
+        score4=0;
+        score5=0;
+        score6=0;
+        score7=0;
+        score8=0;
+        score9=0;
+        score10=0;
+        score11=0;
+        score12=0;
+        score13=0;
+        score14=0;
+        score15=0;
+        aiScoreDate=null;
+    }
+
+    public void clearAiSummary()
+    {
+        summary=null;
+        aiSummaryDate=null;
+    }
+    
+    
     public float getFinalScore()
     {
         if( rcItem==null || !rcItem.getRcItemFormatType().getIsRating() || rcItem.getIntParam1()!=1 )
@@ -227,7 +339,7 @@ public class RcRating implements Serializable, Cloneable
     {
         score = s;
     }
-    
+        
     public RcRatingStatusType getRcRatingStatusType()
     {
         return RcRatingStatusType.getValue(this.rcRatingStatusTypeId);
@@ -426,6 +538,206 @@ public class RcRating implements Serializable, Cloneable
 
     public void setCandidateRcRating(RcRating candidateRcRating) {
         this.candidateRcRating = candidateRcRating;
+    }
+
+    public UnscoredEssay getUnscoredEssay()
+    {
+        return unscoredEssay;
+    }
+
+    public void setUnscoredEssay(UnscoredEssay unscoredEssay)
+    {
+        this.unscoredEssay = unscoredEssay;
+    }
+
+    public float getScore2()
+    {
+        return score2;
+    }
+
+    public void setScore2(float score2)
+    {
+        this.score2 = score2;
+    }
+
+    public float getScore3()
+    {
+        return score3;
+    }
+
+    public void setScore3(float score3)
+    {
+        this.score3 = score3;
+    }
+
+    public float getScore4()
+    {
+        return score4;
+    }
+
+    public void setScore4(float score4)
+    {
+        this.score4 = score4;
+    }
+
+    public float getScore5()
+    {
+        return score5;
+    }
+
+    public void setScore5(float score5)
+    {
+        this.score5 = score5;
+    }
+
+    public float getScore6()
+    {
+        return score6;
+    }
+
+    public void setScore6(float score6)
+    {
+        this.score6 = score6;
+    }
+
+    public float getScore7()
+    {
+        return score7;
+    }
+
+    public void setScore7(float score7)
+    {
+        this.score7 = score7;
+    }
+
+    public float getScore8()
+    {
+        return score8;
+    }
+
+    public void setScore8(float score8)
+    {
+        this.score8 = score8;
+    }
+
+    public float getScore9()
+    {
+        return score9;
+    }
+
+    public void setScore9(float score9)
+    {
+        this.score9 = score9;
+    }
+
+    public float getScore10()
+    {
+        return score10;
+    }
+
+    public void setScore10(float score10)
+    {
+        this.score10 = score10;
+    }
+
+    public float getScore11()
+    {
+        return score11;
+    }
+
+    public void setScore11(float score11)
+    {
+        this.score11 = score11;
+    }
+
+    public float getScore12()
+    {
+        return score12;
+    }
+
+    public void setScore12(float score12)
+    {
+        this.score12 = score12;
+    }
+
+    public float getScore13()
+    {
+        return score13;
+    }
+
+    public void setScore13(float score13)
+    {
+        this.score13 = score13;
+    }
+
+    public float getScore14()
+    {
+        return score14;
+    }
+
+    public void setScore14(float score14)
+    {
+        this.score14 = score14;
+    }
+
+    public float getScore15()
+    {
+        return score15;
+    }
+
+    public void setScore15(float score15)
+    {
+        this.score15 = score15;
+    }
+
+    public String getSummary()
+    {
+        return summary;
+    }
+
+    public void setSummary(String summary)
+    {
+        this.summary = summary;
+    }
+
+    public Date getAiScoreDate()
+    {
+        return aiScoreDate;
+    }
+
+    public void setAiScoreDate(Date aiScoreDate)
+    {
+        this.aiScoreDate = aiScoreDate;
+    }
+
+    public Date getAiSummaryDate()
+    {
+        return aiSummaryDate;
+    }
+
+    public void setAiSummaryDate(Date aiSummaryDate)
+    {
+        this.aiSummaryDate = aiSummaryDate;
+    }
+
+    public int getAiScoresStatusTypeId()
+    {
+        return aiScoresStatusTypeId;
+    }
+
+    public void setAiScoresStatusTypeId(int aiScoresStatusTypeId)
+    {
+        this.aiScoresStatusTypeId = aiScoresStatusTypeId;
+    }
+
+    public int getAiSummaryStatusTypeId()
+    {
+        return aiSummaryStatusTypeId;
+    }
+
+    public void setAiSummaryStatusTypeId(int aiSummaryStatusTypeId)
+    {
+        this.aiSummaryStatusTypeId = aiSummaryStatusTypeId;
     }
 
     

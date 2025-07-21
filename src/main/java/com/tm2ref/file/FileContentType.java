@@ -110,7 +110,17 @@ public enum FileContentType
                 equals(DOCUMENT_XLSX) || equals(DOCUMENT_XLS) || 
                 equals(DOCUMENT_PPTX) || equals(DOCUMENT_PPT); 
     }
+    
+    public boolean getIsAvFile()
+    {
+        return fileContentTypeId<=210;
+    }
 
+    public boolean getIsAnyTextFile()
+    {
+        return equals(DOCUMENT_PDF) || equals(TEXT_PLAIN) || equals(DOCUMENT_DOCX) || equals(DOCUMENT_DOC);
+    }
+    
     public boolean isExcel()
     {
         return equals(DOCUMENT_XLSX) || equals(DOCUMENT_XLS)  || equals(TEXT_CSV);
@@ -131,6 +141,11 @@ public enum FileContentType
         return equals(DOCUMENT_PDF); 
     }
 
+    public boolean isTxt()
+    {
+        return equals(TEXT_PLAIN); 
+    }
+    
     public boolean isZip()
     {
         return equals(ARCHIVE_ZIP); 

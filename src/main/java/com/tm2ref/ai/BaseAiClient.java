@@ -57,6 +57,11 @@ public class BaseAiClient {
         {
             throw e;
         }
+        catch( IOException e )
+        {
+            LogService.logIt( "BaseAiClient.sendApiPost() " + e.toString() + " url=" + url + ", payload=" + payload );
+            throw new STException(e);
+        }
         catch( Exception e )
         {
             LogService.logIt(e, "BaseAiClient.sendApiPost() url=" + url + ", payload=" + payload );

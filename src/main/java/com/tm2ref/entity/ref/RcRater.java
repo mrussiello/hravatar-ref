@@ -111,7 +111,8 @@ public class RcRater implements Serializable, Cloneable
     @Column(name="raternosend")
     private int raterNoSend;
 
-
+    @Column(name="rcrateraistatustypeid")
+    private int rcRaterAiStatusTypeId;
 
     @Column(name="ipaddress")
     private String ipAddress;
@@ -345,6 +346,9 @@ public class RcRater implements Serializable, Cloneable
         for( RcRating rtg : rcRatingList )
         {
             rtg.setRcUploadedUserFile( getRcUploadedUserFileForItemComment( rtg.getRcItemId() ) );
+            
+            if( this.getRcRaterType().getIsCandidateOrEmployee() )
+                rtg.setCandidateRcUploadedUserFile( getRcUploadedUserFileForCandidateUpload( rtg.getRcItemId() ) );
         }
     }
 
@@ -357,6 +361,21 @@ public class RcRater implements Serializable, Cloneable
         {
             // LogService.logIt("RcRater.getRcUploadedUserFileForItemComment( itemId=" + rcItemId + ") " + u.toString() );
             if( u.getUploadedUserFileType().getIsRcComment() && u.getRcRaterId()==rcRaterId && u.getRcItemId()==rcItemId )
+                return u;
+        }
+
+        return null;
+    }
+    
+    public RcUploadedUserFile getRcUploadedUserFileForCandidateUpload(  int rcItemId  )
+    {
+        if( rcUploadedUserFileList==null || rcItemId<=0 )
+            return null;
+
+        for( RcUploadedUserFile u : this.rcUploadedUserFileList )
+        {
+            // LogService.logIt("RcRater.getRcUploadedUserFileForCandidateUpload( itemId=" + rcItemId + ") " + u.toString() );
+            if( u.getUploadedUserFileType().getIsRcCandidateUpload() && u.getRcRaterId()==rcRaterId && u.getRcItemId()==rcItemId )
                 return u;
         }
 
@@ -1000,6 +1019,16 @@ public class RcRater implements Serializable, Cloneable
 
     public void setRaterNoSendB(boolean b) {
         this.raterNoSend = b ? 1 : 0;
+    }
+
+    public int getRcRaterAiStatusTypeId()
+    {
+        return rcRaterAiStatusTypeId;
+    }
+
+    public void setRcRaterAiStatusTypeId(int rcRaterAiStatusTypeId)
+    {
+        this.rcRaterAiStatusTypeId = rcRaterAiStatusTypeId;
     }
 
 

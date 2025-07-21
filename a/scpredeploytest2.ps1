@@ -8,7 +8,7 @@ $baseurl="directtest2.hravatar.com"
 
 $prefix="${app}-1.0"
 $identityfile="C:/dev/AmazonAWS/ClicFlicKeyPair2-ps.pem"
-$glassfishlocation="/usr/pgms/payara6.2025.2/payara6/glassfish"
+$glassfishlocation="/usr/pgms/payara6.2025.7/payara6/glassfish"
 $basedir="c:/work/${app}"
 $targetdir="$basedir/target"
 

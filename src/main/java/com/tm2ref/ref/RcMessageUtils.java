@@ -1288,6 +1288,7 @@ public class RcMessageUtils {
             User ru;
             if( userFacade==null )
                 userFacade=UserFacade.getInstance();
+            
             RcResultEmailFormatter emf;
             
             for( String em : toList )

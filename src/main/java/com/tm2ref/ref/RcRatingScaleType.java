@@ -46,6 +46,14 @@ public enum RcRatingScaleType implements Serializable
         this.minHighRatedCompScore360=minHighRatedCompScore360;
     }
 
+    public float convertFrom100Score( float score )
+    {
+        if( equals( DEFAULT ))
+            return score/10f;
+        
+        return score/20f;
+    }
+    
     public float getMaxLowRatedItemScore()
     {
         if( equals(DEFAULT) )

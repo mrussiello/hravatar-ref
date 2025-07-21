@@ -189,9 +189,12 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem> {
     @Column(name = "candidateuploadtypeid")
     private int candidateUploadTypeId;
 
+    @Column(name="aisummaryok")
+    private int aiSummaryOk;
+        
     @Column(name = "aiscoringok")
     private int aiScoringOk;
-
+    
     @Column(name = "idealresponse")
     private String idealResponse;
 
@@ -228,12 +231,12 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem> {
 
     public boolean getHasNonAvCandidateFileUpload()
     {
-        return candidateUploadTypeId >= 1 && candidateUploadTypeId <= 19;
+        return candidateUploadTypeId>= 1 && candidateUploadTypeId<=19;
     }
 
     public boolean getHasAvCandidateFileUpload()
     {
-        return candidateUploadTypeId >= 20 && candidateUploadTypeId <= 22;
+        return candidateUploadTypeId>=20 && candidateUploadTypeId<=22;
     }
 
     public boolean getHasCandidateFileUpload()
@@ -1067,6 +1070,16 @@ public class RcItem implements Serializable, Cloneable, Comparable<RcItem> {
     public void setAiPrompt(String aiPrompt)
     {
         this.aiPrompt = aiPrompt;
+    }
+
+    public int getAiSummaryOk()
+    {
+        return aiSummaryOk;
+    }
+
+    public void setAiSummaryOk(int aiSummaryOk)
+    {
+        this.aiSummaryOk = aiSummaryOk;
     }
 
     

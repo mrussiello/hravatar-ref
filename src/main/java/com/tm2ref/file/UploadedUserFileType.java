@@ -47,6 +47,10 @@ public enum UploadedUserFileType
         return equals( REF_CHECK_IMAGES ) || equals( REF_CHECK_ID ) || equals( REF_CHECK_RATER ) || equals( REF_CHECK_RATER_ID );        
     }
     
+    public boolean getIsRcCandidateUpload()
+    {
+        return equals(REF_CHECK_CANDIDATE_FILE_UPLOAD);
+    }
     
     public boolean getIsRcCandidatePhoto()
     {
