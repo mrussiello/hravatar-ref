@@ -1,6 +1,6 @@
 package com.tm2ref.ref;
 
-import com.tm2ref.entity.ai.MetaScore;
+import com.tm2ref.entity.ai.AiMetaScore;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcCheckLog;
 import com.tm2ref.entity.ref.RcOrgPrefs;
@@ -481,17 +481,17 @@ public class RcFacade {
         }
     }
 
-    public List<MetaScore> getReportableMetaScoreListForRcCheck(long rcCheckId) throws Exception
+    public List<AiMetaScore> getReportableAiMetaScoreListForRcCheck(long rcCheckId) throws Exception
     {
         try
         {
-            Query q = em.createNamedQuery("MetaScore.findReportableByRcCheckId", MetaScore.class);
+            Query q = em.createNamedQuery("AiMetaScore.findReportableByRcCheckId", AiMetaScore.class);
             q.setParameter("rcCheckId", rcCheckId);
             q.setHint("jakarta.persistence.cache.retrieveMode", "BYPASS");
             return q.getResultList();
         } catch (Exception e)
         {
-            LogService.logIt(e, "RcFacade.getReportableMetaScoreListForRcCheck( " + rcCheckId + " ) ");
+            LogService.logIt(e, "RcFacade.getReportableAiMetaScoreListForRcCheck( " + rcCheckId + " ) ");
             throw new STException(e);
         }
     }

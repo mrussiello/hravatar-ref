@@ -6,7 +6,7 @@
 
 package com.tm2ref.api;
 
-import com.tm2ref.entity.ai.MetaScore;
+import com.tm2ref.entity.ai.AiMetaScore;
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.user.Org;
@@ -295,16 +295,16 @@ public class ReferenceCheckStatusCreator {
                     if( rcFacade==null )
                         rcFacade=RcFacade.getInstance();
                     
-                    rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck(rc.getRcCheckId()) );
+                    rc.setAiMetaScoreList( rcFacade.getReportableAiMetaScoreListForRcCheck(rc.getRcCheckId()) );
                 }
                 // Add meta scores (aI Scores)
                 if( rc.getMetaScoreList()!=null && !rc.getMetaScoreList().isEmpty() )
                 {
                     AssessmentResult.AssessmentStatus.MetaScores aoasmeta;                    
-                    for( MetaScore metaScore : rc.getMetaScoreList() )
+                    for( AiMetaScore metaScore : rc.getMetaScoreList() )
                     {
                         aoasmeta = new AssessmentResult.AssessmentStatus.MetaScores();
-                        aoasmeta.setType(metaScore.getMetaScoreTypeId());
+                        aoasmeta.setType(metaScore.getAiMetaScoreTypeId());
                         aoasmeta.setScoreNumeric( metaScore.getScore());
                         aoasmeta.setConfidence(metaScore.getConfidence());
                         aoasmeta.setScoreText( metaScore.getScoreText());

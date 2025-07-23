@@ -5,8 +5,8 @@
  */
 package com.tm2ref.ref.results;
 
-import com.tm2ref.ai.MetaScoreType;
-import com.tm2ref.entity.ai.MetaScore;
+import com.tm2ref.ai.AiMetaScoreType;
+import com.tm2ref.entity.ai.AiMetaScore;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.report.Report;
 import com.tm2ref.entity.ref.RcCheck;
@@ -1211,9 +1211,9 @@ public class BaseFormatter {
 
         // LogService.logIt(  "BaseScoreFormatter.getStandardGenAISection() BBB.1 " );
         int valCount = 0;
-        for (MetaScore ms : rc.getMetaScoreList())
+        for (AiMetaScore ms : rc.getMetaScoreList())
         {
-            if (ms.getMetaScoreTypeId() > 0 && ms.getScore() > 0 && ms.getConfidence() >= Constants.MIN_METASCORE_CONFIDENCE)
+            if (ms.getAiMetaScoreTypeId() > 0 && ms.getScore() > 0 && ms.getConfidence() >= Constants.MIN_METASCORE_CONFIDENCE)
                 valCount++;
         }
 
@@ -1227,7 +1227,7 @@ public class BaseFormatter {
         String confScr;
         String scoreText;
         int count = 0;
-        MetaScoreType metaScoreType;
+        AiMetaScoreType metaScoreType;
         String lastUpdate;
 
         // String tt = lmsg( "g.AiGenScoresSubtitle" );
@@ -1240,13 +1240,13 @@ public class BaseFormatter {
         // header row        
         sb.append("<tr " + rowStyleSubHdr + "><td>" + lmsg("g.Name") + "</td><td style=\"text-align:center\">" + lmsg("g.Score") + "</td><td style=\"text-align:center\">" + lmsg("g.Confidence") + "</td><td style=\"text-align:left\">" + lmsg("g.Interpretation") + "</td></tr>\n");
 
-        for (MetaScore metaScore : rc.getMetaScoreList())
+        for (AiMetaScore metaScore : rc.getMetaScoreList())
         {
-            if (metaScore.getMetaScoreTypeId() <= 0 || metaScore.getScore() <= 0 || metaScore.getConfidence() < Constants.MIN_METASCORE_CONFIDENCE)
+            if (metaScore.getAiMetaScoreTypeId() <= 0 || metaScore.getScore() <= 0 || metaScore.getConfidence() < Constants.MIN_METASCORE_CONFIDENCE)
                 continue;
             count++;
 
-            metaScoreType = MetaScoreType.getValue(metaScore.getMetaScoreTypeId());
+            metaScoreType = AiMetaScoreType.getValue(metaScore.getAiMetaScoreTypeId());
 
             scr = I18nUtils.getFormattedNumber(locale, metaScore.getScore(), scrDigits);
 
@@ -1254,10 +1254,11 @@ public class BaseFormatter {
 
             metaScore.setLocale(locale);
 
-            scoreText = metaScoreType.getDescription(locale) + " " + lmsg("g.AiMetaScrInputTypesUsed", new String[]
-            {
-                metaScore.getMetaScoreInputTypesStr()
-            });
+            scoreText = metaScoreType.getDescription(locale); 
+            //+ " " + lmsg("g.AiMetaScrInputTypesUsed", new String[]
+            //{
+            ///    metaScore.getMetaScoreInputTypesStr()
+            //});
 
             if (metaScore.getScoreText() != null && !metaScore.getScoreText().isBlank())
                 scoreText += "<br /><br />" + metaScore.getScoreTextXhtml();

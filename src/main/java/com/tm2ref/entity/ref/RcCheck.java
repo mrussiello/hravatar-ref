@@ -1,7 +1,6 @@
 package com.tm2ref.entity.ref;
 
-import com.tm2ref.ai.MetaScoreType;
-import com.tm2ref.entity.ai.MetaScore;
+import com.tm2ref.entity.ai.AiMetaScore;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.user.Org;
 import com.tm2ref.entity.user.User;
@@ -358,7 +357,7 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
     List<PreviousResult> previousResultList;
 
     @Transient
-    private List<MetaScore> metaScoreList;
+    private List<AiMetaScore> aiMetaScoreList;
 
     //@Transient
     //private RefUserType refUserType;
@@ -392,14 +391,14 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
         return "RcCheck{" + "rcCheckId=" + rcCheckId + ", rcRaterId=" + (rcRater == null ? "0" : rcRater.getRcRaterId()) + '}';
     }
 
-    public MetaScore getMetaScore(int metaScoreTypeId)
+    public AiMetaScore getAiMetaScore(int metaScoreTypeId)
     {
-        if (this.metaScoreList == null)
+        if (this.aiMetaScoreList == null)
             return null;
 
-        for (MetaScore m : this.metaScoreList)
+        for (AiMetaScore m : this.aiMetaScoreList)
         {
-            if (m.getMetaScoreTypeId() == metaScoreTypeId)
+            if (m.getAiMetaScoreTypeId() == metaScoreTypeId)
                 return m;
         }
 
@@ -2000,7 +1999,7 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
         this.disallowReentry = disallowReentry;
     }
 
-    public List<MetaScore> getMetaScoreList()
+    public List<AiMetaScore> getMetaScoreList()
     {        
         /*
         if( 1==2 && (metaScoreList==null || metaScoreList.isEmpty() ) )
@@ -2029,12 +2028,12 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
         }
         */
                
-        return metaScoreList;
+        return aiMetaScoreList;
     }
 
-    public void setMetaScoreList(List<MetaScore> metaScoreList)
+    public void setAiMetaScoreList(List<AiMetaScore> metaScoreList)
     {
-        this.metaScoreList = metaScoreList;
+        this.aiMetaScoreList = metaScoreList;
     }
 
     public int getJobId()

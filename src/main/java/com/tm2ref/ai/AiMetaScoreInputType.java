@@ -3,7 +3,7 @@ import com.tm2ref.util.MessageFactory;
 import java.util.Locale;
 
 
-public enum MetaScoreInputType
+public enum AiMetaScoreInputType
 {
     NONE(0, "msip.none"),
     RESUME(1, "msip.resume"),
@@ -11,20 +11,20 @@ public enum MetaScoreInputType
     RC_COMPETENCY(3, "msip.rccomp"),
     TEXT_RESPONSES(4, "msip.textresp");
 
-    private final int metaScoreInputTypeId;
+    private final int aiMetaScoreInputTypeId;
     private final String key;
 
 
-    private MetaScoreInputType( int p, String key )
+    private AiMetaScoreInputType( int p, String key )
     {
-        this.metaScoreInputTypeId = p;
+        this.aiMetaScoreInputTypeId = p;
         this.key = key;
     }
 
 
-    public int getMetaScoreInputTypeId()
+    public int getAiMetaScoreInputTypeId()
     {
-        return this.metaScoreInputTypeId;
+        return this.aiMetaScoreInputTypeId;
     }
 
 
@@ -46,13 +46,13 @@ public enum MetaScoreInputType
         return key;
     }
 
-    public static MetaScoreInputType getValue( int id )
+    public static AiMetaScoreInputType getValue( int id )
     {
-        MetaScoreInputType[] vals = MetaScoreInputType.values();
+        AiMetaScoreInputType[] vals = AiMetaScoreInputType.values();
 
         for( int i=0 ; i<vals.length ; i++ )
         {
-            if( vals[i].getMetaScoreInputTypeId() == id )
+            if( vals[i].getAiMetaScoreInputTypeId() == id )
                 return vals[i];
         }
 

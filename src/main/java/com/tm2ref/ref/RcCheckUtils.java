@@ -1111,7 +1111,7 @@ public class RcCheckUtils {
         }
         
         if( rc.getMetaScoreList()==null )
-            rc.setMetaScoreList( rcFacade.getReportableMetaScoreListForRcCheck( rc.getRcCheckId()));
+            rc.setAiMetaScoreList( rcFacade.getReportableAiMetaScoreListForRcCheck( rc.getRcCheckId()));
                 
     }
     

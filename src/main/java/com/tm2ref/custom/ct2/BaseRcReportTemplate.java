@@ -20,8 +20,8 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.tm2ref.ai.MetaScoreType;
-import com.tm2ref.entity.ai.MetaScore;
+import com.tm2ref.ai.AiMetaScoreType;
+import com.tm2ref.entity.ai.AiMetaScore;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcRater;
 import com.tm2ref.entity.ref.RcRating;
@@ -2428,9 +2428,9 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
         //LogService.logIt(  "BaseRcReportTemplate.addAiScoresSection() AAA.1D " );
 
         int valCount = 0;
-        for( MetaScore ms : reportData.getRc().getMetaScoreList() )
+        for( AiMetaScore ms : reportData.getRc().getMetaScoreList() )
         {
-            if( ms.getMetaScoreTypeId()>0 && ms.getScore()>0 && ms.getConfidence()>= Constants.MIN_METASCORE_CONFIDENCE )
+            if( ms.getAiMetaScoreTypeId()>0 && ms.getScore()>0 && ms.getConfidence()>= Constants.MIN_METASCORE_CONFIDENCE )
                 valCount++;
         }
 
@@ -2512,17 +2512,17 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
             String scoreText;
 
             int count = 0;
-            MetaScoreType metaScoreType;
+            AiMetaScoreType metaScoreType;
             String lastUpdate;
             Paragraph par;
 
-            for( MetaScore metaScore : reportData.getRc().getMetaScoreList() )
+            for( AiMetaScore metaScore : reportData.getRc().getMetaScoreList() )
             {
-                if( metaScore.getMetaScoreTypeId()<=0 || metaScore.getScore()<=0 || metaScore.getConfidence()<Constants.MIN_METASCORE_CONFIDENCE )
+                if( metaScore.getAiMetaScoreTypeId()<=0 || metaScore.getScore()<=0 || metaScore.getConfidence()<Constants.MIN_METASCORE_CONFIDENCE )
                     continue;
                 count++;
 
-                metaScoreType = MetaScoreType.getValue(metaScore.getMetaScoreTypeId() );
+                metaScoreType = AiMetaScoreType.getValue(metaScore.getAiMetaScoreTypeId() );
 
                 c = new PdfPCell(new Phrase( metaScoreType.getName(reportData.getLocale()), fontToUse));
                 c.setBorder( Rectangle.NO_BORDER );
@@ -2564,7 +2564,7 @@ public abstract class BaseRcReportTemplate extends BaseReportTemplate implements
 
                 metaScore.setLocale(reportData.getLocale());
                 c = new PdfPCell();
-                par = new Paragraph(metaScoreType.getDescription(reportData.getLocale()) + " " + lmsg("g.AiMetaScrInputTypesUsed", new String[]{metaScore.getMetaScoreInputTypesStr()}), smallFontToUse);
+                par = new Paragraph(metaScoreType.getDescription(reportData.getLocale()), smallFontToUse);
                 c.addElement(par);
 
                 if( scoreText!=null && !scoreText.isBlank() )

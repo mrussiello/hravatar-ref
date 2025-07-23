@@ -1,7 +1,7 @@
 package com.tm2ref.job;
 
 
-import com.tm2ref.entity.job.Job;
+import com.tm2ref.entity.job.EvalPlan;
 import com.tm2ref.global.STException;
 import com.tm2ref.service.LogService;
 
@@ -16,32 +16,32 @@ import jakarta.persistence.PersistenceContext;
 //// @ManagedBean
 //@Named
 @Stateless
-public class JobFacade
+public class EvalPlanFacade
 {
     @PersistenceContext( name = "persistence/tm2mirror", unitName = "tm2mirror" )
     EntityManager emmirror;
 
 
-    public static JobFacade getInstance()
+    public static EvalPlanFacade getInstance()
     {
         try
         {
-            return (JobFacade) InitialContext.doLookup( "java:module/JobFacade" );
+            return (EvalPlanFacade) InitialContext.doLookup( "java:module/EvalPlanFacade" );
         }
 
         catch( Exception e )
         {
-            LogService.logIt( e, "JobFacade.getInstance() " );
+            LogService.logIt( e, "EvalPlanFacade.getInstance() " );
             return null;
         }
     }
 
     
-    public Job getJob( int jobId ) throws Exception
+    public EvalPlan getEvalPlan( int evalPlanId ) throws Exception
     {
         try
         {
-            return (Job) emmirror.createNamedQuery( "Job.findByJobId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("jobId", jobId ).getSingleResult();
+            return (EvalPlan) emmirror.createNamedQuery( "EvalPlan.findByEvalPlanId" ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).setParameter("evalPlanId", evalPlanId ).getSingleResult();
         }
         catch( NoResultException e )
         {
@@ -49,7 +49,7 @@ public class JobFacade
         }
         catch( Exception e )
         {
-            LogService.logIt( e, "JobFacade.getJob( " + jobId + " ) " );
+            LogService.logIt( e, "EvalPlanFacade.getEvalPlan( " + evalPlanId + " ) " );
             throw new STException( e );
         }
     }
