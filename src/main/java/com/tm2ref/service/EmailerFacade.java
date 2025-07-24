@@ -4,24 +4,31 @@
  */
 package com.tm2ref.service;
 
-import com.tm2ref.email.EmailBlockFacade;
-import jakarta.annotation.PreDestroy;
+import com.tm2ref.entity.email.EmailBlock;
+import com.tm2ref.global.STException;
 import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import jakarta.jms.JMSException;
 import jakarta.jms.JMSProducer;
 import jakarta.jms.MapMessage;
 import jakarta.jms.Queue;
-import jakarta.jms.Session;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import java.util.Date;
 
 import javax.naming.InitialContext;
 
 @Stateless
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EmailerFacade
 {
     @Resource(mappedName = "jms/ConnectionFactory")
@@ -32,16 +39,9 @@ public class EmailerFacade
 
     static JMSContext context = null;
     JMSProducer  messageProducer = null;
-
-    public EmailerFacade( ConnectionFactory cf, Queue q )
-    {
-        this.connectionFactory=cf;
-        this.queue=q;
-    }
-
-    public EmailerFacade()
-    {}
-
+    
+    @PersistenceContext( name = "persistence/tm2", unitName = "tm2" ) 
+    EntityManager emt;
 
     public static EmailerFacade getInstance()
     {
@@ -52,12 +52,99 @@ public class EmailerFacade
 
         catch( Exception e )
         {
-            LogService.logIt( e, "getInstance() " );
+            LogService.logIt( e, "EmailerFacade.getInstance() " );
 
             return null;
         }
     }
 
+    public boolean sendEmail(Map<String, Object> messageInfoMap) throws Exception
+    {
+        // MapMessage message = null;
+
+        try
+        {
+            correctAllEmailsForBlocks(messageInfoMap); 
+            
+            return sendEmailMsg(messageInfoMap);
+
+        } catch (JMSException e)
+        {
+            LogService.logIt(e, "EmailerFacade.sendEmail() XXX.1 ");
+            return false;
+        } catch (Exception e)
+        {
+            LogService.logIt(e, "EmailerFacade.sendEmail() XXX.2 ");
+            return false;
+        }
+    }
+    
+
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    private boolean sendEmailMsg(Map<String, Object> messageInfoMap) throws Exception
+    {
+        MapMessage message = null;
+
+        try
+        {
+            String to1 = (String) messageInfoMap.get(EmailConstants.TO);
+
+            String to = (String) messageInfoMap.get(EmailConstants.TO);
+            if (to == null || to.isEmpty())
+            {
+                LogService.logIt("EmailerFacade.sendEmailMsg() After block processing, there are no to emails. Subj=" + (String) messageInfoMap.get(EmailConstants.SUBJECT) + ", Original To: " + to1);
+                return false;
+            }
+
+            String from = (String) messageInfoMap.get(EmailConstants.FROM);
+            if (from == null || from.isEmpty())
+                return false;
+
+            if (context == null)
+                context = connectionFactory.createContext();
+
+            if (messageProducer == null)
+                messageProducer = context.createProducer();
+
+            message = context.createMapMessage();
+
+            // now copy all keys to MapMessage
+            Set<String> keys = messageInfoMap.keySet();
+
+            Object obj;
+
+            for (String key : keys)
+            {
+                // LogService.logIt( "Setting object: " + key + ", " + messageInfoMap.get( key ) );
+
+                obj = messageInfoMap.get(key);
+
+                if (obj instanceof String)
+                    message.setString(key, (String) obj);
+
+                if (obj instanceof byte[])
+                    message.setBytes(key, (byte[]) obj);
+            }
+
+            // LogService.logIt( "EmailerBean.sendEmail() SENDING. " );
+            messageProducer.send(queue, message);
+
+        } catch (JMSException e)
+        {
+            LogService.logIt(e, "EmailerFacade.sendEmailMsg() XXX.1 ");
+            return false;
+        } catch (Exception e)
+        {
+            LogService.logIt(e, "EmailerFacade.sendEmailMsg() XXX.2 ");
+            return false;
+        }
+
+        return true;
+    }
+    
+    
+    /*
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean sendEmail( Map<String, Object> messageInfoMap ) throws Exception
     {
         MapMessage message = null;
@@ -120,6 +207,7 @@ public class EmailerFacade
 
         return true;
     }
+    */
     
     
     private void correctAllEmailsForBlocks( Map<String, Object> messageInfoMap ) throws Exception
@@ -170,7 +258,7 @@ public class EmailerFacade
         
         StringBuilder emails2 = new StringBuilder();
         
-        EmailBlockFacade elf = EmailBlockFacade.getInstance();
+        // EmailBlockFacade elf = EmailBlockFacade.getInstance();
         
         String eml;
         
@@ -178,7 +266,7 @@ public class EmailerFacade
         {
             eml=em.trim();
             
-            if( eml.indexOf("|")>=0 )
+            if( eml.contains("|") )
             {
                 eml = eml.substring(0, eml.indexOf("|"));
                 eml = eml.trim();
@@ -190,7 +278,7 @@ public class EmailerFacade
                 continue;                
             }
             
-            if( elf.hasEmailBlock(eml, true, true) )
+            if( hasEmailBlock(eml, true, true) )
             {
                 LogService.logIt( "EmailerFacade.correctForBlocks() skipping due to full email block. " + em );
                 continue;
@@ -208,5 +296,52 @@ public class EmailerFacade
         return emails2.toString();
         
     }
+    
+    public boolean hasEmailBlock(String email, boolean fullBlock, boolean treatBouncesComplaintsAsFullBlock) throws Exception
+    {
+        EmailBlock emailBlock = getEmailBlock(email, fullBlock, treatBouncesComplaintsAsFullBlock);
+        return emailBlock != null;
+    }
+    
+    public EmailBlock getEmailBlock(String email, boolean fullBlock, boolean treatBouncesComplaintsAsFullBlock) throws Exception
+    {
+        try
+        {
+            if (email == null || email.trim().isEmpty())
+                return null;
+
+            email = email.trim();
+
+            
+            EntityManager em = emt; // (EntityManager) envCtx.lookup("persistence/tm2");
+
+            if (treatBouncesComplaintsAsFullBlock && !fullBlock)
+                treatBouncesComplaintsAsFullBlock = false;
+
+            Query q = em.createNamedQuery(treatBouncesComplaintsAsFullBlock ? "EmailBlock.findFullBlockOrBounceOrComplainForEmail" : (fullBlock ? "EmailBlock.findFullBlockForEmail" : "EmailBlock.findForEmail"));
+            // Query q = em.createNamedQuery( fullBlock ? "EmailBlock.findFullBlockForEmail" : "EmailBlock.findForEmail" );
+
+            q.setParameter("email", email);
+
+            q.setHint("jakarta.persistence.cache.retrieveMode", "BYPASS");
+
+            EmailBlock eb = (EmailBlock) q.getSingleResult();
+            if (eb != null && eb.getExpireDate() != null && eb.getExpireDate().before(new Date()))
+            {
+                em.remove(eb);
+                em.flush();
+                eb = null;
+            }
+            return eb;
+        } catch (NoResultException e)
+        {
+            return null;
+        } catch (Exception e)
+        {
+            LogService.logIt(e, "EmailerFacade.getEmailBlock() email=" + email);
+            throw new STException(e);
+        }
+    }
+    
     
 }
