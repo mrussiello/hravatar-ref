@@ -2155,10 +2155,12 @@ public class RaterRefUtils extends BaseRefUtils
                 if( !refBean.getAdminOverride() )
                 {
                     saveRcRatingWithCheck(rating);
-                                
+                        
+                    boolean forceAiRescore = rating.getText()!=null && !rating.getText().isBlank() && rating.getUploadedUserFileId()<=0 && rating.getCandidateUploadedUserFileId()<=0;
+                    
                     if( complete && (itm.getAiScoringOk()==1 || itm.getAiSummaryOk()==1) )
                     {
-                        RcRatingAiProcessorThread proc = new RcRatingAiProcessorThread( rc, rc.getRcRater(), rating, itm );
+                        RcRatingAiProcessorThread proc = new RcRatingAiProcessorThread( rc, rc.getRcRater(), rating, itm, forceAiRescore );
 
                         // if needs processing, do it in a thread.
                         if( proc.getReadyForAiProcessing() )
@@ -2276,7 +2278,7 @@ public class RaterRefUtils extends BaseRefUtils
                                         
                     if( !refBean.getAdminOverride() && (rc.getRcRater().getRcRaterStatusType().getIsComplete() ) )
                     {
-                        rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+                        rcCheckUtils.loadRcCheckForScoringOrResults(rc, false);
                         rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete( rc, rc.getRcRater(), false);
                     }
                 }

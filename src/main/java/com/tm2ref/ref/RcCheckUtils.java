@@ -10,6 +10,7 @@ import com.tm2ref.api.ResultPosterFactory;
 import com.tm2ref.entity.event.TestEvent;
 import com.tm2ref.entity.event.TestKey;
 import com.tm2ref.entity.file.RcUploadedUserFile;
+import com.tm2ref.entity.job.EvalPlan;
 import com.tm2ref.entity.ref.RcCheck;
 import com.tm2ref.entity.ref.RcItem;
 import com.tm2ref.entity.ref.RcOrgPrefs;
@@ -29,6 +30,9 @@ import com.tm2ref.global.I18nUtils;
 import com.tm2ref.global.NumberUtils;
 import com.tm2ref.global.RuntimeConstants;
 import com.tm2ref.global.STException;
+import com.tm2ref.job.EvalPlanFacade;
+import com.tm2ref.job.EvalPlanStatusType;
+import com.tm2ref.job.EvalPlanSubmissionThread;
 import com.tm2ref.previousresult.PreviousResult;
 import com.tm2ref.previousresult.PreviousResultDateComparator;
 import com.tm2ref.proctor.ProctorUtils;
@@ -282,7 +286,7 @@ public class RcCheckUtils {
             return out;
         
         if( rc.getRcScript()==null || rc.getRcRaterList()==null )
-            loadRcCheckForScoringOrResults(rc);
+            loadRcCheckForScoringOrResults(rc, false);
         
         RcTopBottomSrcType srcTyp = RcTopBottomSrcType.getValue( rc.getTopBottomSrcTypeId() );
         
@@ -368,7 +372,7 @@ public class RcCheckUtils {
             return out;
         
         if( rc.getRcScript()==null || rc.getRcRaterList()==null )
-            this.loadRcCheckForScoringOrResults(rc);
+            this.loadRcCheckForScoringOrResults(rc, false);
         
         RcTopBottomSrcType srcTyp = RcTopBottomSrcType.getValue( rc.getTopBottomSrcTypeId() );
         float scoreToUse;
@@ -944,7 +948,7 @@ public class RcCheckUtils {
     }
     
     
-    public void loadRcCheckForScoringOrResults( RcCheck rc) throws Exception
+    public void loadRcCheckForScoringOrResults( RcCheck rc, boolean forceAiRescoring) throws Exception
     {
         if( rc==null )
             return;
@@ -1075,9 +1079,9 @@ public class RcCheckUtils {
             rc.setRcRatingsInScript(r.getRcRatingList(), true );              
         }
         
-        if( cRtr!=null && cRtr.getRcRaterAiStatusTypeId()<RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId() && rc.getRcScript().getHasAnyAiProcessing())
+        if( cRtr!=null && (forceAiRescoring || cRtr.getRcRaterAiStatusTypeId()<RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId()) && rc.getRcScript().getHasAnyAiProcessing())
         {
-            RcCheckAiScoresUpdater rcCheckAiScoresUpdater = new RcCheckAiScoresUpdater(rc);
+            RcCheckAiScoresUpdater rcCheckAiScoresUpdater = new RcCheckAiScoresUpdater(rc, forceAiRescoring);
             rcCheckAiScoresUpdater.updateRcCheckAiScores();
         }
                 
@@ -1893,10 +1897,49 @@ public class RcCheckUtils {
                 RcResultReportingUtils rrru = new RcResultReportingUtils();
                 rrru.sendCandidateFeedbackReportEmails(rc, 0, false, rc.getLocale() );
             }
+            
+            if( rc.getJobId()>0 )
+                initiateAiMetaScores(rc, updateIfAlreadyComplete );
         }
         catch( Exception e )
         {
             LogService.logIt(e, "RcCheckUtils.performRcCheckCompletionIfReady() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId()) );
+            throw e;
+        }
+    }
+    
+    
+    public void initiateAiMetaScores( RcCheck rc, boolean forceRescore) throws Exception
+    {
+        if( rc==null )
+            return;
+        if( rc.getJobId()<=0 )
+            return;
+        if( !RuntimeConstants.getBooleanValue("tm2ai_rest_api_ok") || !RuntimeConstants.getBooleanValue("tm2ai_evalplan_scoring_ok"))
+        {
+            LogService.logIt("RcCheckUtils.initiateAiMetaScores() AI EvalPlan Scoring is not enabled. Ignoring. rcCheckId=" + rc.getRcCheckId() );
+            return;
+        }        
+        
+        try
+        {
+            EvalPlan evalPlan = EvalPlanFacade.getInstance().getEvalPlan(rc.getJobId());
+            if( evalPlan==null )
+                throw new Exception( "No EvalPlan found for tk.jobId=evalPlanId=" + rc.getJobId() );
+            
+            if( evalPlan.getEvalPlanStatusTypeId()==EvalPlanStatusType.INACTIVE.getEvalPlanStatusTypeId())
+            {
+                LogService.logIt("RcCheckUtils.initiateAiMetaScores() EvalPlan is inactive. Ignoring. evalPlanId=" + evalPlan.getEvalPlanId() + ", rcCheckId=" + rc.getRcCheckId() + ", testKeyId=" + rc.getTestKeyId() );
+                return;
+            }
+            
+            EvalPlanSubmissionThread epst = new EvalPlanSubmissionThread( rc.getUser(), rc.getTestKeyId(), rc.getRcCheckId(), forceRescore );
+            LogService.logIt("RcCheckUtils.initiateAiMetaScores() Submitting EvalPlan for scoring via thread. rcCheckId=" + rc.getRcCheckId() + ", testKeyId=" + rc.getTestKeyId() + ", userId=" + rc.getUserId() );
+            new Thread(epst).start();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcCheckUtils.initiateAiMetaScores() rcCheckId=" + (rc==null ? "null" : rc.getRcCheckId() + ", testKeyId=" + rc.getTestKeyId()) );
             throw e;
         }
     }

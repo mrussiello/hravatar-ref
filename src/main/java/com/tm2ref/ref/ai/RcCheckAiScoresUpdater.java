@@ -16,6 +16,8 @@ import com.tm2ref.ref.RcFacade;
 import com.tm2ref.ref.RcScriptFacade;
 import com.tm2ref.score.CaveatScoreType;
 import com.tm2ref.service.LogService;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
 
 /**
@@ -24,15 +26,20 @@ import java.util.Map;
  */
 public class RcCheckAiScoresUpdater implements Runnable {
     
+    private static final int MAX_AI_WAIT_TIME = 15;
+    private static final int MAX_AI_ATTEMPTS  = 10;
+    
     RcCheck rcCheck;
     
     RcFacade rcFacade;
     RcScriptFacade rcScriptFacade;
     EssayFacade essayFacade;
+    boolean forceRescoreAll = false;
     
-    public RcCheckAiScoresUpdater( RcCheck rcCheck )
+    public RcCheckAiScoresUpdater( RcCheck rcCheck, boolean forceRescoreAll)
     {
         this.rcCheck = rcCheck;
+        this.forceRescoreAll=forceRescoreAll;
     }
 
     @Override
@@ -89,10 +96,25 @@ public class RcCheckAiScoresUpdater implements Runnable {
                 LogService.logIt( "RcCheckAiScoresUpdater.updateRcCheckAiScores() AAA.5  No candidate/employee RcRater has not been started. rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId()) );
                 return;                
             }
-            if( candidateRcRater.getRcRaterAiStatusTypeId()>=RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId() )
+            
+            if( candidateRcRater.getRcRaterAiStatusTypeId()==RcRaterAiStatusType.NOT_NEEDED.getRcRaterAiStatusTypeId() )
             {
-                LogService.logIt( "RcCheckAiScoresUpdater.updateRcCheckAiScores() AAA.6  RcRater AI Status Type is complete or higher. rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId()) );
+                LogService.logIt( "RcCheckAiScoresUpdater.updateRcCheckAiScores() AAA.6  RcRater AI processing not needed. rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId()) );
                 return;                
+            }
+            
+            if( !forceRescoreAll && candidateRcRater.getRcRaterAiStatusTypeId()>=RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId() )
+            {
+                LogService.logIt( "RcCheckAiScoresUpdater.updateRcCheckAiScores() AAA.7  RcRater AI Status Type is complete and not forceRescoreAll or higher. rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId()) );
+                return;                
+            }
+
+            if( forceRescoreAll && candidateRcRater.getRcRaterAiStatusTypeId()>=RcRaterAiStatusType.COMPLETE.getRcRaterAiStatusTypeId() )
+            {
+                candidateRcRater.setRcRaterAiStatusTypeId( RcRaterAiStatusType.INCOMPLETE.getRcRaterAiStatusTypeId() );
+                if( rcFacade==null )
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRater(candidateRcRater, false, 0 );
             }
             
             if( candidateRcRater.getRcRatingList()==null )
@@ -181,11 +203,17 @@ public class RcCheckAiScoresUpdater implements Runnable {
                 throw new Exception( "RcItem not found for RcRating" );
             
             RcItem item = rcRating.getRcItem();
-            
+
             // not needed
             if( item.getAiScoringOk()!=1 && item.getAiSummaryOk()!=1 )
             {
-                LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() AAA.1 RcItem does not require any AI processing. Not checking. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
+                LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() AAA.1A RcItem does not require any AI processing. Not checking. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
+                return;
+            }
+
+            if( !forceRescoreAll && (item.getAiScoringOk()!=1 || rcRating.getAiScoresStatusType().getIsCompleteOrHigher()) && (item.getAiSummaryOk()!=1 && rcRating.getAiSummaryStatusType().getIsCompleteOrHigher() ) )
+            {
+                LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() AAA.1B RcItem AI processing is complete or perm error for all requested AI scores. Not checking. forceRescoreAll=false. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
                 return;
             }
             
@@ -215,6 +243,38 @@ public class RcCheckAiScoresUpdater implements Runnable {
             boolean pending = false;
             if( item.getAiSummaryOk()==1 )
             {
+                if( forceRescoreAll )
+                {
+                    ue.setSummaryDate( null );
+                    ue.setSummary(null);
+                    ue.setScoreStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId() );
+                    if( item.getAiScoringOk()==1 )
+                    {
+                        ue.setScoreDate( null );
+                        ue.setComputedScore(0);
+                        ue.setComputedConfidence(0);
+                        ue.setScoreStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId() );
+                    }
+                    essayFacade.saveUnscoredEssay(ue);
+
+                    rcRating.setAiSummaryDate( null);
+                    rcRating.setAiSummaryStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId());
+                    if( item.getAiScoringOk()==1 )
+                    {
+                        rcRating.setAiScoreDate( null);
+                        rcRating.setAiScoresStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId());
+                    }
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcRating(rcRating);                        
+
+                    LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() AAA.3B forceRescoreAll=true. Re-Submitting AI Scoring. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
+                    RcRatingAiProcessorThread rapt = new RcRatingAiProcessorThread( rcCheck,  rcCheck.getRcRaterForRcRaterId(rcRating.getRcRaterId()),  rcRating,  item, true);
+                    new Thread( rapt ).start();
+                    counts[2]++;                
+                    return;
+                }
+                
                 if( ue.getSummaryDate()!=null && ue.getSummary()!=null && !ue.getSummary().isBlank() )
                 {
                     if( rcRating.getAiSummaryDate()==null || (rcRating.getAiSummaryDate().before( ue.getSummaryDate() )) || rcRating.getAiSummaryStatusTypeId()>EssayScoreStatusType.SCORECOMPLETE.getEssayScoreStatusTypeId() )
@@ -239,6 +299,27 @@ public class RcCheckAiScoresUpdater implements Runnable {
             
             if( item.getAiScoringOk()==1 )
             {
+                if( forceRescoreAll )
+                {
+                    ue.setScoreDate( null );
+                    ue.setComputedScore(0);
+                    ue.setComputedConfidence(0);
+                    ue.setScoreStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId() );
+                    essayFacade.saveUnscoredEssay(ue);
+
+                    rcRating.setAiScoreDate( null);
+                    rcRating.setAiScoresStatusTypeId( EssayScoreStatusType.NOTSUBMITTED.getEssayScoreStatusTypeId());
+                    if( rcFacade==null )
+                        rcFacade=RcFacade.getInstance();
+                    rcFacade.saveRcRating(rcRating);                        
+                    
+                    LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() BBB.1D forceRescoreAll=true. Re-Submitting AI Scoring. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
+                    RcRatingAiProcessorThread rapt = new RcRatingAiProcessorThread( rcCheck,  rcCheck.getRcRaterForRcRaterId(rcRating.getRcRaterId()),  rcRating,  item, true);
+                    new Thread( rapt ).start();
+                    counts[2]++;
+                    return;
+                }
+                
                 if( ue.getScoreDate()!=null && ue.getEssayScoreStatusType().completed() )
                 {
                     if( rcRating.getAiScoreDate()==null || (rcRating.getAiScoreDate().before( ue.getScoreDate() )) || rcRating.getAiScoresStatusTypeId()>EssayScoreStatusType.SCORECOMPLETE.getEssayScoreStatusTypeId())
@@ -273,6 +354,25 @@ public class RcCheckAiScoresUpdater implements Runnable {
                 {
                     LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() CCC.1C AI Scores not available but not failed either. Updating Pending count. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
                     pending=true;
+                    
+                    if( rcRating.getAiRequestCount()<MAX_AI_ATTEMPTS )
+                    {
+                        Calendar cal = new GregorianCalendar();
+                        cal.add( Calendar.MINUTE, -1*MAX_AI_WAIT_TIME );
+                        if( rcRating.getAiRequestDate()==null || rcRating.getAiRequestDate().before( cal.getTime() ) )
+                        {
+                            if( rcCheck.getRcRaterList()==null )
+                            {
+                                if( rcFacade==null )
+                                    rcFacade=RcFacade.getInstance();
+                                rcCheck.setRcRaterList( rcFacade.getRcRaterList(rcCheck.getRcCheckId()));
+                            }
+                            
+                            LogService.logIt( "RcCheckAiScoresUpdater.updateRcRatingAiScores() CCC.1D AI Scores are past max wait time and current ai attempts=" + rcRating.getAiRequestCount() + " Re-Submitting AI Scoring. rcRatingId=" + (rcRating==null ? "null" : rcRating.getRcRatingId() + ", rcItemId=" + rcRating.getRcItemId()) + ", rcCheckId=" + (rcCheck==null ? "null" : rcCheck.getRcCheckId() ) );
+                            RcRatingAiProcessorThread rapt = new RcRatingAiProcessorThread( rcCheck,  rcCheck.getRcRaterForRcRaterId(rcRating.getRcRaterId()),  rcRating,  item, false);
+                            new Thread( rapt ).start();
+                        }
+                    }
                 }
             }
             

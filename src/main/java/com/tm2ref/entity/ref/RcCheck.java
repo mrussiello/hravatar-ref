@@ -833,7 +833,7 @@ public class RcCheck implements Serializable, Cloneable, PreviousResult {
 
     public String getCandidateInputStr5()
     {
-        return getCandidateInputStr(6);
+        return getCandidateInputStr(5);
     }
 
     public void setCandidateInputStr1(String v)

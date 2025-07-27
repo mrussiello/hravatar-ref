@@ -338,10 +338,20 @@ public class AdminRefUtils extends FacesUtils {
                 throw new Exception( "RcCheck is null for rcCheckId=" + rcCheckId );
             if( !rc.getRcCheckStatusType().getIsComplete())
                 throw new Exception( "RcCheck is not in complete. " + rc.getRcCheckStatusType().getName() + ", rcCheckId=" + rcCheckId );
+
+            boolean forceAiRescores = adminRefBean.getForceAiRescoring();
+
+            if( forceAiRescores )
+            {
+                LogService.logIt( "AdminRefUtils.processRecomputeRaterAndOverallScores() AAA.2 forceAiRescores=" + forceAiRescores + ", rcCheckId=" + rcCheckId );   
+                this.setStringInfoMessage( "Rescoring RcCheck and Re-Computing all AI Scores. You will need to check logfiles or reports in a few minutes to see the new AI scores reflected in the report." );
+            }
             
             if( rcCheckUtils==null )
                 rcCheckUtils = new RcCheckUtils();
-            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+            rcCheckUtils.loadRcCheckForScoringOrResults(rc, forceAiRescores);
+
+            
             
             float score;
             for(RcRater rater : rc.getRcRaterList() )
@@ -356,6 +366,8 @@ public class AdminRefUtils extends FacesUtils {
             }
             
             score = rcCheckUtils.computeRcCheckOverallScore(rc);
+            
+            
             rc.setOverallScore(score);
             rc.setScoreDate( new Date() );
             rc.setRcCheckScoringStatusTypeId( RcCheckScoringStatusType.SCORED.getRcCheckScoringStatusTypeId() );
@@ -583,7 +595,7 @@ public class AdminRefUtils extends FacesUtils {
             
             if( rcCheckUtils==null )
                 rcCheckUtils = new RcCheckUtils();            
-            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+            rcCheckUtils.loadRcCheckForScoringOrResults(rc, false);
             
             Locale locale = null;
             

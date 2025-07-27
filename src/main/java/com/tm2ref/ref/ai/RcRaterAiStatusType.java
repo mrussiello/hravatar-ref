@@ -24,6 +24,11 @@ public enum RcRaterAiStatusType
     }
     
 
+    public boolean getIsCompleteOrHigher()
+    {
+        return rcRaterAiStatusTypeId>=COMPLETE.getRcRaterAiStatusTypeId();
+    }
+    
     public static RcRaterAiStatusType getValue( int id )
     {
         RcRaterAiStatusType[] vals = RcRaterAiStatusType.values();

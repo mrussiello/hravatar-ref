@@ -158,7 +158,7 @@ public class BaseFormatter {
 
         if (rcCheckUtils == null)
             rcCheckUtils = new RcCheckUtils();
-        rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+        rcCheckUtils.loadRcCheckForScoringOrResults(rc, false);
         rcCheckUtils.prepSuspiciusActivityForReporting(rc, locale);
 
         if (report == null)

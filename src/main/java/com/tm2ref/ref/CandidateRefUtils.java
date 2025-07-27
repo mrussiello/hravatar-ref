@@ -599,7 +599,7 @@ public class CandidateRefUtils extends BaseRefUtils
 
         if( !refBean.getAdminOverride() && rc.getRcCandidateStatusType().getIsCompletedOrHigher() && rc.getLastCandidateProgressMsgDate()==null )
         {
-            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+            rcCheckUtils.loadRcCheckForScoringOrResults(rc, false);
             rcCheckUtils.sendProgressUpdateForRaterOrCandidateComplete(rc, null, false );
         }
     }

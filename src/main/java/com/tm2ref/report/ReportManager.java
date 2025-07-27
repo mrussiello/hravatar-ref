@@ -71,7 +71,7 @@ public class ReportManager {
             if( rcCheckUtils==null )
                 rcCheckUtils = new RcCheckUtils();
             
-            rcCheckUtils.loadRcCheckForScoringOrResults(rc);
+            rcCheckUtils.loadRcCheckForScoringOrResults(rc, false);
             
             //if( reportId <= 0 )
             //    reportId = rc.getReportId();

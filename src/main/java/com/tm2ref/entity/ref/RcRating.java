@@ -4,6 +4,7 @@ package com.tm2ref.entity.ref;
 import com.tm2ref.entity.essay.UnscoredEssay;
 import com.tm2ref.entity.file.RcUploadedUserFile;
 import com.tm2ref.entity.user.User;
+import com.tm2ref.essay.EssayScoreStatusType;
 import com.tm2ref.ref.RcCheckUtils;
 import com.tm2ref.ref.RcRatingStatusType;
 import com.tm2ref.service.LogService;
@@ -116,6 +117,9 @@ public class RcRating implements Serializable, Cloneable
     @Column(name="aisummarystatustypeid")
     private int aiSummaryStatusTypeId;
     
+    @Column(name="airequestcount")
+    private int aiRequestCount;
+    
     
     @Column(name="uploadeduserfileid")
     private long uploadedUserFileId;
@@ -141,6 +145,11 @@ public class RcRating implements Serializable, Cloneable
     @Column(name="completedate")
     private Date completeDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="airequestdate")
+    private Date aiRequestDate;
+    
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="aiscoredate")
     private Date aiScoreDate;
@@ -235,6 +244,16 @@ public class RcRating implements Serializable, Cloneable
     }
     
 
+    public EssayScoreStatusType getAiScoresStatusType()
+    {
+        return EssayScoreStatusType.getValue(aiScoresStatusTypeId);
+    }
+
+    public EssayScoreStatusType getAiSummaryStatusType()
+    {
+        return EssayScoreStatusType.getValue(aiSummaryStatusTypeId);
+    }
+    
     //public boolean getHasValidRecording()
     //{
     //    return rcUploadedUserFile!=null && rcUploadedUserFile.getHasValidInitialFile();
@@ -738,6 +757,26 @@ public class RcRating implements Serializable, Cloneable
     public void setAiSummaryStatusTypeId(int aiSummaryStatusTypeId)
     {
         this.aiSummaryStatusTypeId = aiSummaryStatusTypeId;
+    }
+
+    public Date getAiRequestDate()
+    {
+        return aiRequestDate;
+    }
+
+    public void setAiRequestDate(Date aiRequestDate)
+    {
+        this.aiRequestDate = aiRequestDate;
+    }
+
+    public int getAiRequestCount()
+    {
+        return aiRequestCount;
+    }
+
+    public void setAiRequestCount(int aiRequestCount)
+    {
+        this.aiRequestCount = aiRequestCount;
     }
 
     

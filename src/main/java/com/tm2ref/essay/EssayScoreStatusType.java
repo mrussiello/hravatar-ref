@@ -26,6 +26,11 @@ public enum EssayScoreStatusType
         this.name = n;
     }
 
+    public boolean getIsCompleteOrHigher()
+    {
+        return essayScoreStatusTypeId>=SCORECOMPLETE.getEssayScoreStatusTypeId();
+    }
+    
     public boolean getIsComplete()
     {
         return equals(SCORECOMPLETE);

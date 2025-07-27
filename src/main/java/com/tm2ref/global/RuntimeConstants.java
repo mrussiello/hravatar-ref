@@ -293,6 +293,7 @@ public class RuntimeConstants {
 
 
         cache.put( "tm2ai_rest_api_ok", true );
+        cache.put( "tm2ai_evalplan_scoring_ok", true );
         cache.put("tm2ai_rest_api_baseuri", "https://ts.hravatar.com/ai/webresources/");
         cache.put("tm2ai_rest_api_username", "");
         cache.put("tm2ai_rest_api_password", "");

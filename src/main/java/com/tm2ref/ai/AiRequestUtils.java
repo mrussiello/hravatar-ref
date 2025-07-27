@@ -149,6 +149,46 @@ public class AiRequestUtils
         }
     }
 
+    public static JsonObject doEvalPlanScoringCall( AiCallType aiCallType, boolean forceRedo, User user, long testKeyId, long rcCheckId ) throws Exception
+    {
+        try
+        {
+            if( user==null )
+                throw new Exception( "User is null." );
+
+            if( testKeyId<=0 && rcCheckId<=0 )
+                throw new Exception( "Both TestKeyId and RcCheckId are 0." );
+
+            if( aiCallType==null )
+                throw new Exception( "AiCallType is null." );
+            
+            JsonObjectBuilder job = getBasePayloadJsonObjectBuilder(aiCallType, user );
+            
+            job.add("intparam1", testKeyId );
+            job.add("intparam2", rcCheckId );                
+            job.add("autoupdate", 1 );
+
+            if( forceRedo )
+                job.add( "forceredo", 1 );
+            
+            JsonObject joReq = job.build();
+
+            AiRequestClient client = new AiRequestClient();
+
+            Tracker.addAiCall();
+                        
+            return client.getJsonObjectFromAiCallRequest(joReq, BaseAiClient.AI_CALL_TIMEOUT_LONG );
+        }
+        catch( Exception e )
+        {
+            Tracker.addAiCallError();
+            LogService.logIt(e, "AiRequestUtils.doEvalPlanScoringCall() aiCallType=" +  (aiCallType==null ? "null" : aiCallType.getName()) + ", userId=" + (user==null ? "null" : user.getUserId()) + ", testKeyId=" + testKeyId + ", rcCheckId=" + rcCheckId );
+            throw e;
+        }
+    }
+    
+    
+    
     public static JsonObject doEssayScoringCall( UnscoredEssay unscoredEssay, AiCallType aiCallType, boolean autoUpdate, boolean forceRedo, String forcePromptStr, String idealResponseStr, String aiInstructionsStr) throws Exception
     {
         try
@@ -198,6 +238,8 @@ public class AiRequestUtils
             throw e;
         }
     }
+    
+    
 
     public static JsonObject doEssaySummaryCall(UnscoredEssay unscoredEssay, AiCallType aiCallType, boolean autoUpdate, boolean forceRedo) throws Exception
     {

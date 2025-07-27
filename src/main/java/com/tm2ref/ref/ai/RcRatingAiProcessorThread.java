@@ -43,13 +43,15 @@ public class RcRatingAiProcessorThread implements Runnable {
     RcRating rcRating;
     RcItem rcItem;
     UploadedFileHelpUtils uploadedFileHelpUtils;
+    boolean forceRescoreForNonUploadInput;
 
-    public RcRatingAiProcessorThread(RcCheck rcCheck, RcRater rcRater, RcRating rcRating, RcItem rcItem)
+    public RcRatingAiProcessorThread(RcCheck rcCheck, RcRater rcRater, RcRating rcRating, RcItem rcItem, boolean forceRescoreForNonUploadInput)
     {
         this.rcCheck = rcCheck;
         this.rcRater = rcRater;
         this.rcRating = rcRating;
         this.rcItem = rcItem;
+        this.forceRescoreForNonUploadInput=forceRescoreForNonUploadInput;
     }
 
     @Override
@@ -120,6 +122,11 @@ public class RcRatingAiProcessorThread implements Runnable {
             if( theText==null || theText.isBlank() )
             {
                 LogService.logIt( "RcRatingAiProcessorThread.initiateAiProcessing() CCC.0 theText is null or empty. Returning without AI. " + toString() );
+                rcRating.setAiScoresStatusTypeId( EssayScoreStatusType.INVALID_TEXT_FOR_DISCERN.getEssayScoreStatusTypeId());
+                rcRating.setAiSummaryStatusTypeId( EssayScoreStatusType.INVALID_TEXT_FOR_DISCERN.getEssayScoreStatusTypeId() );
+                if(rcFacade==null)
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rcRating);
                 return;
             }
 
@@ -129,17 +136,30 @@ public class RcRatingAiProcessorThread implements Runnable {
             {
                 LogService.logIt( "RcRatingAiProcessorThread.initiateAiProcessing() CCC.2 text length too short for AI Scoring. theText.length=" + theText.length() );
                 needsAiScore = false;
+                rcRating.setAiScoresStatusTypeId( EssayScoreStatusType.INVALID_TEXT_FOR_DISCERN.getEssayScoreStatusTypeId() );
+                if(rcFacade==null)
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rcRating);
             }
 
             if( needsAiSummary && theText.length()<MIN_TEXT_LENGTH_FOR_AI_SUMMARY )
             {
                 LogService.logIt( "RcRatingAiProcessorThread.initiateAiProcessing() CCC.2 text length too short for AI Summary. theText.length=" + theText.length() );
                 needsAiSummary = false;
+                rcRating.setAiSummaryStatusTypeId( EssayScoreStatusType.INVALID_TEXT_FOR_DISCERN.getEssayScoreStatusTypeId() );
+                if(rcFacade==null)
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rcRating);
             }
 
             if( !needsAiScore && !needsAiSummary)
             {
                 LogService.logIt( "RcRatingAiProcessorThread.initiateAiProcessing() CCC.3 both needsAiScore and needsAiSummary are false. Nothing to do. Returning." );
+                rcRating.setAiScoresStatusTypeId( EssayScoreStatusType.SKIPPED_DUMMYPROMPT.getEssayScoreStatusTypeId() );
+                rcRating.setAiSummaryStatusTypeId( EssayScoreStatusType.SKIPPED_DUMMYPROMPT.getEssayScoreStatusTypeId() );
+                if(rcFacade==null)
+                    rcFacade=RcFacade.getInstance();
+                rcFacade.saveRcRating(rcRating);
                 return;
             }
 
@@ -168,7 +188,7 @@ public class RcRatingAiProcessorThread implements Runnable {
                 essayFacade.saveUnscoredEssay(ue);
             }
 
-            if( ue.getEssayScoreStatusType().unsubmitted() )
+            if( forceRescoreForNonUploadInput || ue.getEssayScoreStatusType().unsubmitted() )
             {
                 submitForAi( ue, needsAiScore, needsAiSummary );
             }
@@ -183,7 +203,7 @@ public class RcRatingAiProcessorThread implements Runnable {
     {
         try
         {
-            String promptStr = this.rcItem.getAiPrompt();
+            String promptStr = rcItem.getAiPrompt();
             if( promptStr==null || promptStr.isBlank() )
                 promptStr=rcItem.getQuestionCandidate();
             if( promptStr==null || promptStr.isBlank() )
@@ -214,11 +234,15 @@ public class RcRatingAiProcessorThread implements Runnable {
 
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
+            rcRating.setAiRequestDate( new Date() );
+            rcRating.setAiRequestCount( rcRating.getAiRequestCount()+1 );
             rcFacade.saveRcRating(rcRating);
 
             AiEssayScoringThread aiest = new AiEssayScoringThread(ue, true, true, promptStr, rcItem.getIdealResponse(), rcItem.getAiInstructions(), summaryCode );
             LogService.logIt("RcRatingAiProcessorThread.submitForAi() STARTING AI Scoring inline. unscoredEssayId=" + ue.getUnscoredEssayId() );
             aiest.performEssayScore();
+
+
         }
         catch (Exception e)
         {
@@ -265,7 +289,7 @@ public class RcRatingAiProcessorThread implements Runnable {
             if( !AiEssayScoringUtils.getAiEssayScoringOn() )
                 return false;
 
-            if (rcItem==null || (rcItem.getAiSummaryOk() != 1 && rcItem.getAiScoringOk()!= 1) || rcRater==null || !rcRater.getRcRaterType().getIsCandidateOrEmployee() || rcRating==null || !rcRating.getIsComplete())
+            if (rcItem==null || (rcItem.getAiSummaryOk()!=1 && rcItem.getAiScoringOk()!=1) || rcRater==null || !rcRater.getRcRaterType().getIsCandidateOrEmployee() || rcRating==null || !rcRating.getIsComplete())
                 return false;
 
             //if (rcItem.getAiSummaryOk() == 1 && rcItem.getAiScoringOk() != 1 && rcRating.getSummary() != null && !rcRating.getSummary().isBlank())
@@ -282,7 +306,7 @@ public class RcRatingAiProcessorThread implements Runnable {
 
             // any uploaded Candidate TEXT File. Check dates.  This may not be parsed yet.
             if(rcRating.getCandidateRcUploadedUserFile()!=null && rcRating.getCandidateRcUploadedUserFile().getFileContentType().getIsAnyTextFile())
-            {
+            {                
                 // Use it.
                 if( rcItem.getAiScoringOk()==1 && (rcRating.getAiScoreDate()==null || rcRating.getAiScoreDate().before( rcRating.getCandidateRcUploadedUserFile().getLastUpload())) )
                     return true;
